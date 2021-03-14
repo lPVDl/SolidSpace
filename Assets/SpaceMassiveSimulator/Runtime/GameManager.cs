@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using SpaceMassiveSimulator.Runtime.Entities.Particles;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -16,7 +17,7 @@ namespace ECSTest.Scripts
         [SerializeField] private int _enitityCount;
         [SerializeField] private GameObject _meshFilterPrefab;
 
-        private ShipMeshBatchSystem _meshBatchSystem;
+        private TriangleParticleRenderSystem _meshBatchSystem;
         
         private List<MeshFilter> _meshFilters = new List<MeshFilter>();
         
@@ -26,7 +27,7 @@ namespace ECSTest.Scripts
             
             var entityManager = world.EntityManager;
 
-            _meshBatchSystem = world.GetOrCreateSystem(typeof(ShipMeshBatchSystem)) as ShipMeshBatchSystem;
+            _meshBatchSystem = world.GetOrCreateSystem(typeof(TriangleParticleRenderSystem)) as TriangleParticleRenderSystem;
 
             for (var i = 0; i < 64; i++)
             {
