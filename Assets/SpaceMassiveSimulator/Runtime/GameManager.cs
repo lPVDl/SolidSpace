@@ -16,24 +16,16 @@ namespace ECSTest.Scripts
         [SerializeField] private Material[] _shipMaterials;
         [SerializeField] private int _enitityCount;
         [SerializeField] private GameObject _meshFilterPrefab;
+        [SerializeField] private Material _particleMaterial;
 
-        private TriangleParticleRenderSystem _meshBatchSystem;
-        
-        private List<MeshFilter> _meshFilters = new List<MeshFilter>();
-        
         private void Start()
         {
             var world = World.DefaultGameObjectInjectionWorld;
             
             var entityManager = world.EntityManager;
 
-            _meshBatchSystem = world.GetOrCreateSystem(typeof(TriangleParticleRenderSystem)) as TriangleParticleRenderSystem;
-
-            for (var i = 0; i < 64; i++)
-            {
-                var fab = GameObject.Instantiate(_meshFilterPrefab, transform);
-                _meshFilters.Add(fab.GetComponent<MeshFilter>());
-            }
+            var meshBatchSystem = world.GetOrCreateSystem<TriangleParticleRenderSystem>();
+            meshBatchSystem.Material = _particleMaterial;
 
             var componentTypes = new ComponentType[]
             {
@@ -57,14 +49,6 @@ namespace ECSTest.Scripts
                 {
                     value = new float2(Random.Range(-10f, 10f), Random.Range(-10f, 10f))
                 });
-            }
-        }
-
-        private void LateUpdate()
-        {
-            for (var i = 0; i < _meshBatchSystem.Meshes.Count; i++)
-            {
-                _meshFilters[i].mesh = _meshBatchSystem.Meshes[i];
             }
         }
     }

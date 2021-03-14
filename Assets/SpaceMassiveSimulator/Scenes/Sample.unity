@@ -350,6 +350,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: fdc900030b600884cb24306e542c7def, type: 2}
   _enitityCount: 1000000
   _meshFilterPrefab: {fileID: 7334972591799609491, guid: c1dfd893eef97354db184255ada0e3b1, type: 3}
+  _particleMaterial: {fileID: 2100000, guid: 2b92c87154c8111459c64fbeea07dc49, type: 2}
 --- !u!23 &1222791138
 MeshRenderer:
   m_ObjectHideFlags: 0
