@@ -18,12 +18,10 @@ namespace SpaceMassiveSimulator.Runtime.Entities.Particles
         public IReadOnlyList<Mesh> Meshes => _meshes;
 
         private NativeArray<TriangleParticleVertexData> _vertices;
-        private NativeArray<int> _indices;
         private int _entityCount;
         private EntityQuery _query;
         private VertexAttributeDescriptor[] _meshLayout;
         private List<Mesh> _meshes;
-
         private NativeArray<int> _indexStandart;
 
         protected override void OnCreate()
@@ -50,6 +48,16 @@ namespace SpaceMassiveSimulator.Runtime.Entities.Particles
 
         protected override void OnUpdate()
         {
+            UpdateMeshCount();
+            UpdateMeshTopology();
+            var chunks = UpdateComputationArray();
+            ScheduleJobs(chunks);
+        }
+
+        private void UpdateMeshCount()
+        {
+            Profiler.BeginSample(nameof(UpdateMeshCount));
+            
             var requiredMeshCount = Mathf.CeilToInt(_entityCount / (float) TrianglePerMesh);
             var newMeshCount = requiredMeshCount - _meshes.Count;
             for (var i = 0; i < newMeshCount; i++)
@@ -61,26 +69,32 @@ namespace SpaceMassiveSimulator.Runtime.Entities.Particles
                 mesh.SetIndices(_indexStandart, MeshTopology.Triangles, 0, false);
                 _meshes.Add(mesh);
             }
-
-            Profiler.BeginSample("Mesh.SetVertexBufferData");
-            for (var i = 0; i < requiredMeshCount; i++)
+            
+            Profiler.EndSample();
+        }
+        
+        private void UpdateMeshTopology()
+        {
+            Profiler.BeginSample(nameof(UpdateMeshTopology));
+            
+            for (var i = 0; i < _meshes.Count; i++)
             {
                 _meshes[i].SetVertexBufferData(_vertices, i * VertexPerMesh, 0, VertexPerMesh);
             }
-
+            
             Profiler.EndSample();
+        }
 
-            Profiler.BeginSample("_query.CreateArchetypeChunkArray");
+        private NativeArray<ArchetypeChunk> UpdateComputationArray()
+        {
+            Profiler.BeginSample(nameof(UpdateComputationArray));
+            
+            Profiler.BeginSample("CreateArchetypeChunkArray");
             var chunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
             Profiler.EndSample();
 
-            Profiler.BeginSample("Compute Entity Count");
-            _entityCount = 0;
-            for (var i = 0; i < chunks.Length; i++)
-            {
-                _entityCount += chunks[i].ChunkEntityCount;
-            }
-
+            Profiler.BeginSample("CalculateEntityCount");
+            _entityCount = _query.CalculateEntityCount();
             Profiler.EndSample();
 
             Profiler.BeginSample("Allocate _vertices");
@@ -92,7 +106,16 @@ namespace SpaceMassiveSimulator.Runtime.Entities.Particles
             }
 
             Profiler.EndSample();
+            
+            Profiler.EndSample();
 
+            return chunks;
+        }
+
+        private void ScheduleJobs(NativeArray<ArchetypeChunk> chunks)
+        {
+            Profiler.BeginSample(nameof(ScheduleJobs));
+            
             var unusedAmount = _vertices.Length - _entityCount * 3;
             var resetMeshJob = new FillNativeArrayJob<TriangleParticleVertexData>
             {
@@ -111,7 +134,10 @@ namespace SpaceMassiveSimulator.Runtime.Entities.Particles
                 positionHandle = GetComponentTypeHandle<PositionComponent>(true),
                 vertices = _vertices,
             };
+            
             Dependency = computeMeshJob.Schedule(chunks.Length, 32, jobHandle);
+            
+            Profiler.EndSample();
         }
 
         protected override void OnDestroy()
