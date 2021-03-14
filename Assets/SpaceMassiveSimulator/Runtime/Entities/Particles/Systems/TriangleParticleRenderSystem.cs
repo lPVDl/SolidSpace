@@ -1,9 +1,9 @@
 using System.Collections.Generic;
+using SpaceMassiveSimulator.Runtime.Entities.Physics;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
-using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.Profiling;
 using UnityEngine.Rendering;
@@ -30,14 +30,14 @@ namespace SpaceMassiveSimulator.Runtime.Entities.Particles
         {
             _meshLayout = new[]
             {
-                new VertexAttributeDescriptor(VertexAttribute.Position, VertexAttributeFormat.Float32, 3)
+                new VertexAttributeDescriptor(VertexAttribute.Position, VertexAttributeFormat.Float32, 2)
             };
 
             var queryDesc = new EntityQueryDesc
             {
                 All = new ComponentType[]
                 {
-                    typeof(Translation)
+                    typeof(PositionComponent)
                 }
             };
             _query = GetEntityQuery(queryDesc);
@@ -98,7 +98,7 @@ namespace SpaceMassiveSimulator.Runtime.Entities.Particles
                 array = _vertices,
                 value = new TriangleParticleVertexData
                 {
-                    position = float3.zero
+                    position = float2.zero
                 }
             };
             var jobHandle = resetMeshJob.Schedule(_vertices.Length, 128, Dependency);
@@ -106,7 +106,7 @@ namespace SpaceMassiveSimulator.Runtime.Entities.Particles
             var computeMeshJob = new ComputeTriangleParticleMeshJob
             {
                 chunks = chunks,
-                translationHandle = GetComponentTypeHandle<Translation>(true),
+                positionHandle = GetComponentTypeHandle<PositionComponent>(true),
                 vertices = _vertices,
             };
             Dependency = computeMeshJob.Schedule(chunks.Length, 32, jobHandle);

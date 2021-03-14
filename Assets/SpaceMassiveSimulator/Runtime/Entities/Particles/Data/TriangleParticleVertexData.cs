@@ -6,6 +6,6 @@ namespace SpaceMassiveSimulator.Runtime.Entities.Particles
     [StructLayout(LayoutKind.Sequential)]
     public struct TriangleParticleVertexData
     {
-        public float3 position;
+        public float2 position;
     }
 }

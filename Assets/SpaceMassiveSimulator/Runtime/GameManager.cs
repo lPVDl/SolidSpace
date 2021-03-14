@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using SpaceMassiveSimulator.Runtime.Entities.Particles;
+using SpaceMassiveSimulator.Runtime.Entities.Physics;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Transforms;
 using UnityEngine;
 
 using Random = UnityEngine.Random;
@@ -37,12 +37,8 @@ namespace ECSTest.Scripts
 
             var componentTypes = new ComponentType[]
             {
-                typeof(ShipData),
-                typeof(Translation),
-                //typeof(RenderMesh),
-                //typeof(RenderBounds),
-                //typeof(LocalToWorld),
-                typeof(ShipMovementData)
+                typeof(PositionComponent),
+                typeof(VelocityComponent)
             };
             var shipArchetype = entityManager.CreateArchetype(componentTypes);
 
@@ -52,27 +48,14 @@ namespace ECSTest.Scripts
 
             foreach (var entity in entityArray)
             {
-                entityManager.SetComponentData(entity, new ShipData
+                entityManager.SetComponentData(entity, new VelocityComponent
                 {
-                    health = Random.Range(1, 100),
-                    maxHealth = Random.Range(1000, 10000),
-                    healthRegen = Random.Range(1, 10),
+                    value = new float2(0, Random.Range(1f, 2f))
                 });
                 
-                // entityManager.SetSharedComponentData(entity, new RenderMesh
-                // {
-                //     mesh = _shipMesh,
-                //     material = _shipMaterials[Random.Range(0, _shipMaterials.Length)],
-                // });
-                
-                entityManager.SetComponentData(entity, new ShipMovementData()
+                entityManager.SetComponentData(entity, new PositionComponent
                 {
-                    movementSpeed = Random.Range(1f, 2f),
-                });
-                
-                entityManager.SetComponentData(entity, new Translation
-                {
-                    Value = new float3(Random.Range(-10f, 10f), Random.Range(-10f, 10f), 0)
+                    value = new float2(Random.Range(-10f, 10f), Random.Range(-10f, 10f))
                 });
             }
         }

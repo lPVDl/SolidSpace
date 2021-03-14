@@ -1,3 +1,4 @@
+using SpaceMassiveSimulator.Runtime.Entities.Physics;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -15,22 +16,22 @@ namespace SpaceMassiveSimulator.Runtime.Entities.Particles
         [WriteOnly][NativeDisableParallelForRestriction] 
         public NativeArray<TriangleParticleVertexData> vertices;
 
-        [ReadOnly] public ComponentTypeHandle<Translation> translationHandle;
+        [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
 
         public void Execute(int chunkIndex)
         {
             var chunk = chunks[chunkIndex];
             var instanceCount = chunk.Count;
 
-            var chunkTranslation = chunk.GetNativeArray(translationHandle);
+            var chunkPositions = chunk.GetNativeArray(positionHandle);
             var chunkVertexOffset = chunkIndex * chunk.Capacity * 3;
-            var vec0 = new float3(-0.02f, -0.02f, 0);
-            var vec1 = new float3(0, 0.02f, 0);
-            var vec2 = new float3(0.02f, -0.02f, 0);
+            var vec0 = new float2(-0.02f, -0.02f);
+            var vec1 = new float2(0, 0.02f);
+            var vec2 = new float2(0.02f, -0.02f);
                 
             for (var i = 0; i < instanceCount; i++)
             {
-                var instancePosition = chunkTranslation[i].Value;
+                var instancePosition = chunkPositions[i].value;
                 var instanceVertexGlobalOffset = chunkVertexOffset + i * 3;
 
                 TriangleParticleVertexData vertex;
