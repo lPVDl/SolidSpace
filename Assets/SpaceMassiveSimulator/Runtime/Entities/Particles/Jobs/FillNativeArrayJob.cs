@@ -7,12 +7,13 @@ namespace SpaceMassiveSimulator.Runtime.Entities.Particles
     [BurstCompile]
     public struct FillNativeArrayJob<T> : IJobParallelFor where T : struct
     {
-        [WriteOnly] public NativeArray<T> array;
+        [WriteOnly][NativeDisableParallelForRestriction] public NativeArray<T> array;
+        [ReadOnly] public int offset;
         [ReadOnly] public T value;
 
         public void Execute(int index)
         {
-            array[index] = value;
+            array[index + offset] = value;
         }
     }
 }

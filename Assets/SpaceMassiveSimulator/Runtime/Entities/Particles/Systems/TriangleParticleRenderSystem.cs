@@ -93,15 +93,17 @@ namespace SpaceMassiveSimulator.Runtime.Entities.Particles
 
             Profiler.EndSample();
 
+            var unusedAmount = _vertices.Length - _entityCount * 3;
             var resetMeshJob = new FillNativeArrayJob<TriangleParticleVertexData>
             {
                 array = _vertices,
+                offset = _vertices.Length - unusedAmount,
                 value = new TriangleParticleVertexData
                 {
                     position = float2.zero
                 }
             };
-            var jobHandle = resetMeshJob.Schedule(_vertices.Length, 128, Dependency);
+            var jobHandle = resetMeshJob.Schedule(unusedAmount, 128, Dependency);
 
             var computeMeshJob = new ComputeTriangleParticleMeshJob
             {
