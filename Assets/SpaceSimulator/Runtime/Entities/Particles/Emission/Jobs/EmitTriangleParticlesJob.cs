@@ -1,4 +1,5 @@
 using SpaceSimulator.Runtime.Entities.Physics;
+using SpaceSimulator.Runtime.Entities.Randomization;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -14,10 +15,11 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
         
         [ReadOnly, DeallocateOnJobCompletion] public NativeArray<ArchetypeChunk> chunks;
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
-        public ComponentTypeHandle<TriangleParticleEmitterComponent> emitterHandle;
-        [ReadOnly] public NativeArray<float> randomValues;
-        [ReadOnly] public int randomIndex;
+        [ReadOnly] public ComponentTypeHandle<RandomValueComponent> randomHandle;
         [ReadOnly] public float deltaTime;
+        
+        public ComponentTypeHandle<TriangleParticleEmitterComponent> emitterHandle;
+        
         [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<EmitParticleData> result;
 
         public void Execute(int chunkIndex)
@@ -25,10 +27,9 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
             var chunk = chunks[chunkIndex];
             var entityCount = chunk.ChunkEntityCount;
             var resultOffset = chunkIndex * chunk.Capacity;
-            var randomOffset = resultOffset + randomIndex;
-            var randomCount = randomValues.Length;
             var chunkPositions = chunk.GetNativeArray(positionHandle);
             var chunkEmitters = chunk.GetNativeArray(emitterHandle);
+            var chunkRandoms = chunk.GetNativeArray(randomHandle);
             var emitData = new EmitParticleData();
 
             for (var i = 0; i < entityCount; i++)
@@ -40,7 +41,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
                 if (entityEmitter.timer >= entityEmitter.spawnDelay)
                 {
                     entityEmitter.timer -= entityEmitter.spawnDelay;
-                    var angle = TwoPI * randomValues[(randomOffset + i) % randomCount];
+                    var angle = TwoPI * chunkRandoms[i].value;
                     emitData.position = entityPosition.value;
                     emitData.velocity = new float2(math.cos(angle), math.sin(angle));
                     emitData.emit = true;

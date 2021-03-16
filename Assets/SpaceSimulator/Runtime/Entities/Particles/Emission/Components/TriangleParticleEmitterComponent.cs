@@ -6,6 +6,5 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
     {
         public float spawnDelay;
         public float timer;
-        public float seed;
     }
 }

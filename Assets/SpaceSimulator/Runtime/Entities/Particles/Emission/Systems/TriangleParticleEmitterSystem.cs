@@ -1,11 +1,10 @@
 using SpaceSimulator.Runtime.Entities.Particles.Rendering;
 using SpaceSimulator.Runtime.Entities.Physics;
+using SpaceSimulator.Runtime.Entities.Randomization;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using UnityEngine;
-
-using Random = UnityEngine.Random;
 
 namespace SpaceSimulator.Runtime.Entities.Particles.Emission
 {
@@ -14,10 +13,9 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
         private const int BufferChunkSize = 128;
         
         private EntityArchetype _particleArchetype;
-        private EntityQuery _emitterQuery;
-        private NativeArray<float> _randomBuffer;
+        private EntityQuery _query;
+        
         private NativeArray<EmitParticleData> _resultBuffer;
-        private int _randomIndex;
         private int _entityCount;
 
         private EndSimulationEntityCommandBufferSystem _commandBufferSystem;
@@ -27,18 +25,15 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
         protected override void OnStartRunning()
         {
             _commandBufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
-            _emitterQuery = EntityManager.CreateEntityQuery(new ComponentType[]
+            _query = EntityManager.CreateEntityQuery(new ComponentType[]
             {
                 typeof(TriangleParticleEmitterComponent),
-                typeof(PositionComponent)
+                typeof(PositionComponent),
+                typeof(RandomValueComponent)
             });
 
-            _randomBuffer = new NativeArray<float>(BufferChunkSize, Allocator.Persistent);
-            for (var i = 0; i < BufferChunkSize; i++)
-            {
-                _randomBuffer[i] = Random.value;
-            }
-            _resultBuffer = new NativeArray<EmitParticleData>(BufferChunkSize, Allocator.Persistent);
+            
+            _resultBuffer = new NativeArray<EmitParticleData>(BufferChunkSize, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
 
             _particleArchetype = EntityManager.CreateArchetype(new ComponentType[]
             {
@@ -78,47 +73,32 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
                 });
             }
             
-            _entityCount = _emitterQuery.CalculateEntityCount();
+            _entityCount = _query.CalculateEntityCount();
             var requiredBufferCapacity = Mathf.CeilToInt(_entityCount / (float) BufferChunkSize) * BufferChunkSize;
-            if (_randomBuffer.Length != requiredBufferCapacity)
+            if (_resultBuffer.Length < requiredBufferCapacity)
             {
-                var newRandomBuffer = new NativeArray<float>(requiredBufferCapacity, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
-                for (var i = 0; i < _resultBuffer.Length; i++)
-                {
-                    newRandomBuffer[i] = _randomBuffer[i];
-                }
-                for (var i = _randomBuffer.Length; i < newRandomBuffer.Length; i++)
-                {
-                    newRandomBuffer[i] = Random.value;
-                }
-                _randomBuffer.Dispose();
-                _randomBuffer = newRandomBuffer;
                 _resultBuffer.Dispose();
                 _resultBuffer = new NativeArray<EmitParticleData>(requiredBufferCapacity, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
             }
-            
-            _randomIndex = (_randomIndex + 1) % _randomBuffer.Length;
-            _randomBuffer[_randomIndex] = Random.value;
-            
-            var chunks = _emitterQuery.CreateArchetypeChunkArray(Allocator.TempJob);
+
+            var chunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
 
             var job = new EmitTriangleParticlesJob
             {
                 deltaTime = Time.DeltaTime,
                 chunks = chunks,
-                randomIndex = _randomIndex,
                 emitterHandle = GetComponentTypeHandle<TriangleParticleEmitterComponent>(),
-                positionHandle = GetComponentTypeHandle<PositionComponent>(),
-                randomValues = _randomBuffer,
+                positionHandle = GetComponentTypeHandle<PositionComponent>(true),
+                randomHandle = GetComponentTypeHandle<RandomValueComponent>(true),
                 result = _resultBuffer
             };
+            var handle = job.Schedule(chunks.Length, 32, Dependency);
             
-            Dependency = job.Schedule(chunks.Length, 32, Dependency);
+            handle.Complete();
         }
 
         protected override void OnDestroy()
         {
-            _randomBuffer.Dispose();
             _resultBuffer.Dispose();
         }
     }

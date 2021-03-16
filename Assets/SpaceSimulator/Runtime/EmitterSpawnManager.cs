@@ -1,6 +1,7 @@
 using SpaceSimulator.Runtime.Entities.Particles.Emission;
 using SpaceSimulator.Runtime.Entities.Particles.Rendering;
 using SpaceSimulator.Runtime.Entities.Physics;
+using SpaceSimulator.Runtime.Entities.Randomization;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -29,6 +30,7 @@ namespace SpaceSimulator.Runtime
             {
                 typeof(PositionComponent),
                 typeof(TriangleParticleEmitterComponent),
+                typeof(RandomValueComponent)
             };
             var shipArchetype = entityManager.CreateArchetype(componentTypes);
 
@@ -44,7 +46,6 @@ namespace SpaceSimulator.Runtime
                 });
                 entityManager.SetComponentData(entity, new TriangleParticleEmitterComponent
                 {
-                    seed = UnityEngine.Random.value,
                     spawnDelay = 1 / _spawnRate
                 });
             }
