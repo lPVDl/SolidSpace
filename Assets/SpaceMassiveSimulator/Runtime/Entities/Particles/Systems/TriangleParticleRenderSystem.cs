@@ -66,7 +66,7 @@ namespace SpaceMassiveSimulator.Runtime.Entities.Particles
             UpdateMeshCount();
             UpdateMeshTopology();
             var chunks = UpdateComputationArray();
-            ScheduleJobs(chunks);
+            RunJobs(chunks);
         }
 
         private void UpdateMeshCount()
@@ -208,9 +208,9 @@ namespace SpaceMassiveSimulator.Runtime.Entities.Particles
             return chunks;
         }
 
-        private void ScheduleJobs(NativeArray<ArchetypeChunk> chunks)
+        private void RunJobs(NativeArray<ArchetypeChunk> chunks)
         {
-            Profiler.BeginSample(nameof(ScheduleJobs));
+            Profiler.BeginSample(nameof(RunJobs));
             
             var unusedAmount = _vertices.Length - _entityCount * 3;
             var resetMeshJob = new FillNativeArrayJob<TriangleParticleVertexData>
@@ -231,8 +231,8 @@ namespace SpaceMassiveSimulator.Runtime.Entities.Particles
                 vertices = _vertices,
             };
             
-            Dependency = computeMeshJob.Schedule(chunks.Length, 32, jobHandle);
-            
+            computeMeshJob.Schedule(chunks.Length, 32, jobHandle).Complete();
+
             Profiler.EndSample();
         }
 

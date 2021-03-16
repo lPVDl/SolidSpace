@@ -10,12 +10,14 @@ namespace SpaceMassiveSimulator.Runtime.Entities.Particles
     [BurstCompile]
     public struct ComputeTriangleParticleMeshJob : IJobParallelFor
     {
-        [DeallocateOnJobCompletion] public NativeArray<ArchetypeChunk> chunks;
+        [DeallocateOnJobCompletion] 
+        public NativeArray<ArchetypeChunk> chunks;
 
         [WriteOnly][NativeDisableParallelForRestriction] 
         public NativeArray<TriangleParticleVertexData> vertices;
 
-        [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
+        [ReadOnly] 
+        public ComponentTypeHandle<PositionComponent> positionHandle;
 
         public void Execute(int chunkIndex)
         {
