@@ -1,5 +1,6 @@
 using SpaceSimulator.Runtime.Entities.Physics;
 using SpaceSimulator.Runtime.Entities.Randomization;
+using SpaceSimulator.Runtime.Entities.RepeatTimer;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -16,11 +17,10 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
         [ReadOnly, DeallocateOnJobCompletion] public NativeArray<ArchetypeChunk> chunks;
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
         [ReadOnly] public ComponentTypeHandle<RandomValueComponent> randomHandle;
-        [ReadOnly] public float deltaTime;
+
+        public ComponentTypeHandle<RepeatTimerComponent> timerHandle;
         
-        public ComponentTypeHandle<TriangleParticleEmitterComponent> emitterHandle;
-        
-        [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<EmitParticleData> result;
+        [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<EmitParticleData> results;
 
         public void Execute(int chunkIndex)
         {
@@ -28,31 +28,30 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
             var entityCount = chunk.ChunkEntityCount;
             var resultOffset = chunkIndex * chunk.Capacity;
             var chunkPositions = chunk.GetNativeArray(positionHandle);
-            var chunkEmitters = chunk.GetNativeArray(emitterHandle);
+            var chunkTimers = chunk.GetNativeArray(timerHandle);
             var chunkRandoms = chunk.GetNativeArray(randomHandle);
-            var emitData = new EmitParticleData();
+            var result = new EmitParticleData();
 
             for (var i = 0; i < entityCount; i++)
             {
-                var entityEmitter = chunkEmitters[i];
-                var entityPosition = chunkPositions[i];
-
-                entityEmitter.timer += deltaTime;
-                if (entityEmitter.timer >= entityEmitter.spawnDelay)
+                var timer = chunkTimers[i];
+                
+                if (timer.counter == 0)
                 {
-                    entityEmitter.timer -= entityEmitter.spawnDelay;
-                    var angle = TwoPI * chunkRandoms[i].value;
-                    emitData.position = entityPosition.value;
-                    emitData.velocity = new float2(math.cos(angle), math.sin(angle));
-                    emitData.emit = true;
+                    result.emit = false;
                 }
                 else
                 {
-                    emitData.emit = false;
+                    timer.counter = 0;
+                    chunkTimers[i] = timer;
+                    
+                    var angle = TwoPI * chunkRandoms[i].value;
+                    result.position = chunkPositions[i].value;
+                    result.velocity = new float2(math.cos(angle), math.sin(angle));
+                    result.emit = true;
                 }
 
-                result[resultOffset + i] = emitData;
-                chunkEmitters[i] = entityEmitter;
+                results[resultOffset + i] = result;
             }
         }
     }

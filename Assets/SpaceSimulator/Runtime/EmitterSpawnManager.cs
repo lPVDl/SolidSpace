@@ -2,6 +2,7 @@ using SpaceSimulator.Runtime.Entities.Particles.Emission;
 using SpaceSimulator.Runtime.Entities.Particles.Rendering;
 using SpaceSimulator.Runtime.Entities.Physics;
 using SpaceSimulator.Runtime.Entities.Randomization;
+using SpaceSimulator.Runtime.Entities.RepeatTimer;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -30,7 +31,8 @@ namespace SpaceSimulator.Runtime
             {
                 typeof(PositionComponent),
                 typeof(TriangleParticleEmitterComponent),
-                typeof(RandomValueComponent)
+                typeof(RandomValueComponent),
+                typeof(RepeatTimerComponent),
             };
             var shipArchetype = entityManager.CreateArchetype(componentTypes);
 
@@ -44,9 +46,9 @@ namespace SpaceSimulator.Runtime
                 {
                     value = new float2(Random.Range(-10f, 10f), Random.Range(-10f, 10f))
                 });
-                entityManager.SetComponentData(entity, new TriangleParticleEmitterComponent
+                entityManager.SetComponentData(entity, new RepeatTimerComponent
                 {
-                    spawnDelay = 1 / _spawnRate
+                    delay = 1 / _spawnRate
                 });
             }
         }

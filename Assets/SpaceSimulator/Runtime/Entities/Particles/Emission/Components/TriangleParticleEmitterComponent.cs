@@ -4,7 +4,6 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
 {
     public struct TriangleParticleEmitterComponent : IComponentData
     {
-        public float spawnDelay;
-        public float timer;
+        
     }
 }

@@ -1,6 +1,7 @@
 using SpaceSimulator.Runtime.Entities.Particles.Rendering;
 using SpaceSimulator.Runtime.Entities.Physics;
 using SpaceSimulator.Runtime.Entities.Randomization;
+using SpaceSimulator.Runtime.Entities.RepeatTimer;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -29,7 +30,8 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
             {
                 typeof(TriangleParticleEmitterComponent),
                 typeof(PositionComponent),
-                typeof(RandomValueComponent)
+                typeof(RandomValueComponent),
+                typeof(RepeatTimerComponent)
             });
 
             
@@ -85,12 +87,11 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
 
             var job = new EmitTriangleParticlesJob
             {
-                deltaTime = Time.DeltaTime,
                 chunks = chunks,
-                emitterHandle = GetComponentTypeHandle<TriangleParticleEmitterComponent>(),
+                timerHandle = GetComponentTypeHandle<RepeatTimerComponent>(),
                 positionHandle = GetComponentTypeHandle<PositionComponent>(true),
                 randomHandle = GetComponentTypeHandle<RandomValueComponent>(true),
-                result = _resultBuffer
+                results = _resultBuffer
             };
             var handle = job.Schedule(chunks.Length, 32, Dependency);
             

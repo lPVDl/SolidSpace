@@ -12,7 +12,7 @@ namespace SpaceSimulator.Runtime.Entities.Randomization
         [ReadOnly] public NativeArray<float> randomValues;
         [ReadOnly] public int randomIndex;
         
-        [WriteOnly] public ComponentTypeHandle<RandomValueComponent> randomHandle;
+        public ComponentTypeHandle<RandomValueComponent> randomHandle;
         
         public void Execute(int chunkIndex)
         {
