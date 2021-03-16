@@ -198,7 +198,7 @@ namespace SpaceMassiveSimulator.Runtime.Entities.Particles
             {
                 _vertices.Dispose();
                 var newCount = Mathf.CeilToInt(_entityCount / (float) TrianglePerMesh) * VertexPerMesh;
-                _vertices = new NativeArray<TriangleParticleVertexData>(newCount, Allocator.Persistent);
+                _vertices = new NativeArray<TriangleParticleVertexData>(newCount, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
             }
 
             Profiler.EndSample();
