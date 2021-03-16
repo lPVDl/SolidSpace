@@ -1,4 +1,3 @@
-using SpaceMassiveSimulator.Runtime.Entities.Particles;
 using SpaceMassiveSimulator.Runtime.Entities.Particles.Emission;
 using SpaceMassiveSimulator.Runtime.Entities.Particles.Rendering;
 using SpaceMassiveSimulator.Runtime.Entities.Physics;
@@ -23,8 +22,8 @@ namespace SpaceMassiveSimulator.Runtime
 
             var entityManager = world.EntityManager;
 
-            var meshBatchSystem = world.GetOrCreateSystem<TriangleParticleRenderSystem>();
-            meshBatchSystem.Material = _particleMaterial;
+            var renderSystem = world.GetOrCreateSystem<TriangleParticleMeshRenderSystem>();
+            renderSystem.Material = _particleMaterial;
 
             var componentTypes = new ComponentType[]
             {
