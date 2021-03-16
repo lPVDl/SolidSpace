@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using SpaceMassiveSimulator.Runtime.Entities.Particles;
 using SpaceMassiveSimulator.Runtime.Entities.Physics;
 using Unity.Collections;
@@ -8,20 +7,17 @@ using UnityEngine;
 
 using Random = UnityEngine.Random;
 
-namespace ECSTest.Scripts
+namespace SpaceMassiveSimulator.Runtime
 {
-    public class GameManager : MonoBehaviour
+    public class ParticlesSpawnManager : MonoBehaviour
     {
-        [SerializeField] private Mesh _shipMesh;
-        [SerializeField] private Material[] _shipMaterials;
         [SerializeField] private int _enitityCount;
-        [SerializeField] private GameObject _meshFilterPrefab;
         [SerializeField] private Material _particleMaterial;
 
         private void Start()
         {
             var world = World.DefaultGameObjectInjectionWorld;
-            
+
             var entityManager = world.EntityManager;
 
             var meshBatchSystem = world.GetOrCreateSystem<TriangleParticleRenderSystem>();
@@ -30,13 +26,14 @@ namespace ECSTest.Scripts
             var componentTypes = new ComponentType[]
             {
                 typeof(PositionComponent),
-                typeof(VelocityComponent)
+                typeof(VelocityComponent),
+                typeof(TriangleParticleRenderComponent),
             };
-            var shipArchetype = entityManager.CreateArchetype(componentTypes);
+            var archetype = entityManager.CreateArchetype(componentTypes);
 
             using var entityArray = new NativeArray<Entity>(_enitityCount, Allocator.Temp);
-            
-            entityManager.CreateEntity(shipArchetype, entityArray);
+
+            entityManager.CreateEntity(archetype, entityArray);
 
             foreach (var entity in entityArray)
             {
@@ -44,7 +41,7 @@ namespace ECSTest.Scripts
                 {
                     value = new float2(0, Random.Range(1f, 2f))
                 });
-                
+
                 entityManager.SetComponentData(entity, new PositionComponent
                 {
                     value = new float2(Random.Range(-10f, 10f), Random.Range(-10f, 10f))

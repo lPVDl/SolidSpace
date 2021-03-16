@@ -32,7 +32,7 @@ namespace SpaceMassiveSimulator.Runtime.Entities.Particles
         protected override void OnCreate()
         {
             _commandBufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
-            
+
             _meshLayout = new[]
             {
                 new VertexAttributeDescriptor(VertexAttribute.Position, VertexAttributeFormat.Float32, 2)
@@ -50,7 +50,8 @@ namespace SpaceMassiveSimulator.Runtime.Entities.Particles
             {
                 All = new ComponentType[]
                 {
-                    typeof(PositionComponent)
+                    typeof(PositionComponent),
+                    typeof(TriangleParticleRenderComponent)
                 }
             };
             _query = GetEntityQuery(queryDesc);
