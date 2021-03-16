@@ -1,3 +1,4 @@
+using SpaceMassiveSimulator.Runtime.Entities.Particles.Rendering;
 using SpaceMassiveSimulator.Runtime.Entities.Physics;
 using Unity.Collections;
 using Unity.Entities;
@@ -6,7 +7,7 @@ using UnityEngine;
 
 using Random = UnityEngine.Random;
 
-namespace SpaceMassiveSimulator.Runtime.Entities.Particles
+namespace SpaceMassiveSimulator.Runtime.Entities.Particles.Emission
 {
     public class TriangleParticleEmitterSystem : SystemBase
     {

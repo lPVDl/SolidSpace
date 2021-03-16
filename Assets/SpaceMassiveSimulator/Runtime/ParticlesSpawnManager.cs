@@ -1,4 +1,5 @@
 using SpaceMassiveSimulator.Runtime.Entities.Particles;
+using SpaceMassiveSimulator.Runtime.Entities.Particles.Rendering;
 using SpaceMassiveSimulator.Runtime.Entities.Physics;
 using Unity.Collections;
 using Unity.Entities;

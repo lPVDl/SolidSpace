@@ -10,7 +10,7 @@ using UnityEngine;
 using UnityEngine.Profiling;
 using UnityEngine.Rendering;
 
-namespace SpaceMassiveSimulator.Runtime.Entities.Particles
+namespace SpaceMassiveSimulator.Runtime.Entities.Particles.Rendering
 {
     public class TriangleParticleRenderSystem : SystemBase
     {

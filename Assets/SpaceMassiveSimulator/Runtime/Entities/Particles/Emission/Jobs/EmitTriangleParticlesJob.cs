@@ -5,12 +5,12 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 
-namespace SpaceMassiveSimulator.Runtime.Entities.Particles
+namespace SpaceMassiveSimulator.Runtime.Entities.Particles.Emission
 {
     [BurstCompile]
     public struct EmitTriangleParticlesJob : IJobParallelFor
     {
-        private const float TWO_PI = (float)(2 * math.PI_DBL);
+        private const float TwoPI = (float)(2 * math.PI_DBL);
         
         [ReadOnly, DeallocateOnJobCompletion] public NativeArray<ArchetypeChunk> chunks;
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
@@ -40,7 +40,7 @@ namespace SpaceMassiveSimulator.Runtime.Entities.Particles
                 if (entityEmitter.timer >= entityEmitter.spawnDelay)
                 {
                     entityEmitter.timer -= entityEmitter.spawnDelay;
-                    var angle = TWO_PI * randomValues[(randomOffset + i) % randomCount];
+                    var angle = TwoPI * randomValues[(randomOffset + i) % randomCount];
                     emitData.position = entityPosition.value;
                     emitData.velocity = new float2(math.cos(angle), math.sin(angle));
                     emitData.emit = true;

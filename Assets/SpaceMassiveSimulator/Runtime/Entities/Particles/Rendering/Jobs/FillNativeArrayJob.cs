@@ -2,7 +2,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 
-namespace SpaceMassiveSimulator.Runtime.Entities.Particles
+namespace SpaceMassiveSimulator.Runtime.Entities.Particles.Rendering
 {
     [BurstCompile]
     public struct FillNativeArrayJob<T> : IJobParallelFor where T : struct

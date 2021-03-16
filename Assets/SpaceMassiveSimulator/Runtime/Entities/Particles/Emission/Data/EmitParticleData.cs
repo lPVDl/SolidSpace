@@ -1,6 +1,6 @@
 using Unity.Mathematics;
 
-namespace SpaceMassiveSimulator.Runtime.Entities.Particles
+namespace SpaceMassiveSimulator.Runtime.Entities.Particles.Emission
 {
     public struct EmitParticleData
     {

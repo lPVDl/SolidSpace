@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-namespace SpaceMassiveSimulator.Runtime.Entities.Particles
+namespace SpaceMassiveSimulator.Runtime.Entities.Particles.Emission
 {
     public struct TriangleParticleEmitterComponent : IComponentData
     {

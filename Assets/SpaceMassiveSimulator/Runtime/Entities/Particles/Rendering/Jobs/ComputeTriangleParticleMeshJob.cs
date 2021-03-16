@@ -5,7 +5,7 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 
-namespace SpaceMassiveSimulator.Runtime.Entities.Particles
+namespace SpaceMassiveSimulator.Runtime.Entities.Particles.Rendering
 {
     [BurstCompile]
     public struct ComputeTriangleParticleMeshJob : IJobParallelFor

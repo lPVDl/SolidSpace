@@ -1,7 +1,7 @@
 using Unity.Entities;
 using UnityEngine;
 
-namespace SpaceMassiveSimulator.Runtime.Entities.Particles
+namespace SpaceMassiveSimulator.Runtime.Entities.Particles.Rendering
 {
     internal struct ParticleMeshEntityData
     {
