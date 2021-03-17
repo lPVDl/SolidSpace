@@ -357,7 +357,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c887e9ec9625496bbe7c76686c3095a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enitityCount: 1024
+  _enitityCount: 1
   _particleMaterial: {fileID: 2100000, guid: 2b92c87154c8111459c64fbeea07dc49, type: 2}
   _spawnRate: 60
 --- !u!1 &1726074640

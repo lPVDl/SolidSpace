@@ -17,6 +17,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
         [ReadOnly, DeallocateOnJobCompletion] public NativeArray<ArchetypeChunk> chunks;
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
         [ReadOnly] public ComponentTypeHandle<RandomValueComponent> randomHandle;
+        [ReadOnly] public float time;
 
         public ComponentTypeHandle<RepeatTimerComponent> timerHandle;
         
@@ -31,6 +32,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
             var chunkTimers = chunk.GetNativeArray(timerHandle);
             var chunkRandoms = chunk.GetNativeArray(randomHandle);
             var result = new EmitParticleData();
+            var despawnTime = time + 5;
 
             for (var i = 0; i < entityCount; i++)
             {
@@ -48,6 +50,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
                     var angle = TwoPI * chunkRandoms[i].value;
                     result.position = chunkPositions[i].value;
                     result.velocity = new float2(math.cos(angle), math.sin(angle));
+                    result.despawnTime = despawnTime;
                     result.emit = true;
                 }
 

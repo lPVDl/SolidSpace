@@ -1,3 +1,4 @@
+using SpaceSimulator.Runtime.Entities.Despawn;
 using SpaceSimulator.Runtime.Entities.Particles.Rendering;
 using SpaceSimulator.Runtime.Entities.Physics;
 using SpaceSimulator.Runtime.Entities.Randomization;
@@ -41,6 +42,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
             {
                 typeof(PositionComponent),
                 typeof(VelocityComponent),
+                typeof(DespawnComponent),
                 typeof(TriangleParticleRenderComponent)
             });
         }
@@ -73,6 +75,10 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
                 {
                     value = emitData.velocity
                 });
+                _commandBuffer.SetComponent(entity, new DespawnComponent
+                {
+                    despawnTime = emitData.despawnTime
+                });
             }
             
             _entityCount = _query.CalculateEntityCount();
@@ -91,6 +97,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
                 timerHandle = GetComponentTypeHandle<RepeatTimerComponent>(),
                 positionHandle = GetComponentTypeHandle<PositionComponent>(true),
                 randomHandle = GetComponentTypeHandle<RandomValueComponent>(true),
+                time = (float)Time.ElapsedTime,
                 results = _resultBuffer
             };
             var handle = job.Schedule(chunks.Length, 32, Dependency);
