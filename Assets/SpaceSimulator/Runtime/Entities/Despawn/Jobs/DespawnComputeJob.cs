@@ -9,6 +9,7 @@ namespace SpaceSimulator.Runtime.Entities.Despawn
     public struct DespawnComputeJob : IJobParallelFor
     {
         [ReadOnly, DeallocateOnJobCompletion] public NativeArray<ArchetypeChunk> chunks;
+        [ReadOnly] public NativeArray<int> offsets;
         
         [ReadOnly] public ComponentTypeHandle<DespawnComponent> despawnHandle;
         [ReadOnly] public EntityTypeHandle entityHandle;
@@ -20,7 +21,7 @@ namespace SpaceSimulator.Runtime.Entities.Despawn
         public void Execute(int chunkIndex)
         {
             var chunk = chunks[chunkIndex];
-            var entityOffset = chunkIndex * chunk.Capacity;
+            var entityOffset = offsets[chunkIndex];
             var entityCount = chunk.Count;
             var despawns = chunk.GetNativeArray(despawnHandle);
             var entities = chunk.GetNativeArray(entityHandle);

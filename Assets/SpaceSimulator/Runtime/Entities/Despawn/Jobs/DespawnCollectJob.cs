@@ -8,34 +8,35 @@ namespace SpaceSimulator.Runtime.Entities.Despawn
     [BurstCompile]
     public struct DespawnCollectJob : IJob
     {
+        [ReadOnly, DeallocateOnJobCompletion] public NativeArray<int> offsets;
         [ReadOnly] public int inputCountsAmount;
         [ReadOnly] public NativeArray<int> inputCounts;
         [ReadOnly] public NativeArray<Entity> inputEntities;
-        [ReadOnly] public int inputEntitiesChunkSize;
-        
+
         [WriteOnly] public NativeArray<Entity> outputEntities;
         [WriteOnly] public NativeArray<int> outputCount;
         
         public void Execute()
         {
-            var entityIndex = 0;
-            var resultIndex = 0;
-            for (var countIndex = 0; countIndex < inputCountsAmount; countIndex++, entityIndex += inputEntitiesChunkSize)
+            var resultCount = 0;
+
+            for (var i = 0; i < inputCountsAmount; i++)
             {
-                var chunkEntityCount = inputCounts[countIndex];
-                if (chunkEntityCount == 0)
+                var localAmount = inputCounts[i];
+                if (localAmount == 0)
                 {
                     continue;
                 }
-
-                for (var j = 0; j < chunkEntityCount; j++)
+                
+                var globalOffset = offsets[i];
+                for (var j = 0; j < localAmount; j++)
                 {
-                    outputEntities[resultIndex] = inputEntities[entityIndex + j];
-                    resultIndex++;
+                    outputEntities[resultCount] = inputEntities[globalOffset + j];
+                    resultCount++;
                 }
             }
 
-            outputCount[0] = resultIndex;
+            outputCount[0] = resultCount;
         }
     }
 }
