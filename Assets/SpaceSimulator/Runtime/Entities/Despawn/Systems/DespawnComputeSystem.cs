@@ -8,7 +8,7 @@ namespace SpaceSimulator.Runtime.Entities.Despawn
 {
     public class DespawnComputeSystem : SystemBase
     {
-        private const int IterationCycle = 2;
+        private const int IterationCycle = 8;
 
         public NativeArray<Entity> ResultBuffer => _entityBufferB;
         public int ResultCount => _collectorCountBuffer[0];
