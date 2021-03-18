@@ -46,7 +46,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
             EntityCount = 0;
             for (var i = 0; i < chunkCount; i++)
             {
-                offsets[i] = EntityCount;
+                offsets[i] = EntityCount * 3;
                 EntityCount += chunks[i].Count;
             }
             Profiler.EndSample();
