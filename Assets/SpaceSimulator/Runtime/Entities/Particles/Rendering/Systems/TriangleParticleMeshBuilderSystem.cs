@@ -71,7 +71,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
                     position = float2.zero
                 }
             };
-            var jobHandle = resetMeshJob.Schedule(unusedAmount, 128, Dependency);
+            var jobHandle = resetMeshJob.Schedule(unusedAmount, 32, Dependency);
 
             var computeMeshJob = new ComputeTriangleParticleMeshJob
             {
@@ -81,7 +81,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
                 vertices = Vertices,
             };
             
-            computeMeshJob.Schedule(chunks.Length, 32, jobHandle).Complete();
+            computeMeshJob.Schedule(chunks.Length, 128, jobHandle).Complete();
             Profiler.EndSample();
         }
 

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using SpaceSimulator.Runtime.DebugUtils;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -64,6 +65,8 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
         {
             UpdateMeshCount();
             UpdateMeshTopology();
+            
+            SpaceDebug.LogState("ParticleCount", _meshBuilderSystem.EntityCount);
         }
         
         private void UpdateMeshCount()

@@ -1,3 +1,4 @@
+using SpaceSimulator.Runtime.DebugUtils;
 using SpaceSimulator.Runtime.Entities.Despawn;
 using SpaceSimulator.Runtime.Entities.Particles.Rendering;
 using SpaceSimulator.Runtime.Entities.Physics;
@@ -7,6 +8,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace SpaceSimulator.Runtime.Entities.Particles.Emission
 {
@@ -51,6 +53,8 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
         {
             _createdCommandBuffer = false;
             
+            Profiler.BeginSample("Command buffer");
+            
             for (var i = 0; i < _entityCount; i++)
             {
                 var emitData = _resultBuffer[i];
@@ -81,6 +85,11 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
                 });
             }
             
+            Profiler.EndSample();
+            
+            SpaceDebug.LogState("EmittedCount", _entityCount);
+            
+            Profiler.BeginSample("EmitTriangleParticlesJob");
             _entityCount = _query.CalculateEntityCount();
             var requiredBufferCapacity = Mathf.CeilToInt(_entityCount / (float) BufferChunkSize) * BufferChunkSize;
             if (_resultBuffer.Length < requiredBufferCapacity)
@@ -103,6 +112,8 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
             var handle = job.Schedule(chunks.Length, 32, Dependency);
             
             handle.Complete();
+            
+            Profiler.EndSample();
         }
 
         protected override void OnDestroy()

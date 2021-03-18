@@ -1,3 +1,4 @@
+using SpaceSimulator.Runtime.DebugUtils;
 using Unity.Collections;
 using Unity.Entities;
 
@@ -23,6 +24,8 @@ namespace SpaceSimulator.Runtime.Entities.Despawn
             var slice = new NativeSlice<Entity>(_computeSystem.ResultBuffer, 0, _computeSystem.ResultCount);
             
             EntityManager.DestroyEntity(slice);
+            
+            SpaceDebug.LogState("DespawnCount", _computeSystem.ResultCount);
         }
     }
 }

@@ -310,6 +310,7 @@ GameObject:
   - component: {fileID: 1222791136}
   - component: {fileID: 1222791137}
   - component: {fileID: 1222791138}
+  - component: {fileID: 1222791139}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -357,9 +358,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c887e9ec9625496bbe7c76686c3095a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enitityCount: 1
+  _enitityCount: 4096
   _particleMaterial: {fileID: 2100000, guid: 2b92c87154c8111459c64fbeea07dc49, type: 2}
   _spawnRate: 60
+--- !u!114 &1222791139
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1222791135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50fdf91663ac425ba6bc49734d836726, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _fieldHeight: 24
+  _fieldWidth: 196
+  _cashUpdateDelay: 0.5
+  _forgetDelay: 1
 --- !u!1 &1726074640
 GameObject:
   m_ObjectHideFlags: 0
