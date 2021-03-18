@@ -13,9 +13,9 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
         private const int VertexPerMesh = 65535;
         private const int TrianglePerMesh = 21845;
 
-        public NativeArray<TriangleParticleVertexData> Vertices { get; private set; }
         public int EntityCount { get; private set; }
-        
+        public NativeArray<TriangleParticleVertexData> Vertices { get; private set; }
+
         private EntityQuery _query;
 
         protected override void OnCreate()
@@ -30,25 +30,25 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
             };
             
             _query = GetEntityQuery(queryDesc);
+            
             Vertices = new NativeArray<TriangleParticleVertexData>(VertexPerMesh, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
         }
 
         protected override void OnUpdate()
         {
-            var chunks = UpdateComputationArray();
-            RunJobs(chunks);
-        }
-
-        private NativeArray<ArchetypeChunk> UpdateComputationArray()
-        {
-            Profiler.BeginSample(nameof(UpdateComputationArray));
-            
             Profiler.BeginSample("CreateArchetypeChunkArray");
             var chunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
             Profiler.EndSample();
 
-            Profiler.BeginSample("CalculateEntityCount");
-            EntityCount = _query.CalculateEntityCount();
+            Profiler.BeginSample("ComputeOffsets");
+            var chunkCount = chunks.Length;
+            var offsets = new NativeArray<int>(chunkCount, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
+            EntityCount = 0;
+            for (var i = 0; i < chunkCount; i++)
+            {
+                offsets[i] = EntityCount;
+                EntityCount += chunks[i].Count;
+            }
             Profiler.EndSample();
 
             Profiler.BeginSample("Allocate Vertices");
@@ -58,18 +58,9 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
                 var newCount = Mathf.CeilToInt(EntityCount / (float) TrianglePerMesh) * VertexPerMesh;
                 Vertices = new NativeArray<TriangleParticleVertexData>(newCount, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
             }
-
             Profiler.EndSample();
             
-            Profiler.EndSample();
-
-            return chunks;
-        }
-
-        private void RunJobs(NativeArray<ArchetypeChunk> chunks)
-        {
-            Profiler.BeginSample(nameof(RunJobs));
-            
+            Profiler.BeginSample("ComputeJob");
             var unusedAmount = Vertices.Length - EntityCount * 3;
             var resetMeshJob = new FillNativeArrayJob<TriangleParticleVertexData>
             {
@@ -85,12 +76,12 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
             var computeMeshJob = new ComputeTriangleParticleMeshJob
             {
                 chunks = chunks,
+                offsets = offsets,
                 positionHandle = GetComponentTypeHandle<PositionComponent>(true),
                 vertices = Vertices,
             };
             
             computeMeshJob.Schedule(chunks.Length, 32, jobHandle).Complete();
-
             Profiler.EndSample();
         }
 
