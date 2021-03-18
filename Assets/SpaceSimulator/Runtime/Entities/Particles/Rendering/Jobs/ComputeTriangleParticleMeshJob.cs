@@ -1,4 +1,5 @@
 using SpaceSimulator.Runtime.Entities.Physics;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -6,6 +7,7 @@ using Unity.Mathematics;
 
 namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
 {
+    [BurstCompile]
     public struct ComputeTriangleParticleMeshJob : IJobParallelFor
     {
         [DeallocateOnJobCompletion, ReadOnly] public NativeArray<ArchetypeChunk> chunks;
