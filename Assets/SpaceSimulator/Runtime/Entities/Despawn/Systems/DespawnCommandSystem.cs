@@ -16,7 +16,7 @@ namespace SpaceSimulator.Runtime.Entities.Despawn
 
         protected override void OnUpdate()
         {
-            if (_computeSystem.ResultCount == 0)
+            if (!_computeSystem.Enabled)
             {
                 return;
             }

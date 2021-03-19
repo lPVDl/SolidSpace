@@ -41,6 +41,11 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
 
         protected override void OnUpdate()
         {
+            if (!_meshBuilderSystem.Enabled)
+            {
+                return;
+            }
+            
             var requiredMeshCount = Mathf.CeilToInt(_meshBuilderSystem.EntityCount / (float) TrianglePerMesh);
             
             Profiler.BeginSample("CreateMesh");
