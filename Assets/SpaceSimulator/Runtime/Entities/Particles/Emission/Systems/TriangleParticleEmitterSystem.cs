@@ -51,44 +51,6 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
 
         protected override void OnUpdate()
         {
-            _createdCommandBuffer = false;
-            
-            Profiler.BeginSample("Command buffer");
-            
-            for (var i = 0; i < _entityCount; i++)
-            {
-                var emitData = _resultBuffer[i];
-                
-                if (!emitData.emit)
-                {
-                    continue;
-                }
-
-                if (!_createdCommandBuffer)
-                {
-                    _commandBuffer = _commandBufferSystem.CreateCommandBuffer();
-                    _createdCommandBuffer = true;
-                }
-
-                var entity = _commandBuffer.CreateEntity(_particleArchetype);
-                _commandBuffer.SetComponent(entity, new PositionComponent
-                {
-                    value = emitData.position
-                });
-                _commandBuffer.SetComponent(entity, new VelocityComponent
-                {
-                    value = emitData.velocity
-                });
-                _commandBuffer.SetComponent(entity, new DespawnComponent
-                {
-                    despawnTime = emitData.despawnTime
-                });
-            }
-            
-            Profiler.EndSample();
-            
-            SpaceDebug.LogState("EmittedCount", _entityCount);
-            
             Profiler.BeginSample("EmitTriangleParticlesJob");
             _entityCount = _query.CalculateEntityCount();
             var requiredBufferCapacity = Mathf.CeilToInt(_entityCount / (float) BufferChunkSize) * BufferChunkSize;
@@ -112,8 +74,44 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
             var handle = job.Schedule(chunks.Length, 32, Dependency);
             
             handle.Complete();
-            
             Profiler.EndSample();
+
+            Profiler.BeginSample("Command buffer");
+            _createdCommandBuffer = false;
+            var emitCount = 0;
+            for (var i = 0; i < _entityCount; i++)
+            {
+                var emitData = _resultBuffer[i];
+                
+                if (!emitData.emit)
+                {
+                    continue;
+                }
+
+                if (!_createdCommandBuffer)
+                {
+                    _commandBuffer = _commandBufferSystem.CreateCommandBuffer();
+                    _createdCommandBuffer = true;
+                }
+
+                emitCount++;
+                var entity = _commandBuffer.CreateEntity(_particleArchetype);
+                _commandBuffer.SetComponent(entity, new PositionComponent
+                {
+                    value = emitData.position
+                });
+                _commandBuffer.SetComponent(entity, new VelocityComponent
+                {
+                    value = emitData.velocity
+                });
+                _commandBuffer.SetComponent(entity, new DespawnComponent
+                {
+                    despawnTime = emitData.despawnTime
+                });
+            }
+            Profiler.EndSample();
+            
+            SpaceDebug.LogState("EmittedCount", emitCount);
         }
 
         protected override void OnDestroy()

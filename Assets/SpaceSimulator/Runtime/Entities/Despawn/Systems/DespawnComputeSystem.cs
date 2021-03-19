@@ -33,12 +33,10 @@ namespace SpaceSimulator.Runtime.Entities.Despawn
 
         protected override void OnUpdate()
         {
+            Profiler.BeginSample("CalculateChunkCount");
             var chunkCount = _query.CalculateChunkCount();
-            if (chunkCount == 0)
-            {
-                return;
-            }
-
+            Profiler.EndSample();
+            
             Profiler.BeginSample("Create Compute Buffer");
             _lastOffset = (_lastOffset + 1) % IterationCycle;
             var rawChunks = _query.CreateArchetypeChunkArray(Allocator.Temp);

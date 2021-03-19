@@ -375,7 +375,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _fieldHeight: 24
   _fieldWidth: 196
-  _cashUpdateDelay: 0.5
+  _cashUpdateDelay: 0.2
   _forgetDelay: 1
 --- !u!1 &1726074640
 GameObject:
