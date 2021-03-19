@@ -18,7 +18,8 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
         public Material Material { private get; set; }
 
         private VertexAttributeDescriptor[] _meshLayout;
-        private List<Mesh> _meshes;
+        private List<Mesh> _meshesA;
+        private List<Mesh> _meshesB;
         private NativeArray<int> _indicesDefault;
         private TriangleParticleMeshBuilderSystem _meshBuilderSystem;
         private Matrix4x4 _matrixDefault;
@@ -28,7 +29,8 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
             _meshBuilderSystem = World.GetOrCreateSystem<TriangleParticleMeshBuilderSystem>();
             _matrixDefault = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, 1, -1));
 
-            _meshes = new List<Mesh>();
+            _meshesA = new List<Mesh>();
+            _meshesB = new List<Mesh>();
             _meshLayout = new[]
             {
                 new VertexAttributeDescriptor(VertexAttribute.Position, VertexAttributeFormat.Float32, 2),
@@ -52,17 +54,22 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
             var requiredMeshCount = Mathf.CeilToInt(_meshBuilderSystem.EntityCount / (float) TrianglePerMesh);
             
             Profiler.BeginSample("CreateMesh");
-            for (var i = _meshes.Count; i < requiredMeshCount; i++)
+            for (var i = _meshesA.Count; i < requiredMeshCount; i++)
             {
                 var name = nameof(TriangleParticleMeshBuilderSystem) + "_" + i;
-                _meshes.Add(CreateMesh(name));
+                _meshesA.Add(CreateMesh(name + "(A)"));
+                _meshesB.Add(CreateMesh(name + "(B)"));
             }
             Profiler.EndSample();
+
+            var temp = _meshesB;
+            _meshesB = _meshesA;
+            _meshesA = temp;
 
             Profiler.BeginSample("SetVertexBufferData");
             for (var i = 0; i < requiredMeshCount; i++)
             {
-                _meshes[i].SetVertexBufferData(_meshBuilderSystem.Vertices, i * VertexPerMesh, 0, VertexPerMesh);
+                _meshesA[i].SetVertexBufferData(_meshBuilderSystem.Vertices, i * VertexPerMesh, 0, VertexPerMesh);
             }
             Profiler.EndSample();
             
@@ -71,10 +78,14 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
             {
                 var renderData = new MeshDrawingData
                 {
-                    mesh = _meshes[i],
+                    mesh = _meshesA[i],
                     material = Material,
                     matrix = _matrixDefault,
                 };
+                DrawMesh(renderData);
+
+                renderData.mesh = _meshesB[i];
+                
                 DrawMesh(renderData);
             }
             Profiler.EndSample();
@@ -106,10 +117,12 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
         protected override void OnDestroy()
         {
             _indicesDefault.Dispose();
-            for (var i = 0; i < _meshes.Count; i++)
+            for (var i = 0; i < _meshesA.Count; i++)
             {
-                Object.Destroy(_meshes[i]);
-                _meshes[i] = null;
+                Object.Destroy(_meshesA[i]);
+                Object.Destroy(_meshesB[i]);
+                _meshesA[i] = null;
+                _meshesB[i] = null;
             }
         }
     }

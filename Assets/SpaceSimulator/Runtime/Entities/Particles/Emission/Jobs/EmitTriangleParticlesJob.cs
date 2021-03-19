@@ -49,7 +49,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
                     
                     var angle = TwoPI * chunkRandoms[i].value;
                     result.position = chunkPositions[i].value;
-                    result.velocity = new float2(math.cos(angle), math.sin(angle));
+                    result.velocity = new float2(30 * math.cos(angle), 30 * math.sin(angle));
                     result.despawnTime = despawnTime;
                     result.emit = true;
                 }

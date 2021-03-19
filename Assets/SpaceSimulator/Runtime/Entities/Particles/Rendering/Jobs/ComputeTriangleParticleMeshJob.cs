@@ -14,9 +14,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
         [DeallocateOnJobCompletion, ReadOnly] public NativeArray<int> offsets;
 
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
-        [ReadOnly] public float2 point0;
-        [ReadOnly] public float2 point1;
-        [ReadOnly] public float2 point2;
+        [ReadOnly] public TriangleVerticesData triangle;
         
         [WriteOnly, NativeDisableParallelForRestriction]
         public NativeArray<TriangleParticleVertexData> vertices;
@@ -34,13 +32,13 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
 
                 TriangleParticleVertexData vertex;
 
-                vertex.position = position + point0;
+                vertex.position = position + triangle.point0;
                 vertices[vertexOffset] = vertex;
 
-                vertex.position = position + point1;
+                vertex.position = position + triangle.point1;
                 vertices[vertexOffset + 1] = vertex;
 
-                vertex.position = position + point2;
+                vertex.position = position + triangle.point2;
                 vertices[vertexOffset + 2] = vertex;
                 
                 vertexOffset += 3;
