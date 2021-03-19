@@ -10,6 +10,8 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
 {
     public class TriangleParticleMeshBuilderSystem : SystemBase
     {
+        private const int RotationFrameCount = 1;
+        private const float Deg2Rad = 1f / 180 * math.PI;
         private const int VertexPerMesh = 65535;
         private const int TrianglePerMesh = 21845;
 
@@ -17,6 +19,8 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
         public NativeArray<TriangleParticleVertexData> Vertices { get; private set; }
 
         private EntityQuery _query;
+
+        private int _frameIndex;
 
         protected override void OnCreate()
         {
@@ -79,10 +83,20 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
                 offsets = offsets,
                 positionHandle = GetComponentTypeHandle<PositionComponent>(true),
                 vertices = Vertices,
+                point0 = new float2(-0.5f, -0.5f),
+                point1 = new float2(0, 0.5f),
+                point2 = new float2(0.5f, -0.5f)
             };
             
             computeMeshJob.Schedule(chunks.Length, 128, jobHandle).Complete();
             Profiler.EndSample();
+        }
+
+        private float2 Rotate(float length, float rad)
+        {
+            var x = length * math.cos(rad);
+            var y = length * math.sin(rad);
+            return new float2(x, y);
         }
 
         protected override void OnDestroy()

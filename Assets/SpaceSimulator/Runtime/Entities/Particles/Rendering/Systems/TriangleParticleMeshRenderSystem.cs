@@ -16,7 +16,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
         private const float RenderBounds = 1000;
         
         public Material Material { private get; set; }
-        
+
         private VertexAttributeDescriptor[] _meshLayout;
         private List<Mesh> _meshes;
         private NativeArray<int> _indicesDefault;
@@ -26,17 +26,20 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
         protected override void OnStartRunning()
         {
             _meshBuilderSystem = World.GetOrCreateSystem<TriangleParticleMeshBuilderSystem>();
-            _matrixDefault = Matrix4x4.identity;
+            _matrixDefault = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, 1, -1));
 
             _meshes = new List<Mesh>();
             _meshLayout = new[]
             {
-                new VertexAttributeDescriptor(VertexAttribute.Position, VertexAttributeFormat.Float32, 2)
+                new VertexAttributeDescriptor(VertexAttribute.Position, VertexAttributeFormat.Float32, 2),
             };
 
             _indicesDefault = new NativeArray<int>(VertexPerMesh, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
+            var minusForward = -Vector3.forward;
             for (var i = 0; i < VertexPerMesh; i++)
+            {
                 _indicesDefault[i] = i;
+            }
         }
 
         protected override void OnUpdate()
@@ -64,9 +67,15 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
             Profiler.EndSample();
             
             Profiler.BeginSample("DrawMesh");
-            for (var i = 0; i < requiredMeshCount; i++)
+            for (var i = 0; i < requiredMeshCount - 1; i++)
             {
-                Graphics.DrawMesh(_meshes[i], _matrixDefault, Material, 0);
+                var renderData = new MeshDrawingData
+                {
+                    mesh = _meshes[i],
+                    material = Material,
+                    matrix = _matrixDefault,
+                };
+                DrawMesh(renderData);
             }
             Profiler.EndSample();
             
@@ -75,15 +84,23 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
 
         private Mesh CreateMesh(string name)
         {
-            var mesh = new Mesh();
-            mesh.name = name;
-            mesh.indexFormat = IndexFormat.UInt16;
+            var mesh = new Mesh
+            {
+                name = name,
+                indexFormat = IndexFormat.UInt16,
+                bounds = new Bounds(Vector3.zero, Vector3.one * RenderBounds)
+            };
             mesh.MarkDynamic();
-            mesh.bounds = new Bounds(Vector3.zero, Vector3.one * RenderBounds);
             mesh.SetVertexBufferParams(VertexPerMesh, _meshLayout);
-            mesh.SetIndices(_indicesDefault, MeshTopology.Triangles, 0, false);
+            mesh.SetIndices(_indicesDefault, MeshTopology.Triangles, 0);
 
             return mesh;
+        }
+
+        private static void DrawMesh(MeshDrawingData data)
+        {
+            Graphics.DrawMesh(data.mesh, data.matrix, data.material, data.layer, data.camera, data.subMeshIndex,
+                data.properties, data.castShadows, data.receiveShadows, data.useLightProbes);
         }
 
         protected override void OnDestroy()

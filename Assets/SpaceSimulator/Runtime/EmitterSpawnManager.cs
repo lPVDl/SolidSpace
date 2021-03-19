@@ -17,6 +17,8 @@ namespace SpaceSimulator.Runtime
         [SerializeField] private int _enitityCount;
         [SerializeField] private Material _particleMaterial;
         [SerializeField] private float _spawnRate;
+        [SerializeField] private Vector2 _spawnRangeX;
+        [SerializeField] private Vector2 _spawnRangeY;
 
         private void Start()
         {
@@ -42,9 +44,11 @@ namespace SpaceSimulator.Runtime
 
             foreach (var entity in entityArray)
             {
+                var x = Random.Range(_spawnRangeX.x, _spawnRangeX.y);
+                var y = Random.Range(_spawnRangeY.x, _spawnRangeY.y);
                 entityManager.SetComponentData(entity, new PositionComponent
                 {
-                    value = new float2(Random.Range(-10f, 10f), Random.Range(-10f, 10f))
+                    value = new float2(x, y)
                 });
                 entityManager.SetComponentData(entity, new RepeatTimerComponent
                 {
