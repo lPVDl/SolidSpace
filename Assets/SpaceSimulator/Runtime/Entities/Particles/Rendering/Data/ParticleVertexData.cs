@@ -4,7 +4,7 @@ using Unity.Mathematics;
 namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct TriangleParticleVertexData
+    public struct ParticleVertexData
     {
         public float2 position;
     }

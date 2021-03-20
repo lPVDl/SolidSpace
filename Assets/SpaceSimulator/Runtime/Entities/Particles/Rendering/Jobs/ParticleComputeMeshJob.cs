@@ -3,21 +3,20 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
-using Unity.Mathematics;
 
 namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
 {
     [BurstCompile]
-    public struct ComputeTriangleParticleMeshJob : IJobParallelFor
+    public struct ParticleComputeMeshJob : IJobParallelFor
     {
         [DeallocateOnJobCompletion, ReadOnly] public NativeArray<ArchetypeChunk> chunks;
         [DeallocateOnJobCompletion, ReadOnly] public NativeArray<int> offsets;
 
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
-        [ReadOnly] public TriangleVerticesData triangle;
+        [ReadOnly] public SquareVertices square;
         
         [WriteOnly, NativeDisableParallelForRestriction]
-        public NativeArray<TriangleParticleVertexData> vertices;
+        public NativeArray<ParticleVertexData> vertices;
 
         public void Execute(int chunkIndex)
         {
@@ -30,18 +29,21 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
             {
                 var position = positions[entityIndex].value;
 
-                TriangleParticleVertexData vertex;
+                ParticleVertexData vertex;
 
-                vertex.position = position + triangle.point0;
+                vertex.position = position + square.point0;
                 vertices[vertexOffset] = vertex;
 
-                vertex.position = position + triangle.point1;
+                vertex.position = position + square.point1;
                 vertices[vertexOffset + 1] = vertex;
 
-                vertex.position = position + triangle.point2;
+                vertex.position = position + square.point2;
                 vertices[vertexOffset + 2] = vertex;
                 
-                vertexOffset += 3;
+                vertex.position = position + square.point3;
+                vertices[vertexOffset + 3] = vertex;
+                
+                vertexOffset += 4;
             }
         }
     }
