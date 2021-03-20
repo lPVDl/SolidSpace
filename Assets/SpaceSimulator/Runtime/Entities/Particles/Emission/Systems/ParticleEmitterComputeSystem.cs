@@ -1,4 +1,3 @@
-using SpaceSimulator.Runtime.Entities.Extensions;
 using SpaceSimulator.Runtime.Entities.Physics;
 using SpaceSimulator.Runtime.Entities.Randomization;
 using SpaceSimulator.Runtime.Entities.RepeatTimer;
@@ -43,11 +42,21 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
             var chunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
             Profiler.EndSample();
 
-            var offsets = EntitiesUtil.CreateEntityOffsetsForJob(chunks, out var approximateEntityCount);
+            Profiler.BeginSample("ComputeEntityOffsets");
+            var chunkCount = chunks.Length;
+            var offsets = new NativeArray<int>(chunkCount, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
             var counts = new NativeArray<int>(offsets.Length, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
+            var maxEntityCount = 0;
+            for (var i = 0; i < chunkCount; i++)
+            {
+                offsets[i] = maxEntityCount;
+                maxEntityCount += chunks[i].Count;
+            }
+            Profiler.EndSample();
+            
             
             Profiler.BeginSample("UpdateResultBufferSize");
-            var requiredBufferCapacity = Mathf.CeilToInt(approximateEntityCount / (float) BufferChunkSize) * BufferChunkSize;
+            var requiredBufferCapacity = Mathf.CeilToInt(maxEntityCount / (float) BufferChunkSize) * BufferChunkSize;
             if (_particleBufferA.Length < requiredBufferCapacity)
             {
                 _particleBufferA.Dispose();
