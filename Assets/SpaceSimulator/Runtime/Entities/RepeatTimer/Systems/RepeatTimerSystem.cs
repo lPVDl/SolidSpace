@@ -1,3 +1,4 @@
+using SpaceSimulator.Runtime.DebugUtils;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -22,6 +23,9 @@ namespace SpaceSimulator.Runtime.Entities.RepeatTimer
                 deltaTime = Time.DeltaTime,
                 timerHandle = GetComponentTypeHandle<RepeatTimerComponent>()
             };
+            
+            SpaceDebug.LogState("deltaTime", Time.DeltaTime);
+            
             var handle = job.Schedule(chunks.Length, 32, Dependency);
             handle.Complete();
         }

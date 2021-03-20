@@ -14,11 +14,13 @@ namespace SpaceSimulator.Runtime.DebugUtils
         private StringBuilder _stringBuilder;
         private float _lastCashTime;
         private Dictionary<string, string> _intCash;
+        private Dictionary<string, string> _floatCash;
 
         private void Awake()
         {
             _stringBuilder = new StringBuilder();
             _intCash = new Dictionary<string, string>();
+            _floatCash = new Dictionary<string, string>();
         }
 
         private void OnGUI()
@@ -32,6 +34,7 @@ namespace SpaceSimulator.Runtime.DebugUtils
             
             var offset = 0;
             DrawValues(_intCash, ref offset);
+            DrawValues(_floatCash, ref offset);
         }
 
         private void DrawValues(Dictionary<string, string> values, ref int offset)
@@ -47,9 +50,10 @@ namespace SpaceSimulator.Runtime.DebugUtils
         private void UpdateAllCash()
         {
             UpdateCash(_intCash, SpaceDebug.IntStates);
+            UpdateCash(_floatCash, SpaceDebug.FloatStates);
         }
 
-        private void UpdateCash<T>(Dictionary<string, string> cash, IReadOnlyDictionary<string, SpaceDebugValue<T>> source)
+        private void UpdateCash<T>(IDictionary<string, string> cash, IReadOnlyDictionary<string, SpaceDebugValue<T>> source)
         {
             cash.Clear();
 
