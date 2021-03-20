@@ -91,7 +91,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
             Profiler.EndSample();
             
             Profiler.BeginSample("DrawMesh");
-            for (var i = 0; i < requiredMeshCount - 1; i++)
+            for (var i = 0; i < requiredMeshCount; i++)
             {
                 var renderData = new MeshDrawingData
                 {
@@ -99,8 +99,6 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
                     material = Material,
                     matrix = _matrixDefault,
                 };
-                DrawMesh(renderData);
-
                 DrawMesh(renderData);
             }
             Profiler.EndSample();
