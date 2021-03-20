@@ -32,7 +32,7 @@ namespace SpaceSimulator.Runtime
             var componentTypes = new ComponentType[]
             {
                 typeof(PositionComponent),
-                typeof(TriangleParticleEmitterComponent),
+                typeof(ParticleEmitterComponent),
                 typeof(RandomValueComponent),
                 typeof(RepeatTimerComponent),
             };

@@ -2,9 +2,8 @@ using Unity.Mathematics;
 
 namespace SpaceSimulator.Runtime.Entities.Particles.Emission
 {
-    public struct EmitParticleData
+    public struct ParticleEmissionData
     {
-        public bool emit;
         public float2 position;
         public float2 velocity;
         public float despawnTime;
