@@ -1,9 +1,10 @@
+using SpaceSimulator.Runtime.Entities.Common;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
-namespace SpaceSimulator.Runtime.Entities.Physics.Jobs
+namespace SpaceSimulator.Runtime.Entities.Physics.Velocity
 {
     [BurstCompile]
     public struct VelocityJob : IJobParallelFor

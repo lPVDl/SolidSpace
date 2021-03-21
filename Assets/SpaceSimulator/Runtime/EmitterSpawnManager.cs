@@ -1,3 +1,4 @@
+using SpaceSimulator.Runtime.Entities.Common;
 using SpaceSimulator.Runtime.Entities.Particles.Emission;
 using SpaceSimulator.Runtime.Entities.Particles.Rendering;
 using SpaceSimulator.Runtime.Entities.Physics;

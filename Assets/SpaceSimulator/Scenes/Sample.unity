@@ -312,7 +312,7 @@ GameObject:
   - component: {fileID: 855673391}
   - component: {fileID: 855673390}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: ScreenCenterPixel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -406,6 +406,7 @@ GameObject:
   - component: {fileID: 1222791137}
   - component: {fileID: 1222791138}
   - component: {fileID: 1222791139}
+  - component: {fileID: 1222791140}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -453,7 +454,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c887e9ec9625496bbe7c76686c3095a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enitityCount: 128
+  _enitityCount: 333
   _particleMaterial: {fileID: 2100000, guid: 2b92c87154c8111459c64fbeea07dc49, type: 2}
   _spawnRate: 60
   _spawnRangeX: {x: -400, y: 400}
@@ -474,3 +475,22 @@ MonoBehaviour:
   _fieldWidth: 196
   _cashUpdateDelay: 0.2
   _forgetDelay: 1
+--- !u!114 &1222791140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1222791135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13dbf4e661e4401caff32df35f89c8c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _camera: {fileID: 353976494}
+  _colliderRadius: 15
+  _onStartSpawnCount: 8
+  _spawnPerSpawn: 64
+  _spawnExtraRadius: 15
+  _spawnRangeX: {x: -400, y: 400}
+  _spawnRangeY: {x: -250, y: 250}

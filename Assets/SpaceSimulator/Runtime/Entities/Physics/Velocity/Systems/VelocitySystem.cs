@@ -1,9 +1,9 @@
-using SpaceSimulator.Runtime.Entities.Physics.Jobs;
+using SpaceSimulator.Runtime.Entities.Common;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
-namespace SpaceSimulator.Runtime.Entities.Physics
+namespace SpaceSimulator.Runtime.Entities.Physics.Velocity
 {
     public class VelocitySystem : SystemBase
     {

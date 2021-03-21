@@ -1,7 +1,7 @@
 using Unity.Entities;
 using Unity.Mathematics;
 
-namespace SpaceSimulator.Runtime.Entities.Physics
+namespace SpaceSimulator.Runtime.Entities.Common
 {
     public struct PositionComponent : IComponentData
     {

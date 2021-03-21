@@ -1,3 +1,4 @@
+using SpaceSimulator.Runtime.Entities.Common;
 using SpaceSimulator.Runtime.Entities.Physics;
 using Unity.Burst;
 using Unity.Collections;
