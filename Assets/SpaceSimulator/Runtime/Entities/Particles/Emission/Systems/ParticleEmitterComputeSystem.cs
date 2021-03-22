@@ -1,5 +1,5 @@
 using SpaceSimulator.Runtime.Entities.Common;
-using SpaceSimulator.Runtime.Entities.Physics;
+using SpaceSimulator.Runtime.Entities.Extensions;
 using SpaceSimulator.Runtime.Entities.Randomization;
 using SpaceSimulator.Runtime.Entities.RepeatTimer;
 using Unity.Collections;
@@ -14,13 +14,13 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
     {
         private const int BufferChunkSize = 128;
 
-        public NativeArray<ParticleEmissionData> Particles => _particleBufferB;
-        public int ParticleCount => _resultCountBuffer[0];
+        public NativeArray<ParticleEmissionData> Particles => _particles;
+        public int ParticleCount => _particleCount[0];
         
         private EntityQuery _query;
-        private NativeArray<ParticleEmissionData> _particleBufferA;
-        private NativeArray<ParticleEmissionData> _particleBufferB;
-        private NativeArray<int> _resultCountBuffer;
+        private NativeArray<ParticleEmissionData> _particles;
+        private NativeArray<int> _particleCount;
+        private SystemBaseUtil _util;
 
         protected override void OnStartRunning()
         {
@@ -31,10 +31,9 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
                 typeof(RandomValueComponent),
                 typeof(RepeatTimerComponent)
             });
-            _particleBufferA = new NativeArray<ParticleEmissionData>(BufferChunkSize, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
-            _particleBufferB = new NativeArray<ParticleEmissionData>(BufferChunkSize, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
-            _resultCountBuffer = new NativeArray<int>(1, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
-            _resultCountBuffer[0] = 0;
+            _particles = _util.CreatePersistentArray<ParticleEmissionData>(BufferChunkSize);
+            _particleCount = _util.CreatePersistentArray<int>(1);
+            _particleCount[0] = 0;
         }
 
         protected override void OnUpdate()
@@ -45,8 +44,8 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
 
             Profiler.BeginSample("ComputeEntityOffsets");
             var chunkCount = chunks.Length;
-            var offsets = new NativeArray<int>(chunkCount, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
-            var counts = new NativeArray<int>(offsets.Length, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
+            var offsets = _util.CreateTempJobArray<int>(chunkCount);
+            var counts = _util.CreateTempJobArray<int>(chunkCount);
             var maxEntityCount = 0;
             for (var i = 0; i < chunkCount; i++)
             {
@@ -55,51 +54,42 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
             }
             Profiler.EndSample();
             
-            
-            Profiler.BeginSample("UpdateResultBufferSize");
-            var requiredBufferCapacity = Mathf.CeilToInt(maxEntityCount / (float) BufferChunkSize) * BufferChunkSize;
-            if (_particleBufferA.Length < requiredBufferCapacity)
-            {
-                _particleBufferA.Dispose();
-                _particleBufferB.Dispose();
-                _particleBufferA = new NativeArray<ParticleEmissionData>(requiredBufferCapacity, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
-                _particleBufferB = new NativeArray<ParticleEmissionData>(requiredBufferCapacity, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
-            }
-            Profiler.EndSample();
+            _util.MaintainPersistentArrayLength(ref _particles, maxEntityCount, BufferChunkSize);
 
-            Profiler.BeginSample("Compute Job");
+            Profiler.BeginSample("Compute And Collect Job");
             var computeJob = new ParticleEmitterComputeJob
             {
-                chunks = chunks,
+                inChunks = chunks,
                 timerHandle = GetComponentTypeHandle<RepeatTimerComponent>(),
                 positionHandle = GetComponentTypeHandle<PositionComponent>(true),
                 randomHandle = GetComponentTypeHandle<RandomValueComponent>(true),
-                time = (float)Time.ElapsedTime,
-                resultParticles = _particleBufferA, 
-                offsets = offsets,
-                resultCounts = counts,
+                inTime = (float)Time.ElapsedTime,
+                outParticles = _particles, 
+                inWriteOffsets = offsets,
+                outParticleCounts = counts,
             };
             var computeHandle = computeJob.Schedule(chunks.Length, 32, Dependency);
 
-            var collectJob = new ParticleEmitterCollectJob
+            var collectJob = new SingleBufferedDataCollectJob<ParticleEmissionData>
             {
-                offsets = offsets,
-                counts = counts, 
-                particles = _particleBufferA, 
-                result = _particleBufferB,
-                resultAmount = _resultCountBuffer
+                inCounts = counts,
+                inOffsets = offsets,
+                inOutData = _particles,
+                outCount = _particleCount
             };
             var collectHandle = collectJob.Schedule(computeHandle);
             collectHandle.Complete();
-            
             Profiler.EndSample();
+
+            chunks.Dispose();
+            offsets.Dispose();
+            counts.Dispose();
         }
 
         protected override void OnDestroy()
         {
-            _particleBufferA.Dispose();
-            _particleBufferB.Dispose();
-            _resultCountBuffer.Dispose();
+            _particles.Dispose();
+            _particleCount.Dispose();
         }
     }
 }

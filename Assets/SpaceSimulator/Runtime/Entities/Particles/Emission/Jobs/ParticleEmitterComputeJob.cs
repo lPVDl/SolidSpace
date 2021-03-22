@@ -15,28 +15,28 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
     {
         private const float TwoPI = (float)(2 * math.PI_DBL);
         
-        [ReadOnly, DeallocateOnJobCompletion] public NativeArray<ArchetypeChunk> chunks;
-        [ReadOnly] public NativeArray<int> offsets;
+        [ReadOnly] public NativeArray<ArchetypeChunk> inChunks;
+        [ReadOnly] public NativeArray<int> inWriteOffsets;
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
         [ReadOnly] public ComponentTypeHandle<RandomValueComponent> randomHandle;
-        [ReadOnly] public float time;
+        [ReadOnly] public float inTime;
 
         public ComponentTypeHandle<RepeatTimerComponent> timerHandle;
         
-        [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<ParticleEmissionData> resultParticles;
-        [WriteOnly] public NativeArray<int> resultCounts;
+        [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<ParticleEmissionData> outParticles;
+        [WriteOnly] public NativeArray<int> outParticleCounts;
 
         public void Execute(int chunkIndex)
         {
-            var chunk = chunks[chunkIndex];
-            var resultOffset = offsets[chunkIndex];
+            var chunk = inChunks[chunkIndex];
+            var writeOffset = inWriteOffsets[chunkIndex];
             var entityCount = chunk.Count;
             var positions = chunk.GetNativeArray(positionHandle);
             var timers = chunk.GetNativeArray(timerHandle);
             var randoms = chunk.GetNativeArray(randomHandle);
 
             ParticleEmissionData emissionData;
-            emissionData.despawnTime = time + 5;
+            emissionData.despawnTime = inTime + 5;
             
             var emitCount = 0;
             for (var i = 0; i < entityCount; i++)
@@ -54,11 +54,11 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
                 emissionData.position = positions[i].value;
                 emissionData.velocity = new float2(30 * math.cos(angle), 30 * math.sin(angle));
 
-                resultParticles[resultOffset + emitCount] = emissionData;
+                outParticles[writeOffset + emitCount] = emissionData;
                 emitCount++;
             }
 
-            resultCounts[chunkIndex] = emitCount;
+            outParticleCounts[chunkIndex] = emitCount;
         }
     }
 }
