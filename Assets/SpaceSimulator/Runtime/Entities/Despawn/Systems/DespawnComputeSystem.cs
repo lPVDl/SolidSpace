@@ -1,3 +1,6 @@
+using SpaceSimulator.Runtime.DebugUtils;
+using SpaceSimulator.Runtime.Entities.Common;
+using SpaceSimulator.Runtime.Entities.Extensions;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -10,25 +13,22 @@ namespace SpaceSimulator.Runtime.Entities.Despawn
     {
         private const int IterationCycle = 8;
 
-        public NativeArray<Entity> ResultBuffer => _entityBufferB;
-        public int ResultCount => _collectorCountBuffer[0];
+        public NativeArray<Entity> ResultBuffer => _entities;
+        public int ResultCount => _entityCount[0];
         
-        private NativeArray<int> _countsBuffer;
-        private NativeArray<int> _collectorCountBuffer;
-        private NativeArray<Entity> _entityBufferA;
-        private NativeArray<Entity> _entityBufferB;
+        private NativeArray<int> _entityCount;
+        private NativeArray<Entity> _entities;
         private EntityQuery _query;
         private int _lastOffset;
+        private SystemBaseUtil _util;
         
         protected override void OnCreate()
         {
             _query = EntityManager.CreateEntityQuery(typeof(DespawnComponent));
             _lastOffset = -1;
-            _countsBuffer = CreatePersistentArray<int>(128);
-            _entityBufferA = CreatePersistentArray<Entity>(4096);
-            _entityBufferB = CreatePersistentArray<Entity>(4096);
-            _collectorCountBuffer = CreatePersistentArray<int>(1);
-            _collectorCountBuffer[0] = 0;
+            _entities = _util.CreatePersistentArray<Entity>(4096);
+            _entityCount = _util.CreatePersistentArray<int>(1);
+            _entityCount[0] = 0;
         }
 
         protected override void OnUpdate()
@@ -41,8 +41,9 @@ namespace SpaceSimulator.Runtime.Entities.Despawn
             _lastOffset = (_lastOffset + 1) % IterationCycle;
             var rawChunks = _query.CreateArchetypeChunkArray(Allocator.Temp);
             var computeChunkCount = Mathf.CeilToInt((chunkCount - _lastOffset) / (float) IterationCycle);
-            var computeChunks = CreateTempJobArray<ArchetypeChunk>(computeChunkCount);
-            var computeOffsets = CreateTempJobArray<int>(computeChunkCount);
+            var computeChunks = _util.CreateTempJobArray<ArchetypeChunk>(computeChunkCount);
+            var computeOffsets = _util.CreateTempJobArray<int>(computeChunkCount);
+            var countsBuffer = _util.CreateTempJobArray<int>(computeChunkCount);
             var entityCount = 0;
             var chunkIndex = 0;
 
@@ -54,70 +55,50 @@ namespace SpaceSimulator.Runtime.Entities.Despawn
                 entityCount += rawChunk.Count;
                 chunkIndex++;
             }
-            
-            rawChunks.Dispose();
-            Profiler.EndSample();
-
-            Profiler.BeginSample("Update Counts Buffer");
-            if (_countsBuffer.Length < computeChunkCount)
-            {
-                _countsBuffer.Dispose();
-                _countsBuffer = CreatePersistentArray<int>(computeChunkCount * 2);
-            }
             Profiler.EndSample();
 
             Profiler.BeginSample("Update Entities Buffer");
-            if (_entityBufferA.Length < entityCount)
+            if (_entities.Length < entityCount)
             {
-                _entityBufferA.Dispose();
-                _entityBufferA = CreatePersistentArray<Entity>(entityCount * 2);
-                _entityBufferB.Dispose();
-                _entityBufferB = CreatePersistentArray<Entity>(entityCount * 2);
+                _entities.Dispose();
+                _entities = _util.CreatePersistentArray<Entity>(entityCount * 2);
             }
             Profiler.EndSample();
 
+            Profiler.BeginSample("Compute and collect");
             var computeJob = new DespawnComputeJob
             {
-                chunks = computeChunks,
+                inChunks = computeChunks,
                 despawnHandle = GetComponentTypeHandle<DespawnComponent>(true),
                 entityHandle = GetEntityTypeHandle(),
-                resultCounts = _countsBuffer, 
-                offsets = computeOffsets,
-                resultEntities = _entityBufferA,
+                outEntityCounts = countsBuffer, 
+                inWriteOffsets = computeOffsets,
+                outEntities = _entities,
                 time = (float)Time.ElapsedTime
             };
             var computeJobHandle = computeJob.Schedule(computeChunkCount, 32, Dependency);
 
-            var collectJob = new DespawnCollectJob
+            var collectJob = new SingleBufferedDataCollectJob<Entity>
             {
-                inputCountsAmount = computeChunkCount,
-                inputCounts = _countsBuffer,
-                inputEntities = _entityBufferA,
-                offsets = computeOffsets,
-                outputEntities = _entityBufferB,
-                outputCount = _collectorCountBuffer
+                inCounts = countsBuffer,
+                inOffsets = computeOffsets,
+                inOutData = _entities,
+                outCount = _entityCount
             };
             var collectJobHandle = collectJob.Schedule(computeJobHandle);
-            
             collectJobHandle.Complete();
-        }
+            Profiler.EndSample();
 
-        private static NativeArray<T> CreatePersistentArray<T>(int length) where T : struct
-        {
-            return new NativeArray<T>(length, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
-        }
-
-        private static NativeArray<T> CreateTempJobArray<T>(int length) where T : struct
-        {
-            return new NativeArray<T>(length, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
+            countsBuffer.Dispose();
+            rawChunks.Dispose();
+            computeChunks.Dispose();
+            computeOffsets.Dispose();
         }
 
         protected override void OnDestroy()
         {
-            _countsBuffer.Dispose();
-            _entityBufferA.Dispose();
-            _entityBufferB.Dispose();
-            _collectorCountBuffer.Dispose();
+            _entities.Dispose();
+            _entityCount.Dispose();
         }
     }
 }

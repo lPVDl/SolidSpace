@@ -8,20 +8,20 @@ namespace SpaceSimulator.Runtime.Entities.Despawn
     [BurstCompile]
     public struct DespawnComputeJob : IJobParallelFor
     {
-        [ReadOnly, DeallocateOnJobCompletion] public NativeArray<ArchetypeChunk> chunks;
-        [ReadOnly] public NativeArray<int> offsets;
+        [ReadOnly] public NativeArray<ArchetypeChunk> inChunks;
+        [ReadOnly] public NativeArray<int> inWriteOffsets;
         
         [ReadOnly] public ComponentTypeHandle<DespawnComponent> despawnHandle;
         [ReadOnly] public EntityTypeHandle entityHandle;
         [ReadOnly] public float time;
         
-        [WriteOnly] public NativeArray<int> resultCounts;
-        [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<Entity> resultEntities;
+        [WriteOnly] public NativeArray<int> outEntityCounts;
+        [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<Entity> outEntities;
 
         public void Execute(int chunkIndex)
         {
-            var chunk = chunks[chunkIndex];
-            var entityOffset = offsets[chunkIndex];
+            var chunk = inChunks[chunkIndex];
+            var writeOffset = inWriteOffsets[chunkIndex];
             var entityCount = chunk.Count;
             var despawns = chunk.GetNativeArray(despawnHandle);
             var entities = chunk.GetNativeArray(entityHandle);
@@ -34,11 +34,11 @@ namespace SpaceSimulator.Runtime.Entities.Despawn
                     continue;
                 }
 
-                resultEntities[entityOffset + resultCount] = entities[i];
+                outEntities[writeOffset + resultCount] = entities[i];
                 resultCount++;
             }
 
-            resultCounts[chunkIndex] = resultCount;
+            outEntityCounts[chunkIndex] = resultCount;
         }
     }
 }
