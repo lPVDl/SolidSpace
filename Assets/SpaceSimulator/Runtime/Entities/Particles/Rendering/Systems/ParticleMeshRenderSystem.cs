@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using SpaceSimulator.Runtime.DebugUtils;
+using SpaceSimulator.Runtime.Entities.Extensions;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -25,6 +26,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
         private NativeArray<int> _indices;
         private ParticleMeshBuilderSystem _meshBuilderSystem;
         private Matrix4x4 _matrixDefault;
+        private SystemBaseUtil _util;
 
         protected override void OnStartRunning()
         {
@@ -38,7 +40,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
                 new VertexAttributeDescriptor(VertexAttribute.Position, VertexAttributeFormat.Float32, 2),
             };
 
-            _indices = new NativeArray<int>(ParticlePerMesh * 6, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
+            _indices = _util.CreatePersistentArray<int>(ParticlePerMesh * 6);
             int index = 0, vertex = 0;
             for (; index < ParticlePerMesh * 6; index += 6, vertex += 4)
             {

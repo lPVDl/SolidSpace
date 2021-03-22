@@ -10,8 +10,8 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
     [BurstCompile]
     public struct ParticleComputeMeshJob : IJobParallelFor
     {
-        [DeallocateOnJobCompletion, ReadOnly] public NativeArray<ArchetypeChunk> chunks;
-        [DeallocateOnJobCompletion, ReadOnly] public NativeArray<int> offsets;
+        [ReadOnly] public NativeArray<ArchetypeChunk> chunks;
+        [ReadOnly] public NativeArray<int> offsets;
 
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
         [ReadOnly] public SquareVertices square;

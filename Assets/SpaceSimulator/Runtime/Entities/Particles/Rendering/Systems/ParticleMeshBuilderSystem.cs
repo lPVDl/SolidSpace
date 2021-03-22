@@ -1,5 +1,5 @@
 using SpaceSimulator.Runtime.Entities.Common;
-using SpaceSimulator.Runtime.Entities.Physics;
+using SpaceSimulator.Runtime.Entities.Extensions;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -10,11 +10,15 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
 {
     public class ParticleMeshBuilderSystem : SystemBase
     {
+        private const int VerticesChunkSize = 65536;
+        
         public int ParticleCount { get; private set; }
-        public NativeArray<ParticleVertexData> Vertices { get; private set; }
+        public NativeArray<ParticleVertexData> Vertices => _vertices;
 
         private EntityQuery _query;
         private SquareVertices _square;
+        private SystemBaseUtil _util;
+        private NativeArray<ParticleVertexData> _vertices;
 
         protected override void OnCreate()
         {
@@ -35,8 +39,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
                 point2 = new float2(+0.5f, +0.5f),
                 point3 = new float2(+0.5f, -0.5f)
             };
-
-            Vertices = new NativeArray<ParticleVertexData>(0, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
+            _vertices = _util.CreatePersistentArray<ParticleVertexData>(0);
         }
 
         protected override void OnUpdate()
@@ -47,7 +50,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
 
             Profiler.BeginSample("ComputeOffsets");
             var chunkCount = chunks.Length;
-            var offsets = new NativeArray<int>(chunkCount, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
+            var offsets = _util.CreateTempJobArray<int>(chunkCount);
             ParticleCount = 0;
             for (var i = 0; i < chunkCount; i++)
             {
@@ -55,33 +58,29 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
                 ParticleCount += chunks[i].Count;
             }
             Profiler.EndSample();
-
-            Profiler.BeginSample("Allocate Vertices");
-            if (Vertices.Length < ParticleCount * 4)
-            {
-                Vertices.Dispose();
-                var newCount = ParticleCount * 4;
-                Vertices = new NativeArray<ParticleVertexData>(newCount, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
-            }
-            Profiler.EndSample();
             
+            _util.MaintainPersistentArrayLength(ref _vertices, ParticleCount * 4, VerticesChunkSize);
+
             Profiler.BeginSample("ComputeJob");
             var computeMeshJob = new ParticleComputeMeshJob
             {
                 chunks = chunks,
                 offsets = offsets,
                 positionHandle = GetComponentTypeHandle<PositionComponent>(true),
-                vertices = Vertices,
+                vertices = _vertices,
                 square = _square
             };
             
             computeMeshJob.Schedule(chunks.Length, 128, Dependency).Complete();
             Profiler.EndSample();
+
+            chunks.Dispose();
+            offsets.Dispose();
         }
 
         protected override void OnDestroy()
         {
-            Vertices.Dispose();
+            _vertices.Dispose();
         }
     }
 }
