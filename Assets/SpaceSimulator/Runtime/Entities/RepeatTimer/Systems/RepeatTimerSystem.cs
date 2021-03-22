@@ -28,6 +28,8 @@ namespace SpaceSimulator.Runtime.Entities.RepeatTimer
             
             var handle = job.Schedule(chunks.Length, 32, Dependency);
             handle.Complete();
+
+            chunks.Dispose();
         }
     }
 }

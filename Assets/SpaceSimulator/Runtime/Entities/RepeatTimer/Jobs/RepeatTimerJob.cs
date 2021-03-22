@@ -8,9 +8,7 @@ namespace SpaceSimulator.Runtime.Entities.RepeatTimer
     [BurstCompile]
     public struct RepeatTimerJob : IJobParallelFor
     {
-        [ReadOnly, DeallocateOnJobCompletion]
-        public NativeArray<ArchetypeChunk> chunks;
-
+        [ReadOnly] public NativeArray<ArchetypeChunk> chunks;
         [ReadOnly] public float deltaTime;
         
         public ComponentTypeHandle<RepeatTimerComponent> timerHandle;
