@@ -459,6 +459,7 @@ MonoBehaviour:
   _spawnRate: 60
   _spawnRangeX: {x: -400, y: 400}
   _spawnRangeY: {x: -250, y: 250}
+  _particleVelocity: 100
 --- !u!114 &1222791139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -473,7 +474,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _fieldHeight: 24
   _fieldWidth: 196
-  _cashUpdateDelay: 0.2
+  _cashUpdateDelay: 0
   _forgetDelay: 1
 --- !u!114 &1222791140
 MonoBehaviour:

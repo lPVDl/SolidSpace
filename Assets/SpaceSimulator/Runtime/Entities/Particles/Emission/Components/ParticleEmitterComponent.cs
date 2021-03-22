@@ -4,6 +4,6 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
 {
     public struct ParticleEmitterComponent : IComponentData
     {
-        
+        public float particleVelocity;
     }
 }

@@ -19,6 +19,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
         [ReadOnly] public NativeArray<int> inWriteOffsets;
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
         [ReadOnly] public ComponentTypeHandle<RandomValueComponent> randomHandle;
+        [ReadOnly] public ComponentTypeHandle<ParticleEmitterComponent> emittterHandle;
         [ReadOnly] public float inTime;
 
         public ComponentTypeHandle<RepeatTimerComponent> timerHandle;
@@ -31,6 +32,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
             var chunk = inChunks[chunkIndex];
             var writeOffset = inWriteOffsets[chunkIndex];
             var entityCount = chunk.Count;
+            var emitters = chunk.GetNativeArray(emittterHandle);
             var positions = chunk.GetNativeArray(positionHandle);
             var timers = chunk.GetNativeArray(timerHandle);
             var randoms = chunk.GetNativeArray(randomHandle);
@@ -49,10 +51,12 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
 
                 timer.counter = 0;
                 timers[i] = timer;
-                
+
+                var emitter = emitters[i];
                 var angle = TwoPI * randoms[i].value;
                 emissionData.position = positions[i].value;
-                emissionData.velocity = new float2(30 * math.cos(angle), 30 * math.sin(angle));
+                var velocity = emitter.particleVelocity;
+                emissionData.velocity = new float2(velocity * math.cos(angle), velocity * math.sin(angle));
 
                 outParticles[writeOffset + emitCount] = emissionData;
                 emitCount++;

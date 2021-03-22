@@ -63,6 +63,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
                 timerHandle = GetComponentTypeHandle<RepeatTimerComponent>(),
                 positionHandle = GetComponentTypeHandle<PositionComponent>(true),
                 randomHandle = GetComponentTypeHandle<RandomValueComponent>(true),
+                emittterHandle = GetComponentTypeHandle<ParticleEmitterComponent>(true),
                 inTime = (float)Time.ElapsedTime,
                 outParticles = _particles, 
                 inWriteOffsets = offsets,

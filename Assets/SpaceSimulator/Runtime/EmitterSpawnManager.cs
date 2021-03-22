@@ -1,7 +1,6 @@
 using SpaceSimulator.Runtime.Entities.Common;
 using SpaceSimulator.Runtime.Entities.Particles.Emission;
 using SpaceSimulator.Runtime.Entities.Particles.Rendering;
-using SpaceSimulator.Runtime.Entities.Physics;
 using SpaceSimulator.Runtime.Entities.Randomization;
 using SpaceSimulator.Runtime.Entities.RepeatTimer;
 using Unity.Collections;
@@ -20,6 +19,7 @@ namespace SpaceSimulator.Runtime
         [SerializeField] private float _spawnRate;
         [SerializeField] private Vector2 _spawnRangeX;
         [SerializeField] private Vector2 _spawnRangeY;
+        [SerializeField] private float _particleVelocity;
 
         private void Start()
         {
@@ -54,6 +54,10 @@ namespace SpaceSimulator.Runtime
                 entityManager.SetComponentData(entity, new RepeatTimerComponent
                 {
                     delay = 1 / _spawnRate
+                });
+                entityManager.SetComponentData(entity, new ParticleEmitterComponent
+                {
+                    particleVelocity = _particleVelocity
                 });
             }
         }
