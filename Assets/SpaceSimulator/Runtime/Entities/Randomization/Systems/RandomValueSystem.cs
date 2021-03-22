@@ -1,3 +1,4 @@
+using SpaceSimulator.Runtime.Entities.Extensions;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -12,10 +13,11 @@ namespace SpaceSimulator.Runtime.Entities.Randomization
         private NativeArray<float> _randomBuffer;
         private int _randomIndex;
         private EntityQuery _query;
+        private SystemBaseUtil _util;
 
         protected override void OnStartRunning()
         {
-            _randomBuffer = new NativeArray<float>(BufferChunkSize, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
+            _randomBuffer = _util.CreatePersistentArray<float>(BufferChunkSize);
             for (var i = 0; i < BufferChunkSize; i++)
             {
                 _randomBuffer[i] = Random.value;
@@ -29,7 +31,7 @@ namespace SpaceSimulator.Runtime.Entities.Randomization
             var requiredBufferCapacity = Mathf.CeilToInt(entityCount / (float) BufferChunkSize) * BufferChunkSize;
             if (_randomBuffer.Length < requiredBufferCapacity)
             {
-                var newRandomBuffer = new NativeArray<float>(requiredBufferCapacity, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
+                var newRandomBuffer = _util.CreatePersistentArray<float>(requiredBufferCapacity);
                 for (var i = 0; i < _randomBuffer.Length; i++)
                 {
                     newRandomBuffer[i] = _randomBuffer[i];
@@ -56,6 +58,8 @@ namespace SpaceSimulator.Runtime.Entities.Randomization
             var handle = job.Schedule(chunks.Length, 32, Dependency);
             
             handle.Complete();
+
+            chunks.Dispose();
         }
 
         protected override void OnDestroy()

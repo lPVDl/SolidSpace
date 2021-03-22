@@ -8,7 +8,7 @@ namespace SpaceSimulator.Runtime.Entities.Randomization
     [BurstCompile]
     public struct RandomValueJob : IJobParallelFor
     {
-        [ReadOnly, DeallocateOnJobCompletion] public NativeArray<ArchetypeChunk> chunks;
+        [ReadOnly] public NativeArray<ArchetypeChunk> chunks;
         [ReadOnly] public NativeArray<float> randomValues;
         [ReadOnly] public int randomIndex;
         
