@@ -454,7 +454,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c887e9ec9625496bbe7c76686c3095a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enitityCount: 10
+  _enitityCount: 333
   _particleMaterial: {fileID: 2100000, guid: 2b92c87154c8111459c64fbeea07dc49, type: 2}
   _spawnRate: 60
   _spawnRangeX: {x: -400, y: 400}
@@ -467,7 +467,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1222791135}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 50fdf91663ac425ba6bc49734d836726, type: 3}
   m_Name: 
@@ -489,8 +489,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _camera: {fileID: 353976494}
-  _colliderRadius: 15
-  _onStartSpawnCount: 0
+  _colliderRadius: 10
+  _onStartSpawnCount: 8
   _spawnPerSpawn: 64
   _spawnExtraRadius: 15
   _spawnRangeX: {x: -400, y: 400}
