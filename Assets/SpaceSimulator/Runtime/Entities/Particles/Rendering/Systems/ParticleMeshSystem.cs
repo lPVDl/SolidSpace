@@ -13,7 +13,7 @@ using UnityEngine.Rendering;
 
 namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
 {
-    public class ParticleMeshBuilderSystem : SystemBase
+    public class ParticleMeshSystem : SystemBase
     {
         private const int ParticlePerMesh = 16384;
         private const int RenderBounds = 8096;
@@ -93,7 +93,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
                 meshData.SetSubMesh(0, subMeshDescriptor, _meshUpdateFlags);
 
                 var meshChunkCount = chunkPerMesh[i];
-                var job = new ParticleComputeJobV2
+                var job = new ParticleMeshComputeJob
                 {
                     inChunks = chunks,
                     positionHandle = positionHandle,
@@ -115,7 +115,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
             Profiler.BeginSample("Create meshes");
             for (var i = _meshes.Count; i < meshCount; i++)
             {
-                var name = nameof(ParticleMeshBuilderSystem) + "_" + i;
+                var name = nameof(ParticleMeshSystem) + "_" + i;
                 _meshes.Add(CreateMesh(name));
             }
             _meshesForMeshArray.Clear();
@@ -149,6 +149,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
             Profiler.EndSample();
             
             SpaceDebug.LogState("ParticleCount", totalParticleCount);
+            SpaceDebug.LogState("ParticleMeshCount", meshCount);
         }
         
         private static void FillMesh(NativeArray<ArchetypeChunk> chunks, int startChunk, 

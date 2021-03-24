@@ -8,7 +8,7 @@ using Unity.Jobs;
 namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
 {
     [BurstCompile]
-    public struct ParticleComputeJobV2 : IJob
+    public struct ParticleMeshComputeJob : IJob
     {
         [ReadOnly, NativeDisableContainerSafetyRestriction] public NativeArray<ArchetypeChunk> inChunks;
         [ReadOnly] public int inFirstChunkIndex;
