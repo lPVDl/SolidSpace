@@ -1,37 +1,49 @@
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using SpaceSimulator.Runtime.DebugUtils;
 using SpaceSimulator.Runtime.Entities.Common;
 using SpaceSimulator.Runtime.Entities.Extensions;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
+using UnityEngine;
 using UnityEngine.Profiling;
+using UnityEngine.Rendering;
 
 namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
 {
     public class ParticleMeshBuilderSystem : SystemBase
     {
-        private const int VerticesChunkSize = 65536;
-        
-        public int ParticleCount { get; private set; }
-        public NativeArray<ParticleVertexData> Vertices => _vertices;
+        private const int ParticlePerMesh = 16384;
+        private const int RenderBounds = 8096;
 
+        public Material Material { private get; set; }
+        
         private EntityQuery _query;
         private SquareVertices _square;
         private SystemBaseUtil _util;
-        private NativeArray<ParticleVertexData> _vertices;
+        private VertexAttributeDescriptor[] _meshLayout;
+        private List<Mesh> _meshes;
+        private List<Mesh> _meshesForMeshArray;
+        private Matrix4x4 _matrixDefault;
+        private MeshUpdateFlags _meshUpdateFlags;
 
         protected override void OnCreate()
         {
-            var queryDesc = new EntityQueryDesc
+            _matrixDefault = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, 1, -1));
+            _meshes = new List<Mesh>();
+            _meshesForMeshArray = new List<Mesh>();
+            _meshUpdateFlags = MeshUpdateFlags.DontRecalculateBounds | MeshUpdateFlags.DontValidateIndices;
+            _meshLayout = new[]
             {
-                All = new ComponentType[]
-                {
-                    typeof(PositionComponent),
-                    typeof(TriangleParticleRenderComponent)
-                }
+                new VertexAttributeDescriptor(VertexAttribute.Position, VertexAttributeFormat.Float32, 2),
             };
-            
-            _query = GetEntityQuery(queryDesc);
+            _query = GetEntityQuery(new ComponentType[]
+            {
+                typeof(PositionComponent),
+                typeof(TriangleParticleRenderComponent)
+            });
             _square = new SquareVertices
             {
                 point0 = new float2(-0.5f, -0.5f),
@@ -39,48 +51,151 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
                 point2 = new float2(+0.5f, +0.5f),
                 point3 = new float2(+0.5f, -0.5f)
             };
-            _vertices = _util.CreatePersistentArray<ParticleVertexData>(0);
         }
 
         protected override void OnUpdate()
         {
-            Profiler.BeginSample("CreateArchetypeChunkArray");
+            Profiler.BeginSample("Query chunks");
             var chunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
             Profiler.EndSample();
-
-            Profiler.BeginSample("ComputeOffsets");
-            var chunkCount = chunks.Length;
-            var offsets = _util.CreateTempJobArray<int>(chunkCount);
-            ParticleCount = 0;
-            for (var i = 0; i < chunkCount; i++)
+            
+            Profiler.BeginSample("Compute offsets");
+            var chunkTotal = chunks.Length;
+            var chunkPerMesh = _util.CreateTempJobArray<int>(chunkTotal);
+            var particlePerMesh = _util.CreateTempJobArray<int>(chunkTotal);
+            var totalParticleCount = 0;
+            var meshCount = 0;
+            var chunkIndex = 0;
+            while (chunkIndex < chunkTotal)
             {
-                offsets[i] = ParticleCount * 4;
-                ParticleCount += chunks[i].Count;
+                FillMesh(chunks, chunkIndex, out var particleCount, out var chunkCount);
+                chunkPerMesh[meshCount] = chunkCount;
+                particlePerMesh[meshCount] = particleCount;
+                totalParticleCount += particleCount;
+                chunkIndex += chunkCount;
+                meshCount++;
+            }
+            Profiler.EndSample();
+
+            Profiler.BeginSample("Compute meshes");
+            var meshDataArray = Mesh.AllocateWritableMeshData(meshCount);
+            var computeJobHandles = _util.CreateTempJobArray<JobHandle>(meshCount);
+            var positionHandle = GetComponentTypeHandle<PositionComponent>();
+            var chunkOffset = 0;
+            for (var i = 0; i < meshCount; i++)
+            {
+                var meshData = meshDataArray[i];
+                var particleCount = particlePerMesh[i];
+                meshData.SetVertexBufferParams(particleCount * 4, _meshLayout);
+                meshData.SetIndexBufferParams(particleCount * 6, IndexFormat.UInt16);
+                meshData.subMeshCount = 1;
+                var subMeshDescriptor = new SubMeshDescriptor(0, particleCount * 6);
+                meshData.SetSubMesh(0, subMeshDescriptor, _meshUpdateFlags);
+
+                var meshChunkCount = chunkPerMesh[i];
+                var job = new ParticleComputeJobV2
+                {
+                    inChunks = chunks,
+                    positionHandle = positionHandle,
+                    inBakedSquare = _square,
+                    inChunkCount = meshChunkCount,
+                    inFirstChunkIndex = chunkOffset,
+                    outIndices = meshData.GetIndexData<ushort>(),
+                    outVertices = meshData.GetVertexData<ParticleVertexData>()
+                };
+                computeJobHandles[i] = job.Schedule(Dependency);
+
+                chunkOffset += meshChunkCount;
+            }
+
+            var computeHandle = JobHandle.CombineDependencies(computeJobHandles);
+            computeHandle.Complete();
+            Profiler.EndSample();
+
+            Profiler.BeginSample("Create meshes");
+            for (var i = _meshes.Count; i < meshCount; i++)
+            {
+                var name = nameof(ParticleMeshBuilderSystem) + "_" + i;
+                _meshes.Add(CreateMesh(name));
+            }
+            _meshesForMeshArray.Clear();
+            for (var i = 0; i < meshCount; i++)
+            {
+                _meshesForMeshArray.Add(_meshes[i]);
             }
             Profiler.EndSample();
             
-            _util.MaintainPersistentArrayLength(ref _vertices, ParticleCount * 4, VerticesChunkSize);
-
-            Profiler.BeginSample("ComputeJob");
-            var computeMeshJob = new ParticleComputeMeshJob
-            {
-                chunks = chunks,
-                offsets = offsets,
-                positionHandle = GetComponentTypeHandle<PositionComponent>(true),
-                vertices = _vertices,
-                square = _square
-            };
-            
-            computeMeshJob.Schedule(chunks.Length, 128, Dependency).Complete();
+            Profiler.BeginSample("Apply and dispose writable mesh data");
+            Mesh.ApplyAndDisposeWritableMeshData(meshDataArray, _meshesForMeshArray, _meshUpdateFlags);
             Profiler.EndSample();
-
+            
+            Profiler.BeginSample("Draw mesh");
+            for (var i = 0; i < meshCount; i++)
+            {
+                DrawMesh(new MeshDrawingData
+                {
+                    mesh = _meshes[i],
+                    material = Material,
+                    matrix = _matrixDefault
+                });
+            }
+            Profiler.EndSample();
+            
+            Profiler.BeginSample("Dispose native arrays");
             chunks.Dispose();
-            offsets.Dispose();
+            chunkPerMesh.Dispose();
+            particlePerMesh.Dispose();
+            computeJobHandles.Dispose();
+            Profiler.EndSample();
+            
+            SpaceDebug.LogState("ParticleCount", totalParticleCount);
+        }
+        
+        private static void FillMesh(NativeArray<ArchetypeChunk> chunks, int startChunk, 
+            out int particleCount, out int chunkCount)
+        {
+            particleCount = 0;
+            var chunkTotal = chunks.Length;
+            var i = startChunk;
+            for (; i < chunkTotal; i++)
+            {
+                var chunkParticleCount = chunks[i].Count;
+                if (particleCount + chunkParticleCount > ParticlePerMesh)
+                {
+                    break;
+                }
+
+                particleCount += chunkParticleCount;
+            }
+
+            chunkCount = i - startChunk;
+        }
+        
+        private static void DrawMesh(MeshDrawingData data)
+        {
+            Graphics.DrawMesh(data.mesh, data.matrix, data.material, data.layer, data.camera, data.subMeshIndex,
+                data.properties, data.castShadows, data.receiveShadows, data.useLightProbes);
+        }
+        
+        private static Mesh CreateMesh(string name)
+        {
+            var mesh = new Mesh
+            {
+                name = name,
+                bounds = new Bounds(Vector3.zero, Vector3.one * RenderBounds)
+            };
+            mesh.MarkDynamic();
+
+            return mesh;
         }
 
         protected override void OnDestroy()
         {
-            _vertices.Dispose();
+            for (var i = 0; i < _meshes.Count; i++)
+            {
+                Object.Destroy(_meshes[i]);
+                _meshes[i] = null;
+            }
         }
     }
 }

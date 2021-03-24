@@ -21,7 +21,7 @@ namespace SpaceSimulator.Runtime
 
             var entityManager = world.EntityManager;
 
-            var renderSystem = world.GetOrCreateSystem<ParticleMeshRenderSystem>();
+            var renderSystem = world.GetOrCreateSystem<ParticleMeshBuilderSystem>();
             renderSystem.Material = _particleMaterial;
 
             var componentTypes = new ComponentType[]
