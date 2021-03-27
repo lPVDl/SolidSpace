@@ -449,7 +449,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1222791135}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c887e9ec9625496bbe7c76686c3095a0, type: 3}
   m_Name: 
@@ -489,9 +489,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _camera: {fileID: 353976494}
-  _colliderRadius: 10
-  _onStartSpawnCount: 8
-  _spawnPerSpawn: 64
-  _spawnExtraRadius: 15
-  _spawnRangeX: {x: -400, y: 400}
-  _spawnRangeY: {x: -250, y: 250}
+  _colliderRadius: 2
+  _onStartSpawnCount: 65536
+  _spawnPerSpawn: 1
+  _spawnExtraRadius: 0
+  _spawnRangeX: {x: -500, y: 500}
+  _spawnRangeY: {x: -300, y: 300}
+  _drawGizmos: 1

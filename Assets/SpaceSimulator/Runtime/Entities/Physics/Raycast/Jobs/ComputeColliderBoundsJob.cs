@@ -8,14 +8,14 @@ using Unity.Jobs;
 namespace SpaceSimulator.Runtime.Entities.Physics.Raycast
 {
     [BurstCompile]
-    public struct BakeCollidersJob : IJobParallelFor
+    public struct ComputeColliderBoundsJob : IJobParallelFor
     {
         [ReadOnly] public NativeArray<ArchetypeChunk> colliderChunks;
         [ReadOnly] public NativeArray<int> boundsWriteOffsets;
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
         [ReadOnly] public ComponentTypeHandle<ColliderComponent> colliderHandle;
         
-        [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<BakedColliderData> outputBounds;
+        [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<ColliderBounds> outputBounds;
         
         public void Execute(int chunkIndex)
         {
@@ -29,7 +29,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics.Raycast
             {
                 var radius = colliders[i].radius;
                 var position = positions[i].value;
-                BakedColliderData boundsData;
+                ColliderBounds boundsData;
                 boundsData.xMin = position.x - radius;
                 boundsData.xMax = position.x + radius;
                 boundsData.yMin = position.y - radius;

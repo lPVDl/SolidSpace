@@ -1,6 +1,6 @@
 namespace SpaceSimulator.Runtime.Entities.Physics.Raycast
 {
-    public struct BakedColliderData
+    public struct ColliderBounds
     {
         public float xMin;
         public float xMax;

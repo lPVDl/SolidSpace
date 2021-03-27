@@ -24,6 +24,7 @@ namespace SpaceSimulator.Runtime
         [SerializeField] private float _spawnExtraRadius;
         [SerializeField] private Vector2 _spawnRangeX;
         [SerializeField] private Vector2 _spawnRangeY;
+        [SerializeField] private bool _drawGizmos;
 
         private List<ColliderInfo> _spawnedColliders;
         private ComponentType[] _colliderArchetype;
@@ -137,7 +138,7 @@ namespace SpaceSimulator.Runtime
 
         private void OnDrawGizmos()
         {
-            if (!Application.isPlaying)
+            if (!Application.isPlaying || !_drawGizmos)
             {
                 return;
             }
