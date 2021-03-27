@@ -1,4 +1,4 @@
-namespace SpaceSimulator.Runtime.Entities.Physics.Raycast
+namespace SpaceSimulator.Runtime.Entities.Physics
 {
     public struct ColliderBounds
     {

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using SpaceSimulator.Runtime.Entities.Common;
-using SpaceSimulator.Runtime.Entities.Physics.Collision;
+using SpaceSimulator.Runtime.Entities.Physics;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;

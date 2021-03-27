@@ -2,7 +2,7 @@ using SpaceSimulator.Runtime.DebugUtils;
 using Unity.Collections;
 using Unity.Entities;
 
-namespace SpaceSimulator.Runtime.Entities.Physics.Raycast
+namespace SpaceSimulator.Runtime.Entities.Physics
 {
     [UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = false, OrderLast = true)]
     public class RaycastCommandSystem : SystemBase

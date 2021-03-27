@@ -2,7 +2,7 @@ using SpaceSimulator.Runtime.DebugUtils;
 using SpaceSimulator.Runtime.Entities.Common;
 using SpaceSimulator.Runtime.Entities.Despawn;
 using SpaceSimulator.Runtime.Entities.Particles.Rendering;
-using SpaceSimulator.Runtime.Entities.Physics.Raycast;
+using SpaceSimulator.Runtime.Entities.Physics;
 using SpaceSimulator.Runtime.Entities.Physics.Velocity;
 using Unity.Collections;
 using Unity.Entities;

@@ -3,7 +3,7 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 
-namespace SpaceSimulator.Runtime.Entities.Physics.Raycast
+namespace SpaceSimulator.Runtime.Entities.Physics
 {
     [BurstCompile]
     public struct FindMaxColliderSizeJob : IJobParallelFor

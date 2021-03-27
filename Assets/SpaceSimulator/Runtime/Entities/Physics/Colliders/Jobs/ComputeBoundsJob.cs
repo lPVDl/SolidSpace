@@ -1,14 +1,13 @@
 using SpaceSimulator.Runtime.Entities.Common;
-using SpaceSimulator.Runtime.Entities.Physics.Collision;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
-namespace SpaceSimulator.Runtime.Entities.Physics.Raycast
+namespace SpaceSimulator.Runtime.Entities.Physics
 {
     [BurstCompile]
-    public struct ComputeColliderBoundsJob : IJobParallelFor
+    public struct ComputeBoundsJob : IJobParallelFor
     {
         [ReadOnly] public NativeArray<ArchetypeChunk> colliderChunks;
         [ReadOnly] public NativeArray<int> boundsWriteOffsets;

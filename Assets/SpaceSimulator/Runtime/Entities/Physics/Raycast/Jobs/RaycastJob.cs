@@ -6,7 +6,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
-namespace SpaceSimulator.Runtime.Entities.Physics.Raycast
+namespace SpaceSimulator.Runtime.Entities.Physics
 {
     [BurstCompile]
     public struct RaycastJob : IJobParallelFor
@@ -16,7 +16,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics.Raycast
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
         [ReadOnly] public ComponentTypeHandle<VelocityComponent> velocityHandle;
         [ReadOnly] public EntityTypeHandle entityHandle;
-        [ReadOnly, NativeDisableParallelForRestriction] public NativeArray<ColliderBounds> colliders;
+        [ReadOnly, NativeDisableParallelForRestriction] public NativeSlice<ColliderBounds> colliders;
         [ReadOnly] public float deltaTime;
 
         [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<Entity> resultEntities;
