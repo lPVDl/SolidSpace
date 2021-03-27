@@ -12,12 +12,12 @@ namespace SpaceSimulator.Runtime.Entities.Physics
 {
     public partial class ColliderBakeSystem : SystemBase
     {
-        public ColliderWorld World { get; private set; }
+        public ColliderWorld ColliderWorld { get; private set; }
         
-        private const float MinWorldSize = 1;
-        private const float MinCellSize = 1;
-        private const int MaxWorldCellCount = 128;
         private const int ColliderBufferChunkSize = 512;
+        private const int MappingJobCount = 8;
+        private const int MaxCellCount = 65536;
+        private const int MinCellSize = 1;
         
         private EntityQuery _query;
         private SystemBaseUtil _systemUtil;
@@ -68,12 +68,13 @@ namespace SpaceSimulator.Runtime.Entities.Physics
             Profiler.EndSample();
 
             Profiler.BeginSample("Compute World Bounds");
-            var colliderJobCount = (int) (colliderCount / 128f + 0.5);
+            var colliderJobCount = (int)math.ceil(colliderCount / 128f);
             var colliderJoinedBounds = _systemUtil.CreateTempJobArray<ColliderBounds>(colliderJobCount);
             var worldBoundsJob = new JoinBoundsJob
             {
                 inBounds = _colliderBounds,
                 inBoundsPerJob = 128,
+                inTotalBounds = colliderCount,
                 outBounds = colliderJoinedBounds
             };
             var worldBoundsJobHandle = worldBoundsJob.Schedule(colliderJobCount, 1, Dependency);
@@ -91,6 +92,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
             {
                 inBounds = _colliderBounds,
                 inBoundsPerJob = 128,
+                inTotalBounds = colliderCount,
                 outSizes = colliderMaxSizes
             };
             var colliderSizesJobHandle = colliderSizesJob.Schedule(colliderJobCount, 1, Dependency);
@@ -100,34 +102,69 @@ namespace SpaceSimulator.Runtime.Entities.Physics
             Profiler.EndSample();
 
             Profiler.BeginSample("Find Max Collider Size : Main Thread");
-            var maxColliderSizes = _boundsUtil.FindBoundsMaxSize(colliderMaxSizes);
-            var worldCellSize = math.max(math.max(maxColliderSizes.x, maxColliderSizes.y), MinCellSize);
+            var maxColliderSize = _boundsUtil.FindBoundsMaxSize(colliderMaxSizes);
             Profiler.EndSample();
 
-            var worldMin = new float2(worldBounds.xMin, worldBounds.yMin);
-            var worldMax = new float2(worldBounds.xMax, worldBounds.yMax);
-            var worldDelta = worldMax - worldMin;
-            var worldSize = math.max(math.max(worldDelta.x, worldDelta.y), MinWorldSize);
-            var cellCount = (int) (worldSize / worldCellSize + 0.5);
-            cellCount = math.min(cellCount, MaxWorldCellCount);
-            var cellSize = worldSize / cellCount;
-            var worldCenter = (worldMax + worldMin) / 2;
-
-            SpaceDebug.LogState("ColliderCellCount", cellCount);
-
-            worldMin = worldCenter - worldSize / 2;
-            worldMax = worldMin + worldSize;
-
-            for (var i = 1; i < cellCount; i++)
+            var cellSize = math.max(MinCellSize, math.max(maxColliderSize.x, maxColliderSize.y));
+            var worldSizeX = math.max(1, worldBounds.xMax - worldBounds.xMin);
+            var worldSizeY = math.max(1, worldBounds.yMax - worldBounds.yMin);
+            var cellCountX = worldSizeX / cellSize;
+            var cellCountY = worldSizeY / cellSize;
+            var cellTotal = cellCountX * cellCountY;
+            if (cellTotal > MaxCellCount)
             {
-                var p0 = new Vector3(worldMin.x + cellSize * i, worldMax.y, 0);
-                var p1 = new Vector3(worldMin.x + cellSize * i, worldMin.y, 0);
-                var p2 = new Vector3(worldMin.x, worldMin.y + i * cellSize, 0);
-                var p3 = new Vector3(worldMax.x, worldMin.y + i * cellSize, 0);
-                Debug.DrawLine(p0, p1);
-                Debug.DrawLine(p2, p3);
+                var downscaleFactor = math.sqrt(MaxCellCount / cellTotal);
+                cellCountX *= downscaleFactor;
+                cellCountY *= downscaleFactor;
             }
 
+            cellCountX = math.max(1, math.floor(cellCountX));
+            cellCountY = math.max(1, math.floor(cellCountY));
+            
+            // cellCountX = math.max(1, math.floor(cellCountX / MappingJobCount)) * MappingJobCount;
+            // cellCountY = math.max(1, math.floor(cellCountY / MappingJobCount)) * MappingJobCount;
+            // cellTotal = cellCountX * cellCountY;
+            // if (cellTotal > MaxCellCount)
+            // {
+            //     var overload = cellTotal - MaxCellCount;
+            //     if (cellCountX > cellCountY)
+            //     {
+            //         cellCountX -= math.ceil(overload / cellCountY);
+            //     }
+            //     else
+            //     {
+            //         cellCountY -= math.ceil(overload / cellCountX);
+            //     }
+            // }
+
+            var cellSizeX = math.max(cellSize, worldSizeX / cellCountX);
+            var cellSizeY = math.max(cellSize, worldSizeY / cellCountY);
+            var worldCenterX = (worldBounds.xMin + worldBounds.xMax) / 2;
+            var worldCenterY = (worldBounds.yMin + worldBounds.yMax) / 2;
+            var halfWorldSizeX = cellCountX * cellSizeX / 2;
+            var halfWorldSizeY = cellCountY * cellSizeY / 2;
+            var worldMin = new float2(worldCenterX - halfWorldSizeX, worldCenterY - halfWorldSizeY);
+            var worldMax = new float2(worldCenterX + halfWorldSizeX, worldCenterY + halfWorldSizeY);
+            
+            SpaceDebug.LogState("ColliderCellCountX", cellCountX);
+            SpaceDebug.LogState("ColliderCellCountY", cellCountY);
+            SpaceDebug.LogState("ColliderCellSizeX", cellSizeX);
+            SpaceDebug.LogState("ColliderCellSizeY", cellSizeY);
+            
+            for (var i = 1; i < cellCountX; i++)
+            {
+                var p0 = new Vector3(worldMin.x + cellSizeX * i, worldMax.y, 0);
+                var p1 = new Vector3(worldMin.x + cellSizeX * i, worldMin.y, 0);
+                Debug.DrawLine(p0, p1);
+            }
+            
+            for (var i = 1; i < cellCountY; i++)
+            {
+                var p2 = new Vector3(worldMin.x, worldMin.y + i * cellSizeY, 0);
+                var p3 = new Vector3(worldMax.x, worldMin.y + i * cellSizeY, 0);
+                Debug.DrawLine(p2, p3);
+            }
+            
             Profiler.EndSample();
 
             Profiler.BeginSample("Dispose arrays");
@@ -137,7 +174,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
             colliderJoinedBounds.Dispose();
             Profiler.EndSample();
 
-            World = new ColliderWorld
+            ColliderWorld = new ColliderWorld
             {
                 colliders = new NativeSlice<ColliderBounds>(_colliderBounds, colliderCount)
             };

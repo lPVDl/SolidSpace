@@ -9,6 +9,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
     public struct JoinBoundsJob : IJobParallelFor
     {
         [ReadOnly] public NativeArray<ColliderBounds> inBounds;
+        [ReadOnly] public int inTotalBounds;
         [ReadOnly] public int inBoundsPerJob;
         
         [WriteOnly] public NativeArray<ColliderBounds> outBounds;
@@ -16,7 +17,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
         public void Execute(int jobIndex)
         {
             var startIndex = inBoundsPerJob * jobIndex;
-            var endIndex = math.min(startIndex + inBoundsPerJob, inBounds.Length);
+            var endIndex = math.min(startIndex + inBoundsPerJob, inTotalBounds);
             var bounds = inBounds[startIndex];
             var xMin = bounds.xMin;
             var xMax = bounds.xMax;
@@ -25,7 +26,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
 
             for (var i = startIndex + 1; i < endIndex; i++)
             {
-                bounds = inBounds[startIndex];
+                bounds = inBounds[i];
 
                 if (bounds.xMin < xMin)
                 {

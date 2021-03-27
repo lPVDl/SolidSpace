@@ -10,13 +10,14 @@ namespace SpaceSimulator.Runtime.Entities.Physics
     {
         [ReadOnly] public NativeArray<ColliderBounds> inBounds;
         [ReadOnly] public int inBoundsPerJob;
+        [ReadOnly] public int inTotalBounds;
 
         [WriteOnly] public NativeArray<float2> outSizes; 
         
         public void Execute(int jobIndex)
         {
             var startIndex = jobIndex * inBoundsPerJob;
-            var endIndex = math.min(startIndex + inBoundsPerJob, inBounds.Length);
+            var endIndex = math.min(startIndex + inBoundsPerJob, inTotalBounds);
             
             var bounds = inBounds[startIndex];
             var xMax = bounds.xMax - bounds.xMin;
@@ -24,7 +25,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
             
             for (var i = startIndex + 1; i < endIndex; i++)
             {
-                bounds = inBounds[startIndex];
+                bounds = inBounds[i];
                 var dX = bounds.xMax - bounds.xMin;
                 var dY = bounds.yMax - bounds.yMin;
                 

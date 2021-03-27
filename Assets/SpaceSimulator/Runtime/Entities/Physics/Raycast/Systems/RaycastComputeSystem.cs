@@ -68,7 +68,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
                 positionHandle = GetComponentTypeHandle<PositionComponent>(),
                 velocityHandle = GetComponentTypeHandle<VelocityComponent>(),
                 entityHandle = GetEntityTypeHandle(),
-                colliders = _colliderSystem.World.colliders,
+                colliders = _colliderSystem.ColliderWorld.colliders,
                 deltaTime = Time.DeltaTime,
                 resultCounts = raycastResultCounts,
                 resultEntities = _entityBuffer
