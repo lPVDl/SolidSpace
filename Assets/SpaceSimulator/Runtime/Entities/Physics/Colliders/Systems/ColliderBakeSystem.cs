@@ -20,8 +20,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
         private const int MappingJobCount = 8;
         private const int MaxCellCount = 65536;
         private const int MaxChunksPerCollider = 4;
-        private const float MinCellSize = 1;
-        
+
         private EntityQuery _query;
         private SystemBaseUtil _systemUtil;
         private GridUtil _gridUtil;
@@ -80,7 +79,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
             DebugDrawWorld(worldGrid);
 
             Profiler.BeginSample("Bake Chunks");
-            var worldChunkTotal = worldGrid.cellCount.x * worldGrid.cellCount.y;
+            var worldChunkTotal = worldGrid.size.x * worldGrid.size.y;
             _systemUtil.MaintainPersistentArrayLength(ref _worldChunks, worldChunkTotal, ChunkBufferChunkSize);
 
             Profiler.BeginSample("Reset Chunks");
@@ -104,26 +103,26 @@ namespace SpaceSimulator.Runtime.Entities.Physics
             for (var i = 0; i < colliderCount; i++)
             {
                 var bounds = _colliderBounds[i];
-                var x0 = (int) math.min(worldGrid.cellCount.x - 1, math.floor((bounds.xMin - worldGrid.worldMin.x) / worldGrid.cellSize.x));
-                var y0 = (int) math.min(worldGrid.cellCount.y - 1, math.floor((bounds.yMin - worldGrid.worldMin.y) / worldGrid.cellSize.y));
-                var x1 = (int) math.min(worldGrid.cellCount.x - 1, math.floor((bounds.xMax - worldGrid.worldMin.x) / worldGrid.cellSize.x));
-                var y1 = (int) math.min(worldGrid.cellCount.y - 1, math.floor((bounds.yMax - worldGrid.worldMin.y) / worldGrid.cellSize.y));
-
-                AddCollider(y0 * worldGrid.cellCount.x + x0, i);
+                var x0 = ((int) bounds.xMin >> worldGrid.power) - worldGrid.anchor.x;
+                var y0 = ((int) bounds.yMin >> worldGrid.power) - worldGrid.anchor.y;
+                var x1 = ((int) bounds.xMax >> worldGrid.power) - worldGrid.anchor.x;
+                var y1 = ((int) bounds.yMax >> worldGrid.power) - worldGrid.anchor.y;
+                
+                AddCollider(y0 * worldGrid.size.x + x0, i);
 
                 if (x0 != x1)
                 {
-                    AddCollider(y0 * worldGrid.cellCount.x + x1, i);
+                    AddCollider(y0 * worldGrid.size.x + x1, i);
 
                     if (y0 != y1)
                     {
-                        AddCollider(y1 * worldGrid.cellCount.x + x1, i);
+                        AddCollider(y1 * worldGrid.size.x + x1, i);
                     }
                 }
                 
                 if (y0 != y1)
                 {
-                    AddCollider(y1 * worldGrid.cellCount.x + x0, i);
+                    AddCollider(y1 * worldGrid.size.x + x0, i);
                 }
             }
             
@@ -161,29 +160,32 @@ namespace SpaceSimulator.Runtime.Entities.Physics
 
         private void DebugDrawWorld(ColliderWorldGrid worldGrid)
         {
-            var cellCountX = worldGrid.cellCount.x;
-            var cellCountY = worldGrid.cellCount.y;
-            var cellSizeX = worldGrid.cellSize.x;
-            var cellSizeY = worldGrid.cellSize.y;
-            var worldMin = worldGrid.worldMin;
-            var worldMax = worldGrid.worldMax;
+            var cellSize = 1 << worldGrid.power;
+            var cellCountX = worldGrid.size.x;
+            var cellCountY = worldGrid.size.y;
+            var worldMin = worldGrid.anchor * cellSize;
+            var worldMax = (worldGrid.anchor + worldGrid.size) * cellSize;
             
             SpaceDebug.LogState("ColliderCellCountX", cellCountX);
             SpaceDebug.LogState("ColliderCellCountY", cellCountY);
-            SpaceDebug.LogState("ColliderCellSizeX", cellSizeX);
-            SpaceDebug.LogState("ColliderCellSizeY", cellSizeY);
+            SpaceDebug.LogState("ColliderCellSize", cellSize);
             
+            Debug.DrawLine(new Vector3(worldMin.x, worldMin.y), new Vector3(worldMin.x, worldMax.y));
+            Debug.DrawLine(new Vector3(worldMin.x, worldMax.y), new Vector3(worldMax.x, worldMax.y));
+            Debug.DrawLine(new Vector3(worldMax.x, worldMax.y), new Vector3(worldMax.x, worldMin.y));
+            Debug.DrawLine(new Vector3(worldMax.x, worldMin.y), new Vector3(worldMin.x, worldMin.y));
+
             for (var i = 1; i < cellCountX; i++)
             {
-                var p0 = new Vector3(worldMin.x + cellSizeX * i, worldMax.y, 0);
-                var p1 = new Vector3(worldMin.x + cellSizeX * i, worldMin.y, 0);
+                var p0 = new Vector3(worldMin.x + cellSize * i, worldMax.y, 0);
+                var p1 = new Vector3(worldMin.x + cellSize * i, worldMin.y, 0);
                 Debug.DrawLine(p0, p1);
             }
             
             for (var i = 1; i < cellCountY; i++)
             {
-                var p2 = new Vector3(worldMin.x, worldMin.y + i * cellSizeY, 0);
-                var p3 = new Vector3(worldMax.x, worldMin.y + i * cellSizeY, 0);
+                var p2 = new Vector3(worldMin.x, worldMin.y + i * cellSize, 0);
+                var p3 = new Vector3(worldMax.x, worldMin.y + i * cellSize, 0);
                 Debug.DrawLine(p2, p3);
             }
         }
