@@ -1,4 +1,3 @@
-using System;
 using SpaceSimulator.Runtime.DebugUtils;
 using SpaceSimulator.Runtime.Entities.Common;
 using SpaceSimulator.Runtime.Entities.Extensions;
@@ -19,7 +18,6 @@ namespace SpaceSimulator.Runtime.Entities.Physics
         private const int ChunkBufferChunkSize = 256;
         private const int MappingJobCount = 8;
         private const int MaxCellCount = 65536;
-        private const int MaxChunksPerCollider = 4;
 
         private EntityQuery _query;
         private SystemBaseUtil _systemUtil;
@@ -27,7 +25,6 @@ namespace SpaceSimulator.Runtime.Entities.Physics
         private NativeArray<ColliderBounds> _colliderBounds;
         private NativeArray<ushort> _worldColliders;
         private NativeArray<ColliderListPointer> _worldChunks;
-        private NativeArray<ChunkColliderBounds> _colliderBoundsStream; 
 
         protected override void OnCreate()
         {
@@ -37,9 +34,8 @@ namespace SpaceSimulator.Runtime.Entities.Physics
                 typeof(ColliderComponent)
             });
             _colliderBounds = _systemUtil.CreatePersistentArray<ColliderBounds>(ColliderBufferChunkSize);
-            _worldColliders = _systemUtil.CreatePersistentArray<ushort>(ColliderBufferChunkSize * MaxChunksPerCollider);
+            _worldColliders = _systemUtil.CreatePersistentArray<ushort>(ColliderBufferChunkSize * 4);
             _worldChunks = _systemUtil.CreatePersistentArray<ColliderListPointer>(ChunkBufferChunkSize);
-            _colliderBoundsStream = _systemUtil.CreatePersistentArray<ChunkColliderBounds>(ColliderBufferChunkSize * MaxChunksPerCollider);
         }
 
         protected override void OnUpdate()
@@ -71,18 +67,18 @@ namespace SpaceSimulator.Runtime.Entities.Physics
                 colliderHandle = GetComponentTypeHandle<ColliderComponent>(true),
                 positionHandle = GetComponentTypeHandle<PositionComponent>(true)
             };
-            var computeBoundsJobHandle = computeBoundsJob.Schedule(colliderChunkCount, 16, Dependency);
+            var computeBoundsJobHandle = computeBoundsJob.Schedule(colliderChunkCount, 8, Dependency);
             computeBoundsJobHandle.Complete();
             Profiler.EndSample();
 
             var worldGrid = _gridUtil.ComputeGrid(_colliderBounds, colliderCount);
             DebugDrawWorld(worldGrid);
-
-            Profiler.BeginSample("Bake Chunks");
-            var worldChunkTotal = worldGrid.size.x * worldGrid.size.y;
-            _systemUtil.MaintainPersistentArrayLength(ref _worldChunks, worldChunkTotal, ChunkBufferChunkSize);
-
+            
             Profiler.BeginSample("Reset Chunks");
+            var worldChunkTotal = worldGrid.size.x * worldGrid.size.y;
+            
+            _systemUtil.MaintainPersistentArrayLength(ref _worldChunks, worldChunkTotal, ChunkBufferChunkSize);
+            
             var resetChunksJob = new FillNativeArrayJob<ColliderListPointer>
             {
                 inItemPerJob = 128,
@@ -91,63 +87,69 @@ namespace SpaceSimulator.Runtime.Entities.Physics
                 outNativeArray = _worldChunks
             };
             var jobCount = (int) math.ceil(worldChunkTotal / 128f);
-            var resetChunksJobHandle = resetChunksJob.Schedule(jobCount, 1, Dependency);
+            var resetChunksJobHandle = resetChunksJob.Schedule(jobCount, 8, Dependency);
             resetChunksJobHandle.Complete();
             Profiler.EndSample();
 
-            _systemUtil.MaintainPersistentArrayLength(ref _colliderBoundsStream, colliderCount * MaxChunksPerCollider,
-                ColliderBufferChunkSize * MaxChunksPerCollider);
+            Profiler.BeginSample("Chunk colliders");
+            jobCount = (int) math.ceil(colliderCount / 128f);
+            var chunkedColliders = _systemUtil.CreateTempJobArray<ChunkedCollider>(colliderCount * 4);
+            var chunkedColliderCounts = _systemUtil.CreateTempJobArray<int>(jobCount);
             
-            Profiler.BeginSample("Bounds stream");
-            var boundsStreamIndex = 0;
-            for (var i = 0; i < colliderCount; i++)
+            var chunkingJob = new ChunkCollidersJob
             {
-                var bounds = _colliderBounds[i];
-                var x0 = ((int) bounds.xMin >> worldGrid.power) - worldGrid.anchor.x;
-                var y0 = ((int) bounds.yMin >> worldGrid.power) - worldGrid.anchor.y;
-                var x1 = ((int) bounds.xMax >> worldGrid.power) - worldGrid.anchor.x;
-                var y1 = ((int) bounds.yMax >> worldGrid.power) - worldGrid.anchor.y;
-                
-                AddCollider(y0 * worldGrid.size.x + x0, i);
-
-                if (x0 != x1)
-                {
-                    AddCollider(y0 * worldGrid.size.x + x1, i);
-
-                    if (y0 != y1)
-                    {
-                        AddCollider(y1 * worldGrid.size.x + x1, i);
-                    }
-                }
-                
-                if (y0 != y1)
-                {
-                    AddCollider(y1 * worldGrid.size.x + x0, i);
-                }
-            }
-            
-            SpaceDebug.LogState("BoundsStreamIndex", boundsStreamIndex);
-
-            void AddCollider(int chunkIndex, int colliderIndex)
-            {
-                var chunkData = _worldChunks[chunkIndex];
-                chunkData.count++;
-                _worldChunks[chunkIndex] = chunkData;
-                
-                _colliderBoundsStream[boundsStreamIndex++] = new ChunkColliderBounds
-                {
-                    chunkIndex = (ushort) chunkIndex,
-                    colliderIndex = (ushort) colliderIndex
-                };
-            }
-            
-            Profiler.EndSample();
-
+                inColliderBounds = _colliderBounds,
+                inWorldGrid = worldGrid,
+                inColliderPerJob = 128,
+                inColliderTotalCount = colliderCount,
+                outColliders = chunkedColliders,
+                outColliderCount = chunkedColliderCounts
+            };
+            var chunkingJobHandle = chunkingJob.Schedule(jobCount, 8, Dependency);
+            chunkingJobHandle.Complete();
             Profiler.EndSample();
             
+            Profiler.BeginSample("Lists capacity");
+            var listCapacityJob = new WorldChunkListsCapacityJob
+            {
+                inColliders = chunkedColliders,
+                inColliderBatchCapacity = 128 * 4,
+                inColliderCounts = chunkedColliderCounts,
+                inOutLists = _worldChunks
+            };
+            var listCapacityJobHandle = listCapacityJob.Schedule();
+            listCapacityJobHandle.Complete();
+            Profiler.EndSample();
+            
+            Profiler.BeginSample("Lists offsets");
+            var listOffsetsJob = new WorldChunkListsOffsetJob
+            {
+                inListCount = worldChunkTotal,
+                inOutLists = _worldChunks
+            };
+            var listOffsetsJobHandle = listOffsetsJob.Schedule();
+            listOffsetsJobHandle.Complete();
+            Profiler.EndSample();
+            
+            Profiler.BeginSample("Lists fill");
+            _systemUtil.MaintainPersistentArrayLength(ref _worldColliders, colliderCount * 4, ChunkBufferChunkSize * 4);
+            var listFillJob = new WorldChunkListsFillJob
+            {
+                inColliders = chunkedColliders,
+                inColliderBatchCapacity = 128 * 4,
+                inColliderCounts = chunkedColliderCounts,
+                inOutLists = _worldChunks,
+                outColliders = _worldColliders
+            };
+            var listFillJobHandle = listFillJob.Schedule();
+            listFillJobHandle.Complete();
+            Profiler.EndSample();
+
             Profiler.BeginSample("Dispose arrays");
             colliderChunks.Dispose();
             colliderOffsets.Dispose();
+            chunkedColliderCounts.Dispose();
+            chunkedColliders.Dispose();
             Profiler.EndSample();
 
             ColliderWorld = new ColliderWorld
@@ -195,7 +197,6 @@ namespace SpaceSimulator.Runtime.Entities.Physics
             _colliderBounds.Dispose();
             _worldColliders.Dispose();
             _worldChunks.Dispose();
-            _colliderBoundsStream.Dispose();
         }
     }
 }

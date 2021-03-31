@@ -1,8 +1,8 @@
 namespace SpaceSimulator.Runtime.Entities.Physics
 {
-    public struct ChunkColliderBounds
+    public struct ChunkedCollider
     {
-        public ushort chunkIndex;
         public ushort colliderIndex;
+        public ushort chunkIndex;
     }
 }

@@ -4,5 +4,6 @@ namespace SpaceSimulator.Runtime.Entities.Physics
     {
         public int offset;
         public ushort count;
+        public ushort wroteCount;
     }
 }
