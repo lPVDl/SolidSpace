@@ -151,7 +151,10 @@ namespace SpaceSimulator.Runtime.Entities.Physics
 
             ColliderWorld = new ColliderWorld
             {
-                colliders = new NativeSlice<ColliderBounds>(_colliderBounds, colliderCount)
+                colliders = new NativeSlice<ColliderBounds>(_colliderBounds, 0, colliderCount),
+                colliderStream = new NativeSlice<ushort>(_worldColliders, 0, _worldColliders.Length),
+                worldCells = new NativeSlice<ColliderListPointer>(_worldChunks, 0, _worldChunks.Length),
+                worldGrid = worldGrid
             };
 
             SpaceDebug.LogState("ColliderCount", colliderCount);

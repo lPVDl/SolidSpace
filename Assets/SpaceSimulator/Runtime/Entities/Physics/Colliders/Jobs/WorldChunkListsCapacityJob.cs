@@ -1,3 +1,4 @@
+using System;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
@@ -12,7 +13,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
         [ReadOnly] public NativeArray<int> inColliderCounts;
 
         public NativeArray<ColliderListPointer> inOutLists;
-        
+
         public void Execute()
         {
             var colliderChunkCount = inColliderCounts.Length;
@@ -24,9 +25,8 @@ namespace SpaceSimulator.Runtime.Entities.Physics
                 for (var i = readOffset; i < lastCollider; i++)
                 {
                     var collider = inColliders[i];
-                    var list = inOutLists[collider.chunkIndex]; 
+                    var list = inOutLists[collider.chunkIndex];
                     list.count++;
-                    
                     inOutLists[collider.chunkIndex] = list;
                 }
 

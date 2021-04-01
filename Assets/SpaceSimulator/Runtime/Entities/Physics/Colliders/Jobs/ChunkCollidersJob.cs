@@ -61,7 +61,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
                 if (y0 != y1)
                 {
                     chunkedCollider.chunkIndex = (ushort) (anchorChunk + worldSize.x);
-                    outColliders[colliderCount++] = chunkedCollider;
+                    outColliders[writeOffset + colliderCount++] = chunkedCollider;
                 }
             }
 
