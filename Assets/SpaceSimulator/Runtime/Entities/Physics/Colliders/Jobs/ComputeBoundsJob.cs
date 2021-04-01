@@ -14,7 +14,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
         [ReadOnly] public ComponentTypeHandle<ColliderComponent> colliderHandle;
         
-        [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<ColliderBounds> outputBounds;
+        [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<FloatBounds> outputBounds;
         
         public void Execute(int chunkIndex)
         {
@@ -28,7 +28,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
             {
                 var radius = colliders[i].radius;
                 var position = positions[i].value;
-                ColliderBounds boundsData;
+                FloatBounds boundsData;
                 boundsData.xMin = position.x - radius;
                 boundsData.xMax = position.x + radius;
                 boundsData.yMin = position.y - radius;

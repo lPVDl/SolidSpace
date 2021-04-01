@@ -8,7 +8,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
     [BurstCompile]
     public struct ChunkCollidersJob : IJobParallelFor
     {
-        [ReadOnly, NativeDisableParallelForRestriction] public NativeArray<ColliderBounds> inColliderBounds;
+        [ReadOnly, NativeDisableParallelForRestriction] public NativeArray<FloatBounds> inColliderBounds;
         [ReadOnly] public int inColliderTotalCount;
         [ReadOnly] public int inColliderPerJob;
         [ReadOnly] public ColliderWorldGrid inWorldGrid;

@@ -8,11 +8,11 @@ namespace SpaceSimulator.Runtime.Entities.Physics
     [BurstCompile]
     public struct JoinBoundsJob : IJobParallelFor
     {
-        [ReadOnly] public NativeArray<ColliderBounds> inBounds;
+        [ReadOnly] public NativeArray<FloatBounds> inBounds;
         [ReadOnly] public int inTotalBounds;
         [ReadOnly] public int inBoundsPerJob;
         
-        [WriteOnly] public NativeArray<ColliderBounds> outBounds;
+        [WriteOnly] public NativeArray<FloatBounds> outBounds;
 
         public void Execute(int jobIndex)
         {
@@ -49,7 +49,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
                 }
             }
 
-            outBounds[jobIndex] = new ColliderBounds
+            outBounds[jobIndex] = new FloatBounds
             {
                 xMin = xMin,
                 xMax = xMax,

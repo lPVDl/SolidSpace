@@ -33,52 +33,98 @@ namespace SpaceSimulator.Runtime.Entities.Physics
             var worldPower = inColliderWorld.worldGrid.power;
             var worldAnchor = inColliderWorld.worldGrid.anchor;
             var worldSize = inColliderWorld.worldGrid.size;
-            
+            var cellTotal = worldSize.x * worldSize.y;
+
             for (var i = 0; i < rayCount; i++)
             {
-                var pos = positions[i].value;
+                var velocity = velocities[i].value;
+                var pos0 = positions[i].value;
+                var pos1 = pos0 + velocity * deltaTime;
+                
+                FloatBounds ray;
+                MinMax(pos0.x, pos1.x, out ray.xMin, out ray.xMax);
+                MinMax(pos0.y, pos1.y, out ray.yMin, out ray.yMax);
 
-                var x0 = ((int) pos.x >> worldPower) - worldAnchor.x;
-                if (x0 < 0 || x0 >= worldSize.x)
+                var x0 = ((int) ray.xMin >> worldPower) - worldAnchor.x;
+                var y0 = ((int) ray.yMin >> worldPower) - worldAnchor.y;
+                var x1 = ((int) ray.xMax >> worldPower) - worldAnchor.x;
+                var y1 = ((int) ray.yMin >> worldPower) - worldAnchor.y;
+
+                if (x1 < 0 || x0 >= worldSize.x)
+                {
+                    continue;
+                }
+
+                if (y1 < 0 || y0 >= worldSize.y)
                 {
                     continue;
                 }
                 
-                var y0 = ((int) pos.y >> worldPower) - worldAnchor.y;
-                if (y0 < 0 || y0 >= worldSize.y)
+                if ((x0 == x1) && (y0 == y1))
                 {
-                    continue;
-                }
-
-                var rayCellIndex = y0 * worldSize.x + x0;
-                var rayCell = inColliderWorld.worldCells[rayCellIndex];
-                if (rayCell.count == 0)
-                {
-                    continue;
-                }
-
-                for (var j = 0; j < rayCell.count; j++)
-                {
-                    var colliderIndex = inColliderWorld.colliderStream[rayCell.offset + j];
-                    var collider = inColliderWorld.colliders[colliderIndex];
-
-                    if (!BoundsOverlap(pos.x, pos.x, collider.xMin, collider.xMax))
+                    var index = y0 * worldSize.x + x0;
+                    if (Raycast(inColliderWorld, index, ray))
                     {
-                        continue;
+                        resultEntities[writeOffset + hitCount++] = entities[i];
                     }
-
-                    if (!BoundsOverlap(pos.y, pos.y, collider.yMin, collider.yMax))
-                    {
-                        continue;
-                    }
-
-                    resultEntities[writeOffset + hitCount++] = entities[i];
                     
-                    break;
+                    continue;
+                }
+
+                var isHit = false;
+                for (var yOffset = y0; (yOffset <= y1) && (!isHit); yOffset++)
+                {
+                    for (var xOffset = x0; xOffset <= x1; xOffset++)
+                    {
+                        var index = yOffset * worldSize.x + xOffset;
+                        if (index < 0 || index >= cellTotal)
+                        {
+                            continue;
+                        }
+                        
+                        if (!Raycast(inColliderWorld, index, ray))
+                        {
+                            continue;
+                        }
+                        
+                        resultEntities[writeOffset + hitCount++] = entities[i];
+                        isHit = true;
+                        break;
+                    }
                 }
             }
 
             resultCounts[chunkIndex] = hitCount;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool Raycast(ColliderWorld world, int cellIndex, FloatBounds ray)
+        {
+            var cellData = world.worldCells[cellIndex];
+            if (cellData.count == 0)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < cellData.count; i++)
+            {
+                var colliderIndex = world.colliderStream[cellData.offset + i];
+                var collider = world.colliders[colliderIndex];
+
+                if (!BoundsOverlap(ray.xMin, ray.xMax, collider.xMin, collider.xMax))
+                {
+                    continue;
+                }
+
+                if (!BoundsOverlap(ray.yMin, ray.yMax, collider.yMin, collider.yMax))
+                {
+                    continue;
+                }
+
+                return true;
+            }
+
+            return false;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

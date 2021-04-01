@@ -47,7 +47,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
             var raycasterChunks = _raycasterQuery.CreateArchetypeChunkArray(Allocator.TempJob);
             Profiler.EndSample();
 
-            Profiler.BeginSample("raycasterOffsets");
+            Profiler.BeginSample("Raycaster offsets");
             var raycasterChunkCount = raycasterChunks.Length;
             var raycasterOffsets = _util.CreateTempJobArray<int>(raycasterChunkCount);
             var raycasterCount = 0;
@@ -58,7 +58,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
             }
             Profiler.EndSample();
 
-            Profiler.BeginSample("Raycast and collect results");
+            Profiler.BeginSample("Raycast");
             var raycastResultCounts = _util.CreateTempJobArray<int>(raycasterChunkCount);
             _util.MaintainPersistentArrayLength(ref _entityBuffer, raycasterCount, EntityBufferChunkSize);
             var raycastJob = new RaycastJob
@@ -74,7 +74,10 @@ namespace SpaceSimulator.Runtime.Entities.Physics
                 resultEntities = _entityBuffer
             };
             var raycastHandle = raycastJob.Schedule(raycasterChunkCount, 1, Dependency);
-
+            raycastHandle.Complete();
+            Profiler.EndSample();
+            
+            Profiler.BeginSample("Collect results");
             var collectJob = new SingleBufferedDataCollectJob<Entity>
             {
                 inOutData = _entityBuffer,

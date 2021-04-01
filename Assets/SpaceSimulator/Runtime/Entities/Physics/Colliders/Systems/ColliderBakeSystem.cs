@@ -22,7 +22,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
         private SystemBaseUtil _systemUtil;
         private GridUtil _gridUtil;
         private DebugUtil _debugUtil;
-        private NativeArray<ColliderBounds> _colliderBounds;
+        private NativeArray<FloatBounds> _colliderBounds;
         private NativeArray<ushort> _worldColliders;
         private NativeArray<ColliderListPointer> _worldChunks;
 
@@ -33,7 +33,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
                 typeof(PositionComponent),
                 typeof(ColliderComponent)
             });
-            _colliderBounds = _systemUtil.CreatePersistentArray<ColliderBounds>(ColliderBufferChunkSize);
+            _colliderBounds = _systemUtil.CreatePersistentArray<FloatBounds>(ColliderBufferChunkSize);
             _worldColliders = _systemUtil.CreatePersistentArray<ushort>(ColliderBufferChunkSize * 4);
             _worldChunks = _systemUtil.CreatePersistentArray<ColliderListPointer>(ChunkBufferChunkSize);
         }
@@ -151,7 +151,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
 
             ColliderWorld = new ColliderWorld
             {
-                colliders = new NativeSlice<ColliderBounds>(_colliderBounds, 0, colliderCount),
+                colliders = new NativeSlice<FloatBounds>(_colliderBounds, 0, colliderCount),
                 colliderStream = new NativeSlice<ushort>(_worldColliders, 0, _worldColliders.Length),
                 worldCells = new NativeSlice<ColliderListPointer>(_worldChunks, 0, _worldChunks.Length),
                 worldGrid = worldGrid

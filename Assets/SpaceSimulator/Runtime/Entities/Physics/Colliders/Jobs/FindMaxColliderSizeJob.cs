@@ -8,7 +8,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
     [BurstCompile]
     public struct FindMaxColliderSizeJob : IJobParallelFor
     {
-        [ReadOnly] public NativeArray<ColliderBounds> inBounds;
+        [ReadOnly] public NativeArray<FloatBounds> inBounds;
         [ReadOnly] public int inBoundsPerJob;
         [ReadOnly] public int inTotalBounds;
 

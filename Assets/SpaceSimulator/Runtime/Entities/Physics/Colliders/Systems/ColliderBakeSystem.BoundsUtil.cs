@@ -37,7 +37,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
                 return new float2(xMax, yMax);
             }
 
-            public ColliderBounds JoinBounds(NativeArray<ColliderBounds> colliders)
+            public FloatBounds JoinBounds(NativeArray<FloatBounds> colliders)
             {
                 if (colliders.Length == 0)
                 {
@@ -75,7 +75,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
                     }
                 }
 
-                return new ColliderBounds
+                return new FloatBounds
                 {
                     xMin = xMin,
                     xMax = xMax,

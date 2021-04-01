@@ -13,7 +13,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
             private BoundsUtil _boundsUtil;
             private SystemBaseUtil _systemUtil;
 
-            public ColliderWorldGrid ComputeGrid(NativeArray<ColliderBounds> colliders, int colliderCount)
+            public ColliderWorldGrid ComputeGrid(NativeArray<FloatBounds> colliders, int colliderCount)
             {
                 Profiler.BeginSample("ComputeGrid");
                 
@@ -44,12 +44,12 @@ namespace SpaceSimulator.Runtime.Entities.Physics
                 };
             }
 
-            private ColliderBounds ComputeWorldBounds(NativeArray<ColliderBounds> colliders, int colliderCount)
+            private FloatBounds ComputeWorldBounds(NativeArray<FloatBounds> colliders, int colliderCount)
             {
                 Profiler.BeginSample("ComputeWorldBounds");
                 
                 var colliderJobCount = (int)math.ceil(colliderCount / 128f);
-                var colliderJoinedBounds = _systemUtil.CreateTempJobArray<ColliderBounds>(colliderJobCount);
+                var colliderJoinedBounds = _systemUtil.CreateTempJobArray<FloatBounds>(colliderJobCount);
                 var worldBoundsJob = new JoinBoundsJob
                 {
                     inBounds = colliders,
@@ -74,7 +74,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
                 return worldBounds;
             }
 
-            private float2 FindMaxColliderSize(NativeArray<ColliderBounds> colliders, int colliderCount)
+            private float2 FindMaxColliderSize(NativeArray<FloatBounds> colliders, int colliderCount)
             {
                 Profiler.BeginSample("FindMaxColliderSize");
                 
