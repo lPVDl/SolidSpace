@@ -5,7 +5,6 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
-using UnityEngine;
 using UnityEngine.Profiling;
 
 namespace SpaceSimulator.Runtime.Entities.Physics
@@ -22,6 +21,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
         private EntityQuery _query;
         private SystemBaseUtil _systemUtil;
         private GridUtil _gridUtil;
+        private DebugUtil _debugUtil;
         private NativeArray<ColliderBounds> _colliderBounds;
         private NativeArray<ushort> _worldColliders;
         private NativeArray<ColliderListPointer> _worldChunks;
@@ -53,12 +53,10 @@ namespace SpaceSimulator.Runtime.Entities.Physics
                 colliderOffsets[i] = colliderCount;
                 colliderCount += colliderChunks[i].Count;
             }
-
             Profiler.EndSample();
-
-            _systemUtil.MaintainPersistentArrayLength(ref _colliderBounds, colliderCount, ColliderBufferChunkSize);
-
+            
             Profiler.BeginSample("Compute Colliders Bounds");
+            _systemUtil.MaintainPersistentArrayLength(ref _colliderBounds, colliderCount, ColliderBufferChunkSize);
             var computeBoundsJob = new ComputeBoundsJob
             {
                 colliderChunks = colliderChunks,
@@ -72,7 +70,6 @@ namespace SpaceSimulator.Runtime.Entities.Physics
             Profiler.EndSample();
 
             var worldGrid = _gridUtil.ComputeGrid(_colliderBounds, colliderCount);
-            DebugDrawWorld(worldGrid);
             
             Profiler.BeginSample("Reset Chunks");
             var worldChunkTotal = worldGrid.size.x * worldGrid.size.y;
@@ -158,38 +155,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
             };
 
             SpaceDebug.LogState("ColliderCount", colliderCount);
-        }
-
-        private void DebugDrawWorld(ColliderWorldGrid worldGrid)
-        {
-            var cellSize = 1 << worldGrid.power;
-            var cellCountX = worldGrid.size.x;
-            var cellCountY = worldGrid.size.y;
-            var worldMin = worldGrid.anchor * cellSize;
-            var worldMax = (worldGrid.anchor + worldGrid.size) * cellSize;
-            
-            SpaceDebug.LogState("ColliderCellCountX", cellCountX);
-            SpaceDebug.LogState("ColliderCellCountY", cellCountY);
-            SpaceDebug.LogState("ColliderCellSize", cellSize);
-            
-            Debug.DrawLine(new Vector3(worldMin.x, worldMin.y), new Vector3(worldMin.x, worldMax.y));
-            Debug.DrawLine(new Vector3(worldMin.x, worldMax.y), new Vector3(worldMax.x, worldMax.y));
-            Debug.DrawLine(new Vector3(worldMax.x, worldMax.y), new Vector3(worldMax.x, worldMin.y));
-            Debug.DrawLine(new Vector3(worldMax.x, worldMin.y), new Vector3(worldMin.x, worldMin.y));
-
-            for (var i = 1; i < cellCountX; i++)
-            {
-                var p0 = new Vector3(worldMin.x + cellSize * i, worldMax.y, 0);
-                var p1 = new Vector3(worldMin.x + cellSize * i, worldMin.y, 0);
-                Debug.DrawLine(p0, p1);
-            }
-            
-            for (var i = 1; i < cellCountY; i++)
-            {
-                var p2 = new Vector3(worldMin.x, worldMin.y + i * cellSize, 0);
-                var p3 = new Vector3(worldMax.x, worldMin.y + i * cellSize, 0);
-                Debug.DrawLine(p2, p3);
-            }
+            _debugUtil.LogWorld(worldGrid);
         }
 
         protected override void OnDestroy()
