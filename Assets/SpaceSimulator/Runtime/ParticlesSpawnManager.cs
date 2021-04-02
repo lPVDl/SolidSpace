@@ -28,7 +28,7 @@ namespace SpaceSimulator.Runtime
             {
                 typeof(PositionComponent),
                 typeof(VelocityComponent),
-                typeof(TriangleParticleRenderComponent),
+                typeof(ParticleRenderComponent),
             };
             var archetype = entityManager.CreateArchetype(componentTypes);
 

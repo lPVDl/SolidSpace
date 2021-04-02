@@ -24,7 +24,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
                 typeof(VelocityComponent),
                 typeof(DespawnComponent),
                 typeof(RaycastComponent),
-                typeof(TriangleParticleRenderComponent)
+                typeof(ParticleRenderComponent)
             });
         }
 
@@ -38,6 +38,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
             var entityCount = _computeSystem.ParticleCount;
             var particles = _computeSystem.Particles;
             var entities = EntityManager.CreateEntity(_particleArchetype, entityCount, Allocator.Temp);
+            
             for (var i = 0; i < entityCount; i++)
             {
                 var entity = entities[i];

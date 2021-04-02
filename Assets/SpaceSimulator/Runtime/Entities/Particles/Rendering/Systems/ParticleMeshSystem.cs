@@ -42,7 +42,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
             _query = GetEntityQuery(new ComponentType[]
             {
                 typeof(PositionComponent),
-                typeof(TriangleParticleRenderComponent)
+                typeof(ParticleRenderComponent)
             });
             _square = new SquareVertices
             {
