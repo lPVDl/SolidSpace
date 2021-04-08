@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 using Unity.Collections;
-using UnityEngine;
+using Unity.Mathematics;
 
 namespace SpaceSimulator.Runtime.Entities.Extensions
 {
@@ -22,12 +22,14 @@ namespace SpaceSimulator.Runtime.Entities.Extensions
         public void MaintainPersistentArrayLength<T>(ref NativeArray<T> array, int requiredCapacity, int chunkSize) 
             where T : struct
         {
-            var chunkBasedLength = Mathf.CeilToInt(requiredCapacity / (float) chunkSize) * chunkSize;
-            if (array.Length < chunkBasedLength)
+            if (array.Length >= requiredCapacity)
             {
-                array.Dispose();
-                array = CreatePersistentArray<T>(chunkBasedLength);
+                return;
             }
+            
+            var chunkBasedLength = (int) math.ceil(requiredCapacity / (float) chunkSize) * chunkSize;
+            array.Dispose();
+            array = CreatePersistentArray<T>(chunkBasedLength);
         }
     }
 }
