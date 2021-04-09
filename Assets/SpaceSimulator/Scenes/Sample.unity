@@ -490,7 +490,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _camera: {fileID: 353976494}
   _colliderRadius: 1
-  _onStartSpawnCount: 1000
+  _onStartSpawnCount: 1024
   _spawnPerSpawn: 1
   _spawnExtraRadius: 0
   _spawnRangeX: {x: -600, y: 600}
