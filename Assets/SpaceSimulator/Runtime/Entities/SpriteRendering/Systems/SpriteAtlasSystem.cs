@@ -13,7 +13,11 @@ namespace SpaceSimulator.Runtime.Entities.SpriteRendering
 
         public byte CreateTexture(int2 size)
         {
-            var texture = new Texture2D(size.x, size.y, TextureFormat.ARGB32, false);
+            var texture = new Texture2D(size.x, size.y, TextureFormat.ARGB32, 0, true)
+            {
+                name = nameof(SpriteAtlasSystem) + "_" + _textures.Count,
+            };
+
             _textures.Add(texture);
             
             return (byte) (_textures.Count - 1);

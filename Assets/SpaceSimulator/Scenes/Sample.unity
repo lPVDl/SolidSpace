@@ -407,6 +407,7 @@ GameObject:
   - component: {fileID: 1222791138}
   - component: {fileID: 1222791139}
   - component: {fileID: 1222791140}
+  - component: {fileID: 1222791141}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -449,7 +450,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1222791135}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c887e9ec9625496bbe7c76686c3095a0, type: 3}
   m_Name: 
@@ -483,7 +484,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1222791135}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 13dbf4e661e4401caff32df35f89c8c2, type: 3}
   m_Name: 
@@ -496,3 +497,17 @@ MonoBehaviour:
   _spawnRangeX: {x: -600, y: 600}
   _spawnRangeY: {x: -420, y: 420}
   _drawGizmos: 1
+--- !u!114 &1222791141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1222791135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 770180670dc544bba8e5b28e6670daad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _spriteTexture: {fileID: 2800000, guid: d51b8917003f48442892e8c7a6035160, type: 3}
+  _outputAtlasPath: T:\Atlas.png

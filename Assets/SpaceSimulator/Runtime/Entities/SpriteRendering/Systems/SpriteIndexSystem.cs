@@ -7,6 +7,8 @@ namespace SpaceSimulator.Runtime.Entities.SpriteRendering
 {
     public class SpriteIndexSystem : SystemBase
     {
+        public NativeList<SpriteChunk> Chunks => _chunks;
+        
         private const int MaxSpritePower = 6;
         private const int MinSpritePower = 2;
 
