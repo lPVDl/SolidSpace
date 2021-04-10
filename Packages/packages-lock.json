@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.oddworm.heapexplorer": {
+      "version": "https://github.com/pschraut/UnityHeapExplorer.git#3.8.0",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "f0f5983d7ad9e5a5ab330dca8b13bd88ab50b4ec"
+    },
     "com.unity.burst": {
       "version": "1.4.1",
       "depth": 1,
