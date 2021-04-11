@@ -1,8 +1,6 @@
 using System.Collections;
 using System.IO;
 using SpaceSimulator.Runtime.Entities.SpriteRendering;
-using Unity.Entities;
-using Unity.Mathematics;
 using UnityEngine;
 
 namespace SpaceSimulator.Runtime
@@ -14,17 +12,18 @@ namespace SpaceSimulator.Runtime
 
         private IEnumerator Start()
         {
-            var world = World.DefaultGameObjectInjectionWorld;
-            var indexSystem = world.GetOrCreateSystem<SpriteIndexSystem>();
-            var commandSystem = world.GetOrCreateSystem<SpriteCommandSystem>();
+            var colorSystem = new SpriteAtlasColorSystem();
+            var commandSystem = new SpriteAtlasCommandSystem(colorSystem);
             
-            var spriteIndex = indexSystem.AllocateSpace(new int2(_spriteTexture.width, _spriteTexture.height));
+            var spriteIndex = colorSystem.AllocateSpace(_spriteTexture.width, _spriteTexture.height);
             commandSystem.ScheduleTextureCopy(_spriteTexture, spriteIndex);
+            commandSystem.ProcessCommands();
 
             yield return new WaitForSeconds(1);
-
-            var atlasSystem = world.GetOrCreateSystem<SpriteAtlasSystem>();
-            File.WriteAllBytes(_outputAtlasPath, atlasSystem.Textures[0].EncodeToPNG());
+            
+            File.WriteAllBytes(_outputAtlasPath, colorSystem.Texture.EncodeToPNG());
+            
+            colorSystem.Dispose();
         }
     }
 }

@@ -1,8 +1,8 @@
 namespace SpaceSimulator.Runtime.Entities.SpriteRendering
 {
-    public struct SpriteIndex
+    public struct SpriteAtlasIndex
     {
-        public byte chunkId;
+        public ushort chunkId;
         public byte itemId;
     }
 }

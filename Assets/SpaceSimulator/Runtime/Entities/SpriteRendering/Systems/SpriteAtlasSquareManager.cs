@@ -1,28 +1,31 @@
+using System;
 using System.Collections.Generic;
-using Unity.Entities;
-using Unity.Mathematics;
 
 namespace SpaceSimulator.Runtime.Entities.SpriteRendering
 {
-    public class SpriteSquareSystem : SystemBase
+    public class SpriteAtlasSquareManager
     {
-        private const int MaxSquarePower = 10;
-        private const int AtlasSize = 1 << MaxSquarePower;
+        private readonly Stack<SpriteAtlasSquare>[] _emptySquares;
+        private readonly byte _atlasPower;
         
-        private Stack<SpriteAtlasSquare>[] _emptySquares;
-        private SpriteAtlasSystem _atlasSystem;
-        
-        protected override void OnCreate()
+        public SpriteAtlasSquareManager(byte atlasPower)
         {
-            _atlasSystem = World.GetOrCreateSystem<SpriteAtlasSystem>();
-            _emptySquares = new Stack<SpriteAtlasSquare>[MaxSquarePower + 1];
-            for (var i = 0; i <= MaxSquarePower; i++)
+            _atlasPower = atlasPower;
+            _emptySquares = new Stack<SpriteAtlasSquare>[atlasPower + 1];
+            
+            for (var i = 0; i <= atlasPower; i++)
             {
                 _emptySquares[i] = new Stack<SpriteAtlasSquare>();
             }
+            
+            _emptySquares[atlasPower].Push(new SpriteAtlasSquare
+            {
+                offsetX = 0,
+                offsetY = 0,
+            });
         }
-        
-        public SpriteAtlasSquare AllocateSquare(byte power)
+
+        public SpriteAtlasSquare AllocateSquare(int power)
         {
             var squareStack = _emptySquares[power];
             if (squareStack.Count > 0)
@@ -30,7 +33,7 @@ namespace SpaceSimulator.Runtime.Entities.SpriteRendering
                 return squareStack.Pop();
             }
 
-            for (var i = power + 1; i <= MaxSquarePower; i++)
+            for (var i = power + 1; i <= _atlasPower; i++)
             {
                 squareStack = _emptySquares[i];
                 if (squareStack.Count == 0)
@@ -45,19 +48,16 @@ namespace SpaceSimulator.Runtime.Entities.SpriteRendering
                     squareStack = _emptySquares[j];
                     squareStack.Push(new SpriteAtlasSquare
                     {
-                        atlasId = square.atlasId,
                         offsetX = (byte)(square.offsetX + size),
                         offsetY = square.offsetY
                     });
                     squareStack.Push(new SpriteAtlasSquare
                     {
-                        atlasId = square.atlasId,
                         offsetX = square.offsetX,
                         offsetY = (byte)(square.offsetY + size)
                     });
                     squareStack.Push(new SpriteAtlasSquare
                     {
-                        atlasId = square.atlasId,
                         offsetX = (byte)(square.offsetX + size),
                         offsetY = (byte)(square.offsetY + size)
                     });
@@ -65,20 +65,8 @@ namespace SpaceSimulator.Runtime.Entities.SpriteRendering
 
                 return square;
             }
-            
-            _emptySquares[MaxSquarePower].Push(new SpriteAtlasSquare()
-            {
-                atlasId = _atlasSystem.CreateTexture(new int2(AtlasSize, AtlasSize)),
-                offsetX = 0,
-                offsetY = 0
-            });
-            
-            return AllocateSquare(power);
-        }
 
-        protected override void OnUpdate()
-        {
-            
+            throw new OutOfMemoryException($"Failed to allocate square with size {1 << power}");
         }
     }
 }
