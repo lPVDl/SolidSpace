@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Zenject
 {
-    public class ScriptableObjectInstaller : ScriptableObjectInstallerBase
+    public abstract class ScriptableObjectInstaller : ScriptableObjectInstallerBase
     {
     }
 
@@ -19,7 +19,7 @@ namespace Zenject
     //
     // This approach is needed if you want to pass in strongly typed runtime parameters too it
     //
-    public class ScriptableObjectInstaller<TDerived> : ScriptableObjectInstaller
+    public abstract class ScriptableObjectInstaller<TDerived> : ScriptableObjectInstaller
         where TDerived : ScriptableObjectInstaller<TDerived>
     {
         public static TDerived InstallFromResource(DiContainer container)
@@ -37,7 +37,7 @@ namespace Zenject
         }
     }
 
-    public class ScriptableObjectInstaller<TParam1, TDerived> : ScriptableObjectInstallerBase
+    public abstract class ScriptableObjectInstaller<TParam1, TDerived> : ScriptableObjectInstallerBase
         where TDerived : ScriptableObjectInstaller<TParam1, TDerived>
     {
         public static TDerived InstallFromResource(DiContainer container, TParam1 p1)
@@ -55,7 +55,7 @@ namespace Zenject
         }
     }
 
-    public class ScriptableObjectInstaller<TParam1, TParam2, TDerived> : ScriptableObjectInstallerBase
+    public abstract class ScriptableObjectInstaller<TParam1, TParam2, TDerived> : ScriptableObjectInstallerBase
         where TDerived : ScriptableObjectInstaller<TParam1, TParam2, TDerived>
     {
         public static TDerived InstallFromResource(DiContainer container, TParam1 p1, TParam2 p2)
@@ -73,7 +73,7 @@ namespace Zenject
         }
     }
 
-    public class ScriptableObjectInstaller<TParam1, TParam2, TParam3, TDerived> : ScriptableObjectInstallerBase
+    public abstract class ScriptableObjectInstaller<TParam1, TParam2, TParam3, TDerived> : ScriptableObjectInstallerBase
         where TDerived : ScriptableObjectInstaller<TParam1, TParam2, TParam3, TDerived>
     {
         public static TDerived InstallFromResource(DiContainer container, TParam1 p1, TParam2 p2, TParam3 p3)
@@ -91,7 +91,7 @@ namespace Zenject
         }
     }
 
-    public class ScriptableObjectInstaller<TParam1, TParam2, TParam3, TParam4, TDerived> : ScriptableObjectInstallerBase
+    public abstract class ScriptableObjectInstaller<TParam1, TParam2, TParam3, TParam4, TDerived> : ScriptableObjectInstallerBase
         where TDerived : ScriptableObjectInstaller<TParam1, TParam2, TParam3, TParam4, TDerived>
     {
         public static TDerived InstallFromResource(DiContainer container, TParam1 p1, TParam2 p2, TParam3 p3, TParam4 p4)

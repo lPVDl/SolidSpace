@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Zenject
 {
-    public class ScriptableObjectInstallerBase : ScriptableObject, IInstaller
+    public abstract class ScriptableObjectInstallerBase : ScriptableObject, IInstaller
     {
         [Inject]
         DiContainer _container = null;
@@ -20,10 +20,7 @@ namespace Zenject
             get { return true; }
         }
 
-        public virtual void InstallBindings()
-        {
-            
-        }
+        public abstract void InstallBindings();
     }
 }
 
