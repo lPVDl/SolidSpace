@@ -1,0 +1,111 @@
+using SpaceSimulator.Runtime.Entities.Extensions;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Jobs;
+using UnityEngine;
+using UnityEngine.Profiling;
+
+namespace SpaceSimulator.Runtime.Entities.Despawn
+{
+    public class DespawnComputeSystem : IEntitySystem
+    {
+        private const int IterationCycle = 8;
+
+        public ESystemType SystemType => ESystemType.Compute;
+
+        public NativeArray<Entity> ResultBuffer => _entities;
+        public int ResultCount => _entityCount[0];
+        
+        private readonly World _world;
+        
+        private EntityQuery _query;
+        private NativeArray<int> _entityCount;
+        private NativeArray<Entity> _entities;
+        private int _lastOffset;
+        private EntitySystemUtil _util;
+
+        public DespawnComputeSystem(World world)
+        {
+            _world = world;
+        }
+        
+        public void Initialize()
+        {
+            _query = _world.EntityManager.CreateEntityQuery(typeof(DespawnComponent));
+            _lastOffset = -1;
+            _entities = _util.CreatePersistentArray<Entity>(4096);
+            _entityCount = _util.CreatePersistentArray<int>(1);
+            _entityCount[0] = 0;
+        }
+
+        public void Update()
+        {
+            Profiler.BeginSample("CalculateChunkCount");
+            var chunkCount = _query.CalculateChunkCount();
+            Profiler.EndSample();
+            
+            Profiler.BeginSample("Create Compute Buffer");
+            _lastOffset = (_lastOffset + 1) % IterationCycle;
+            var rawChunks = _query.CreateArchetypeChunkArray(Allocator.Temp);
+            var computeChunkCount = Mathf.CeilToInt((chunkCount - _lastOffset) / (float) IterationCycle);
+            var computeChunks = _util.CreateTempJobArray<ArchetypeChunk>(computeChunkCount);
+            var computeOffsets = _util.CreateTempJobArray<int>(computeChunkCount);
+            var countsBuffer = _util.CreateTempJobArray<int>(computeChunkCount);
+            var entityCount = 0;
+            var chunkIndex = 0;
+
+            for (var offset = _lastOffset; offset < chunkCount; offset += IterationCycle)
+            {
+                var rawChunk = rawChunks[offset];
+                computeOffsets[chunkIndex] = entityCount;
+                computeChunks[chunkIndex] = rawChunk;
+                entityCount += rawChunk.Count;
+                chunkIndex++;
+            }
+            Profiler.EndSample();
+
+            Profiler.BeginSample("Update Entities Buffer");
+            if (_entities.Length < entityCount)
+            {
+                _entities.Dispose();
+                _entities = _util.CreatePersistentArray<Entity>(entityCount * 2);
+            }
+            Profiler.EndSample();
+
+            Profiler.BeginSample("Compute and collect");
+            var computeJob = new DespawnComputeJob
+            {
+                inChunks = computeChunks,
+                despawnHandle = _world.EntityManager.GetComponentTypeHandle<DespawnComponent>(true),
+                entityHandle = _world.EntityManager.GetEntityTypeHandle(),
+                outEntityCounts = countsBuffer, 
+                inWriteOffsets = computeOffsets,
+                outEntities = _entities,
+                time = (float) _world.Time.ElapsedTime
+            };
+            var computeJobHandle = computeJob.Schedule(computeChunkCount, 32);
+
+            var collectJob = new SingleBufferedDataCollectJob<Entity>
+            {
+                inCounts = countsBuffer,
+                inOffsets = computeOffsets,
+                inOutData = _entities,
+                outCount = _entityCount
+            };
+            var collectJobHandle = collectJob.Schedule(computeJobHandle);
+            collectJobHandle.Complete();
+            Profiler.EndSample();
+
+            countsBuffer.Dispose();
+            rawChunks.Dispose();
+            computeChunks.Dispose();
+            computeOffsets.Dispose();
+        }
+
+        public void FinalizeSystem()
+        {
+            _entities.Dispose();
+            _entityCount.Dispose();
+        }
+    }
+}

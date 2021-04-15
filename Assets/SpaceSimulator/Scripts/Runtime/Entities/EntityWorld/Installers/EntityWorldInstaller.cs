@@ -12,8 +12,6 @@ namespace SpaceSimulator.Runtime.Entities
         {
             var world = new World("SpaceSimulator");
             Container.BindInstance(world).AsSingle();
-            Container.BindInstance(world.EntityManager).AsSingle();
-
             Container.BindInterfacesTo<EntityCycleController>().AsSingle().WithArguments(_entityCycleConfig);
         }
     }

@@ -1,5 +1,4 @@
 using System.Runtime.CompilerServices;
-using SpaceSimulator.Runtime.Entities.Common;
 using SpaceSimulator.Runtime.Entities.Physics.Velocity;
 using Unity.Burst;
 using Unity.Collections;

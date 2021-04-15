@@ -3,6 +3,8 @@ namespace SpaceSimulator.Runtime.Entities
     public enum ESystemType
     {
         Invalid = 0,
-        Common = 1,
+        Compute = 1,
+        Command = 2,
+        Render = 3,
     }
 }

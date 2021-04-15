@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: EntityWorldInstaller
   m_EditorClassIdentifier: 
   _entityCycleConfig:
-    _invocationOrder: 01000000
+    _invocationOrder: 010000000200000003000000

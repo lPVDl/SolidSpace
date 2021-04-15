@@ -30,7 +30,7 @@ namespace SpaceSimulator.Runtime
             {
                 foreach (var controller in unordered)
                 {
-                    var message = $"{controller.GetType()} ({controller.ControllerType}) is missing in initialization order list";
+                    var message = $"{controller.GetType()} ({controller.ControllerType}) is missing in initialization order list.";
                     Debug.LogError(message);
                 }
                 

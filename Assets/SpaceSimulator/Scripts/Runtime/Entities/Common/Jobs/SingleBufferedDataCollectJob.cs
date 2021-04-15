@@ -2,7 +2,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 
-namespace SpaceSimulator.Runtime.Entities.Common
+namespace SpaceSimulator.Runtime.Entities
 {
     [BurstCompile]
     public struct SingleBufferedDataCollectJob<T> : IJob where T : struct

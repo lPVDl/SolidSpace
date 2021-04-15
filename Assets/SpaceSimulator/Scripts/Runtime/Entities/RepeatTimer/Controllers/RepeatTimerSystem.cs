@@ -1,0 +1,49 @@
+using SpaceSimulator.Runtime.DebugUtils;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Jobs;
+
+namespace SpaceSimulator.Runtime.Entities.RepeatTimer
+{
+    public class RepeatTimerSystem : IEntitySystem
+    {
+        public ESystemType SystemType => ESystemType.Compute;
+
+        private readonly World _world;
+        
+        private EntityQuery _query;
+
+        public RepeatTimerSystem(World world)
+        {
+            _world = world;
+        }
+        
+        public void Initialize()
+        {
+            _query = _world.EntityManager.CreateEntityQuery(typeof(RepeatTimerComponent));
+        }
+
+        public void Update()
+        {
+            var chunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
+            var job = new RepeatTimerJob
+            {
+                chunks = chunks,
+                deltaTime = _world.Time.DeltaTime,
+                timerHandle = _world.EntityManager.GetComponentTypeHandle<RepeatTimerComponent>(false)
+            };
+            
+            SpaceDebug.LogState("deltaTime", _world.Time.DeltaTime);
+            
+            var handle = job.Schedule(chunks.Length, 32);
+            handle.Complete();
+
+            chunks.Dispose();
+        }
+
+        public void FinalizeSystem()
+        {
+            
+        }
+    }
+}

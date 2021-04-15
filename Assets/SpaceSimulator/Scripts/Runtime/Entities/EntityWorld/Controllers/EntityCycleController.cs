@@ -33,7 +33,7 @@ namespace SpaceSimulator.Runtime.Entities
             {
                 foreach (var controller in unordered)
                 {
-                    var message = $"{controller.GetType()} ({controller.SystemType}) is missing in update order list";
+                    var message = $"{controller.GetType()} ({controller.SystemType}) is missing in update order list.";
                     Debug.LogError(message);
                 }
                 
