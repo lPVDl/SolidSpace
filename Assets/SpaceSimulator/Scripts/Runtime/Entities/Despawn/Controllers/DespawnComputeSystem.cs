@@ -16,7 +16,7 @@ namespace SpaceSimulator.Runtime.Entities.Despawn
         public NativeArray<Entity> ResultBuffer => _entities;
         public int ResultCount => _entityCount[0];
         
-        private readonly World _world;
+        private readonly IEntityWorld _world;
         
         private EntityQuery _query;
         private NativeArray<int> _entityCount;
@@ -24,7 +24,7 @@ namespace SpaceSimulator.Runtime.Entities.Despawn
         private int _lastOffset;
         private EntitySystemUtil _util;
 
-        public DespawnComputeSystem(World world)
+        public DespawnComputeSystem(IEntityWorld world)
         {
             _world = world;
         }

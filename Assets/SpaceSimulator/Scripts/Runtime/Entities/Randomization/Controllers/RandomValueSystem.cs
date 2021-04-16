@@ -12,14 +12,14 @@ namespace SpaceSimulator.Runtime.Entities.Randomization
 
         public ESystemType SystemType => ESystemType.Compute;
 
-        private readonly World _world;
+        private readonly IEntityWorld _world;
         
         private NativeArray<float> _randomBuffer;
         private int _randomIndex;
         private EntityQuery _query;
         private EntitySystemUtil _util;
 
-        public RandomValueSystem(World world)
+        public RandomValueSystem(IEntityWorld world)
         {
             _world = world;
         }

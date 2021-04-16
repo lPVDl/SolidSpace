@@ -19,13 +19,13 @@ namespace SpaceSimulator.Runtime.Playground
 
         public EControllerType ControllerType => EControllerType.Common;
 
-        private readonly World _world;
+        private readonly IEntityWorld _world;
         private readonly ColliderSpawnManagerConfig _config;
         private readonly Camera _camera;
         private readonly List<ColliderInfo> _spawnedColliders;
         private readonly ComponentType[] _colliderArchetype;
 
-        public ColliderSpawnManager(World world, ColliderSpawnManagerConfig config, Camera camera)
+        public ColliderSpawnManager(IEntityWorld world, ColliderSpawnManagerConfig config, Camera camera)
         {
             _world = world;
             _config = config;

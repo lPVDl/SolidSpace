@@ -8,10 +8,10 @@ namespace SpaceSimulator.Runtime.Entities.Physics
     {
         public ESystemType SystemType => ESystemType.Command;
 
-        private readonly World _world;
+        private readonly IEntityWorld _world;
         private readonly RaycastComputeSystem _computeSystem;
 
-        public RaycastCommandSystem(World world, RaycastComputeSystem computeSystem)
+        public RaycastCommandSystem(IEntityWorld world, RaycastComputeSystem computeSystem)
         {
             _world = world;
             _computeSystem = computeSystem;

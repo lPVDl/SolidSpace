@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace SpaceSimulator.Runtime
 {
-    public class GameCycleInstaller : ScriptableInstaller
+    public class GameCycleInstaller : Installer
     {
         [SerializeField] private GameCycleConfig _gameCycleConfig;
 

@@ -1,6 +1,6 @@
 namespace SpaceSimulator.Runtime.Entities.Physics
 {
-    public class CollidersInstaller : ScriptableInstaller
+    public class CollidersInstaller : Installer
     {
         public override void InstallBindings()
         {

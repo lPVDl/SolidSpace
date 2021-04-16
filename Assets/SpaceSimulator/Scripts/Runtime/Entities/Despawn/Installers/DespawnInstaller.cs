@@ -1,6 +1,6 @@
 namespace SpaceSimulator.Runtime.Entities.Despawn
 {
-    public class DespawnInstaller : ScriptableInstaller
+    public class DespawnInstaller : Installer
     {
         public override void InstallBindings()
         {

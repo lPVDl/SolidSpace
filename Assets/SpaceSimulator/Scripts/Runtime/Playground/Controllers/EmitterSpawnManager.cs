@@ -17,9 +17,9 @@ namespace SpaceSimulator.Runtime.Playground
 
         private readonly EmitterSpawnManagerConfig _config;
         private readonly ParticleMeshSystem _renderSystem;
-        private readonly World _world;
+        private readonly IEntityWorld _world;
 
-        public EmitterSpawnManager(EmitterSpawnManagerConfig config, ParticleMeshSystem renderSystem, World world)
+        public EmitterSpawnManager(EmitterSpawnManagerConfig config, ParticleMeshSystem renderSystem, IEntityWorld world)
         {
             _config = config;
             _renderSystem = renderSystem;

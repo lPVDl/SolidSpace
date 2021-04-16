@@ -19,7 +19,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
         private const int MappingJobCount = 8;
         private const int MaxCellCount = 65536;
 
-        private readonly World _world;
+        private readonly IEntityWorld _world;
         
         private EntityQuery _query;
         private EntitySystemUtil _systemUtil;
@@ -29,7 +29,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
         private NativeArray<ushort> _worldColliders;
         private NativeArray<ColliderListPointer> _worldChunks;
 
-        public ColliderBakeSystem(World world)
+        public ColliderBakeSystem(IEntityWorld world)
         {
             _world = world;
         }

@@ -9,11 +9,11 @@ namespace SpaceSimulator.Runtime.Entities.RepeatTimer
     {
         public ESystemType SystemType => ESystemType.Compute;
 
-        private readonly World _world;
+        private readonly IEntityWorld _world;
         
         private EntityQuery _query;
 
-        public RepeatTimerSystem(World world)
+        public RepeatTimerSystem(IEntityWorld world)
         {
             _world = world;
         }

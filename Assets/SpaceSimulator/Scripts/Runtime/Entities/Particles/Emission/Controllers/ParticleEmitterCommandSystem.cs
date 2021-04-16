@@ -12,12 +12,12 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
     {
         public ESystemType SystemType => ESystemType.Command;
         
-        private readonly World _world;
+        private readonly IEntityWorld _world;
         private readonly ParticleEmitterComputeSystem _computeSystem;
         
         private EntityArchetype _particleArchetype;
 
-        public ParticleEmitterCommandSystem(World world, ParticleEmitterComputeSystem computeSystem)
+        public ParticleEmitterCommandSystem(IEntityWorld world, ParticleEmitterComputeSystem computeSystem)
         {
             _world = world;
             _computeSystem = computeSystem;

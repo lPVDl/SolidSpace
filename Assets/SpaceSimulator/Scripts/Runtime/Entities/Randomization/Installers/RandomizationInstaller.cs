@@ -1,6 +1,6 @@
 namespace SpaceSimulator.Runtime.Entities.Randomization
 {
-    public class RandomizationInstaller : ScriptableInstaller
+    public class RandomizationInstaller : Installer
     {
         public override void InstallBindings()
         {

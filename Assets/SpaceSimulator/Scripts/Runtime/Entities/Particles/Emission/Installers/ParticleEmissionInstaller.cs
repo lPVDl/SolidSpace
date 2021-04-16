@@ -1,6 +1,6 @@
 namespace SpaceSimulator.Runtime.Entities.Particles.Emission
 {
-    public class ParticleEmissionInstaller : ScriptableInstaller
+    public class ParticleEmissionInstaller : Installer
     {
         public override void InstallBindings()
         {

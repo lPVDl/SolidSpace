@@ -19,7 +19,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
         public ESystemType SystemType => ESystemType.Render;
         public Material Material { private get; set; }
         
-        private readonly World _world;
+        private readonly IEntityWorld _world;
         
         private EntityQuery _query;
         private SquareVertices _square;
@@ -30,7 +30,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
         private Matrix4x4 _matrixDefault;
         private MeshUpdateFlags _meshUpdateFlags;
 
-        public ParticleMeshSystem(World world)
+        public ParticleMeshSystem(IEntityWorld world)
         {
             _world = world;
         }

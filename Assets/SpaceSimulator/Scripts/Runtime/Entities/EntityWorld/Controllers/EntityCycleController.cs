@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Entities;
 using UnityEngine;
 
 namespace SpaceSimulator.Runtime.Entities
@@ -10,7 +11,7 @@ namespace SpaceSimulator.Runtime.Entities
         public EControllerType ControllerType => EControllerType.Common;
 
         private readonly EntityCycleConfig _config;
-        
+
         private List<IEntitySystem> _systems;
 
         public EntityCycleController(List<IEntitySystem> systems, EntityCycleConfig config)

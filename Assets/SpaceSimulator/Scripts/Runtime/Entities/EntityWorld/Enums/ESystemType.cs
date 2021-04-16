@@ -6,5 +6,6 @@ namespace SpaceSimulator.Runtime.Entities
         Compute = 1,
         Command = 2,
         Render = 3,
+        World = 4,
     }
 }

@@ -8,11 +8,11 @@ namespace SpaceSimulator.Runtime.Entities.Physics.Velocity
     {
         public ESystemType SystemType => ESystemType.Compute;
         
-        private readonly World _world;
+        private readonly IEntityWorld _world;
         
         private EntityQuery _query;
 
-        public VelocitySystem(World world)
+        public VelocitySystem(IEntityWorld world)
         {
             _world = world;
         }

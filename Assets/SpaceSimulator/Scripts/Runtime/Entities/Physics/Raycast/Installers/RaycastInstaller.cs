@@ -1,6 +1,6 @@
 namespace SpaceSimulator.Runtime.Entities.Physics
 {
-    public class RaycastInstaller : ScriptableInstaller
+    public class RaycastInstaller : Installer
     {
         public override void InstallBindings()
         {

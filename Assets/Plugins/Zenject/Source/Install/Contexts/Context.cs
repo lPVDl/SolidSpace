@@ -15,7 +15,7 @@ namespace Zenject
     public abstract class Context : MonoBehaviour
     {
         [SerializeField]
-        List<ScriptableObjectInstaller> _scriptableObjectInstallers = new List<ScriptableObjectInstaller>();
+        List<ScriptableObjectInstallerBase> _scriptableObjectInstallers = new List<ScriptableObjectInstallerBase>();
 
         [FormerlySerializedAs("Installers")]
         [FormerlySerializedAs("_installers")]
@@ -48,7 +48,7 @@ namespace Zenject
             }
         }
 
-        public IEnumerable<ScriptableObjectInstaller> ScriptableObjectInstallers
+        public IEnumerable<ScriptableObjectInstallerBase> ScriptableObjectInstallers
         {
             get { return _scriptableObjectInstallers; }
             set
@@ -143,7 +143,7 @@ namespace Zenject
         protected void InstallInstallers(
             List<InstallerBase> normalInstallers,
             List<Type> normalInstallerTypes,
-            List<ScriptableObjectInstaller> scriptableObjectInstallers,
+            List<ScriptableObjectInstallerBase> scriptableObjectInstallers,
             List<MonoInstaller> installers,
             List<MonoInstaller> installerPrefabs)
         {

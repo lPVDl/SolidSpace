@@ -18,7 +18,7 @@ namespace Zenject
         List<MonoInstaller> _lateInstallerPrefabs = new List<MonoInstaller>();
 
         [SerializeField]
-        List<ScriptableObjectInstaller> _lateScriptableObjectInstallers = new List<ScriptableObjectInstaller>();
+        List<ScriptableObjectInstallerBase> _lateScriptableObjectInstallers = new List<ScriptableObjectInstallerBase>();
 
         public IEnumerable<MonoInstaller> LateInstallers
         {
@@ -40,7 +40,7 @@ namespace Zenject
             }
         }
 
-        public IEnumerable<ScriptableObjectInstaller> LateScriptableObjectInstallers
+        public IEnumerable<ScriptableObjectInstallerBase> LateScriptableObjectInstallers
         {
             get { return _lateScriptableObjectInstallers; }
             set

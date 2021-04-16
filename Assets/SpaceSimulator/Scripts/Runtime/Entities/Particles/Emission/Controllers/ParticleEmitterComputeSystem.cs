@@ -18,14 +18,14 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
         public NativeArray<ParticleEmissionData> Particles => _particles;
         public int ParticleCount => _particleCount[0];
         
-        private readonly World _world;
+        private readonly IEntityWorld _world;
         
         private EntityQuery _query;
         private NativeArray<ParticleEmissionData> _particles;
         private NativeArray<int> _particleCount;
         private EntitySystemUtil _util;
 
-        public ParticleEmitterComputeSystem(World world)
+        public ParticleEmitterComputeSystem(IEntityWorld world)
         {
             _world = world;
         }

@@ -16,7 +16,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
         public NativeArray<Entity> HitEntities => _entityBuffer;
         public int HitCount => _entityCount[0];
 
-        private readonly World _world;
+        private readonly IEntityWorld _world;
         private readonly ColliderBakeSystem _colliderSystem;
         
         private EntityQuery _raycasterQuery;
@@ -24,7 +24,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
         private NativeArray<int> _entityCount;
         private EntitySystemUtil _util;
 
-        public RaycastComputeSystem(World world, ColliderBakeSystem colliderSystem)
+        public RaycastComputeSystem(IEntityWorld world, ColliderBakeSystem colliderSystem)
         {
             _world = world;
             _colliderSystem = colliderSystem;
