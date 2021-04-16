@@ -19,7 +19,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
         private const int MappingJobCount = 8;
         private const int MaxCellCount = 65536;
 
-        private readonly IEntityWorld _world;
+        private readonly IEntityManager _entityManager;
         
         private EntityQuery _query;
         private EntitySystemUtil _systemUtil;
@@ -29,14 +29,14 @@ namespace SpaceSimulator.Runtime.Entities.Physics
         private NativeArray<ushort> _worldColliders;
         private NativeArray<ColliderListPointer> _worldChunks;
 
-        public ColliderBakeSystem(IEntityWorld world)
+        public ColliderBakeSystem(IEntityManager entityManager)
         {
-            _world = world;
+            _entityManager = entityManager;
         }
         
         public void Initialize()
         {
-            _query = _world.EntityManager.CreateEntityQuery(new ComponentType[]
+            _query = _entityManager.CreateEntityQuery(new ComponentType[]
             {
                 typeof(PositionComponent),
                 typeof(ColliderComponent)
@@ -70,8 +70,8 @@ namespace SpaceSimulator.Runtime.Entities.Physics
                 colliderChunks = colliderChunks,
                 boundsWriteOffsets = colliderOffsets,
                 outputBounds = _colliderBounds,
-                colliderHandle = _world.EntityManager.GetComponentTypeHandle<ColliderComponent>(true),
-                positionHandle = _world.EntityManager.GetComponentTypeHandle<PositionComponent>(true)
+                colliderHandle = _entityManager.GetComponentTypeHandle<ColliderComponent>(true),
+                positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true)
             };
             var computeBoundsJobHandle = computeBoundsJob.Schedule(colliderChunkCount, 8);
             computeBoundsJobHandle.Complete();

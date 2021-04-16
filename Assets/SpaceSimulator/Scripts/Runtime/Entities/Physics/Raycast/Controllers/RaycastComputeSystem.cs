@@ -16,7 +16,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
         public NativeArray<Entity> HitEntities => _entityBuffer;
         public int HitCount => _entityCount[0];
 
-        private readonly IEntityWorld _world;
+        private readonly IEntityManager _entityManager;
         private readonly ColliderBakeSystem _colliderSystem;
         private readonly IEntityWorldTime _time;
 
@@ -25,16 +25,16 @@ namespace SpaceSimulator.Runtime.Entities.Physics
         private NativeArray<int> _entityCount;
         private EntitySystemUtil _util;
 
-        public RaycastComputeSystem(IEntityWorld world, ColliderBakeSystem colliderSystem, IEntityWorldTime time)
+        public RaycastComputeSystem(IEntityManager entityManager, ColliderBakeSystem colliderSystem, IEntityWorldTime time)
         {
-            _world = world;
+            _entityManager = entityManager;
             _colliderSystem = colliderSystem;
             _time = time;
         }
         
         public void Initialize()
         {
-            _raycasterQuery = _world.EntityManager.CreateEntityQuery(new ComponentType[]
+            _raycasterQuery = _entityManager.CreateEntityQuery(new ComponentType[]
             {
                 typeof(PositionComponent),
                 typeof(VelocityComponent),
@@ -69,9 +69,9 @@ namespace SpaceSimulator.Runtime.Entities.Physics
             {
                 raycasterChunks = raycasterChunks,
                 resultWriteOffsets = raycasterOffsets,
-                positionHandle = _world.EntityManager.GetComponentTypeHandle<PositionComponent>(true),
-                velocityHandle = _world.EntityManager.GetComponentTypeHandle<VelocityComponent>(true),
-                entityHandle = _world.EntityManager.GetEntityTypeHandle(),
+                positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
+                velocityHandle = _entityManager.GetComponentTypeHandle<VelocityComponent>(true),
+                entityHandle = _entityManager.GetEntityTypeHandle(),
                 inColliderWorld = _colliderSystem.ColliderWorld,
                 deltaTime = _time.DeltaTime,
                 resultCounts = raycastResultCounts,

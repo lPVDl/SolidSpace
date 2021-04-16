@@ -17,18 +17,17 @@ namespace SpaceSimulator.Runtime.Playground
 
         private readonly EmitterSpawnManagerConfig _config;
         private readonly ParticleMeshSystem _renderSystem;
-        private readonly IEntityWorld _world;
+        private readonly IEntityManager _entityManager;
 
-        public EmitterSpawnManager(EmitterSpawnManagerConfig config, ParticleMeshSystem renderSystem, IEntityWorld world)
+        public EmitterSpawnManager(EmitterSpawnManagerConfig config, ParticleMeshSystem renderSystem, IEntityManager entityManager)
         {
             _config = config;
             _renderSystem = renderSystem;
-            _world = world;
+            _entityManager = entityManager;
         }
         
         public void Initialize()
         {
-            var entityManager = _world.EntityManager;
             _renderSystem.Material = _config.ParticleMaterial;
 
             var componentTypes = new ComponentType[]
@@ -38,25 +37,23 @@ namespace SpaceSimulator.Runtime.Playground
                 typeof(RandomValueComponent),
                 typeof(RepeatTimerComponent),
             };
-            var shipArchetype = entityManager.CreateArchetype(componentTypes);
-
-            using var entityArray = new NativeArray<Entity>(_config.EntityCount, Allocator.Temp);
-
-            entityManager.CreateEntity(shipArchetype, entityArray);
+            var shipArchetype = _entityManager.CreateArchetype(componentTypes);
+            
+            using var entityArray = _entityManager.CreateEntity(shipArchetype, _config.EntityCount, Allocator.Temp);
 
             foreach (var entity in entityArray)
             {
                 var x = Random.Range(_config.SpawnRangeX.x, _config.SpawnRangeX.y);
                 var y = Random.Range(_config.SpawnRangeY.x, _config.SpawnRangeY.y);
-                entityManager.SetComponentData(entity, new PositionComponent
+                _entityManager.SetComponentData(entity, new PositionComponent
                 {
                     value = new float2(x, y)
                 });
-                entityManager.SetComponentData(entity, new RepeatTimerComponent
+                _entityManager.SetComponentData(entity, new RepeatTimerComponent
                 {
                     delay = 1 / _config.SpawnRate
                 });
-                entityManager.SetComponentData(entity, new ParticleEmitterComponent
+                _entityManager.SetComponentData(entity, new ParticleEmitterComponent
                 {
                     particleVelocity = _config.ParticleVelocity
                 });

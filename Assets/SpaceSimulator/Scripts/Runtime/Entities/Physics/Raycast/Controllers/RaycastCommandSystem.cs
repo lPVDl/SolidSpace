@@ -8,12 +8,12 @@ namespace SpaceSimulator.Runtime.Entities.Physics
     {
         public ESystemType SystemType => ESystemType.Command;
 
-        private readonly IEntityWorld _world;
+        private readonly IEntityManager _entityManager;
         private readonly RaycastComputeSystem _computeSystem;
 
-        public RaycastCommandSystem(IEntityWorld world, RaycastComputeSystem computeSystem)
+        public RaycastCommandSystem(IEntityManager entityManager, RaycastComputeSystem computeSystem)
         {
-            _world = world;
+            _entityManager = entityManager;
             _computeSystem = computeSystem;
         }
 
@@ -26,7 +26,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
         {
             var hitCount = _computeSystem.HitCount;
             var slice = new NativeSlice<Entity>(_computeSystem.HitEntities, 0, hitCount);
-            _world.EntityManager.DestroyEntity(slice);
+            _entityManager.DestroyEntity(slice);
 
             SpaceDebug.LogState("RayHit", hitCount);
         }

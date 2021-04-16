@@ -19,15 +19,15 @@ namespace SpaceSimulator.Runtime.Playground
 
         public EControllerType ControllerType => EControllerType.Common;
 
-        private readonly IEntityWorld _world;
+        private readonly IEntityManager _entityManager;
         private readonly ColliderSpawnManagerConfig _config;
         private readonly Camera _camera;
         private readonly List<ColliderInfo> _spawnedColliders;
         private readonly ComponentType[] _colliderArchetype;
 
-        public ColliderSpawnManager(IEntityWorld world, ColliderSpawnManagerConfig config, Camera camera)
+        public ColliderSpawnManager(IEntityManager entityManager, ColliderSpawnManagerConfig config, Camera camera)
         {
-            _world = world;
+            _entityManager = entityManager;
             _config = config;
             _camera = camera;
             _spawnedColliders = new List<ColliderInfo>();
@@ -88,29 +88,24 @@ namespace SpaceSimulator.Runtime.Playground
 
             var entity = _spawnedColliders[minIndex].entity;
             _spawnedColliders.RemoveAt(minIndex);
-            
-            var world = World.DefaultGameObjectInjectionWorld;
-            var entityManager = world.EntityManager;
-            entityManager.DestroyEntity(entity);
+            _entityManager.DestroyEntity(entity);
         }
 
         private void SpawnCollider(Vector3 position)
         {
-            var entityManager = _world.EntityManager;
-            
             var info = new ColliderInfo
             {
                 position = position,
-                entity = entityManager.CreateEntity(_colliderArchetype)
+                entity = _entityManager.CreateEntity(_colliderArchetype)
             };
             _spawnedColliders.Add(info);
             
-            entityManager.SetComponentData(info.entity, new PositionComponent
+            _entityManager.SetComponentData(info.entity, new PositionComponent
             {
                 value = new float2(position.x, position.y)
             });
             
-            entityManager.SetComponentData(info.entity, new ColliderComponent
+            _entityManager.SetComponentData(info.entity, new ColliderComponent
             {
                 radius = _config.ColliderRadius
             });

@@ -18,7 +18,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
         public NativeArray<ParticleEmissionData> Particles => _particles;
         public int ParticleCount => _particleCount[0];
         
-        private readonly IEntityWorld _world;
+        private readonly IEntityManager _entityManager;
         private readonly IEntityWorldTime _time;
 
         private EntityQuery _query;
@@ -26,15 +26,15 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
         private NativeArray<int> _particleCount;
         private EntitySystemUtil _util;
 
-        public ParticleEmitterComputeSystem(IEntityWorld world, IEntityWorldTime time)
+        public ParticleEmitterComputeSystem(IEntityManager entityManager, IEntityWorldTime time)
         {
-            _world = world;
+            _entityManager = entityManager;
             _time = time;
         }
 
         public void Initialize()
         {
-            _query = _world.EntityManager.CreateEntityQuery(new ComponentType[]
+            _query = _entityManager.CreateEntityQuery(new ComponentType[]
             {
                 typeof(ParticleEmitterComponent),
                 typeof(PositionComponent),
@@ -70,10 +70,10 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
             var computeJob = new ParticleEmitterComputeJob
             {
                 inChunks = chunks,
-                timerHandle = _world.EntityManager.GetComponentTypeHandle<RepeatTimerComponent>(false),
-                positionHandle = _world.EntityManager.GetComponentTypeHandle<PositionComponent>(true),
-                randomHandle = _world.EntityManager.GetComponentTypeHandle<RandomValueComponent>(true),
-                emittterHandle = _world.EntityManager.GetComponentTypeHandle<ParticleEmitterComponent>(true),
+                timerHandle = _entityManager.GetComponentTypeHandle<RepeatTimerComponent>(false),
+                positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
+                randomHandle = _entityManager.GetComponentTypeHandle<RandomValueComponent>(true),
+                emittterHandle = _entityManager.GetComponentTypeHandle<ParticleEmitterComponent>(true),
                 inTime = (float) _time.ElapsedTime,
                 outParticles = _particles, 
                 inWriteOffsets = offsets,

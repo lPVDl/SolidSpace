@@ -9,20 +9,20 @@ namespace SpaceSimulator.Runtime.Entities.RepeatTimer
     {
         public ESystemType SystemType => ESystemType.Compute;
 
-        private readonly IEntityWorld _world;
+        private readonly IEntityManager _entityManager;
         private readonly IEntityWorldTime _time;
 
         private EntityQuery _query;
 
-        public RepeatTimerSystem(IEntityWorld world, IEntityWorldTime time)
+        public RepeatTimerSystem(IEntityManager entityManager, IEntityWorldTime time)
         {
-            _world = world;
+            _entityManager = entityManager;
             _time = time;
         }
         
         public void Initialize()
         {
-            _query = _world.EntityManager.CreateEntityQuery(typeof(RepeatTimerComponent));
+            _query = _entityManager.CreateEntityQuery(typeof(RepeatTimerComponent));
         }
 
         public void Update()
@@ -32,7 +32,7 @@ namespace SpaceSimulator.Runtime.Entities.RepeatTimer
             {
                 chunks = chunks,
                 deltaTime = _time.DeltaTime,
-                timerHandle = _world.EntityManager.GetComponentTypeHandle<RepeatTimerComponent>(false)
+                timerHandle = _entityManager.GetComponentTypeHandle<RepeatTimerComponent>(false)
             };
             
             SpaceDebug.LogState("deltaTime", _time.DeltaTime);

@@ -8,20 +8,20 @@ namespace SpaceSimulator.Runtime.Entities.Physics.Velocity
     {
         public ESystemType SystemType => ESystemType.Compute;
         
-        private readonly IEntityWorld _world;
+        private readonly IEntityManager _entityManager;
         private readonly IEntityWorldTime _time;
 
         private EntityQuery _query;
 
-        public VelocitySystem(IEntityWorld world, IEntityWorldTime time)
+        public VelocitySystem(IEntityManager entityManager, IEntityWorldTime time)
         {
-            _world = world;
+            _entityManager = entityManager;
             _time = time;
         }
         
         public void Initialize()
         {
-            _query = _world.EntityManager.CreateEntityQuery(new ComponentType[]
+            _query = _entityManager.CreateEntityQuery(new ComponentType[]
             {
                 typeof(PositionComponent),
                 typeof(VelocityComponent)
@@ -34,8 +34,8 @@ namespace SpaceSimulator.Runtime.Entities.Physics.Velocity
             var job = new VelocityJob
             {
                 deltaTime = _time.DeltaTime,
-                positionHandle = _world.EntityManager.GetComponentTypeHandle<PositionComponent>(false),
-                velocityHandle = _world.EntityManager.GetComponentTypeHandle<VelocityComponent>(true),
+                positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(false),
+                velocityHandle = _entityManager.GetComponentTypeHandle<VelocityComponent>(true),
                 chunks = chunks
             };
             

@@ -19,7 +19,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
         public ESystemType SystemType => ESystemType.Render;
         public Material Material { private get; set; }
         
-        private readonly IEntityWorld _world;
+        private readonly IEntityManager _entityManager;
         
         private EntityQuery _query;
         private SquareVertices _square;
@@ -30,9 +30,9 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
         private Matrix4x4 _matrixDefault;
         private MeshUpdateFlags _meshUpdateFlags;
 
-        public ParticleMeshSystem(IEntityWorld world)
+        public ParticleMeshSystem(IEntityManager entityManager)
         {
-            _world = world;
+            _entityManager = entityManager;
         }
         
         public void Initialize()
@@ -45,7 +45,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
             {
                 new VertexAttributeDescriptor(VertexAttribute.Position, VertexAttributeFormat.Float32, 2),
             };
-            _query = _world.EntityManager.CreateEntityQuery(new ComponentType[]
+            _query = _entityManager.CreateEntityQuery(new ComponentType[]
             {
                 typeof(PositionComponent),
                 typeof(ParticleRenderComponent)
@@ -86,7 +86,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
             Profiler.BeginSample("Compute meshes");
             var meshDataArray = Mesh.AllocateWritableMeshData(meshCount);
             var computeJobHandles = _util.CreateTempJobArray<JobHandle>(meshCount);
-            var positionHandle = _world.EntityManager.GetComponentTypeHandle<PositionComponent>(true);
+            var positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true);
             var chunkOffset = 0;
             for (var i = 0; i < meshCount; i++)
             {

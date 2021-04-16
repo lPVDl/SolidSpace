@@ -12,20 +12,20 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
     {
         public ESystemType SystemType => ESystemType.Command;
         
-        private readonly IEntityWorld _world;
+        private readonly IEntityManager _entityManager;
         private readonly ParticleEmitterComputeSystem _computeSystem;
         
         private EntityArchetype _particleArchetype;
 
-        public ParticleEmitterCommandSystem(IEntityWorld world, ParticleEmitterComputeSystem computeSystem)
+        public ParticleEmitterCommandSystem(IEntityManager entityManager, ParticleEmitterComputeSystem computeSystem)
         {
-            _world = world;
+            _entityManager = entityManager;
             _computeSystem = computeSystem;
         }
 
         public void Initialize()
         {
-            _particleArchetype = _world.EntityManager.CreateArchetype(new ComponentType[]
+            _particleArchetype = _entityManager.CreateArchetype(new ComponentType[]
             {
                 typeof(PositionComponent),
                 typeof(VelocityComponent),
@@ -39,21 +39,21 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
         {
             var entityCount = _computeSystem.ParticleCount;
             var particles = _computeSystem.Particles;
-            var entities = _world.EntityManager.CreateEntity(_particleArchetype, entityCount, Allocator.Temp);
+            var entities = _entityManager.CreateEntity(_particleArchetype, entityCount, Allocator.Temp);
             
             for (var i = 0; i < entityCount; i++)
             {
                 var entity = entities[i];
                 var particle = particles[i];
-                _world.EntityManager.SetComponentData(entity, new PositionComponent
+                _entityManager.SetComponentData(entity, new PositionComponent
                 {
                     value = particle.position
                 });
-                _world.EntityManager.SetComponentData(entity, new VelocityComponent
+                _entityManager.SetComponentData(entity, new VelocityComponent
                 {
                     value = particle.velocity
                 });
-                _world.EntityManager.SetComponentData(entity, new DespawnComponent
+                _entityManager.SetComponentData(entity, new DespawnComponent
                 {
                     despawnTime = particle.despawnTime
                 });

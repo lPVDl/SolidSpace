@@ -9,7 +9,7 @@ namespace SpaceSimulator.Runtime.Entities
         public override void InstallBindings()
         {
             Container.BindInterfacesTo<EntityCycleController>().AsSingle().WithArguments(_entityCycleConfig);
-            Container.BindInterfacesTo<EntityWorld>().AsSingle();
+            Container.BindInterfacesTo<EntityManager>().AsSingle();
             Container.BindInterfacesTo<EntityWorldTime>().AsSingle();
         }
     }

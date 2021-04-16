@@ -12,16 +12,16 @@ namespace SpaceSimulator.Runtime.Entities.Randomization
 
         public ESystemType SystemType => ESystemType.Compute;
 
-        private readonly IEntityWorld _world;
+        private readonly IEntityManager _entityManager;
         
         private NativeArray<float> _randomBuffer;
         private int _randomIndex;
         private EntityQuery _query;
         private EntitySystemUtil _util;
 
-        public RandomValueSystem(IEntityWorld world)
+        public RandomValueSystem(IEntityManager entityManager)
         {
-            _world = world;
+            _entityManager = entityManager;
         }
 
         public void Initialize()
@@ -31,7 +31,7 @@ namespace SpaceSimulator.Runtime.Entities.Randomization
             {
                 _randomBuffer[i] = Random.value;
             }
-            _query = _world.EntityManager.CreateEntityQuery(typeof(RandomValueComponent));
+            _query = _entityManager.CreateEntityQuery(typeof(RandomValueComponent));
         }
 
         public void Update()
@@ -60,7 +60,7 @@ namespace SpaceSimulator.Runtime.Entities.Randomization
             var job = new RandomValueJob
             {
                 chunks = chunks,
-                randomHandle = _world.EntityManager.GetComponentTypeHandle<RandomValueComponent>(false),
+                randomHandle = _entityManager.GetComponentTypeHandle<RandomValueComponent>(false),
                 randomIndex = _randomIndex,
                 randomValues = _randomBuffer
             };
