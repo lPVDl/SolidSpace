@@ -19,15 +19,17 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
         public int ParticleCount => _particleCount[0];
         
         private readonly IEntityWorld _world;
-        
+        private readonly IEntityWorldTime _time;
+
         private EntityQuery _query;
         private NativeArray<ParticleEmissionData> _particles;
         private NativeArray<int> _particleCount;
         private EntitySystemUtil _util;
 
-        public ParticleEmitterComputeSystem(IEntityWorld world)
+        public ParticleEmitterComputeSystem(IEntityWorld world, IEntityWorldTime time)
         {
             _world = world;
+            _time = time;
         }
 
         public void Initialize()
@@ -72,7 +74,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
                 positionHandle = _world.EntityManager.GetComponentTypeHandle<PositionComponent>(true),
                 randomHandle = _world.EntityManager.GetComponentTypeHandle<RandomValueComponent>(true),
                 emittterHandle = _world.EntityManager.GetComponentTypeHandle<ParticleEmitterComponent>(true),
-                inTime = (float) _world.Time.ElapsedTime,
+                inTime = (float) _time.ElapsedTime,
                 outParticles = _particles, 
                 inWriteOffsets = offsets,
                 outParticleCounts = counts,

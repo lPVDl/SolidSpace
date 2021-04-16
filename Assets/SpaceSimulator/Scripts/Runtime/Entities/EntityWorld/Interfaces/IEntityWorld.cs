@@ -6,7 +6,5 @@ namespace SpaceSimulator.Runtime.Entities
     public interface IEntityWorld
     {
         public EntityManager EntityManager { get; }
-        
-        public TimeData Time { get; }
     }
 }

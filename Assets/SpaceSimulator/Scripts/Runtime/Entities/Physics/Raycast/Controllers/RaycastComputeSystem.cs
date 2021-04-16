@@ -18,16 +18,18 @@ namespace SpaceSimulator.Runtime.Entities.Physics
 
         private readonly IEntityWorld _world;
         private readonly ColliderBakeSystem _colliderSystem;
-        
+        private readonly IEntityWorldTime _time;
+
         private EntityQuery _raycasterQuery;
         private NativeArray<Entity> _entityBuffer;
         private NativeArray<int> _entityCount;
         private EntitySystemUtil _util;
 
-        public RaycastComputeSystem(IEntityWorld world, ColliderBakeSystem colliderSystem)
+        public RaycastComputeSystem(IEntityWorld world, ColliderBakeSystem colliderSystem, IEntityWorldTime time)
         {
             _world = world;
             _colliderSystem = colliderSystem;
+            _time = time;
         }
         
         public void Initialize()
@@ -71,7 +73,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
                 velocityHandle = _world.EntityManager.GetComponentTypeHandle<VelocityComponent>(true),
                 entityHandle = _world.EntityManager.GetEntityTypeHandle(),
                 inColliderWorld = _colliderSystem.ColliderWorld,
-                deltaTime = _world.Time.DeltaTime,
+                deltaTime = _time.DeltaTime,
                 resultCounts = raycastResultCounts,
                 resultEntities = _entityBuffer
             };

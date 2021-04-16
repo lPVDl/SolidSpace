@@ -10,6 +10,7 @@ namespace SpaceSimulator.Runtime.Entities
         {
             Container.BindInterfacesTo<EntityCycleController>().AsSingle().WithArguments(_entityCycleConfig);
             Container.BindInterfacesTo<EntityWorld>().AsSingle();
+            Container.BindInterfacesTo<EntityWorldTime>().AsSingle();
         }
     }
 }

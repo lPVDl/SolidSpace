@@ -9,12 +9,14 @@ namespace SpaceSimulator.Runtime.Entities.Physics.Velocity
         public ESystemType SystemType => ESystemType.Compute;
         
         private readonly IEntityWorld _world;
-        
+        private readonly IEntityWorldTime _time;
+
         private EntityQuery _query;
 
-        public VelocitySystem(IEntityWorld world)
+        public VelocitySystem(IEntityWorld world, IEntityWorldTime time)
         {
             _world = world;
+            _time = time;
         }
         
         public void Initialize()
@@ -31,7 +33,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics.Velocity
             var chunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
             var job = new VelocityJob
             {
-                deltaTime = _world.Time.DeltaTime,
+                deltaTime = _time.DeltaTime,
                 positionHandle = _world.EntityManager.GetComponentTypeHandle<PositionComponent>(false),
                 velocityHandle = _world.EntityManager.GetComponentTypeHandle<VelocityComponent>(true),
                 chunks = chunks

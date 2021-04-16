@@ -17,16 +17,18 @@ namespace SpaceSimulator.Runtime.Entities.Despawn
         public int ResultCount => _entityCount[0];
         
         private readonly IEntityWorld _world;
-        
+        private readonly IEntityWorldTime _time;
+
         private EntityQuery _query;
         private NativeArray<int> _entityCount;
         private NativeArray<Entity> _entities;
         private int _lastOffset;
         private EntitySystemUtil _util;
 
-        public DespawnComputeSystem(IEntityWorld world)
+        public DespawnComputeSystem(IEntityWorld world, IEntityWorldTime time)
         {
             _world = world;
+            _time = time;
         }
         
         public void Initialize()
@@ -81,7 +83,7 @@ namespace SpaceSimulator.Runtime.Entities.Despawn
                 outEntityCounts = countsBuffer, 
                 inWriteOffsets = computeOffsets,
                 outEntities = _entities,
-                time = (float) _world.Time.ElapsedTime
+                time = (float) _time.ElapsedTime
             };
             var computeJobHandle = computeJob.Schedule(computeChunkCount, 32);
 

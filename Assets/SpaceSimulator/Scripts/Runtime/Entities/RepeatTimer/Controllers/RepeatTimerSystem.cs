@@ -10,12 +10,14 @@ namespace SpaceSimulator.Runtime.Entities.RepeatTimer
         public ESystemType SystemType => ESystemType.Compute;
 
         private readonly IEntityWorld _world;
-        
+        private readonly IEntityWorldTime _time;
+
         private EntityQuery _query;
 
-        public RepeatTimerSystem(IEntityWorld world)
+        public RepeatTimerSystem(IEntityWorld world, IEntityWorldTime time)
         {
             _world = world;
+            _time = time;
         }
         
         public void Initialize()
@@ -29,11 +31,11 @@ namespace SpaceSimulator.Runtime.Entities.RepeatTimer
             var job = new RepeatTimerJob
             {
                 chunks = chunks,
-                deltaTime = _world.Time.DeltaTime,
+                deltaTime = _time.DeltaTime,
                 timerHandle = _world.EntityManager.GetComponentTypeHandle<RepeatTimerComponent>(false)
             };
             
-            SpaceDebug.LogState("deltaTime", _world.Time.DeltaTime);
+            SpaceDebug.LogState("deltaTime", _time.DeltaTime);
             
             var handle = job.Schedule(chunks.Length, 32);
             handle.Complete();
