@@ -2,18 +2,20 @@
 
 using System.Collections.Generic;
 using UnityEngine;
-using Zenject.Internal;
 
 namespace Zenject
 {
-    public class SceneContext : Context
+    public class SceneContext : MonoBehaviour, IContext
     {
+        public IEnumerable<GameObject> RootGameObjects => gameObject.scene.GetRootGameObjects();
+
+        public GameObject GameObject => gameObject;
+
+        public Transform Transform => gameObject.transform;
+
         DiContainer _container;
 
-        public override DiContainer Container
-        {
-            get { return _container; }
-        }
+        [SerializeField] private List<ScriptableObjectInstallerBase> _installers;
 
         public void Awake()
         {
@@ -31,11 +33,6 @@ namespace Zenject
         {
             Install();
             Resolve();
-        }
-
-        public override IEnumerable<GameObject> GetRootGameObjects()
-        {
-            return gameObject.scene.GetRootGameObjects();
         }
 
         public void Install()
@@ -64,15 +61,18 @@ namespace Zenject
             _container.Bind<TickableManager>().AsSingle().NonLazy();
             _container.Bind<InitializableManager>().AsSingle().NonLazy();
             _container.Bind<DisposableManager>().AsSingle().NonLazy();
-            _container.Bind(typeof(Context), typeof(SceneContext)).To<SceneContext>().FromInstance(this);
+            _container.Bind<IContext>().FromInstance(this);
             _container.Bind(typeof(SceneKernel), typeof(MonoKernel)).To<SceneKernel>().FromNewComponentOn(gameObject).AsSingle().NonLazy();
 
-            InstallInstallers();
-        }
+            foreach (var installer in _installers)
+            {
+                _container.Inject(installer);
+            }
 
-        protected override void GetInjectableMonoBehaviours(List<MonoBehaviour> monoBehaviours)
-        {
-            monoBehaviours.Clear();
+            foreach (var installer in _installers)
+            {
+                installer.InstallBindings();
+            }
         }
     }
 }

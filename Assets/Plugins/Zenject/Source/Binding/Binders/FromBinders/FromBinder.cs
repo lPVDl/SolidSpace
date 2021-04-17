@@ -235,13 +235,13 @@ namespace Zenject
         public ScopeConcreteIdArgConditionCopyNonLazyBinder FromComponentsOnRoot()
         {
             return FromComponentsOn(
-                ctx => ctx.Container.Resolve<Context>().gameObject);
+                ctx => ctx.Container.Resolve<IContext>().GameObject);
         }
 
         public ScopeConcreteIdArgConditionCopyNonLazyBinder FromComponentOnRoot()
         {
             return FromComponentOn(
-                ctx => ctx.Container.Resolve<Context>().gameObject);
+                ctx => ctx.Container.Resolve<IContext>().GameObject);
         }
 
         public ScopeConcreteIdArgConditionCopyNonLazyBinder FromNewComponentOn(GameObject gameObject)
@@ -289,7 +289,7 @@ namespace Zenject
         public ScopeConcreteIdArgConditionCopyNonLazyBinder FromNewComponentOnRoot()
         {
             return FromNewComponentOn(
-                ctx => ctx.Container.Resolve<Context>().gameObject);
+                ctx => ctx.Container.Resolve<IContext>().GameObject);
         }
 
         public NameTransformScopeConcreteIdArgConditionCopyNonLazyBinder FromNewComponentOnNewGameObject()
@@ -749,7 +749,7 @@ namespace Zenject
                 BindInfo,
                 (container, concreteType) => new MethodMultipleProviderUntyped(ctx =>
                     {
-                        var match = container.Resolve<Context>().GetRootGameObjects()
+                        var match = container.Resolve<IContext>().RootGameObjects
                             .Select(x => x.GetComponentInChildren(concreteType, includeInactive))
                             .Where(x => x != null && !ReferenceEquals(x, ctx.ObjectInstance)).FirstOrDefault();
 
@@ -781,7 +781,7 @@ namespace Zenject
                 BindInfo,
                 (container, concreteType) => new MethodMultipleProviderUntyped(ctx =>
                     {
-                        var res = container.Resolve<Context>().GetRootGameObjects()
+                        var res = container.Resolve<IContext>().RootGameObjects
                             .SelectMany(x => x.GetComponentsInChildren(concreteType, includeInactive))
                             .Where(x => !ReferenceEquals(x, ctx.ObjectInstance));
 

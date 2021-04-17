@@ -70,7 +70,7 @@ namespace Zenject
             }
 
 #if !NOT_UNITY3D
-            if (type.DerivesFrom<Context>())
+            if (type.DerivesFrom<IContext>())
             {
                 return true;
             }

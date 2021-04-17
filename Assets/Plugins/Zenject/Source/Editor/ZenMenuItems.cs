@@ -16,15 +16,6 @@ namespace Zenject.Internal
             Application.OpenURL("https://github.com/svermeulen/zenject");
         }
 
-        [MenuItem("GameObject/Zenject/Scene Context", false, 9)]
-        public static void CreateSceneContext(MenuCommand menuCommand)
-        {
-            var root = new GameObject("SceneContext").AddComponent<SceneContext>();
-            Selection.activeGameObject = root.gameObject;
-
-            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
-        }
-
         [MenuItem("Assets/Create/Zenject/Default Scene Contract Config", false, 80)]
         public static void CreateDefaultSceneContractConfig()
         {

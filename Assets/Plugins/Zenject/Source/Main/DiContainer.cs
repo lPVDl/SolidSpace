@@ -233,11 +233,11 @@ namespace Zenject
                 {
                     _hasLookedUpContextTransform = true;
 
-                    var context = TryResolve<Context>();
+                    var context = TryResolve<IContext>();
 
                     if (context != null)
                     {
-                        _contextTransform = context.transform;
+                        _contextTransform = context.Transform;
                     }
                 }
 
@@ -836,7 +836,7 @@ namespace Zenject
             }
 
 #if UNITY_EDITOR
-            if (context.MemberType.DerivesFrom<Context>())
+            if (context.MemberType.DerivesFrom<IContext>())
             {
                 // This happens when getting default transform parent so ok
                 return;

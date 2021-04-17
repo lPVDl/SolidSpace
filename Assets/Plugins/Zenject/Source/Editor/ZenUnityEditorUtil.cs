@@ -6,61 +6,12 @@ using System.IO;
 using System.Linq;
 using ModestTree;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Zenject.Internal
 {
     public static class ZenUnityEditorUtil
     {
-        // Returns true if succeeds without errors
-        public static bool SaveThenRunPreserveSceneSetup(Action action)
-        {
-            if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
-            {
-                var originalSceneSetup = EditorSceneManager.GetSceneManagerSetup();
-
-                try
-                {
-                    action();
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    Log.ErrorException(e);
-                    return false;
-                }
-                finally
-                {
-                    EditorSceneManager.RestoreSceneManagerSetup(originalSceneSetup);
-                }
-            }
-
-            return false;
-        }
-
-        public static SceneContext TryGetSceneContextForScene(Scene scene)
-        {
-            if (!scene.isLoaded)
-            {
-                return null;
-            }
-
-            var sceneContexts = scene.GetRootGameObjects()
-                .SelectMany(x => x.GetComponentsInChildren<SceneContext>()).ToList();
-
-            if (sceneContexts.IsEmpty())
-            {
-                return null;
-            }
-
-            Assert.That(sceneContexts.Count == 1,
-                "Found multiple SceneContexts in scene '{0}'.  Expected a maximum of one.", scene.name);
-
-            return sceneContexts[0];
-        }
-        
         public static string ConvertFullAbsolutePathToAssetPath(string fullPath)
         {
             fullPath = Path.GetFullPath(fullPath);
@@ -111,26 +62,6 @@ namespace Zenject.Internal
         {
             return GetSelectedPathsInProjectsTab()
                 .Where(x => File.Exists(x)).ToList();
-        }
-
-        public static List<string> GetSelectedAssetPathsInProjectsTab()
-        {
-            var paths = new List<string>();
-
-            UnityEngine.Object[] selectedAssets = Selection.GetFiltered(
-                typeof(UnityEngine.Object), SelectionMode.Assets);
-
-            foreach (var item in selectedAssets)
-            {
-                var assetPath = AssetDatabase.GetAssetPath(item);
-
-                if (!string.IsNullOrEmpty(assetPath))
-                {
-                    paths.Add(assetPath);
-                }
-            }
-
-            return paths;
         }
 
         public static List<string> GetSelectedPathsInProjectsTab()
