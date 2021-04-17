@@ -1,11 +1,13 @@
+using Zenject;
+
 namespace SpaceSimulator.Runtime.Entities.Physics
 {
     public class RaycastInstaller : ScriptableObjectInstaller
     {
-        public override void InstallBindings()
+        public override void InstallBindings(DiContainer container)
         {
-            Container.BindInterfacesAndSelfTo<RaycastComputeSystem>().AsSingle();
-            Container.BindInterfacesTo<RaycastCommandSystem>().AsSingle();
+            container.BindInterfacesAndSelfTo<RaycastComputeSystem>().AsSingle();
+            container.BindInterfacesTo<RaycastCommandSystem>().AsSingle();
         }
     }
 }

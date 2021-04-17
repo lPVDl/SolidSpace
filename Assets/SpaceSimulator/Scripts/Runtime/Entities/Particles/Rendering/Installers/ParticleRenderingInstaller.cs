@@ -1,10 +1,12 @@
+using Zenject;
+
 namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
 {
     public class ParticleRenderingInstaller : ScriptableObjectInstaller
     {
-        public override void InstallBindings()
+        public override void InstallBindings(DiContainer container)
         {
-            Container.BindInterfacesAndSelfTo<ParticleMeshSystem>().AsSingle();
+            container.BindInterfacesAndSelfTo<ParticleMeshSystem>().AsSingle();
         }
     }
 }

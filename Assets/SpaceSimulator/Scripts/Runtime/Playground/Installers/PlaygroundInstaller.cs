@@ -1,4 +1,5 @@
 using UnityEngine;
+using Zenject;
 
 namespace SpaceSimulator.Runtime.Playground
 {
@@ -8,12 +9,12 @@ namespace SpaceSimulator.Runtime.Playground
         [SerializeField] private EmitterSpawnManagerConfig _emitterSpawnManagerConfig;
         [SerializeField] private SpriteSpawnManagerConfig _spriteSpawnManagerConfig; 
         
-        public override void InstallBindings()
+        public override void InstallBindings(DiContainer container)
         {
-            Container.Bind<Camera>().FromComponentInHierarchy().AsSingle();
-            Container.BindInterfacesTo<ColliderSpawnManager>().AsSingle().WithArguments(_colliderSpawnManagerConfig);
-            Container.BindInterfacesTo<EmitterSpawnManager>().AsSingle().WithArguments(_emitterSpawnManagerConfig);
-            Container.BindInterfacesTo<SpriteSpawnManager>().AsSingle().WithArguments(_spriteSpawnManagerConfig);
+            container.Bind<Camera>().FromComponentInHierarchy().AsSingle();
+            container.BindInterfacesTo<ColliderSpawnManager>().AsSingle().WithArguments(_colliderSpawnManagerConfig);
+            container.BindInterfacesTo<EmitterSpawnManager>().AsSingle().WithArguments(_emitterSpawnManagerConfig);
+            container.BindInterfacesTo<SpriteSpawnManager>().AsSingle().WithArguments(_spriteSpawnManagerConfig);
         }
     }
 }

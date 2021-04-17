@@ -37,12 +37,7 @@ namespace SpaceSimulator.Runtime
 
             foreach (var installer in _installers)
             {
-                container.Inject(installer);
-            }
-
-            foreach (var installer in _installers)
-            {
-                installer.InstallBindings();
+                installer.InstallBindings(container);
             }
         }
     }

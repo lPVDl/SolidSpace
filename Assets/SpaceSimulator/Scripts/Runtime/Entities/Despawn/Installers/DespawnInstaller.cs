@@ -1,11 +1,13 @@
+using Zenject;
+
 namespace SpaceSimulator.Runtime.Entities.Despawn
 {
     public class DespawnInstaller : ScriptableObjectInstaller
     {
-        public override void InstallBindings()
+        public override void InstallBindings(DiContainer container)
         {
-            Container.BindInterfacesAndSelfTo<DespawnComputeSystem>().AsSingle();
-            Container.BindInterfacesTo<DespawnCommandSystem>().AsSingle();
+            container.BindInterfacesAndSelfTo<DespawnComputeSystem>().AsSingle();
+            container.BindInterfacesTo<DespawnCommandSystem>().AsSingle();
         }
     }
 }
