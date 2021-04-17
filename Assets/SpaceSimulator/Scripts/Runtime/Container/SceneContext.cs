@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using Zenject;
 
@@ -12,6 +13,7 @@ namespace SpaceSimulator.Runtime
 
         public Transform Transform => gameObject.transform;
 
+        [InlineEditor(InlineEditorObjectFieldModes.Foldout)]
         [Serialize] private List<ScriptableObjectInstaller> _installers;
 
         public void Awake()
