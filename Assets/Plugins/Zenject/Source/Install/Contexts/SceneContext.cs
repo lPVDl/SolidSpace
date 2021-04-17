@@ -6,7 +6,7 @@ using Zenject.Internal;
 
 namespace Zenject
 {
-    public class SceneContext : RunnableContext
+    public class SceneContext : Context
     {
         DiContainer _container;
 
@@ -17,30 +17,20 @@ namespace Zenject
 
         public void Awake()
         {
-            Initialize();
+            using (ProfileBlock.Start("Zenject.SceneContext.Install"))
+            {
+                Install();
+            }
+            using (ProfileBlock.Start("Zenject.SceneContext.Resolve"))
+            {
+                Resolve();
+            }
         }
 
         public void Validate()
         {
             Install();
             Resolve();
-        }
-
-        protected override void RunInternal()
-        {
-#if UNITY_EDITOR
-            using (ProfileBlock.Start("Zenject.SceneContext.Install"))
-#endif
-            {
-                Install();
-            }
-
-#if UNITY_EDITOR
-            using (ProfileBlock.Start("Zenject.SceneContext.Resolve"))
-#endif
-            {
-                Resolve();
-            }
         }
 
         public override IEnumerable<GameObject> GetRootGameObjects()
@@ -64,7 +54,7 @@ namespace Zenject
             }
         }
 
-        public void Resolve()
+        private void Resolve()
         {
             _container.ResolveRoots();
         }
