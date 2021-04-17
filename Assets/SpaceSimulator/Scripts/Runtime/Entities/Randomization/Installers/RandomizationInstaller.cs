@@ -1,12 +1,10 @@
-using Zenject;
-
 namespace SpaceSimulator.Runtime.Entities.Randomization
 {
     public class RandomizationInstaller : ScriptableObjectInstaller
     {
-        public override void InstallBindings(DiContainer container)
+        public override void InstallBindings(IContainer container)
         {
-            container.BindInterfacesTo<RandomValueSystem>().AsSingle();
+            container.BindInterfacesTo<RandomValueSystem>();
         }
     }
 }

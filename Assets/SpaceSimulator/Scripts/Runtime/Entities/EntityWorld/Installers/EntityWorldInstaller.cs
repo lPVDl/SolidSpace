@@ -1,5 +1,4 @@
 using UnityEngine;
-using Zenject;
 
 namespace SpaceSimulator.Runtime.Entities
 {
@@ -7,11 +6,11 @@ namespace SpaceSimulator.Runtime.Entities
     {
         [SerializeField] private EntityCycleConfig _entityCycleConfig;
         
-        public override void InstallBindings(DiContainer container)
+        public override void InstallBindings(IContainer container)
         {
-            container.BindInterfacesTo<EntityCycleController>().AsSingle().WithArguments(_entityCycleConfig);
-            container.BindInterfacesTo<EntityManager>().AsSingle();
-            container.BindInterfacesTo<EntityWorldTime>().AsSingle();
+            container.BindInterfacesTo<EntityCycleController>(_entityCycleConfig);
+            container.BindInterfacesTo<EntityManager>();
+            container.BindInterfacesTo<EntityWorldTime>();
         }
     }
 }

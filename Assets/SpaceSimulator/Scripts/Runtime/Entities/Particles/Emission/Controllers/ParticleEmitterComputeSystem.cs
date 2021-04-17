@@ -4,7 +4,6 @@ using SpaceSimulator.Runtime.Entities.RepeatTimer;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
-using UnityEngine;
 using UnityEngine.Profiling;
 
 namespace SpaceSimulator.Runtime.Entities.Particles.Emission

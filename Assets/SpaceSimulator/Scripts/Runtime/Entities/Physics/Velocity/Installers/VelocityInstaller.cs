@@ -1,12 +1,10 @@
-using Zenject;
-
 namespace SpaceSimulator.Runtime.Entities.Physics.Velocity
 {
     public class VelocityInstaller : ScriptableObjectInstaller
     {
-        public override void InstallBindings(DiContainer container)
+        public override void InstallBindings(IContainer container)
         {
-            container.BindInterfacesTo<VelocitySystem>().AsSingle();
+            container.BindInterfacesTo<VelocitySystem>();
         }
     }
 }

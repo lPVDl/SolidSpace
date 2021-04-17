@@ -1,13 +1,11 @@
-using Zenject;
-
 namespace SpaceSimulator.Runtime.Entities.Particles.Emission
 {
     public class ParticleEmissionInstaller : ScriptableObjectInstaller
     {
-        public override void InstallBindings(DiContainer container)
+        public override void InstallBindings(IContainer container)
         {
-            container.BindInterfacesAndSelfTo<ParticleEmitterComputeSystem>().AsSingle();
-            container.BindInterfacesTo<ParticleEmitterCommandSystem>().AsSingle();
+            container.BindInterfacesAndSelfTo<ParticleEmitterComputeSystem>();
+            container.BindInterfacesTo<ParticleEmitterCommandSystem>();
         }
     }
 }

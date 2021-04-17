@@ -35,9 +35,10 @@ namespace SpaceSimulator.Runtime
             container.Bind<DisposableManager>().AsSingle().NonLazy();
             container.Bind(typeof(SceneKernel), typeof(MonoKernel)).To<SceneKernel>().FromNewComponentOn(gameObject).AsSingle().NonLazy();
 
+            var wrappedContainer = new ZenjectContainerWrapper(container);
             foreach (var installer in _installers)
             {
-                installer.InstallBindings(container);
+                installer.InstallBindings(wrappedContainer);
             }
         }
     }
