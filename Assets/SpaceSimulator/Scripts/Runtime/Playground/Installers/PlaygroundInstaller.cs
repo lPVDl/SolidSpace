@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace SpaceSimulator.Runtime.Playground
 {
-    public class PlaygroundInstaller : Installer
+    public class PlaygroundInstaller : ScriptableObjectInstaller
     {
         [SerializeField] private ColliderSpawnManagerConfig _colliderSpawnManagerConfig;
         [SerializeField] private EmitterSpawnManagerConfig _emitterSpawnManagerConfig;

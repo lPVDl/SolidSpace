@@ -1,6 +1,6 @@
 namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
 {
-    public class ParticleRenderingInstaller : Installer
+    public class ParticleRenderingInstaller : ScriptableObjectInstaller
     {
         public override void InstallBindings()
         {

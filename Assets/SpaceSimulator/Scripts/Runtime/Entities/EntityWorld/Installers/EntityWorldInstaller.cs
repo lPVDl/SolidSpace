@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace SpaceSimulator.Runtime.Entities
 {
-    public class EntityWorldInstaller : Installer
+    public class EntityWorldInstaller : ScriptableObjectInstaller
     {
         [SerializeField] private EntityCycleConfig _entityCycleConfig;
         

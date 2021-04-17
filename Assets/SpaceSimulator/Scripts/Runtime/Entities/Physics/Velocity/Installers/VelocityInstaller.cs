@@ -1,6 +1,6 @@
 namespace SpaceSimulator.Runtime.Entities.Physics.Velocity
 {
-    public class VelocityInstaller : Installer
+    public class VelocityInstaller : ScriptableObjectInstaller
     {
         public override void InstallBindings()
         {

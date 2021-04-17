@@ -1,6 +1,6 @@
 namespace SpaceSimulator.Runtime.Entities.RepeatTimer
 {
-    public class RepeatTimerInstaller : Installer
+    public class RepeatTimerInstaller : ScriptableObjectInstaller
     {
         public override void InstallBindings()
         {
