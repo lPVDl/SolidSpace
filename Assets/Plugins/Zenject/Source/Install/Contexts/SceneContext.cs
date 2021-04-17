@@ -3,8 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ModestTree;
-using ModestTree.Util;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Zenject.Internal;
@@ -93,17 +91,12 @@ namespace Zenject
 
         public void Validate()
         {
-            Assert.That(IsValidating);
-
             Install();
             Resolve();
         }
 
         protected override void RunInternal()
         {
-            // We always want to initialize ProjectContext as early as possible
-            ProjectContext.Instance.EnsureIsInitialized();
-
 #if UNITY_EDITOR
             using (ProfileBlock.Start("Zenject.SceneContext.Install"))
 #endif
@@ -124,64 +117,14 @@ namespace Zenject
             return ZenUtilInternal.GetRootGameObjects(gameObject.scene);
         }
 
-        IEnumerable<DiContainer> GetParentContainers()
-        {
-            var parentContractNames = ParentContractNames;
-
-            if (parentContractNames.IsEmpty())
-            {
-                if (ParentContainers != null)
-                {
-                    var tempParentContainer = ParentContainers;
-
-                    // Always reset after using it - it is only used to pass the reference
-                    // between scenes via ZenjectSceneLoader
-                    ParentContainers = null;
-
-                    return tempParentContainer;
-                }
-
-                return new[] { ProjectContext.Instance.Container };
-            }
-
-            Assert.IsNull(ParentContainers,
-                "Scene cannot have both a parent scene context name set and also an explicit parent container given");
-
-            var parentContainers = UnityUtil.AllLoadedScenes
-                .Except(gameObject.scene)
-                .SelectMany(scene => scene.GetRootGameObjects())
-                .SelectMany(root => root.GetComponentsInChildren<SceneContext>())
-                .Where(sceneContext => sceneContext.ContractNames.Where(x => parentContractNames.Contains(x)).Any())
-                .Select(x => x.Container)
-                .ToList();
-
-            if (!parentContainers.Any())
-            {
-                throw Assert.CreateException(
-                    "SceneContext on object {0} of scene {1} requires at least one of contracts '{2}', but none of the loaded SceneContexts implements that contract.",
-                    gameObject.name,
-                    gameObject.scene.name,
-                    parentContractNames.Join(", "));
-            }
-
-            return parentContainers;
-        }
-
         public void Install()
         {
-            Assert.That(!_hasInstalled);
             _hasInstalled = true;
 
-            Assert.IsNull(_container);
-
-            var parents = GetParentContainers();
-
-            _container = new DiContainer(parents, parents.First().IsValidating);
-
+            _container = new DiContainer();
             _container.DefaultParent = transform;
-
             _container.IsInstalling = true;
-
+            
             try
             {
                 InstallBindings();
@@ -194,17 +137,16 @@ namespace Zenject
 
         public void Resolve()
         {
-            _hasResolved = true;
-
             _container.ResolveRoots();
         }
 
         void InstallBindings()
         {
+            _container.Bind<TickableManager>().AsSingle().NonLazy();
+            _container.Bind<InitializableManager>().AsSingle().NonLazy();
+            _container.Bind<DisposableManager>().AsSingle().NonLazy();
             _container.Bind(typeof(Context), typeof(SceneContext)).To<SceneContext>().FromInstance(this);
-
-            _container.Bind(typeof(SceneKernel), typeof(MonoKernel))
-                .To<SceneKernel>().FromNewComponentOn(gameObject).AsSingle().NonLazy();
+            _container.Bind(typeof(SceneKernel), typeof(MonoKernel)).To<SceneKernel>().FromNewComponentOn(gameObject).AsSingle().NonLazy();
 
             InstallInstallers();
         }
