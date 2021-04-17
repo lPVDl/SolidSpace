@@ -1,4 +1,4 @@
-namespace SpaceSimulator.Runtime.Entities.Physics.Velocity
+namespace SpaceSimulator.Runtime.Entities.Physics
 {
     public class VelocityInstaller : ScriptableObjectInstaller
     {

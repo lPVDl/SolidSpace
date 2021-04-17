@@ -3,7 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
-namespace SpaceSimulator.Runtime.Entities.Physics.Velocity
+namespace SpaceSimulator.Runtime.Entities.Physics
 {
     [BurstCompile]
     public struct VelocityJob : IJobParallelFor
