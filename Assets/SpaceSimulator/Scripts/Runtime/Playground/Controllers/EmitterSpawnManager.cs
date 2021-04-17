@@ -16,10 +16,10 @@ namespace SpaceSimulator.Runtime.Playground
         public EControllerType ControllerType => EControllerType.Common;
 
         private readonly EmitterSpawnManagerConfig _config;
-        private readonly ParticleMeshSystem _renderSystem;
+        private readonly IParticleMeshSystem _renderSystem;
         private readonly IEntityManager _entityManager;
 
-        public EmitterSpawnManager(EmitterSpawnManagerConfig config, ParticleMeshSystem renderSystem, IEntityManager entityManager)
+        public EmitterSpawnManager(EmitterSpawnManagerConfig config, IParticleMeshSystem renderSystem, IEntityManager entityManager)
         {
             _config = config;
             _renderSystem = renderSystem;

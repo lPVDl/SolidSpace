@@ -11,9 +11,9 @@ namespace SpaceSimulator.Runtime.Playground
         public override void InstallBindings(IContainer container)
         {
             container.BindFromComponentInHierarchy<Camera>();
-            container.BindInterfacesTo<ColliderSpawnManager>(_colliderSpawnManagerConfig);
-            container.BindInterfacesTo<EmitterSpawnManager>(_emitterSpawnManagerConfig);
-            container.BindInterfacesTo<SpriteSpawnManager>(_spriteSpawnManagerConfig);
+            container.Bind<ColliderSpawnManager>(_colliderSpawnManagerConfig);
+            container.Bind<EmitterSpawnManager>(_emitterSpawnManagerConfig);
+            container.Bind<SpriteSpawnManager>(_spriteSpawnManagerConfig);
         }
     }
 }

@@ -4,7 +4,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics.Velocity
     {
         public override void InstallBindings(IContainer container)
         {
-            container.BindInterfacesTo<VelocitySystem>();
+            container.Bind<VelocitySystem>();
         }
     }
 }

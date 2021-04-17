@@ -4,8 +4,8 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
     {
         public override void InstallBindings(IContainer container)
         {
-            container.BindInterfacesAndSelfTo<ParticleEmitterComputeSystem>();
-            container.BindInterfacesTo<ParticleEmitterCommandSystem>();
+            container.Bind<ParticleEmitterComputeSystem>();
+            container.Bind<ParticleEmitterCommandSystem>();
         }
     }
 }

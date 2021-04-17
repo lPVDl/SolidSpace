@@ -4,7 +4,7 @@ namespace SpaceSimulator.Runtime.Entities.Randomization
     {
         public override void InstallBindings(IContainer container)
         {
-            container.BindInterfacesTo<RandomValueSystem>();
+            container.Bind<RandomValueSystem>();
         }
     }
 }

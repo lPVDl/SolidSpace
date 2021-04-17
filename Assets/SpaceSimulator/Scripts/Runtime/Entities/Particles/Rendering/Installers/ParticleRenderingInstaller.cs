@@ -4,7 +4,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
     {
         public override void InstallBindings(IContainer container)
         {
-            container.BindInterfacesAndSelfTo<ParticleMeshSystem>();
+            container.Bind<ParticleMeshSystem>();
         }
     }
 }

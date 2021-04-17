@@ -2,9 +2,8 @@ namespace SpaceSimulator.Runtime
 {
     public interface IContainer
     {
-        void BindInterfacesAndSelfTo<T>();
-        void BindInterfacesTo<T>();
-        void BindInterfacesTo<T>(object parameter);
+        void Bind<T>();
+        void Bind<T>(object parameter);
         void BindFromComponentInHierarchy<T>();
     }
 }

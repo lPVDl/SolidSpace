@@ -9,9 +9,9 @@ namespace SpaceSimulator.Runtime.Entities.Physics
         public ESystemType SystemType => ESystemType.Command;
 
         private readonly IEntityManager _entityManager;
-        private readonly RaycastComputeSystem _computeSystem;
+        private readonly IRaycastComputeSystem _computeSystem;
 
-        public RaycastCommandSystem(IEntityManager entityManager, RaycastComputeSystem computeSystem)
+        public RaycastCommandSystem(IEntityManager entityManager, IRaycastComputeSystem computeSystem)
         {
             _entityManager = entityManager;
             _computeSystem = computeSystem;

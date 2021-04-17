@@ -4,7 +4,7 @@ namespace SpaceSimulator.Runtime.Entities.RepeatTimer
     {
         public override void InstallBindings(IContainer container)
         {
-            container.BindInterfacesTo<RepeatTimerSystem>();
+            container.Bind<RepeatTimerSystem>();
         }
     }
 }

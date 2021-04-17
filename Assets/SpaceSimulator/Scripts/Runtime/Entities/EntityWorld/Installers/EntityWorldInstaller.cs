@@ -8,9 +8,9 @@ namespace SpaceSimulator.Runtime.Entities
         
         public override void InstallBindings(IContainer container)
         {
-            container.BindInterfacesTo<EntityCycleController>(_entityCycleConfig);
-            container.BindInterfacesTo<EntityManager>();
-            container.BindInterfacesTo<EntityWorldTime>();
+            container.Bind<EntityCycleController>(_entityCycleConfig);
+            container.Bind<EntityManager>();
+            container.Bind<EntityWorldTime>();
         }
     }
 }

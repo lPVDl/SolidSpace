@@ -8,7 +8,7 @@ using UnityEngine.Profiling;
 
 namespace SpaceSimulator.Runtime.Entities.Particles.Emission
 {
-    public class ParticleEmitterComputeSystem : IEntitySystem
+    public class ParticleEmitterComputeSystem : IEntitySystem, IParticleEmitterComputeSystem
     {
         private const int BufferChunkSize = 128;
 

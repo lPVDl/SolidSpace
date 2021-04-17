@@ -13,11 +13,11 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Emission
         public ESystemType SystemType => ESystemType.Command;
         
         private readonly IEntityManager _entityManager;
-        private readonly ParticleEmitterComputeSystem _computeSystem;
+        private readonly IParticleEmitterComputeSystem _computeSystem;
         
         private EntityArchetype _particleArchetype;
 
-        public ParticleEmitterCommandSystem(IEntityManager entityManager, ParticleEmitterComputeSystem computeSystem)
+        public ParticleEmitterCommandSystem(IEntityManager entityManager, IParticleEmitterComputeSystem computeSystem)
         {
             _entityManager = entityManager;
             _computeSystem = computeSystem;

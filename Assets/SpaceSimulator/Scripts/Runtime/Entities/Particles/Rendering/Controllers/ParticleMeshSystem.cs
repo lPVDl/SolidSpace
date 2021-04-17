@@ -11,13 +11,13 @@ using UnityEngine.Rendering;
 
 namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
 {
-    public class ParticleMeshSystem : IEntitySystem
+    public class ParticleMeshSystem : IEntitySystem, IParticleMeshSystem
     {
         private const int ParticlePerMesh = 16384;
         private const int RenderBounds = 8096;
 
         public ESystemType SystemType => ESystemType.Render;
-        public Material Material { private get; set; }
+        public Material Material { get; set; }
         
         private readonly IEntityManager _entityManager;
         

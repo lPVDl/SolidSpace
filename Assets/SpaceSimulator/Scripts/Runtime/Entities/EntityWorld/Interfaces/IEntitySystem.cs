@@ -1,3 +1,6 @@
+using SpaceSimulator.Runtime.Entities.Particles.Emission;
+using Unity.Collections;
+
 namespace SpaceSimulator.Runtime.Entities
 {
     public interface IEntitySystem

@@ -8,9 +8,9 @@ namespace SpaceSimulator.Runtime
 
         public override void InstallBindings(IContainer container)
         {
-            container.BindInterfacesTo<InitializationController>(_gameCycleConfig);
-            container.BindInterfacesTo<UpdatingController>(_gameCycleConfig);
-            container.BindInterfacesTo<FinalizationController>();
+            container.Bind<InitializationController>(_gameCycleConfig);
+            container.Bind<UpdatingController>(_gameCycleConfig);
+            container.Bind<FinalizationController>();
         }
     }
 }

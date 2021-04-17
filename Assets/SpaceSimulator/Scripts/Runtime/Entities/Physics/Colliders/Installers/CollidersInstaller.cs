@@ -4,7 +4,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
     {
         public override void InstallBindings(IContainer container)
         {
-            container.BindInterfacesAndSelfTo<ColliderBakeSystem>();
+            container.Bind<ColliderBakeSystem>();
         }
     }
 }

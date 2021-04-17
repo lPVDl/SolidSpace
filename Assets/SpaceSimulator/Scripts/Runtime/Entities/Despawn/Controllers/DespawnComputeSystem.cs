@@ -7,7 +7,7 @@ using UnityEngine.Profiling;
 
 namespace SpaceSimulator.Runtime.Entities.Despawn
 {
-    public class DespawnComputeSystem : IEntitySystem
+    public class DespawnComputeSystem : IEntitySystem, IDespawnComputeSystem
     {
         private const int IterationCycle = 8;
 

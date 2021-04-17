@@ -9,10 +9,10 @@ namespace SpaceSimulator.Runtime.Entities.Despawn
     {
         public ESystemType SystemType => ESystemType.Command;
         
-        private readonly DespawnComputeSystem _computeSystem;
+        private readonly IDespawnComputeSystem _computeSystem;
         private readonly IEntityManager _entityManager;
 
-        public DespawnCommandSystem(DespawnComputeSystem computeSystem, IEntityManager entityManager)
+        public DespawnCommandSystem(IDespawnComputeSystem computeSystem, IEntityManager entityManager)
         {
             _computeSystem = computeSystem;
             _entityManager = entityManager;

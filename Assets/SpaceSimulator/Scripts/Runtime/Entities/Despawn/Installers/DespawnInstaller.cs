@@ -4,8 +4,8 @@ namespace SpaceSimulator.Runtime.Entities.Despawn
     {
         public override void InstallBindings(IContainer container)
         {
-            container.BindInterfacesAndSelfTo<DespawnComputeSystem>();
-            container.BindInterfacesTo<DespawnCommandSystem>();
+            container.Bind<DespawnComputeSystem>();
+            container.Bind<DespawnCommandSystem>();
         }
     }
 }

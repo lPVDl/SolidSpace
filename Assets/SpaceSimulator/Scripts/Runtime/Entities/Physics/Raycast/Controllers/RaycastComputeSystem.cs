@@ -7,7 +7,7 @@ using UnityEngine.Profiling;
 
 namespace SpaceSimulator.Runtime.Entities.Physics
 {
-    public class RaycastComputeSystem : IEntitySystem
+    public class RaycastComputeSystem : IEntitySystem, IRaycastComputeSystem
     {
         private const int EntityBufferChunkSize = 4096;
 
@@ -17,7 +17,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
         public int HitCount => _entityCount[0];
 
         private readonly IEntityManager _entityManager;
-        private readonly ColliderBakeSystem _colliderSystem;
+        private readonly IColliderBakeSystem _colliderSystem;
         private readonly IEntityWorldTime _time;
 
         private EntityQuery _raycasterQuery;
@@ -25,7 +25,7 @@ namespace SpaceSimulator.Runtime.Entities.Physics
         private NativeArray<int> _entityCount;
         private EntitySystemUtil _util;
 
-        public RaycastComputeSystem(IEntityManager entityManager, ColliderBakeSystem colliderSystem, IEntityWorldTime time)
+        public RaycastComputeSystem(IEntityManager entityManager, IColliderBakeSystem colliderSystem, IEntityWorldTime time)
         {
             _entityManager = entityManager;
             _colliderSystem = colliderSystem;

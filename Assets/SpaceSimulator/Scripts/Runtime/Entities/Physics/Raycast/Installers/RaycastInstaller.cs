@@ -4,8 +4,8 @@ namespace SpaceSimulator.Runtime.Entities.Physics
     {
         public override void InstallBindings(IContainer container)
         {
-            container.BindInterfacesAndSelfTo<RaycastComputeSystem>();
-            container.BindInterfacesTo<RaycastCommandSystem>();
+            container.Bind<RaycastComputeSystem>();
+            container.Bind<RaycastCommandSystem>();
         }
     }
 }

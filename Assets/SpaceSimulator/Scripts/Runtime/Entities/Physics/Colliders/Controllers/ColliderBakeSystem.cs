@@ -8,7 +8,7 @@ using UnityEngine.Profiling;
 
 namespace SpaceSimulator.Runtime.Entities.Physics
 {
-    public partial class ColliderBakeSystem : IEntitySystem
+    public partial class ColliderBakeSystem : IEntitySystem, IColliderBakeSystem
     {
         public ESystemType SystemType => ESystemType.Compute;
         
