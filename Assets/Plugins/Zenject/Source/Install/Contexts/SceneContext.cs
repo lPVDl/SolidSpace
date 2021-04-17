@@ -35,7 +35,7 @@ namespace Zenject
 
         public override IEnumerable<GameObject> GetRootGameObjects()
         {
-            return ZenUtilInternal.GetRootGameObjects(gameObject.scene);
+            return gameObject.scene.GetRootGameObjects();
         }
 
         public void Install()

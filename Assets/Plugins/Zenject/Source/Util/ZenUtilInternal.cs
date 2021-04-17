@@ -26,81 +26,7 @@ namespace Zenject.Internal
             return obj == null || obj.Equals(null);
         }
 
-#if UNITY_EDITOR
-        // This can be useful if you are running code outside unity
-        // since in that case you have to make sure to avoid calling anything
-        // inside Unity DLLs
-        public static bool IsOutsideUnity()
-        {
-            return AppDomain.CurrentDomain.FriendlyName != "Unity Child Domain";
-        }
-#endif
-
-        public static bool AreFunctionsEqual(Delegate left, Delegate right)
-        {
-            return left.Target == right.Target && left.Method() == right.Method();
-        }
-
-        // Taken from here:
-        // http://stackoverflow.com/questions/28937324/in-c-how-could-i-get-a-classs-inheritance-distance-to-base-class/28937542#28937542
-        public static int GetInheritanceDelta(Type derived, Type parent)
-        {
-            Assert.That(derived.DerivesFromOrEqual(parent));
-
-            if (parent.IsInterface())
-            {
-                // Not sure if we can calculate this so just return 1
-                return 1;
-            }
-
-            if (derived == parent)
-            {
-                return 0;
-            }
-
-            int distance = 1;
-
-            Type child = derived;
-
-            while ((child = child.BaseType()) != parent)
-            {
-                distance++;
-            }
-
-            return distance;
-        }
-
 #if !NOT_UNITY3D
-        public static IEnumerable<SceneContext> GetAllSceneContexts()
-        {
-            foreach (var scene in UnityUtil.AllLoadedScenes)
-            {
-                var contexts = scene.GetRootGameObjects()
-                    .SelectMany(root => root.GetComponentsInChildren<SceneContext>()).ToList();
-
-                if (contexts.IsEmpty())
-                {
-                    continue;
-                }
-
-                Assert.That(contexts.Count == 1,
-                    "Found multiple scene contexts in scene '{0}'", scene.name);
-
-                yield return contexts[0];
-            }
-        }
-
-        public static void AddStateMachineBehaviourAutoInjectersInScene(Scene scene)
-        {
-            foreach (var rootObj in GetRootGameObjects(scene))
-            {
-                if (rootObj != null)
-                {
-                    AddStateMachineBehaviourAutoInjectersUnderGameObject(rootObj);
-                }
-            }
-        }
-
         // Call this before calling GetInjectableMonoBehavioursUnderGameObject to ensure that the StateMachineBehaviour's
         // also get injected properly
         // The StateMachineBehaviour's cannot be retrieved until after the Start() method so we
@@ -123,43 +49,6 @@ namespace Zenject.Internal
                 }
             }
         }
-        public static bool IsInjectableMonoBehaviourType(Type type)
-        {
-            // Do not inject on installers since these are always injected before they are installed
-            return type != null && !type.DerivesFrom<MonoInstaller>() && TypeAnalyzer.HasInfo(type);
-        }
-
-        public static IEnumerable<GameObject> GetRootGameObjects(Scene scene)
-        {
-#if ZEN_INTERNAL_PROFILING
-            using (ProfileTimers.CreateTimedBlock("Searching Hierarchy"))
-#endif
-            {
-                if (scene.isLoaded)
-                {
-                    return scene.GetRootGameObjects()
-                        .Where(x => x.GetComponent<ProjectContext>() == null);
-                }
-
-                // Note: We can't use scene.GetRootObjects() here because that apparently fails with an exception
-                // about the scene not being loaded yet when executed in Awake
-                // We also can't use GameObject.FindObjectsOfType<Transform>() because that does not include inactive game objects
-                // So we use Resources.FindObjectsOfTypeAll, even though that may include prefabs.  However, our assumption here
-                // is that prefabs do not have their "scene" property set correctly so this should work
-                //
-                // It's important here that we only inject into root objects that are part of our scene, to properly support
-                // multi-scene editing features of Unity 5.x
-                //
-                // Also, even with older Unity versions, if there is an object that is marked with DontDestroyOnLoad, then it will
-                // be injected multiple times when another scene is loaded
-                //
-                // We also make sure not to inject into the project root objects which are injected by ProjectContext.
-                return Resources.FindObjectsOfTypeAll<GameObject>()
-                    .Where(x => x.transform.parent == null
-                            && x.GetComponent<ProjectContext>() == null
-                            && x.scene == scene);
-            }
-        }
 
 #if UNITY_EDITOR
         // Returns a Transform in the DontDestroyOnLoad scene (or, if we're not in play mode, within the current active scene)
@@ -167,13 +56,15 @@ namespace Zenject.Internal
         // without any of their Awake() methods firing.
         public static Transform GetOrCreateInactivePrefabParent()
         {
-            if(_disabledIndestructibleGameObject == null || (!Application.isPlaying && _disabledIndestructibleGameObject.scene != SceneManager.GetActiveScene()))
+            if (_disabledIndestructibleGameObject == null || (!Application.isPlaying &&
+                                                              _disabledIndestructibleGameObject.scene !=
+                                                              SceneManager.GetActiveScene()))
             {
                 var go = new GameObject("ZenUtilInternal_PrefabParent");
                 go.hideFlags = HideFlags.HideAndDontSave;
                 go.SetActive(false);
 
-                if(Application.isPlaying)
+                if (Application.isPlaying)
                 {
                     UnityEngine.Object.DontDestroyOnLoad(go);
                 }
@@ -187,4 +78,5 @@ namespace Zenject.Internal
 
 #endif
     }
+
 }
