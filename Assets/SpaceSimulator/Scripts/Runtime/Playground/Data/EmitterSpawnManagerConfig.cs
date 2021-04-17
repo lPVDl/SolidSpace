@@ -7,7 +7,6 @@ namespace SpaceSimulator.Runtime.Playground
     public class EmitterSpawnManagerConfig
     {
         [Serialize] public int EntityCount { get; private set; }
-        [Serialize] public Material ParticleMaterial { get; private set; }
         [Serialize] public float SpawnRate { get; private set; }
         [Serialize] public Vector2 SpawnRangeX { get; private set; }
         [Serialize] public Vector2 SpawnRangeY { get; private set; }

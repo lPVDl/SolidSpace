@@ -11,16 +11,16 @@ using UnityEngine.Rendering;
 
 namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
 {
-    public class ParticleMeshSystem : IEntitySystem, IParticleMeshSystem
+    public class ParticleMeshSystem : IEntitySystem
     {
         private const int ParticlePerMesh = 16384;
         private const int RenderBounds = 8096;
 
         public ESystemType SystemType => ESystemType.Render;
-        public Material Material { get; set; }
-        
+
         private readonly IEntityManager _entityManager;
-        
+        private readonly ParticleMeshSystemConfig _config;
+
         private EntityQuery _query;
         private SquareVertices _square;
         private EntitySystemUtil _util;
@@ -29,14 +29,17 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
         private List<Mesh> _meshesForMeshArray;
         private Matrix4x4 _matrixDefault;
         private MeshUpdateFlags _meshUpdateFlags;
+        private Material _material;
 
-        public ParticleMeshSystem(IEntityManager entityManager)
+        public ParticleMeshSystem(IEntityManager entityManager, ParticleMeshSystemConfig config)
         {
             _entityManager = entityManager;
+            _config = config;
         }
         
         public void Initialize()
         {
+            _material = new Material(_config.Shader);
             _matrixDefault = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, 1, -1));
             _meshes = new List<Mesh>();
             _meshesForMeshArray = new List<Mesh>();
@@ -141,7 +144,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
                 DrawMesh(new MeshDrawingData
                 {
                     mesh = _meshes[i],
-                    material = Material,
+                    material = _material,
                     matrix = _matrixDefault
                 });
             }
@@ -203,6 +206,7 @@ namespace SpaceSimulator.Runtime.Entities.Particles.Rendering
                 Object.Destroy(_meshes[i]);
                 _meshes[i] = null;
             }
+            Object.Destroy(_material);
         }
     }
 }

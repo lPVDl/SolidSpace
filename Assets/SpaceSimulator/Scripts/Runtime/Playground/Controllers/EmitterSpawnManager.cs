@@ -1,6 +1,5 @@
 using SpaceSimulator.Runtime.Entities;
 using SpaceSimulator.Runtime.Entities.Particles.Emission;
-using SpaceSimulator.Runtime.Entities.Particles.Rendering;
 using SpaceSimulator.Runtime.Entities.Randomization;
 using SpaceSimulator.Runtime.Entities.RepeatTimer;
 using Unity.Collections;
@@ -16,20 +15,16 @@ namespace SpaceSimulator.Runtime.Playground
         public EControllerType ControllerType => EControllerType.Common;
 
         private readonly EmitterSpawnManagerConfig _config;
-        private readonly IParticleMeshSystem _renderSystem;
         private readonly IEntityManager _entityManager;
 
-        public EmitterSpawnManager(EmitterSpawnManagerConfig config, IParticleMeshSystem renderSystem, IEntityManager entityManager)
+        public EmitterSpawnManager(EmitterSpawnManagerConfig config, IEntityManager entityManager)
         {
             _config = config;
-            _renderSystem = renderSystem;
             _entityManager = entityManager;
         }
         
         public void Initialize()
         {
-            _renderSystem.Material = _config.ParticleMaterial;
-
             var componentTypes = new ComponentType[]
             {
                 typeof(PositionComponent),

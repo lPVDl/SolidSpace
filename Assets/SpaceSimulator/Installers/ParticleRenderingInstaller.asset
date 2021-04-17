@@ -12,3 +12,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88c994e22ddb458fb5641549e4959b93, type: 3}
   m_Name: ParticleRenderingInstaller
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects:
+    - {fileID: 4800000, guid: 87b296a76dd1ce949bc894866359dc4e, type: 3}
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: _particleMeshSystemConfig
+      Entry: 7
+      Data: 0|SpaceSimulator.Runtime.Entities.Particles.Rendering.ParticleMeshSystemConfig,
+        Assembly-CSharp
+    - Name: Shader
+      Entry: 10
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
