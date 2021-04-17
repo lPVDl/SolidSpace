@@ -74,42 +74,7 @@ namespace Zenject
             Action<DiContainer> extraBindingsLate,
             LoadSceneRelationship containerMode)
         {
-            if (loadMode == LoadSceneMode.Single)
-            {
-                Assert.IsEqual(containerMode, LoadSceneRelationship.None);
 
-                // Here we explicitly unload all existing scenes rather than relying on Unity to
-                // do this for us.  The reason we do this is to ensure a deterministic destruction
-                // order for everything in the scene and in the container.
-                // See comment at ProjectKernel.OnApplicationQuit for more details
-                _projectKernel.ForceUnloadAllScenes();
-            }
-
-            if (containerMode == LoadSceneRelationship.None)
-            {
-                SceneContext.ParentContainers = null;
-            }
-            else if (containerMode == LoadSceneRelationship.Child)
-            {
-                if (_sceneContainer == null)
-                {
-                    SceneContext.ParentContainers = null;
-                }
-                else
-                {
-                    SceneContext.ParentContainers = new[] { _sceneContainer };
-                }
-            }
-            else
-            {
-                Assert.IsNotNull(_sceneContainer,
-                    "Cannot use LoadSceneRelationship.Sibling when loading scenes from ProjectContext");
-                Assert.IsEqual(containerMode, LoadSceneRelationship.Sibling);
-                SceneContext.ParentContainers = _sceneContainer.ParentContainers;
-            }
-
-            SceneContext.ExtraBindingsInstallMethod = extraBindings;
-            SceneContext.ExtraBindingsLateInstallMethod = extraBindingsLate;
         }
 
         public void LoadScene(

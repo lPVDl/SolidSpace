@@ -115,26 +115,7 @@ namespace Zenject.Internal
             Dictionary<string, LoadedSceneInfo> contractMap,
             Dictionary<string, string> defaultContractsMap)
         {
-            foreach (var parentContractName in sceneInfo.SceneContext.ParentContractNames)
-            {
-                LoadedSceneInfo parentInfo;
 
-                if (contractMap.TryGetValue(parentContractName, out parentInfo))
-                {
-                    ValidateParentChildMatch(parentInfo, sceneInfo);
-                    continue;
-                }
-
-                parentInfo = LoadDefaultSceneForContract(sceneInfo, parentContractName, defaultContractsMap);
-
-                AddToContractMap(contractMap, parentInfo);
-
-                EditorSceneManager.MoveSceneBefore(parentInfo.Scene, sceneInfo.Scene);
-
-                ValidateParentChildMatch(parentInfo, sceneInfo);
-
-                ProcessScene(parentInfo, contractMap, defaultContractsMap);
-            }
         }
 
         static LoadedSceneInfo LoadDefaultSceneForContract(
@@ -296,24 +277,7 @@ namespace Zenject.Internal
         static void AddToContractMap(
             Dictionary<string, LoadedSceneInfo> contractMap, LoadedSceneInfo info)
         {
-            if (info.SceneContext == null)
-            {
-                return;
-            }
-
-            foreach (var contractName in info.SceneContext.ContractNames)
-            {
-                LoadedSceneInfo currentInfo;
-
-                if (contractMap.TryGetValue(contractName, out currentInfo))
-                {
-                    throw Assert.CreateException(
-                        "Found multiple scene contracts with name '{0}'. Scene '{1}' and scene '{2}'",
-                        contractName, currentInfo.Scene.name, info.Scene.name);
-                }
-
-                contractMap.Add(contractName, info);
-            }
+ 
         }
 
         public class LoadedSceneInfo

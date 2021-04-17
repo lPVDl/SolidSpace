@@ -197,8 +197,6 @@ namespace Zenject.Internal
                     Assert.That(decoratorContext == null,
                         "Found both SceneDecoratorContext and SceneContext in the same scene '{0}'.  This is not allowed", scene.name);
 
-                    decoratedSceneNames.RemoveAll(x => sceneContext.ContractNames.Contains(x));
-
                     yield return sceneContext;
                 }
                 else if (decoratorContext != null)
