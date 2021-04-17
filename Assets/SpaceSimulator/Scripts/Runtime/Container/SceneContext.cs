@@ -12,7 +12,7 @@ namespace SpaceSimulator.Runtime
 
         public Transform Transform => gameObject.transform;
 
-        [SerializeField] private List<ScriptableObjectInstaller> _installers;
+        [Serialize] private List<ScriptableObjectInstaller> _installers;
 
         public void Awake()
         {

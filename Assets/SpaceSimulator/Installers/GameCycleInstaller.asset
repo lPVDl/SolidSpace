@@ -12,5 +12,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 906ec737e14544a38ea4a507fa6a558b, type: 3}
   m_Name: GameCycleInstaller
   m_EditorClassIdentifier: 
-  _gameCycleConfig:
-    _invocationOrder: 01000000
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: _gameCycleConfig
+      Entry: 7
+      Data: 0|SpaceSimulator.Runtime.GameCycleConfig, Assembly-CSharp
+    - Name: InvocationOrder
+      Entry: 7
+      Data: 1|System.Collections.Generic.List`1[[SpaceSimulator.Runtime.EControllerType,
+        Assembly-CSharp]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 

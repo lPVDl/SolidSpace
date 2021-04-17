@@ -12,21 +12,113 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c4545d311b740e0bcbb6b09077ce572, type: 3}
   m_Name: PlaygroundInstaller
   m_EditorClassIdentifier: 
-  _colliderSpawnManagerConfig:
-    _colliderRadius: 0
-    _onStartSpawnCount: 0
-    _spawnPerSpawn: 0
-    _spawnExtraRadius: 0
-    _spawnRangeX: {x: 0, y: 0}
-    _spawnRangeY: {x: 0, y: 0}
-    _drawGizmos: 0
-  _emitterSpawnManagerConfig:
-    _entityCount: 100
-    _particleMaterial: {fileID: 2100000, guid: 2b92c87154c8111459c64fbeea07dc49, type: 2}
-    _spawnRate: 60
-    _spawnRangeX: {x: -200, y: 200}
-    _spawnRangeY: {x: -200, y: 200}
-    _particleVelocity: 10
-  _spriteSpawnManagerConfig:
-    _spriteTexture: {fileID: 2800000, guid: d51b8917003f48442892e8c7a6035160, type: 3}
-    _outputAtlasPath: T:/Atlas.png
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects:
+    - {fileID: 2100000, guid: 2b92c87154c8111459c64fbeea07dc49, type: 2}
+    - {fileID: 2800000, guid: d51b8917003f48442892e8c7a6035160, type: 3}
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: _colliderSpawnManagerConfig
+      Entry: 7
+      Data: 0|SpaceSimulator.Runtime.Playground.ColliderSpawnManagerConfig, Assembly-CSharp
+    - Name: ColliderRadius
+      Entry: 4
+      Data: 0
+    - Name: OnStartSpawnCount
+      Entry: 4
+      Data: 0
+    - Name: SpawnPerSpawn
+      Entry: 3
+      Data: 0
+    - Name: SpawnExtraRadius
+      Entry: 4
+      Data: 0
+    - Name: SpawnRangeX
+      Entry: 7
+      Data: UnityEngine.Vector2, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: SpawnRangeY
+      Entry: 7
+      Data: UnityEngine.Vector2, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: DrawGizmos
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: _emitterSpawnManagerConfig
+      Entry: 7
+      Data: 1|SpaceSimulator.Runtime.Playground.EmitterSpawnManagerConfig, Assembly-CSharp
+    - Name: EntityCount
+      Entry: 3
+      Data: 100
+    - Name: ParticleMaterial
+      Entry: 10
+      Data: 0
+    - Name: SpawnRate
+      Entry: 4
+      Data: 60
+    - Name: SpawnRangeX
+      Entry: 7
+      Data: UnityEngine.Vector2, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: -300
+    - Name: 
+      Entry: 4
+      Data: 300
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: SpawnRangeY
+      Entry: 7
+      Data: UnityEngine.Vector2, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: -200
+    - Name: 
+      Entry: 4
+      Data: 200
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: ParticleVelocity
+      Entry: 4
+      Data: 10
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: _spriteSpawnManagerConfig
+      Entry: 7
+      Data: 2|SpaceSimulator.Runtime.Playground.SpriteSpawnManagerConfig, Assembly-CSharp
+    - Name: SpriteTexture
+      Entry: 10
+      Data: 1
+    - Name: OutputAtlasPath
+      Entry: 1
+      Data: T:\Atlas.png
+    - Name: 
+      Entry: 8
+      Data: 
