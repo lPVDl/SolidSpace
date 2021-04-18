@@ -1,10 +1,11 @@
 using System;
+using UnityEngine;
 
 namespace SpaceSimulator.Controllers
 {
     public partial class UpdatingController
     {
-        private class UpdateHandler : SolidMonoBehaviour
+        private class UpdateHandler : MonoBehaviour
         {
             public event Action OnUpdate;
 

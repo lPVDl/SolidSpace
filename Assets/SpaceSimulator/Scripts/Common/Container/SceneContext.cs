@@ -5,7 +5,7 @@ using Zenject;
 
 namespace SpaceSimulator
 {
-    public class SceneContext : SolidMonoBehaviour, IContext
+    public class SceneContext : MonoBehaviour, IContext
     {
         public IEnumerable<GameObject> RootGameObjects => gameObject.scene.GetRootGameObjects();
 
