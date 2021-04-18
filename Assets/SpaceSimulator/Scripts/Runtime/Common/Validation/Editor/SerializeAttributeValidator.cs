@@ -13,23 +13,21 @@ namespace SpaceSimulator.Editor.Validation
 {
     public class SerializeAttributeValidator : AttributeValidator<SerializeAttribute>
     {
-        private readonly Runtime.ValidationResult _result;
-        private readonly HashSet<MethodInfo> _trashValidators;
+        private readonly HashSet<MethodInfo> _brokenValidators;
         private readonly object[] _invocationParameters;
 
         public SerializeAttributeValidator()
         {
-            _trashValidators = new HashSet<MethodInfo>();
-            _result = new Runtime.ValidationResult();
-            _invocationParameters = new object[] { null, _result };
+            _brokenValidators = new HashSet<MethodInfo>();
+            _invocationParameters = new object[] { null };
         }
         
         protected override void Initialize()
         {
-            _trashValidators.Clear();
+            _brokenValidators.Clear();
         }
 
-        protected override void Validate(Sirenix.OdinInspector.Editor.Validation.ValidationResult result)
+        protected override void Validate(ValidationResult result)
         {
             if (Property.BaseValueEntry.ValueState == PropertyValueState.NullReference)
             {
@@ -51,29 +49,36 @@ namespace SpaceSimulator.Editor.Validation
             {
                 return;
             }
-
-            _result.IsError = false;
-            _result.Message = string.Empty;
+            
+            if (_brokenValidators.Contains(validationMethod.method))
+            {
+                return;
+            }
 
             try
             {
                 _invocationParameters[0] = Property.BaseValueEntry.WeakSmartValue;
-                validationMethod.method.Invoke(validationMethod.validator, _invocationParameters);
 
-                if (_result.IsError)
+                var invokeResult = (string) validationMethod.method.Invoke(validationMethod.validator, _invocationParameters);
+                if (invokeResult is null)
                 {
-                    result.ResultType = ValidationResultType.Error;
-                    result.Message = _result.Message;
-                }
-            }
-            catch (Exception e)
-            {
-                if (_trashValidators.Contains(validationMethod.method))
-                {
+                    Debug.LogError($"Validator '{validationMethod.validator.GetType()}' returned null or non-string");
+                    _brokenValidators.Add(validationMethod.method);
                     return;
                 }
 
-                _trashValidators.Add(validationMethod.method);
+                if (invokeResult != string.Empty)
+                {
+                    result.ResultType = ValidationResultType.Error;
+                    result.Message = invokeResult;
+                }
+
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Exception during validation via '{validationMethod.validator.GetType()}'");
+                
+                _brokenValidators.Add(validationMethod.method);
                 
                 Debug.LogException(e);
             }

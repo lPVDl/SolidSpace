@@ -2,28 +2,26 @@ namespace SpaceSimulator.Runtime.Entities.SpriteRendering
 {
     public class SpriteAtlasChunkConfigValidator : IValidator<SpriteAtlasChunkConfig>
     {
-        public void Validate(SpriteAtlasChunkConfig data, ValidationResult result)
+        public string Validate(SpriteAtlasChunkConfig data)
         {
-            var minSpriteSize = 1 << SpriteAtlasIndexManager.MinSpritePower;
+            const int minSpriteSize = 1 << SpriteAtlasIndexManager.MinSpritePower;
+            
             if (data.spriteSize < minSpriteSize)
             {
-                result.IsError = true;
-                result.Message = $"'{nameof(data.spriteSize)}' must be equal or more than {minSpriteSize}";
-                return;
+                return $"'{nameof(data.spriteSize)}' must be equal or more than {minSpriteSize}";
             }
 
             if (!IsPowerOfTwo(data.spriteSize))
             {
-                result.IsError = true;
-                result.Message = $"'{nameof(data.spriteSize)}' must be power of 2";
-                return;
+                return $"'{nameof(data.spriteSize)}' must be power of 2";
             }
 
             if (!IsPowerOfFour(data.itemCount))
             {
-                result.IsError = true;
-                result.Message = $"'{nameof(data.itemCount)}' must be power of 4";
+                return $"'{nameof(data.itemCount)}' must be power of 4";
             }
+
+            return string.Empty;
         }
 
         private static bool IsPowerOfTwo(int a)

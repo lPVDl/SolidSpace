@@ -10,15 +10,15 @@ namespace SpaceSimulator.Editor.Validation
 {
     public static class AssemblyValidatorFactory
     {
-        private static readonly Dictionary<Type, ValidationMethod> _validators;
-        private static readonly Type[] _argumentTypes;
+        private static readonly Dictionary<Type, ValidationMethod> Validators;
+        private static readonly Type[] ArgumentTypes;
 
         static AssemblyValidatorFactory()
         {
             try
             {
-                _validators = new Dictionary<Type, ValidationMethod>();
-                _argumentTypes = new[] { typeof(object), typeof(ValidationResult) };
+                Validators = new Dictionary<Type, ValidationMethod>();
+                ArgumentTypes = new[] { typeof(object) };
                 
                 Initialize();
             }
@@ -58,7 +58,7 @@ namespace SpaceSimulator.Editor.Validation
                     }
 
                     var genericArgument0 = inter.GetGenericArguments()[0];
-                    if (_validators.TryGetValue(genericArgument0, out var validationMethod))
+                    if (Validators.TryGetValue(genericArgument0, out var validationMethod))
                     {
                         var message = $"'{genericArgument0.FullName}' can be validated by more than one validator. " +
                                       $"'{validationMethod.validator.GetType().FullName}' will be used. " +
@@ -81,7 +81,7 @@ namespace SpaceSimulator.Editor.Validation
                             continue;
                         }
 
-                        _validators[genericArgument0] = method;
+                        Validators[genericArgument0] = method;
                     }
                     catch (Exception e)
                     {
@@ -93,16 +93,16 @@ namespace SpaceSimulator.Editor.Validation
 
         private static MethodInfo GetValidationMethod(Type objectType, Type genericArgumentType)
         {
-            IValidator<int> _dummy;
+            IValidator<object> dummy;
 
-            _argumentTypes[0] = genericArgumentType;
+            ArgumentTypes[0] = genericArgumentType;
 
-            return objectType.GetMethod(nameof(_dummy.Validate), _argumentTypes);
+            return objectType.GetMethod(nameof(dummy.Validate), ArgumentTypes);
         }
 
         public static bool TryGetValidatorFor(Type type, out ValidationMethod validator)
         {
-            return _validators.TryGetValue(type, out validator);
+            return Validators.TryGetValue(type, out validator);
         }
     }
 }

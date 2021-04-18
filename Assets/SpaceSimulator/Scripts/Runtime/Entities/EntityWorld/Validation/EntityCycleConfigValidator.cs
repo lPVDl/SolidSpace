@@ -11,7 +11,7 @@ namespace SpaceSimulator.Runtime.Entities
             _itemHash = new HashSet<ESystemType>();
         }
         
-        public void Validate(EntityCycleConfig data, ValidationResult result)
+        public string Validate(EntityCycleConfig data)
         {
             var order = data.InvocationOrder;
             _itemHash.Clear();
@@ -22,18 +22,16 @@ namespace SpaceSimulator.Runtime.Entities
 
                 if (order[i] == ESystemType.Invalid)
                 {
-                    result.IsError = true;
-                    result.Message = $"{nameof(data.InvocationOrder)} contains '{ESystemType.Invalid}'";
-                    return;
+                    return $"{nameof(data.InvocationOrder)} contains '{ESystemType.Invalid}'";
                 }
 
                 if (!_itemHash.Add(item))
                 {
-                    result.IsError = true;
-                    result.Message = $"'{item}' is duplicated in {nameof(data.InvocationOrder)}";
-                    return;
+                    return $"'{item}' is duplicated in {nameof(data.InvocationOrder)}";
                 }
             }
+
+            return string.Empty;
         }
     }
 }

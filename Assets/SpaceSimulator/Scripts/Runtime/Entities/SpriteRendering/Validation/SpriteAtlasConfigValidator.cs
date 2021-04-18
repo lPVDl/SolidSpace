@@ -13,36 +13,28 @@ namespace SpaceSimulator.Runtime.Entities.SpriteRendering
             _spriteSizeCash = new HashSet<int>();
         }
         
-        public void Validate(SpriteAtlasConfig data, ValidationResult result)
+        public string Validate(SpriteAtlasConfig data)
         {
             var chunks = data.Chunks;
             
             if (chunks is null)
             {
-                result.IsError = true;
-                result.Message = $"'{nameof(data.Chunks)}' is null";
-                return;
+                return string.Empty;
             }
 
             if (chunks.Count == 0)
             {
-                result.IsError = true;
-                result.Message = $"'{nameof(data.Chunks)}' must contain at least 1 element";
-                return;
+                return $"'{nameof(data.Chunks)}' must contain at least 1 element";
             }
 
             if (!IsPowerOfTwo(data.AtlasSize))
             {
-                result.IsError = true;
-                result.Message = $"'{nameof(data.AtlasSize)}' must be power of 2";
-                return;
+                return $"'{nameof(data.AtlasSize)}' must be power of 2";
             }
 
             if (!Enum.IsDefined(typeof(TextureFormat), data.AtlasFormat))
             {
-                result.IsError = true;
-                result.Message = $"'{nameof(data.AtlasFormat)}' is invalid";
-                return;
+                return $"'{nameof(data.AtlasFormat)}' is invalid";
             }
 
             _spriteSizeCash.Clear();
@@ -54,28 +46,24 @@ namespace SpaceSimulator.Runtime.Entities.SpriteRendering
                 var size = itemCount * chunk.spriteSize;
                 if (data.AtlasSize < size)
                 {
-                    result.IsError = true;
-                    result.Message = $"'{nameof(data.AtlasSize)}' must be at least {size} to support '{nameof(data.Chunks)}' at index {i}";
-                    return;
+                    return $"'{nameof(data.AtlasSize)}' must be at least {size} to support '{nameof(data.Chunks)}' at index {i}";
                 }
 
                 if (!_spriteSizeCash.Add(chunk.spriteSize))
                 {
-                    result.IsError = true;
-                    result.Message = $"More than one '{nameof(data.Chunks)}' has '{nameof(chunk.spriteSize)}' with value {chunk.spriteSize}";
-                    return;
+                    return $"More than one '{nameof(data.Chunks)}' has '{nameof(chunk.spriteSize)}' with value {chunk.spriteSize}";
                 }
 
                 var spriteSizeLog2 = (int) Math.Ceiling(Math.Log(chunk.spriteSize, 2));
                 if ((_spriteSizeCash.Count > 1) && (spriteSizeLog2 - prevSpriteSizeLog2 != 1))
                 {
-                    result.IsError = true;
-                    result.Message = $"'{nameof(chunk.spriteSize)}' in '{nameof(data.Chunks)}' must create power of 2 sequence";
-                    return;
+                    return $"'{nameof(chunk.spriteSize)}' in '{nameof(data.Chunks)}' must create power of 2 sequence";
                 }
 
                 prevSpriteSizeLog2 = spriteSizeLog2;
             }
+
+            return string.Empty;
         }
         
         private static bool IsPowerOfTwo(int a)

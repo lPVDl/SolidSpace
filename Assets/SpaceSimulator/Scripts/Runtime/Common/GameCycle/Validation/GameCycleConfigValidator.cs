@@ -11,7 +11,7 @@ namespace SpaceSimulator.Runtime
             _itemHash = new HashSet<EControllerType>();
         }
         
-        public void Validate(GameCycleConfig data, ValidationResult result)
+        public string Validate(GameCycleConfig data)
         {
             var order = data.InvocationOrder;
             _itemHash.Clear();
@@ -22,18 +22,16 @@ namespace SpaceSimulator.Runtime
 
                 if (order[i] == EControllerType.Invalid)
                 {
-                    result.IsError = true;
-                    result.Message = $"{nameof(data.InvocationOrder)} contains '{EControllerType.Invalid}'";
-                    return;
+                    return $"{nameof(data.InvocationOrder)} contains '{EControllerType.Invalid}'";
                 }
 
                 if (!_itemHash.Add(item))
                 {
-                    result.IsError = true;
-                    result.Message = $"'{item}' is duplicated in {nameof(data.InvocationOrder)}";
-                    return;
+                    return $"'{item}' is duplicated in {nameof(data.InvocationOrder)}";
                 }
             }
+
+            return string.Empty;
         }
     }
 }
