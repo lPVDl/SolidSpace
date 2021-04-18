@@ -23,10 +23,10 @@ MonoBehaviour:
     SerializationNodes:
     - Name: _entityCycleConfig
       Entry: 7
-      Data: 0|SpaceSimulator.Runtime.Entities.EntityCycleConfig, Assembly-CSharp
+      Data: 0|SpaceSimulator.Entities.EntityWorld.EntityCycleConfig, Assembly-CSharp
     - Name: InvocationOrder
       Entry: 7
-      Data: 1|System.Collections.Generic.List`1[[SpaceSimulator.Runtime.Entities.ESystemType,
+      Data: 1|System.Collections.Generic.List`1[[SpaceSimulator.Entities.EntityWorld.ESystemType,
         Assembly-CSharp]], mscorlib
     - Name: 
       Entry: 12

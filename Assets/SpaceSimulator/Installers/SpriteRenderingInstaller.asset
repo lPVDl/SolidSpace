@@ -23,8 +23,7 @@ MonoBehaviour:
     SerializationNodes:
     - Name: _colorAtlasConfig
       Entry: 7
-      Data: 0|SpaceSimulator.Runtime.Entities.SpriteRendering.SpriteAtlasConfig,
-        Assembly-CSharp
+      Data: 0|SpaceSimulator.Entities.SpriteRendering.SpriteAtlasConfig, Assembly-CSharp
     - Name: AtlasSize
       Entry: 3
       Data: 512
@@ -33,15 +32,14 @@ MonoBehaviour:
       Data: 3
     - Name: Chunks
       Entry: 7
-      Data: 1|System.Collections.Generic.List`1[[SpaceSimulator.Runtime.Entities.SpriteRendering.SpriteAtlasChunkConfig,
+      Data: 1|System.Collections.Generic.List`1[[SpaceSimulator.Entities.SpriteRendering.SpriteAtlasChunkConfig,
         Assembly-CSharp]], mscorlib
     - Name: 
       Entry: 12
       Data: 6
     - Name: 
       Entry: 7
-      Data: SpaceSimulator.Runtime.Entities.SpriteRendering.SpriteAtlasChunkConfig,
-        Assembly-CSharp
+      Data: SpaceSimulator.Entities.SpriteRendering.SpriteAtlasChunkConfig, Assembly-CSharp
     - Name: spriteSize
       Entry: 3
       Data: 4
@@ -53,8 +51,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: SpaceSimulator.Runtime.Entities.SpriteRendering.SpriteAtlasChunkConfig,
-        Assembly-CSharp
+      Data: SpaceSimulator.Entities.SpriteRendering.SpriteAtlasChunkConfig, Assembly-CSharp
     - Name: spriteSize
       Entry: 3
       Data: 8
@@ -66,8 +63,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: SpaceSimulator.Runtime.Entities.SpriteRendering.SpriteAtlasChunkConfig,
-        Assembly-CSharp
+      Data: SpaceSimulator.Entities.SpriteRendering.SpriteAtlasChunkConfig, Assembly-CSharp
     - Name: spriteSize
       Entry: 3
       Data: 16
@@ -79,8 +75,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: SpaceSimulator.Runtime.Entities.SpriteRendering.SpriteAtlasChunkConfig,
-        Assembly-CSharp
+      Data: SpaceSimulator.Entities.SpriteRendering.SpriteAtlasChunkConfig, Assembly-CSharp
     - Name: spriteSize
       Entry: 3
       Data: 32
@@ -92,8 +87,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: SpaceSimulator.Runtime.Entities.SpriteRendering.SpriteAtlasChunkConfig,
-        Assembly-CSharp
+      Data: SpaceSimulator.Entities.SpriteRendering.SpriteAtlasChunkConfig, Assembly-CSharp
     - Name: spriteSize
       Entry: 3
       Data: 64
@@ -105,8 +99,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: SpaceSimulator.Runtime.Entities.SpriteRendering.SpriteAtlasChunkConfig,
-        Assembly-CSharp
+      Data: SpaceSimulator.Entities.SpriteRendering.SpriteAtlasChunkConfig, Assembly-CSharp
     - Name: spriteSize
       Entry: 3
       Data: 128
