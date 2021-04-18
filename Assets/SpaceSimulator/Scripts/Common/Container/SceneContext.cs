@@ -14,7 +14,7 @@ namespace SpaceSimulator
         public Transform Transform => gameObject.transform;
 
         [InlineEditor(InlineEditorObjectFieldModes.Foldout)]
-        [Serialize] private List<ScriptableObjectInstaller> _installers;
+        [SerializeField] private List<ScriptableObjectInstaller> _installers;
 
         public void Awake()
         {

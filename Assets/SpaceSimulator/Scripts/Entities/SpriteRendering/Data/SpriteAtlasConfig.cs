@@ -7,8 +7,12 @@ namespace SpaceSimulator.Entities.SpriteRendering
     [Serializable]
     public class SpriteAtlasConfig
     {
-        [Serialize] public int AtlasSize { get; private set; }
-        [Serialize] public TextureFormat AtlasFormat { get; private set; }
-        [Serialize] public IReadOnlyList<SpriteAtlasChunkConfig> Chunks { get; private set; }
+        public int AtlasSize => _atlasSize;
+        public TextureFormat AtlasFormat => _atlasFormat;
+        public IReadOnlyList<SpriteAtlasChunkConfig> Chunks => _chunks;
+        
+        [SerializeField] private int _atlasSize;
+        [SerializeField] private TextureFormat _atlasFormat;
+        [SerializeField] private List<SpriteAtlasChunkConfig> _chunks;
     }
 }

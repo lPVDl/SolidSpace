@@ -1,8 +1,10 @@
+using UnityEngine;
+
 namespace SpaceSimulator.Entities.Particles.Rendering
 {
     public class ParticleRenderingInstaller : ScriptableObjectInstaller
     {
-        [Serialize] public ParticleMeshSystemConfig _particleMeshSystemConfig;
+        [SerializeField] private ParticleMeshSystemConfig _particleMeshSystemConfig;
         
         public override void InstallBindings(IContainer container)
         {

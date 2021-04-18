@@ -4,9 +4,9 @@ namespace SpaceSimulator.Playground
 {
     public class PlaygroundInstaller : ScriptableObjectInstaller
     {
-        [Serialize] private ColliderSpawnManagerConfig _colliderSpawnManagerConfig;
-        [Serialize] private EmitterSpawnManagerConfig _emitterSpawnManagerConfig;
-        [Serialize] private SpriteSpawnManagerConfig _spriteSpawnManagerConfig; 
+        [SerializeField] private ColliderSpawnManagerConfig _colliderSpawnManagerConfig;
+        [SerializeField] private EmitterSpawnManagerConfig _emitterSpawnManagerConfig;
+        [SerializeField] private SpriteSpawnManagerConfig _spriteSpawnManagerConfig; 
         
         public override void InstallBindings(IContainer container)
         {

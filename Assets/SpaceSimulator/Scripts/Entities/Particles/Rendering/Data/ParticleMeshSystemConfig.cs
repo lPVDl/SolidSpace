@@ -6,6 +6,8 @@ namespace SpaceSimulator.Entities.Particles.Rendering
     [Serializable]
     public class ParticleMeshSystemConfig
     {
-        [Serialize] public Shader Shader { get; private set; }
+        public Shader Shader => _shader;
+        
+        [SerializeField] private Shader _shader;
     }
 }

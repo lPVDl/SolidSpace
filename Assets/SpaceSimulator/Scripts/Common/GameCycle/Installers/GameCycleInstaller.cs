@@ -1,11 +1,12 @@
 using SpaceSimulator.Controllers;
 using SpaceSimulator.Data;
+using UnityEngine;
 
 namespace SpaceSimulator.Installers
 {
     public class GameCycleInstaller : ScriptableObjectInstaller
     {
-        [Serialize] private GameCycleConfig _gameCycleConfig;
+        [SerializeField] private GameCycleConfig _gameCycleConfig;
 
         public override void InstallBindings(IContainer container)
         {

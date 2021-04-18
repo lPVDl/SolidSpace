@@ -3,13 +3,19 @@ using UnityEngine;
 
 namespace SpaceSimulator.Playground
 {
-    [Serializable]
-    public class EmitterSpawnManagerConfig
-    {
-        [Serialize] public int EntityCount { get; private set; }
-        [Serialize] public float SpawnRate { get; private set; }
-        [Serialize] public Vector2 SpawnRangeX { get; private set; }
-        [Serialize] public Vector2 SpawnRangeY { get; private set; }
-        [Serialize] public float ParticleVelocity { get; private set; }
-    }
+       [Serializable]
+       public class EmitterSpawnManagerConfig
+       {
+              public int EntityCount => _entityCount;
+              public float SpawnRate => _spawnRate;
+              public Vector2 SpawnRangeX => _spawnRangeX;
+              public Vector2 SpawnRangeY => _spawnRangeY;
+              public float ParticleVelocity => _particleVelocity;
+              
+              [SerializeField] private int _entityCount;
+              [SerializeField] private float _spawnRate;
+              [SerializeField] private Vector2 _spawnRangeX;
+              [SerializeField] private Vector2 _spawnRangeY;
+              [SerializeField] private float _particleVelocity;
+       }
 }

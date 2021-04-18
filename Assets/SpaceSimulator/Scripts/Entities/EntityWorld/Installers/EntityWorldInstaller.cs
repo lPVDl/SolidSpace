@@ -1,8 +1,10 @@
+using UnityEngine;
+
 namespace SpaceSimulator.Entities.EntityWorld
 {
     public class EntityWorldInstaller : ScriptableObjectInstaller
     {
-        [Serialize] private EntityCycleConfig _entityCycleConfig;
+        [SerializeField] private EntityCycleConfig _entityCycleConfig;
 
         public override void InstallBindings(IContainer container)
         {

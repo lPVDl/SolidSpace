@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace SpaceSimulator.Editor
 {
-    public class SerializeAttributeValidator : AttributeValidator<SerializeAttribute>
+    public class SerializeAttributeValidator : AttributeValidator<SerializeField>
     {
         private readonly HashSet<MethodInfo> _brokenValidators;
         private readonly object[] _invocationParameters;
