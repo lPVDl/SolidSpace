@@ -1,0 +1,35 @@
+using System.Collections.Generic;
+using SpaceSimulator.Data;
+using SpaceSimulator.Enums;
+using SpaceSimulator.Interfaces;
+
+namespace SpaceSimulator.Validation
+{
+    public class GameCycleConfigValidator : IValidator<GameCycleConfig>
+    {
+        private readonly HashSet<EControllerType> _itemHash;
+
+        public GameCycleConfigValidator()
+        {
+            _itemHash = new HashSet<EControllerType>();
+        }
+        
+        public string Validate(GameCycleConfig data)
+        {
+            var order = data.InvocationOrder;
+            _itemHash.Clear();
+            
+            for (var i = 0; i < order.Count; i++)
+            {
+                var item = order[i];
+
+                if (!_itemHash.Add(item))
+                {
+                    return $"'{item}' is duplicated in {nameof(data.InvocationOrder)}";
+                }
+            }
+
+            return string.Empty;
+        }
+    }
+}
