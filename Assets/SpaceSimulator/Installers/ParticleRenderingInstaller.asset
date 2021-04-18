@@ -15,20 +15,11 @@ MonoBehaviour:
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
-    ReferencedUnityObjects:
-    - {fileID: 4800000, guid: 87b296a76dd1ce949bc894866359dc4e, type: 3}
+    ReferencedUnityObjects: []
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
-    SerializationNodes:
-    - Name: _particleMeshSystemConfig
-      Entry: 7
-      Data: 0|SpaceSimulator.Runtime.Entities.Particles.Rendering.ParticleMeshSystemConfig,
-        Assembly-CSharp
-    - Name: Shader
-      Entry: 10
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
+    SerializationNodes: []
+  _particleMeshSystemConfig:
+    _shader: {fileID: 4800000, guid: 87b296a76dd1ce949bc894866359dc4e, type: 3}
