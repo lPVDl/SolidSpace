@@ -4,7 +4,7 @@ using UnityEngine.Profiling;
 
 namespace SpaceSimulator.Runtime.Entities.SpriteRendering
 {
-    public class SpriteAtlasCommandSystem
+    public class SpriteAtlasCommandManager
     {
         private struct CopyTextureCommand
         {
@@ -15,7 +15,7 @@ namespace SpaceSimulator.Runtime.Entities.SpriteRendering
         private readonly ISpriteAtlasSystem _atlas;
         private readonly List<CopyTextureCommand> _commands;
         
-        public SpriteAtlasCommandSystem(ISpriteAtlasSystem atlas)
+        public SpriteAtlasCommandManager(ISpriteAtlasSystem atlas)
         {
             _atlas = atlas;
             _commands = new List<CopyTextureCommand>();

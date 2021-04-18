@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
 using Unity.Collections;
-using Unity.Mathematics;
 
 namespace SpaceSimulator.Runtime.Entities.SpriteRendering
 {
     public class SpriteAtlasIndexManager : IDisposable
     {
-        private const int MinSpritePower = 2;
+        public const int MinSpritePower = 2;
 
         public NativeList<SpriteAtlasChunk> Chunks => _chunks;
 
@@ -15,32 +14,29 @@ namespace SpaceSimulator.Runtime.Entities.SpriteRendering
         private readonly SpriteAtlasSquareManager _squareManager;
         private readonly Stack<SpriteAtlasIndex>[] _emptySprites;
         private readonly int _maxSpritePower;
+        private readonly int _minSpritePower;
         private readonly int[] _chunkIndexPowers;
 
-        public SpriteAtlasIndexManager(SpriteAtlasSquareManager squareManager, int[] chunkIndexPowers)
+        public SpriteAtlasIndexManager(SpriteAtlasSquareManager squareManager, IReadOnlyList<SpriteAtlasChunkConfig> chunkConfig)
         {
-            if (chunkIndexPowers == null || chunkIndexPowers.Length < MinSpritePower + 1)
-            {
-                var message = $"{nameof(chunkIndexPowers)} must contain at least {MinSpritePower} elements";
-                throw new ArgumentException(message);
-            }
-            
-            _maxSpritePower = chunkIndexPowers.Length - 1;
-            _squareManager = squareManager;
-            _chunkIndexPowers = chunkIndexPowers;
+            _minSpritePower = (int) CeilLog2(chunkConfig[0].spriteSize);
+            _maxSpritePower = (int) CeilLog2(chunkConfig[chunkConfig.Count - 1].spriteSize);
+            _chunkIndexPowers = new int[_maxSpritePower + 1];
             _emptySprites = new Stack<SpriteAtlasIndex>[_maxSpritePower + 1];
-            for (var i = 0; i <= _maxSpritePower; i++)
+            for (int i = _minSpritePower, j = 0; i <= _maxSpritePower; i++, j++)
             {
+                _chunkIndexPowers[i] = (byte) CeilLog4(chunkConfig[j].itemCount);
                 _emptySprites[i] = new Stack<SpriteAtlasIndex>();
             }
-
+            
             _chunks = new NativeList<SpriteAtlasChunk>(16, Allocator.Persistent);
+            _squareManager = squareManager;
         }
 
         public SpriteAtlasIndex AllocateSpace(int sizeX, int sizeY)
         {
-            var maxSize = math.max(sizeX, sizeY);
-            var spritePower = (byte) math.max(math.ceil(math.log2(maxSize)), MinSpritePower);
+            var maxSize = Math.Max(sizeX, sizeY);
+            var spritePower = (byte) Math.Max(_minSpritePower, CeilLog2(maxSize));
             if (spritePower > _maxSpritePower)
             {
                 var message = $"Size {1 << spritePower} is more than allowed {1 << _maxSpritePower}";
@@ -87,6 +83,16 @@ namespace SpaceSimulator.Runtime.Entities.SpriteRendering
                 };
                 indexStack.Push(spriteIndex);
             }
+        }
+
+        private static double CeilLog2(double a)
+        {
+            return Math.Ceiling(Math.Log(a, 2));
+        }
+
+        private static double CeilLog4(double a)
+        {
+            return Math.Ceiling(Math.Log(a, 2));
         }
 
         public void Dispose()

@@ -11,6 +11,8 @@ namespace SpaceSimulator.Runtime.Entities.SpriteRendering
 
         public SpriteAtlasIndex AllocateSpace(int sizeX, int sizeY);
 
+        public void ScheduleTextureCopy(Texture2D source, SpriteAtlasIndex target);
+
         public void ReleaseSpace(SpriteAtlasIndex spriteAtlasIndex);
     }
 }

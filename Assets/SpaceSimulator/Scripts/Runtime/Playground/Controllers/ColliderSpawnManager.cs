@@ -17,7 +17,7 @@ namespace SpaceSimulator.Runtime.Playground
             public Entity entity;
         }
 
-        public EControllerType ControllerType => EControllerType.Common;
+        public EControllerType ControllerType => EControllerType.Playground;
 
         private readonly IEntityManager _entityManager;
         private readonly ColliderSpawnManagerConfig _config;

@@ -4,30 +4,39 @@ using UnityEngine;
 
 namespace SpaceSimulator.Runtime.Playground
 {
-    public class SpriteSpawnManager : IInitializable
+    public class SpriteSpawnManager : IInitializable, IUpdatable
     {
-        private readonly SpriteSpawnManagerConfig _config;
-
-        public EControllerType ControllerType => EControllerType.Common;
+        public EControllerType ControllerType => EControllerType.Playground;
         
-        public SpriteSpawnManager(SpriteSpawnManagerConfig config)
+        private readonly SpriteSpawnManagerConfig _config;
+        private readonly ISpriteAtlasColorSystem _colorSystem;
+
+        private bool _flushedAtlas;
+
+        public SpriteSpawnManager(SpriteSpawnManagerConfig config, ISpriteAtlasColorSystem colorSystem)
         {
             _config = config;
+            _colorSystem = colorSystem;
         }
         
         public void Initialize()
         {
-            var colorSystem = new SpriteAtlasColorSystem();
-            var commandSystem = new SpriteAtlasCommandSystem(colorSystem);
-
             var spriteTexture = _config.SpriteTexture;
-            var spriteIndex = colorSystem.AllocateSpace(spriteTexture.width, spriteTexture.height);
-            commandSystem.ScheduleTextureCopy(spriteTexture, spriteIndex);
-            commandSystem.ProcessCommands();
+            var spriteIndex = _colorSystem.AllocateSpace(spriteTexture.width, spriteTexture.height);
+            _colorSystem.ScheduleTextureCopy(spriteTexture, spriteIndex);
+            _flushedAtlas = false;
+        }
+        
+        public void Update()
+        {
+            if (_flushedAtlas)
+            {
+                return;
+            }
 
-            File.WriteAllBytes(_config.OutputAtlasPath, colorSystem.Texture.EncodeToPNG());
+            _flushedAtlas = true;
             
-            colorSystem.Dispose();
+            File.WriteAllBytes(_config.OutputAtlasPath, _colorSystem.Texture.EncodeToPNG());
         }
     }
 }

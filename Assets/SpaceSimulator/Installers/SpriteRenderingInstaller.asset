@@ -1,0 +1,127 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc8f12f6f4174149a67ab82a4b2b73be, type: 3}
+  m_Name: SpriteRenderingInstaller
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: _colorAtlasConfig
+      Entry: 7
+      Data: 0|SpaceSimulator.Runtime.Entities.SpriteRendering.SpriteAtlasConfig,
+        Assembly-CSharp
+    - Name: AtlasSize
+      Entry: 3
+      Data: 512
+    - Name: AtlasFormat
+      Entry: 3
+      Data: 3
+    - Name: Chunks
+      Entry: 7
+      Data: 1|System.Collections.Generic.List`1[[SpaceSimulator.Runtime.Entities.SpriteRendering.SpriteAtlasChunkConfig,
+        Assembly-CSharp]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 6
+    - Name: 
+      Entry: 7
+      Data: SpaceSimulator.Runtime.Entities.SpriteRendering.SpriteAtlasChunkConfig,
+        Assembly-CSharp
+    - Name: spriteSize
+      Entry: 3
+      Data: 4
+    - Name: itemCount
+      Entry: 3
+      Data: 64
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: SpaceSimulator.Runtime.Entities.SpriteRendering.SpriteAtlasChunkConfig,
+        Assembly-CSharp
+    - Name: spriteSize
+      Entry: 3
+      Data: 8
+    - Name: itemCount
+      Entry: 3
+      Data: 16
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: SpaceSimulator.Runtime.Entities.SpriteRendering.SpriteAtlasChunkConfig,
+        Assembly-CSharp
+    - Name: spriteSize
+      Entry: 3
+      Data: 16
+    - Name: itemCount
+      Entry: 3
+      Data: 16
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: SpaceSimulator.Runtime.Entities.SpriteRendering.SpriteAtlasChunkConfig,
+        Assembly-CSharp
+    - Name: spriteSize
+      Entry: 3
+      Data: 32
+    - Name: itemCount
+      Entry: 3
+      Data: 4
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: SpaceSimulator.Runtime.Entities.SpriteRendering.SpriteAtlasChunkConfig,
+        Assembly-CSharp
+    - Name: spriteSize
+      Entry: 3
+      Data: 64
+    - Name: itemCount
+      Entry: 3
+      Data: 4
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: SpaceSimulator.Runtime.Entities.SpriteRendering.SpriteAtlasChunkConfig,
+        Assembly-CSharp
+    - Name: spriteSize
+      Entry: 3
+      Data: 128
+    - Name: itemCount
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 

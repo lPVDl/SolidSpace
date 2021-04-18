@@ -12,7 +12,7 @@ namespace SpaceSimulator.Runtime.Playground
 {
     public class EmitterSpawnManager : IInitializable
     {
-        public EControllerType ControllerType => EControllerType.Common;
+        public EControllerType ControllerType => EControllerType.Playground;
 
         private readonly EmitterSpawnManagerConfig _config;
         private readonly IEntityManager _entityManager;

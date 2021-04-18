@@ -8,17 +8,17 @@ namespace SpaceSimulator.Runtime.Entities.SpriteRendering
         private readonly Stack<SpriteAtlasSquare>[] _emptySquares;
         private readonly byte _atlasPower;
         
-        public SpriteAtlasSquareManager(byte atlasPower)
+        public SpriteAtlasSquareManager(int atlasSize)
         {
-            _atlasPower = atlasPower;
-            _emptySquares = new Stack<SpriteAtlasSquare>[atlasPower + 1];
+            _atlasPower = (byte) Math.Ceiling(Math.Log(atlasSize, 2));
+            _emptySquares = new Stack<SpriteAtlasSquare>[_atlasPower + 1];
             
-            for (var i = 0; i <= atlasPower; i++)
+            for (var i = 0; i <= _atlasPower; i++)
             {
                 _emptySquares[i] = new Stack<SpriteAtlasSquare>();
             }
             
-            _emptySquares[atlasPower].Push(new SpriteAtlasSquare
+            _emptySquares[_atlasPower].Push(new SpriteAtlasSquare
             {
                 offsetX = 0,
                 offsetY = 0,

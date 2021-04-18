@@ -4,5 +4,6 @@ namespace SpaceSimulator.Runtime
     {
         Invalid = 0,
         Common = 1,
+        Playground = 2,
     }
 }
