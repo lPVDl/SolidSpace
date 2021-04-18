@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace SpaceSimulator.Editor.Validation
+namespace SpaceSimulator.Runtime.Editor
 {
     public struct ValidationMethod
     {

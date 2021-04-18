@@ -20,11 +20,6 @@ namespace SpaceSimulator.Runtime.Entities
             {
                 var item = order[i];
 
-                if (order[i] == ESystemType.Invalid)
-                {
-                    return $"{nameof(data.InvocationOrder)} contains '{ESystemType.Invalid}'";
-                }
-
                 if (!_itemHash.Add(item))
                 {
                     return $"'{item}' is duplicated in {nameof(data.InvocationOrder)}";

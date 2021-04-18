@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace SpaceSimulator.Runtime.Entities.SpriteRendering
 {
@@ -30,11 +29,6 @@ namespace SpaceSimulator.Runtime.Entities.SpriteRendering
             if (!IsPowerOfTwo(data.AtlasSize))
             {
                 return $"'{nameof(data.AtlasSize)}' must be power of 2";
-            }
-
-            if (!Enum.IsDefined(typeof(TextureFormat), data.AtlasFormat))
-            {
-                return $"'{nameof(data.AtlasFormat)}' is invalid";
             }
 
             _spriteSizeCash.Clear();

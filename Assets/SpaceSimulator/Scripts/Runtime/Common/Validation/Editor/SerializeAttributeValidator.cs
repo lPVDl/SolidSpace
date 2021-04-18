@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Reflection;
 using Sirenix.OdinInspector.Editor;
 using Sirenix.OdinInspector.Editor.Validation;
-using SpaceSimulator.Editor.Validation;
-using SpaceSimulator.Runtime;
+using SpaceSimulator.Runtime.Editor;
 using UnityEngine;
 
 [assembly: RegisterValidator(typeof(SerializeAttributeValidator))]
 
-namespace SpaceSimulator.Editor.Validation
+namespace SpaceSimulator.Runtime.Editor
 {
     public class SerializeAttributeValidator : AttributeValidator<SerializeAttribute>
     {
@@ -33,18 +32,32 @@ namespace SpaceSimulator.Editor.Validation
             {
                 result.ResultType = ValidationResultType.Error;
 
-                if (int.TryParse(Property.NiceName, out _))
+                if (IsIndex(Property.NiceName))
                 {
                     result.Message = $"Element at index ({Property.NiceName}) is null";
                     return;
                 }
 
                 result.Message = $"Property '{Property.NiceName}' is null";
-                
                 return;
             }
 
+            var value = Property.BaseValueEntry.WeakSmartValue;
             var itemType = Property.BaseValueEntry.TypeOfValue;
+            if (itemType.IsEnum && !Enum.IsDefined(itemType, value))
+            {
+                result.ResultType = ValidationResultType.Error;
+
+                if (IsIndex(Property.NiceName))
+                {
+                    result.Message = $"Element at index ({Property.NiceName}) equals '{value}' which is invalid '{itemType}'";
+                    return;
+                }
+                
+                result.Message = $"Property '{Property.NiceName}' equals '{value}' which is invalid '{itemType}'";
+                return;
+            }
+
             if (!AssemblyValidatorFactory.TryGetValidatorFor(itemType, out var validationMethod))
             {
                 return;
@@ -82,6 +95,16 @@ namespace SpaceSimulator.Editor.Validation
                 
                 Debug.LogException(e);
             }
+        }
+
+        private bool IsIndex(string propertyNiceName)
+        {
+            if (int.TryParse(propertyNiceName, out _))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

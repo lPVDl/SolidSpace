@@ -2,11 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using SpaceSimulator.Runtime;
-
 using Debug = UnityEngine.Debug;
 
-namespace SpaceSimulator.Editor.Validation
+namespace SpaceSimulator.Runtime.Editor
 {
     public static class AssemblyValidatorFactory
     {

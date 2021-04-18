@@ -5,7 +5,7 @@ using Sirenix.OdinInspector.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace SpaceSimulator.Runtime.Entities.SpriteRendering
+namespace SpaceSimulator.Runtime.Entities.SpriteRendering.Editor
 {
     public class SpriteAtlasChunkConfigDrawer : OdinValueDrawer<SpriteAtlasChunkConfig>
     {

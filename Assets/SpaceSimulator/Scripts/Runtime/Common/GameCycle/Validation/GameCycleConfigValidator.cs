@@ -20,11 +20,6 @@ namespace SpaceSimulator.Runtime
             {
                 var item = order[i];
 
-                if (order[i] == EControllerType.Invalid)
-                {
-                    return $"{nameof(data.InvocationOrder)} contains '{EControllerType.Invalid}'";
-                }
-
                 if (!_itemHash.Add(item))
                 {
                     return $"'{item}' is duplicated in {nameof(data.InvocationOrder)}";
