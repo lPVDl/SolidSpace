@@ -10,8 +10,7 @@ namespace SpaceSimulator.Editor.CodeFlow
     {
         public void Scan(NammyConfig config, ICollection<NammyFolderInfo> output)
         {
-            var dataPath = Application.dataPath;
-            var projectRoot = dataPath.Substring(0, dataPath.Length - 7);
+            var projectRoot = Application.dataPath.Substring(0, Application.dataPath.Length - 7);
             var rootPath = Path.Combine(projectRoot, config.ScriptsRoot);
             
             var state = new NammyFolderInfo

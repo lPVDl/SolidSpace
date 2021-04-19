@@ -9,8 +9,7 @@ namespace SpaceSimulator.Editor.CodeFlow
         
         public NammyConfigValidator()
         {
-            var dataPath = Application.dataPath;
-            _projectRoot = dataPath.Substring(0, dataPath.Length - 7);
+            _projectRoot = Application.dataPath.Substring(0, Application.dataPath.Length - 7);
         }
         
         public string Validate(NammyConfig data)
