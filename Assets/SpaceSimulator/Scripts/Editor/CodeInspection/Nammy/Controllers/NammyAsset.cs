@@ -25,7 +25,7 @@ namespace SpaceSimulator.Editor.CodeFlow
                 Debug.Log(message);
             }
             
-            Debug.Log($"Total folders: {output.Count}; Editor folders: {output.Count(o => o.isEditor)}");
+            Debug.Log($"Total folders: {output.Count};");
         }
 
         [HorizontalGroup("Export"), Button("Export to NamespaceProvider")]
@@ -39,13 +39,14 @@ namespace SpaceSimulator.Editor.CodeFlow
             var exporter = new NammyExporter();
 
             var projectRoot = Application.dataPath.Substring(0, Application.dataPath.Length - 7);
+
+            var sharpFile = Path.Combine(projectRoot, "Assembly-CSharp.csproj.DotSettings");
             
-            exporter.ExportFoldersForSkip(Path.Combine(projectRoot, "Assembly-CSharp.csproj.DotSettings"),
-                output.Where(o => !o.isEditor).Select(i => i.fullPath));
-            
-            exporter.ExportFoldersForSkip(Path.Combine(projectRoot, "Assembly-CSharp-Editor.csproj.DotSettings"),
-                output.Where(o => o.isEditor).Select(i => i.fullPath));
-            
+            exporter.ExportFoldersForSkip(sharpFile, output.Select(i => i.fullPath));
+
+            var editorFile = Path.Combine(projectRoot, "Assembly-CSharp-Editor.csproj.DotSettings");
+            File.Copy(sharpFile, editorFile, true);
+
             Debug.Log("Done");
         }
         

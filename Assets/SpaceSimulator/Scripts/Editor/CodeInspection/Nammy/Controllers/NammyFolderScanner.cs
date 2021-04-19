@@ -15,9 +15,7 @@ namespace SpaceSimulator.Editor.CodeFlow
             
             var state = new NammyFolderInfo
             {
-                isEditor = false,
                 fullPath = rootPath,
-                directoryName = Path.GetFileName(rootPath),
                 regexId = -1
             };
             
@@ -28,11 +26,6 @@ namespace SpaceSimulator.Editor.CodeFlow
 
         private void ScanRecursive(NammyFolderInfo state, IReadOnlyList<NammyFolderFilter> filters, ICollection<NammyFolderInfo> output)
         {
-            if (!state.isEditor)
-            {
-                state.isEditor = IsEditorFolder(state.directoryName);
-            }
-
             for (var i = 0; i < filters.Count; i++)
             {
                 var filter = filters[i];
@@ -55,15 +48,9 @@ namespace SpaceSimulator.Editor.CodeFlow
             foreach (var directory in subDirectories)
             {
                 state.fullPath = directory;
-                state.directoryName = Path.GetFileName(directory);
-                
+
                 ScanRecursive(state, filters, output);
             }
-        }
-
-        private bool IsEditorFolder(string directoryName)
-        {
-            return string.Compare(directoryName, "Editor", StringComparison.InvariantCultureIgnoreCase) == 0;
         }
     }
 }
