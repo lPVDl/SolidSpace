@@ -16,6 +16,8 @@ MonoBehaviour:
     _scriptsRoot: Assets/SpaceSimulator/Scripts
     _folderFilters:
     - enabled: 1
+      regex: \/(?i)scripts$
+    - enabled: 1
       regex: \\(?i)controllers$
     - enabled: 1
       regex: \\(?i)enums$
