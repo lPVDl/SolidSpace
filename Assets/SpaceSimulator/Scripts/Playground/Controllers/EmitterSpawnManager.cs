@@ -3,8 +3,6 @@ using SpaceSimulator.Entities.EntityWorld;
 using SpaceSimulator.Entities.Particles.Emission;
 using SpaceSimulator.Entities.Randomization;
 using SpaceSimulator.Entities.RepeatTimer;
-using SpaceSimulator.Enums;
-using SpaceSimulator.Interfaces;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;

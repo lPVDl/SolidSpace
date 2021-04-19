@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using SpaceSimulator.Enums;
 using UnityEngine;
 
-namespace SpaceSimulator.Data
+namespace SpaceSimulator
 {
     [System.Serializable]
     public class GameCycleConfig

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace SpaceSimulator.Controllers
+namespace SpaceSimulator
 {
     public partial class UpdatingController
     {

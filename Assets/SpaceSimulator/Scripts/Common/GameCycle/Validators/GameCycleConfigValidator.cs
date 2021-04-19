@@ -1,9 +1,6 @@
 using System.Collections.Generic;
-using SpaceSimulator.Data;
-using SpaceSimulator.Enums;
-using SpaceSimulator.Interfaces;
 
-namespace SpaceSimulator.Validation
+namespace SpaceSimulator
 {
     public class GameCycleConfigValidator : IValidator<GameCycleConfig>
     {

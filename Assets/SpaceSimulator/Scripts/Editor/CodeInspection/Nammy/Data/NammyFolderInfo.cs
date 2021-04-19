@@ -1,4 +1,4 @@
-namespace SpaceSimulator.Editor.CodeFlow
+namespace SpaceSimulator.Editor.CodeInspection.Nammy
 {
     public struct NammyFolderInfo
     {

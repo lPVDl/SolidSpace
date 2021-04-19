@@ -4,7 +4,7 @@ using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace SpaceSimulator.Editor.CodeFlow
+namespace SpaceSimulator.Editor.CodeInspection.Nammy
 {
     public class NammyAsset : ScriptableObject
     {

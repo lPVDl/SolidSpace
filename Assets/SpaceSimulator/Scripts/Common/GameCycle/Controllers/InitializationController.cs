@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SpaceSimulator.Data;
-using SpaceSimulator.Enums;
-using SpaceSimulator.Interfaces;
 using UnityEngine;
 
-namespace SpaceSimulator.Controllers
+namespace SpaceSimulator
 {
     public class InitializationController : Zenject.IInitializable
     {

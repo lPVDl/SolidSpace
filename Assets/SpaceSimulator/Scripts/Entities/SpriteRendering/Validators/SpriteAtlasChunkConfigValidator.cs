@@ -1,5 +1,3 @@
-using SpaceSimulator.Interfaces;
-
 namespace SpaceSimulator.Entities.SpriteRendering
 {
     public class SpriteAtlasChunkConfigValidator : IValidator<SpriteAtlasChunkConfig>

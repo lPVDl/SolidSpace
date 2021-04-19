@@ -1,8 +1,6 @@
-using SpaceSimulator.Controllers;
-using SpaceSimulator.Data;
 using UnityEngine;
 
-namespace SpaceSimulator.Installers
+namespace SpaceSimulator
 {
     public class GameCycleInstaller : ScriptableObjectInstaller
     {

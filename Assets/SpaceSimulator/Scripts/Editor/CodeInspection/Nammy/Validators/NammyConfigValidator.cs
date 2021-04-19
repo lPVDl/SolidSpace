@@ -1,7 +1,7 @@
 using System.IO;
 using UnityEngine;
 
-namespace SpaceSimulator.Editor.CodeFlow
+namespace SpaceSimulator.Editor.CodeInspection.Nammy
 {
     public class NammyConfigValidator : IValidator<NammyConfig>
     {

@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using SpaceSimulator.Interfaces;
 
-namespace SpaceSimulator.Controllers
+namespace SpaceSimulator
 {
     public class FinalizationController : IDisposable
     {

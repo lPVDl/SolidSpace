@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using SpaceSimulator.Interfaces;
 
 namespace SpaceSimulator.Entities.EntityWorld
 {

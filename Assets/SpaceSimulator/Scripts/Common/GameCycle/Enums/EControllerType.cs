@@ -1,4 +1,4 @@
-namespace SpaceSimulator.Enums
+namespace SpaceSimulator
 {
     public enum EControllerType
     {

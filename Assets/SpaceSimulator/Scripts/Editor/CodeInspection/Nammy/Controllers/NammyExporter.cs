@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace SpaceSimulator.Editor.CodeFlow
+namespace SpaceSimulator.Editor.CodeInspection.Nammy
 {
     public class NammyExporter
     {

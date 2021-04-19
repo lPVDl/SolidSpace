@@ -2,8 +2,6 @@ using System.Collections.Generic;
 using SpaceSimulator.Entities;
 using SpaceSimulator.Entities.EntityWorld;
 using SpaceSimulator.Entities.Physics;
-using SpaceSimulator.Enums;
-using SpaceSimulator.Interfaces;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;

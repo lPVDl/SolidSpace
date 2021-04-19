@@ -1,10 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-namespace SpaceSimulator.Editor.CodeFlow
+namespace SpaceSimulator.Editor.CodeInspection.Nammy
 {
     public class NammyFolderScanner
     {

@@ -1,7 +1,5 @@
 using System.IO;
 using SpaceSimulator.Entities.SpriteRendering;
-using SpaceSimulator.Enums;
-using SpaceSimulator.Interfaces;
 using UnityEngine;
 
 namespace SpaceSimulator.Playground

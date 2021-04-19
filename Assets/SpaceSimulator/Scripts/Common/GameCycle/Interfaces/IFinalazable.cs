@@ -1,4 +1,4 @@
-namespace SpaceSimulator.Interfaces
+namespace SpaceSimulator
 {
     public interface IFinalazable
     {
