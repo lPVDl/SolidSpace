@@ -12,9 +12,6 @@ namespace SpaceSimulator.Entities.Rendering.Particles
 {
     public class ParticleMeshSystem : IEntitySystem
     {
-        private const int ParticlePerMesh = 16384;
-        private const int RenderBounds = 8096;
-
         public ESystemType SystemType => ESystemType.Render;
 
         private readonly IEntityManager _entityManager;
@@ -23,6 +20,7 @@ namespace SpaceSimulator.Entities.Rendering.Particles
         private EntityQuery _query;
         private SquareVertices _square;
         private NativeArrayUtil _arrayUtil;
+        private MeshRenderingUtil _meshUtil;
         private VertexAttributeDescriptor[] _meshLayout;
         private List<Mesh> _meshes;
         private List<Mesh> _meshesForMeshArray;
@@ -76,7 +74,7 @@ namespace SpaceSimulator.Entities.Rendering.Particles
             var chunkIndex = 0;
             while (chunkIndex < chunkTotal)
             {
-                FillMesh(chunks, chunkIndex, out var particleCount, out var chunkCount);
+                _meshUtil.FillMesh(chunks, chunkIndex, out var particleCount, out var chunkCount);
                 chunkPerMesh[meshCount] = chunkCount;
                 particlePerMesh[meshCount] = particleCount;
                 totalParticleCount += particleCount;
@@ -124,7 +122,7 @@ namespace SpaceSimulator.Entities.Rendering.Particles
             for (var i = _meshes.Count; i < meshCount; i++)
             {
                 var name = nameof(ParticleMeshSystem) + "_" + i;
-                _meshes.Add(CreateMesh(name));
+                _meshes.Add( _meshUtil.CreateMesh(name));
             }
             _meshesForMeshArray.Clear();
             for (var i = 0; i < meshCount; i++)
@@ -140,7 +138,7 @@ namespace SpaceSimulator.Entities.Rendering.Particles
             Profiler.BeginSample("Draw mesh");
             for (var i = 0; i < meshCount; i++)
             {
-                DrawMesh(new MeshDrawingData
+                _meshUtil.DrawMesh(new MeshDrawingData
                 {
                     mesh = _meshes[i],
                     material = _material,
@@ -158,44 +156,6 @@ namespace SpaceSimulator.Entities.Rendering.Particles
             
             SpaceDebug.LogState("ParticleCount", totalParticleCount);
             SpaceDebug.LogState("ParticleMeshCount", meshCount);
-        }
-        
-        private static void FillMesh(NativeArray<ArchetypeChunk> chunks, int startChunk, 
-            out int particleCount, out int chunkCount)
-        {
-            particleCount = 0;
-            var chunkTotal = chunks.Length;
-            var i = startChunk;
-            for (; i < chunkTotal; i++)
-            {
-                var chunkParticleCount = chunks[i].Count;
-                if (particleCount + chunkParticleCount > ParticlePerMesh)
-                {
-                    break;
-                }
-
-                particleCount += chunkParticleCount;
-            }
-
-            chunkCount = i - startChunk;
-        }
-        
-        private static void DrawMesh(MeshDrawingData data)
-        {
-            Graphics.DrawMesh(data.mesh, data.matrix, data.material, data.layer, data.camera, data.subMeshIndex,
-                data.properties, data.castShadows, data.receiveShadows, data.useLightProbes);
-        }
-        
-        private static Mesh CreateMesh(string name)
-        {
-            var mesh = new Mesh
-            {
-                name = name,
-                bounds = new Bounds(Vector3.zero, Vector3.one * RenderBounds)
-            };
-            mesh.MarkDynamic();
-
-            return mesh;
         }
 
         public void FinalizeSystem()

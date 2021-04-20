@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace SpaceSimulator.Entities.Rendering.Particles
+namespace SpaceSimulator.Entities.Rendering
 {
     public struct MeshDrawingData
     {
