@@ -1,5 +1,5 @@
 using System.IO;
-using SpaceSimulator.Entities.SpriteRendering;
+using SpaceSimulator.Entities.Rendering.Sprites;
 using UnityEngine;
 
 namespace SpaceSimulator.Playground
@@ -9,11 +9,11 @@ namespace SpaceSimulator.Playground
         public EControllerType ControllerType => EControllerType.Playground;
         
         private readonly SpriteSpawnManagerConfig _config;
-        private readonly ISpriteAtlasColorSystem _colorSystem;
+        private readonly ISpriteColorSystem _colorSystem;
 
         private bool _flushedAtlas;
 
-        public SpriteSpawnManager(SpriteSpawnManagerConfig config, ISpriteAtlasColorSystem colorSystem)
+        public SpriteSpawnManager(SpriteSpawnManagerConfig config, ISpriteColorSystem colorSystem)
         {
             _config = config;
             _colorSystem = colorSystem;

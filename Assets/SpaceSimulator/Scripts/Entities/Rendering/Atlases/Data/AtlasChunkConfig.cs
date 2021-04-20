@@ -1,10 +1,10 @@
 using System;
 using UnityEngine;
 
-namespace SpaceSimulator.Entities.SpriteRendering
+namespace SpaceSimulator.Entities.Rendering.Atlases
 {
     [Serializable]
-    public struct SpriteAtlasChunkConfig
+    public struct AtlasChunkConfig
     {
         [SerializeField] public int spriteSize;
         [SerializeField] public int itemCount;

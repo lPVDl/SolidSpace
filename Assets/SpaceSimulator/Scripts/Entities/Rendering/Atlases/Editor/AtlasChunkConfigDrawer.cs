@@ -5,17 +5,17 @@ using Sirenix.OdinInspector.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace SpaceSimulator.Entities.SpriteRendering.Editor
+namespace SpaceSimulator.Entities.Rendering.Atlases.Editor
 {
-    public class SpriteAtlasChunkConfigDrawer : OdinValueDrawer<SpriteAtlasChunkConfig>
+    public class AtlasChunkConfigDrawer : OdinValueDrawer<AtlasChunkConfig>
     {
         private readonly StringBuilder _stringBuilder;
-        private readonly Dictionary<SpriteAtlasChunkConfig, string> _chunkInfoCash;
+        private readonly Dictionary<AtlasChunkConfig, string> _chunkInfoCash;
         
-        public SpriteAtlasChunkConfigDrawer()
+        public AtlasChunkConfigDrawer()
         {
             _stringBuilder = new StringBuilder();
-            _chunkInfoCash = new Dictionary<SpriteAtlasChunkConfig, string>();
+            _chunkInfoCash = new Dictionary<AtlasChunkConfig, string>();
         }
         
         protected override void DrawPropertyLayout(GUIContent label)
@@ -52,7 +52,7 @@ namespace SpaceSimulator.Entities.SpriteRendering.Editor
             EditorGUI.HelpBox(rect, info, MessageType.Info);
         }
 
-        private string CreateInfoMessage(SpriteAtlasChunkConfig data)
+        private string CreateInfoMessage(AtlasChunkConfig data)
         {
             _stringBuilder.Clear();
 

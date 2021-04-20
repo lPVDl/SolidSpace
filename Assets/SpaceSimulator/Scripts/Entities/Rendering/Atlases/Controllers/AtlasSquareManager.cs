@@ -1,31 +1,31 @@
 using System;
 using System.Collections.Generic;
 
-namespace SpaceSimulator.Entities.SpriteRendering
+namespace SpaceSimulator.Entities.Rendering.Atlases
 {
-    public class SpriteAtlasSquareManager
+    public class AtlasSquareManager
     {
-        private readonly Stack<SpriteAtlasSquare>[] _emptySquares;
+        private readonly Stack<AtlasSquare>[] _emptySquares;
         private readonly byte _atlasPower;
         
-        public SpriteAtlasSquareManager(int atlasSize)
+        public AtlasSquareManager(int atlasSize)
         {
             _atlasPower = (byte) Math.Ceiling(Math.Log(atlasSize, 2));
-            _emptySquares = new Stack<SpriteAtlasSquare>[_atlasPower + 1];
+            _emptySquares = new Stack<AtlasSquare>[_atlasPower + 1];
             
             for (var i = 0; i <= _atlasPower; i++)
             {
-                _emptySquares[i] = new Stack<SpriteAtlasSquare>();
+                _emptySquares[i] = new Stack<AtlasSquare>();
             }
             
-            _emptySquares[_atlasPower].Push(new SpriteAtlasSquare
+            _emptySquares[_atlasPower].Push(new AtlasSquare
             {
                 offsetX = 0,
                 offsetY = 0,
             });
         }
 
-        public SpriteAtlasSquare AllocateSquare(int power)
+        public AtlasSquare AllocateSquare(int power)
         {
             var squareStack = _emptySquares[power];
             if (squareStack.Count > 0)
@@ -46,17 +46,17 @@ namespace SpaceSimulator.Entities.SpriteRendering
                 {
                     var size = 1 << (j - 2);
                     squareStack = _emptySquares[j];
-                    squareStack.Push(new SpriteAtlasSquare
+                    squareStack.Push(new AtlasSquare
                     {
                         offsetX = (byte)(square.offsetX + size),
                         offsetY = square.offsetY
                     });
-                    squareStack.Push(new SpriteAtlasSquare
+                    squareStack.Push(new AtlasSquare
                     {
                         offsetX = square.offsetX,
                         offsetY = (byte)(square.offsetY + size)
                     });
-                    squareStack.Push(new SpriteAtlasSquare
+                    squareStack.Push(new AtlasSquare
                     {
                         offsetX = (byte)(square.offsetX + size),
                         offsetY = (byte)(square.offsetY + size)

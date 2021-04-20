@@ -1,10 +1,10 @@
-namespace SpaceSimulator.Entities.SpriteRendering
+namespace SpaceSimulator.Entities.Rendering.Atlases
 {
-    public class SpriteAtlasChunkConfigValidator : IValidator<SpriteAtlasChunkConfig>
+    public class AtlasChunkConfigValidator : IValidator<AtlasChunkConfig>
     {
-        public string Validate(SpriteAtlasChunkConfig data)
+        public string Validate(AtlasChunkConfig data)
         {
-            const int minSpriteSize = 1 << SpriteAtlasIndexManager.MinSpritePower;
+            const int minSpriteSize = 1 << AtlasIndexManager.MinSpritePower;
             
             if (data.spriteSize < minSpriteSize)
             {

@@ -1,8 +1,8 @@
 using System.Runtime.CompilerServices;
 
-namespace SpaceSimulator.Entities.SpriteRendering
+namespace SpaceSimulator.Entities.Rendering.Atlases
 {
-    public struct SpriteAtlasChunk
+    public struct AtlasChunk
     {
         public byte offsetX;
         public byte offsetY;

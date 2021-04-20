@@ -1,21 +1,22 @@
 using SpaceSimulator.Entities.EntityWorld;
+using SpaceSimulator.Entities.Rendering.Atlases;
 using Unity.Collections;
 using UnityEngine;
 
-namespace SpaceSimulator.Entities.SpriteRendering
+namespace SpaceSimulator.Entities.Rendering.Sprites
 {
-    public class SpriteAtlasColorSystem : ISpriteAtlasColorSystem, IEntitySystem
+    public class SpriteColorSystem : ISpriteColorSystem, IEntitySystem
     {
         public ESystemType SystemType => ESystemType.Command;
         public Texture2D Texture { get; private set; }
-        public NativeList<SpriteAtlasChunk> Chunks => _indexManager.Chunks;
+        public NativeList<AtlasChunk> Chunks => _indexManager.Chunks;
         
-        private readonly SpriteAtlasConfig _config;
+        private readonly AtlasConfig _config;
         
-        private SpriteAtlasIndexManager _indexManager;
-        private SpriteAtlasCommandManager _commandManager;
+        private AtlasIndexManager _indexManager;
+        private AtlasCommandManager _commandManager;
 
-        public SpriteAtlasColorSystem(SpriteAtlasConfig config)
+        public SpriteColorSystem(AtlasConfig config)
         {
             _config = config;
         }
@@ -23,12 +24,12 @@ namespace SpaceSimulator.Entities.SpriteRendering
         public void Initialize()
         {
             Texture = new Texture2D(_config.AtlasSize, _config.AtlasSize, _config.AtlasFormat, false, true);
-            Texture.name = nameof(SpriteAtlasColorSystem);
+            Texture.name = nameof(SpriteColorSystem);
             
-            var squareManager = new SpriteAtlasSquareManager(_config.AtlasSize);
-            _indexManager = new SpriteAtlasIndexManager(squareManager, _config.Chunks);
+            var squareManager = new AtlasSquareManager(_config.AtlasSize);
+            _indexManager = new AtlasIndexManager(squareManager, _config.Chunks);
 
-            _commandManager = new SpriteAtlasCommandManager(this);
+            _commandManager = new AtlasCommandManager(this);
         }
         
         public void Update()
@@ -36,17 +37,17 @@ namespace SpaceSimulator.Entities.SpriteRendering
             _commandManager.ProcessCommands();
         }
         
-        public SpriteAtlasIndex AllocateSpace(int sizeX, int sizeY)
+        public AtlasIndex AllocateSpace(int sizeX, int sizeY)
         {
             return _indexManager.AllocateSpace(sizeX, sizeY);
         }
 
-        public void ReleaseSpace(SpriteAtlasIndex spriteAtlasIndex)
+        public void ReleaseSpace(AtlasIndex spriteAtlasIndex)
         {
             _indexManager.ReleaseSpace(spriteAtlasIndex);
         }
 
-        public void ScheduleTextureCopy(Texture2D source, SpriteAtlasIndex target)
+        public void ScheduleTextureCopy(Texture2D source, AtlasIndex target)
         {
             _commandManager.ScheduleTextureCopy(source, target);
         }

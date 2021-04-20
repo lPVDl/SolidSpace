@@ -2,26 +2,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Profiling;
 
-namespace SpaceSimulator.Entities.SpriteRendering
+namespace SpaceSimulator.Entities.Rendering.Atlases
 {
-    public class SpriteAtlasCommandManager
+    public class AtlasCommandManager
     {
         private struct CopyTextureCommand
         {
             public Texture2D source;
-            public SpriteAtlasIndex target;
+            public AtlasIndex target;
         }
         
-        private readonly ISpriteAtlasSystem _atlas;
+        private readonly IAtlasSystem _atlas;
         private readonly List<CopyTextureCommand> _commands;
         
-        public SpriteAtlasCommandManager(ISpriteAtlasSystem atlas)
+        public AtlasCommandManager(IAtlasSystem atlas)
         {
             _atlas = atlas;
             _commands = new List<CopyTextureCommand>();
         }
 
-        public void ScheduleTextureCopy(Texture2D source, SpriteAtlasIndex target)
+        public void ScheduleTextureCopy(Texture2D source, AtlasIndex target)
         {
             _commands.Add(new CopyTextureCommand
             {

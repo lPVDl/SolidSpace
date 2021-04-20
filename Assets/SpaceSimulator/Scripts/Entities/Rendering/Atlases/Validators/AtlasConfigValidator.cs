@@ -1,18 +1,18 @@
 using System;
 using System.Collections.Generic;
 
-namespace SpaceSimulator.Entities.SpriteRendering
+namespace SpaceSimulator.Entities.Rendering.Atlases
 {
-    public class SpriteAtlasConfigValidator : IValidator<SpriteAtlasConfig>
+    public class AtlasConfigValidator : IValidator<AtlasConfig>
     {
         private readonly HashSet<int> _spriteSizeCash;
 
-        public SpriteAtlasConfigValidator()
+        public AtlasConfigValidator()
         {
             _spriteSizeCash = new HashSet<int>();
         }
         
-        public string Validate(SpriteAtlasConfig data)
+        public string Validate(AtlasConfig data)
         {
             var chunks = data.Chunks;
             
