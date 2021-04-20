@@ -1,10 +1,10 @@
 using Unity.Collections;
 
-namespace SpaceSimulator.Entities.Particles.Emission
+namespace SpaceSimulator.Entities.ParticleEmitters
 {
     public interface IParticleEmitterComputeSystem
     {
-        NativeArray<ParticleEmissionData> Particles { get; }
+        NativeArray<ParticleEmitterData> Particles { get; }
         int ParticleCount { get; }
     }
 }

@@ -6,7 +6,7 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 
-namespace SpaceSimulator.Entities.Particles.Emission
+namespace SpaceSimulator.Entities.ParticleEmitters
 {
     [BurstCompile]
     public struct ParticleEmitterComputeJob : IJobParallelFor
@@ -22,7 +22,7 @@ namespace SpaceSimulator.Entities.Particles.Emission
 
         public ComponentTypeHandle<RepeatTimerComponent> timerHandle;
         
-        [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<ParticleEmissionData> outParticles;
+        [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<ParticleEmitterData> outParticles;
         [WriteOnly] public NativeArray<int> outParticleCounts;
 
         public void Execute(int chunkIndex)
@@ -35,8 +35,8 @@ namespace SpaceSimulator.Entities.Particles.Emission
             var timers = chunk.GetNativeArray(timerHandle);
             var randoms = chunk.GetNativeArray(randomHandle);
 
-            ParticleEmissionData emissionData;
-            emissionData.despawnTime = inTime + 5;
+            ParticleEmitterData emitterData;
+            emitterData.despawnTime = inTime + 5;
             
             var emitCount = 0;
             for (var i = 0; i < entityCount; i++)
@@ -52,11 +52,11 @@ namespace SpaceSimulator.Entities.Particles.Emission
 
                 var emitter = emitters[i];
                 var angle = TwoPI * randoms[i].value;
-                emissionData.position = positions[i].value;
+                emitterData.position = positions[i].value;
                 var velocity = emitter.particleVelocity;
-                emissionData.velocity = new float2(velocity * math.cos(angle), velocity * math.sin(angle));
+                emitterData.velocity = new float2(velocity * math.cos(angle), velocity * math.sin(angle));
 
-                outParticles[writeOffset + emitCount] = emissionData;
+                outParticles[writeOffset + emitCount] = emitterData;
                 emitCount++;
             }
 

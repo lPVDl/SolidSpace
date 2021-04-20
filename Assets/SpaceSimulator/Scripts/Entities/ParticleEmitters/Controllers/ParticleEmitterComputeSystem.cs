@@ -5,7 +5,7 @@ using Unity.Entities;
 using Unity.Jobs;
 using UnityEngine.Profiling;
 
-namespace SpaceSimulator.Entities.Particles.Emission
+namespace SpaceSimulator.Entities.ParticleEmitters
 {
     public class ParticleEmitterComputeSystem : IEntitySystem, IParticleEmitterComputeSystem
     {
@@ -13,14 +13,14 @@ namespace SpaceSimulator.Entities.Particles.Emission
 
         public ESystemType SystemType => ESystemType.Compute;
 
-        public NativeArray<ParticleEmissionData> Particles => _particles;
+        public NativeArray<ParticleEmitterData> Particles => _particles;
         public int ParticleCount => _particleCount[0];
         
         private readonly IEntityManager _entityManager;
         private readonly IEntityWorldTime _time;
 
         private EntityQuery _query;
-        private NativeArray<ParticleEmissionData> _particles;
+        private NativeArray<ParticleEmitterData> _particles;
         private NativeArray<int> _particleCount;
         private NativeArrayUtil _arrayUtil;
 
@@ -39,7 +39,7 @@ namespace SpaceSimulator.Entities.Particles.Emission
                 typeof(RandomValueComponent),
                 typeof(RepeatTimerComponent)
             });
-            _particles = _arrayUtil.CreatePersistentArray<ParticleEmissionData>(BufferChunkSize);
+            _particles = _arrayUtil.CreatePersistentArray<ParticleEmitterData>(BufferChunkSize);
             _particleCount = _arrayUtil.CreatePersistentArray<int>(1);
             _particleCount[0] = 0;
         }
@@ -79,7 +79,7 @@ namespace SpaceSimulator.Entities.Particles.Emission
             };
             var computeHandle = computeJob.Schedule(chunks.Length, 32);
 
-            var collectJob = new SingleBufferedDataCollectJob<ParticleEmissionData>
+            var collectJob = new SingleBufferedDataCollectJob<ParticleEmitterData>
             {
                 inCounts = counts,
                 inOffsets = offsets,

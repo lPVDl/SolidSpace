@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace SpaceSimulator.Entities.Particles.Rendering
+namespace SpaceSimulator.Entities.Rendering.Particles
 {
     [Serializable]
     public class ParticleMeshSystemConfig

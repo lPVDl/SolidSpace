@@ -1,8 +1,8 @@
 using Unity.Mathematics;
 
-namespace SpaceSimulator.Entities.Particles.Emission
+namespace SpaceSimulator.Entities.ParticleEmitters
 {
-    public struct ParticleEmissionData
+    public struct ParticleEmitterData
     {
         public float2 position;
         public float2 velocity;

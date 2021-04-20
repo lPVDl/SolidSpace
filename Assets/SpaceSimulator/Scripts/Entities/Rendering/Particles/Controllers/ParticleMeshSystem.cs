@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.Profiling;
 using UnityEngine.Rendering;
 
-namespace SpaceSimulator.Entities.Particles.Rendering
+namespace SpaceSimulator.Entities.Rendering.Particles
 {
     public class ParticleMeshSystem : IEntitySystem
     {

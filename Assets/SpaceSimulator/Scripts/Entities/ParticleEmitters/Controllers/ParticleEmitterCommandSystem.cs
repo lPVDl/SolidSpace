@@ -1,11 +1,11 @@
 using SpaceSimulator.DebugUtils;
 using SpaceSimulator.Entities.Despawn;
-using SpaceSimulator.Entities.Particles.Rendering;
 using SpaceSimulator.Entities.Physics;
+using SpaceSimulator.Entities.Rendering.Particles;
 using Unity.Collections;
 using Unity.Entities;
 
-namespace SpaceSimulator.Entities.Particles.Emission
+namespace SpaceSimulator.Entities.ParticleEmitters
 {
     public class ParticleEmitterCommandSystem : IEntitySystem
     {

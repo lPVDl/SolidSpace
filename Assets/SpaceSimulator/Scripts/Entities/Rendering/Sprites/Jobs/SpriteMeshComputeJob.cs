@@ -1,4 +1,4 @@
-using SpaceSimulator.Entities.Particles.Rendering;
+using SpaceSimulator.Entities.Rendering.Particles;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;

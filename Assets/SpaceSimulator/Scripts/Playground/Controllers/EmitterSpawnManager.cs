@@ -1,5 +1,5 @@
 using SpaceSimulator.Entities;
-using SpaceSimulator.Entities.Particles.Emission;
+using SpaceSimulator.Entities.ParticleEmitters;
 using SpaceSimulator.Entities.Randomization;
 using SpaceSimulator.Entities.RepeatTimer;
 using Unity.Collections;

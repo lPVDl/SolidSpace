@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using SpaceSimulator.DebugUtils;
-using SpaceSimulator.Entities.Particles.Rendering;
+using SpaceSimulator.Entities.Rendering.Particles;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;

@@ -4,7 +4,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Jobs;
 
-namespace SpaceSimulator.Entities.Particles.Rendering
+namespace SpaceSimulator.Entities.Rendering.Particles
 {
     [BurstCompile]
     public struct ParticleMeshComputeJob : IJob
