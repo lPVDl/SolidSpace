@@ -10,7 +10,7 @@ namespace SpaceSimulator.Entities.Physics
         private struct GridUtil
         {
             private BoundsUtil _boundsUtil;
-            private NativeArrayUtil _systemUtil;
+            private NativeArrayUtil _arrayUtil;
 
             public ColliderWorldGrid ComputeGrid(NativeArray<FloatBounds> colliders, int colliderCount)
             {
@@ -48,7 +48,7 @@ namespace SpaceSimulator.Entities.Physics
                 Profiler.BeginSample("ComputeWorldBounds");
                 
                 var colliderJobCount = (int)math.ceil(colliderCount / 128f);
-                var colliderJoinedBounds = _systemUtil.CreateTempJobArray<FloatBounds>(colliderJobCount);
+                var colliderJoinedBounds = _arrayUtil.CreateTempJobArray<FloatBounds>(colliderJobCount);
                 var worldBoundsJob = new JoinBoundsJob
                 {
                     inBounds = colliders,
@@ -78,7 +78,7 @@ namespace SpaceSimulator.Entities.Physics
                 Profiler.BeginSample("FindMaxColliderSize");
                 
                 var colliderJobCount = (int)math.ceil(colliderCount / 128f);
-                var colliderMaxSizes = _systemUtil.CreateTempJobArray<float2>(colliderJobCount);
+                var colliderMaxSizes = _arrayUtil.CreateTempJobArray<float2>(colliderJobCount);
                 var colliderSizesJob = new FindMaxColliderSizeJob
                 {
                     inBounds = colliders,

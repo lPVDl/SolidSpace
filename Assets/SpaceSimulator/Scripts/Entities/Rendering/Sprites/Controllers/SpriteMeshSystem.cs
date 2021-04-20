@@ -24,7 +24,7 @@ namespace SpaceSimulator.Entities.Rendering.Sprites
 
         private EntityQuery _query;
         private SquareVertices _square;
-        private NativeArrayUtil _util;
+        private NativeArrayUtil _arrayUtil;
         private VertexAttributeDescriptor[] _meshLayout;
         private List<Mesh> _meshes;
         private List<Mesh> _meshesForMeshArray;
@@ -71,8 +71,8 @@ namespace SpaceSimulator.Entities.Rendering.Sprites
             
             Profiler.BeginSample("Compute offsets");
             var chunkTotal = chunks.Length;
-            var chunkPerMesh = _util.CreateTempJobArray<int>(chunkTotal);
-            var spritePerMesh = _util.CreateTempJobArray<int>(chunkTotal);
+            var chunkPerMesh = _arrayUtil.CreateTempJobArray<int>(chunkTotal);
+            var spritePerMesh = _arrayUtil.CreateTempJobArray<int>(chunkTotal);
             var totalSpriteCount = 0;
             var meshCount = 0;
             var chunkIndex = 0;
@@ -89,7 +89,7 @@ namespace SpaceSimulator.Entities.Rendering.Sprites
 
             Profiler.BeginSample("Compute meshes");
             var meshDataArray = Mesh.AllocateWritableMeshData(meshCount);
-            var computeJobHandles = _util.CreateTempJobArray<JobHandle>(meshCount);
+            var computeJobHandles = _arrayUtil.CreateTempJobArray<JobHandle>(meshCount);
             var positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true);
             var chunkOffset = 0;
             for (var i = 0; i < meshCount; i++)

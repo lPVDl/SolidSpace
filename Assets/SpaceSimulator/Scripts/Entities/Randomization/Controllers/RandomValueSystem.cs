@@ -17,7 +17,7 @@ namespace SpaceSimulator.Entities.Randomization
         private NativeArray<float> _randomBuffer;
         private int _randomIndex;
         private EntityQuery _query;
-        private NativeArrayUtil _util;
+        private NativeArrayUtil _arrayUtil;
 
         public RandomValueSystem(IEntityManager entityManager)
         {
@@ -26,7 +26,7 @@ namespace SpaceSimulator.Entities.Randomization
 
         public void Initialize()
         {
-            _randomBuffer = _util.CreatePersistentArray<float>(BufferChunkSize);
+            _randomBuffer = _arrayUtil.CreatePersistentArray<float>(BufferChunkSize);
             for (var i = 0; i < BufferChunkSize; i++)
             {
                 _randomBuffer[i] = Random.value;
@@ -40,7 +40,7 @@ namespace SpaceSimulator.Entities.Randomization
             var requiredBufferCapacity = Mathf.CeilToInt(entityCount / (float) BufferChunkSize) * BufferChunkSize;
             if (_randomBuffer.Length < requiredBufferCapacity)
             {
-                var newRandomBuffer = _util.CreatePersistentArray<float>(requiredBufferCapacity);
+                var newRandomBuffer = _arrayUtil.CreatePersistentArray<float>(requiredBufferCapacity);
                 for (var i = 0; i < _randomBuffer.Length; i++)
                 {
                     newRandomBuffer[i] = _randomBuffer[i];

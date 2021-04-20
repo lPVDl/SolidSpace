@@ -22,7 +22,7 @@ namespace SpaceSimulator.Entities.Physics
         private readonly IEntityManager _entityManager;
         
         private EntityQuery _query;
-        private NativeArrayUtil _systemUtil;
+        private NativeArrayUtil _arrayUtil;
         private GridUtil _gridUtil;
         private DebugUtil _debugUtil;
         private NativeArray<FloatBounds> _colliderBounds;
@@ -41,9 +41,9 @@ namespace SpaceSimulator.Entities.Physics
                 typeof(PositionComponent),
                 typeof(ColliderComponent)
             });
-            _colliderBounds = _systemUtil.CreatePersistentArray<FloatBounds>(ColliderBufferChunkSize);
-            _worldColliders = _systemUtil.CreatePersistentArray<ushort>(ColliderBufferChunkSize * 4);
-            _worldChunks = _systemUtil.CreatePersistentArray<ColliderListPointer>(ChunkBufferChunkSize);
+            _colliderBounds = _arrayUtil.CreatePersistentArray<FloatBounds>(ColliderBufferChunkSize);
+            _worldColliders = _arrayUtil.CreatePersistentArray<ushort>(ColliderBufferChunkSize * 4);
+            _worldChunks = _arrayUtil.CreatePersistentArray<ColliderListPointer>(ChunkBufferChunkSize);
         }
 
         public void Update()
@@ -54,7 +54,7 @@ namespace SpaceSimulator.Entities.Physics
 
             Profiler.BeginSample("Collider Offsets");
             var colliderChunkCount = colliderChunks.Length;
-            var colliderOffsets = _systemUtil.CreateTempJobArray<int>(colliderChunkCount);
+            var colliderOffsets = _arrayUtil.CreateTempJobArray<int>(colliderChunkCount);
             var colliderCount = 0;
             for (var i = 0; i < colliderChunkCount; i++)
             {
@@ -64,7 +64,7 @@ namespace SpaceSimulator.Entities.Physics
             Profiler.EndSample();
             
             Profiler.BeginSample("Compute Colliders Bounds");
-            _systemUtil.MaintainPersistentArrayLength(ref _colliderBounds, colliderCount, ColliderBufferChunkSize);
+            _arrayUtil.MaintainPersistentArrayLength(ref _colliderBounds, colliderCount, ColliderBufferChunkSize);
             var computeBoundsJob = new ComputeBoundsJob
             {
                 colliderChunks = colliderChunks,
@@ -82,7 +82,7 @@ namespace SpaceSimulator.Entities.Physics
             Profiler.BeginSample("Reset Chunks");
             var worldChunkTotal = worldGrid.size.x * worldGrid.size.y;
             
-            _systemUtil.MaintainPersistentArrayLength(ref _worldChunks, worldChunkTotal, ChunkBufferChunkSize);
+            _arrayUtil.MaintainPersistentArrayLength(ref _worldChunks, worldChunkTotal, ChunkBufferChunkSize);
             
             var resetChunksJob = new FillNativeArrayJob<ColliderListPointer>
             {
@@ -98,8 +98,8 @@ namespace SpaceSimulator.Entities.Physics
 
             Profiler.BeginSample("Chunk colliders");
             jobCount = (int) math.ceil(colliderCount / 128f);
-            var chunkedColliders = _systemUtil.CreateTempJobArray<ChunkedCollider>(colliderCount * 4);
-            var chunkedColliderCounts = _systemUtil.CreateTempJobArray<int>(jobCount);
+            var chunkedColliders = _arrayUtil.CreateTempJobArray<ChunkedCollider>(colliderCount * 4);
+            var chunkedColliderCounts = _arrayUtil.CreateTempJobArray<int>(jobCount);
             
             var chunkingJob = new ChunkCollidersJob
             {
@@ -137,7 +137,7 @@ namespace SpaceSimulator.Entities.Physics
             Profiler.EndSample();
             
             Profiler.BeginSample("Lists fill");
-            _systemUtil.MaintainPersistentArrayLength(ref _worldColliders, colliderCount * 4, ChunkBufferChunkSize * 4);
+            _arrayUtil.MaintainPersistentArrayLength(ref _worldColliders, colliderCount * 4, ChunkBufferChunkSize * 4);
             var listFillJob = new WorldChunkListsFillJob
             {
                 inColliders = chunkedColliders,

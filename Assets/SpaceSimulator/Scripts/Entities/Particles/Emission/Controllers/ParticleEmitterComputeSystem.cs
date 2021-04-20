@@ -23,7 +23,7 @@ namespace SpaceSimulator.Entities.Particles.Emission
         private EntityQuery _query;
         private NativeArray<ParticleEmissionData> _particles;
         private NativeArray<int> _particleCount;
-        private NativeArrayUtil _util;
+        private NativeArrayUtil _arrayUtil;
 
         public ParticleEmitterComputeSystem(IEntityManager entityManager, IEntityWorldTime time)
         {
@@ -40,8 +40,8 @@ namespace SpaceSimulator.Entities.Particles.Emission
                 typeof(RandomValueComponent),
                 typeof(RepeatTimerComponent)
             });
-            _particles = _util.CreatePersistentArray<ParticleEmissionData>(BufferChunkSize);
-            _particleCount = _util.CreatePersistentArray<int>(1);
+            _particles = _arrayUtil.CreatePersistentArray<ParticleEmissionData>(BufferChunkSize);
+            _particleCount = _arrayUtil.CreatePersistentArray<int>(1);
             _particleCount[0] = 0;
         }
 
@@ -53,8 +53,8 @@ namespace SpaceSimulator.Entities.Particles.Emission
 
             Profiler.BeginSample("ComputeEntityOffsets");
             var chunkCount = chunks.Length;
-            var offsets = _util.CreateTempJobArray<int>(chunkCount);
-            var counts = _util.CreateTempJobArray<int>(chunkCount);
+            var offsets = _arrayUtil.CreateTempJobArray<int>(chunkCount);
+            var counts = _arrayUtil.CreateTempJobArray<int>(chunkCount);
             var maxEntityCount = 0;
             for (var i = 0; i < chunkCount; i++)
             {
@@ -63,7 +63,7 @@ namespace SpaceSimulator.Entities.Particles.Emission
             }
             Profiler.EndSample();
             
-            _util.MaintainPersistentArrayLength(ref _particles, maxEntityCount, BufferChunkSize);
+            _arrayUtil.MaintainPersistentArrayLength(ref _particles, maxEntityCount, BufferChunkSize);
 
             Profiler.BeginSample("Compute And Collect Job");
             var computeJob = new ParticleEmitterComputeJob

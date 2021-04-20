@@ -22,7 +22,7 @@ namespace SpaceSimulator.Entities.Physics
         private EntityQuery _raycasterQuery;
         private NativeArray<Entity> _entityBuffer;
         private NativeArray<int> _entityCount;
-        private NativeArrayUtil _util;
+        private NativeArrayUtil _arrayUtil;
 
         public RaycastComputeSystem(IEntityManager entityManager, IColliderBakeSystem colliderSystem, IEntityWorldTime time)
         {
@@ -39,8 +39,8 @@ namespace SpaceSimulator.Entities.Physics
                 typeof(VelocityComponent),
                 typeof(RaycastComponent)
             });
-            _entityBuffer = _util.CreatePersistentArray<Entity>(EntityBufferChunkSize);
-            _entityCount = _util.CreatePersistentArray<int>(1);
+            _entityBuffer = _arrayUtil.CreatePersistentArray<Entity>(EntityBufferChunkSize);
+            _entityCount = _arrayUtil.CreatePersistentArray<int>(1);
             _entityCount[0] = 0;
         }
 
@@ -52,7 +52,7 @@ namespace SpaceSimulator.Entities.Physics
 
             Profiler.BeginSample("Raycaster offsets");
             var raycasterChunkCount = raycasterChunks.Length;
-            var raycasterOffsets = _util.CreateTempJobArray<int>(raycasterChunkCount);
+            var raycasterOffsets = _arrayUtil.CreateTempJobArray<int>(raycasterChunkCount);
             var raycasterCount = 0;
             for (var i = 0; i < raycasterChunkCount; i++)
             {
@@ -62,8 +62,8 @@ namespace SpaceSimulator.Entities.Physics
             Profiler.EndSample();
 
             Profiler.BeginSample("Raycast");
-            var raycastResultCounts = _util.CreateTempJobArray<int>(raycasterChunkCount);
-            _util.MaintainPersistentArrayLength(ref _entityBuffer, raycasterCount, EntityBufferChunkSize);
+            var raycastResultCounts = _arrayUtil.CreateTempJobArray<int>(raycasterChunkCount);
+            _arrayUtil.MaintainPersistentArrayLength(ref _entityBuffer, raycasterCount, EntityBufferChunkSize);
             var raycastJob = new RaycastJob
             {
                 raycasterChunks = raycasterChunks,

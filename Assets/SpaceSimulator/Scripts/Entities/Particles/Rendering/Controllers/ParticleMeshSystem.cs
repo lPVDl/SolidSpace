@@ -23,7 +23,7 @@ namespace SpaceSimulator.Entities.Particles.Rendering
 
         private EntityQuery _query;
         private SquareVertices _square;
-        private NativeArrayUtil _util;
+        private NativeArrayUtil _arrayUtil;
         private VertexAttributeDescriptor[] _meshLayout;
         private List<Mesh> _meshes;
         private List<Mesh> _meshesForMeshArray;
@@ -70,8 +70,8 @@ namespace SpaceSimulator.Entities.Particles.Rendering
             
             Profiler.BeginSample("Compute offsets");
             var chunkTotal = chunks.Length;
-            var chunkPerMesh = _util.CreateTempJobArray<int>(chunkTotal);
-            var particlePerMesh = _util.CreateTempJobArray<int>(chunkTotal);
+            var chunkPerMesh = _arrayUtil.CreateTempJobArray<int>(chunkTotal);
+            var particlePerMesh = _arrayUtil.CreateTempJobArray<int>(chunkTotal);
             var totalParticleCount = 0;
             var meshCount = 0;
             var chunkIndex = 0;
@@ -88,7 +88,7 @@ namespace SpaceSimulator.Entities.Particles.Rendering
 
             Profiler.BeginSample("Compute meshes");
             var meshDataArray = Mesh.AllocateWritableMeshData(meshCount);
-            var computeJobHandles = _util.CreateTempJobArray<JobHandle>(meshCount);
+            var computeJobHandles = _arrayUtil.CreateTempJobArray<JobHandle>(meshCount);
             var positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true);
             var chunkOffset = 0;
             for (var i = 0; i < meshCount; i++)

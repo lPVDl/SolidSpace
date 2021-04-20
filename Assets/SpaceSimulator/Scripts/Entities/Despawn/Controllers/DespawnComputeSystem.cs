@@ -23,7 +23,7 @@ namespace SpaceSimulator.Entities.Despawn
         private NativeArray<int> _entityCount;
         private NativeArray<Entity> _entities;
         private int _lastOffset;
-        private NativeArrayUtil _util;
+        private NativeArrayUtil _arrayUtil;
 
         public DespawnComputeSystem(IEntityManager entityManager, IEntityWorldTime time)
         {
@@ -35,8 +35,8 @@ namespace SpaceSimulator.Entities.Despawn
         {
             _query = _entityManager.CreateEntityQuery(typeof(DespawnComponent));
             _lastOffset = -1;
-            _entities = _util.CreatePersistentArray<Entity>(4096);
-            _entityCount = _util.CreatePersistentArray<int>(1);
+            _entities = _arrayUtil.CreatePersistentArray<Entity>(4096);
+            _entityCount = _arrayUtil.CreatePersistentArray<int>(1);
             _entityCount[0] = 0;
         }
 
@@ -50,9 +50,9 @@ namespace SpaceSimulator.Entities.Despawn
             _lastOffset = (_lastOffset + 1) % IterationCycle;
             var rawChunks = _query.CreateArchetypeChunkArray(Allocator.Temp);
             var computeChunkCount = Mathf.CeilToInt((chunkCount - _lastOffset) / (float) IterationCycle);
-            var computeChunks = _util.CreateTempJobArray<ArchetypeChunk>(computeChunkCount);
-            var computeOffsets = _util.CreateTempJobArray<int>(computeChunkCount);
-            var countsBuffer = _util.CreateTempJobArray<int>(computeChunkCount);
+            var computeChunks = _arrayUtil.CreateTempJobArray<ArchetypeChunk>(computeChunkCount);
+            var computeOffsets = _arrayUtil.CreateTempJobArray<int>(computeChunkCount);
+            var countsBuffer = _arrayUtil.CreateTempJobArray<int>(computeChunkCount);
             var entityCount = 0;
             var chunkIndex = 0;
 
@@ -70,7 +70,7 @@ namespace SpaceSimulator.Entities.Despawn
             if (_entities.Length < entityCount)
             {
                 _entities.Dispose();
-                _entities = _util.CreatePersistentArray<Entity>(entityCount * 2);
+                _entities = _arrayUtil.CreatePersistentArray<Entity>(entityCount * 2);
             }
             Profiler.EndSample();
 
