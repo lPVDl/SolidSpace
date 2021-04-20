@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace SpaceSimulator.Entities.EntityWorld
+namespace SpaceSimulator.Entities
 {
     public class EntityCycleController : IInitializable, IUpdatable, IFinalazable
     {

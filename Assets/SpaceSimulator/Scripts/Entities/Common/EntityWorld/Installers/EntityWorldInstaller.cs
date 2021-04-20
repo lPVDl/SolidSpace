@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace SpaceSimulator.Entities.EntityWorld
+namespace SpaceSimulator.Entities
 {
     public class EntityWorldInstaller : ScriptableObjectInstaller
     {

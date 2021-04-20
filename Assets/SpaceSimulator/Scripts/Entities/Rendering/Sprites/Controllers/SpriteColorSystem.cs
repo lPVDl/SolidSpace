@@ -1,4 +1,3 @@
-using SpaceSimulator.Entities.EntityWorld;
 using SpaceSimulator.Entities.Rendering.Atlases;
 using Unity.Collections;
 using UnityEngine;

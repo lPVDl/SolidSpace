@@ -1,6 +1,5 @@
 using SpaceSimulator.DebugUtils;
 using SpaceSimulator.Entities.Despawn;
-using SpaceSimulator.Entities.EntityWorld;
 using SpaceSimulator.Entities.Particles.Rendering;
 using SpaceSimulator.Entities.Physics;
 using Unity.Collections;

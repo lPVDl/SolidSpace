@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SpaceSimulator.Entities.EntityWorld
+namespace SpaceSimulator.Entities
 {
     [System.Serializable]
     public class EntityCycleConfig

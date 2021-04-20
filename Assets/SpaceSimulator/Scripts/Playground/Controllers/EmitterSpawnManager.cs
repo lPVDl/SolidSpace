@@ -1,5 +1,4 @@
 using SpaceSimulator.Entities;
-using SpaceSimulator.Entities.EntityWorld;
 using SpaceSimulator.Entities.Particles.Emission;
 using SpaceSimulator.Entities.Randomization;
 using SpaceSimulator.Entities.RepeatTimer;

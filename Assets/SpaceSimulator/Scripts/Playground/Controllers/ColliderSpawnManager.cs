@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using SpaceSimulator.Entities;
-using SpaceSimulator.Entities.EntityWorld;
 using SpaceSimulator.Entities.Physics;
 using Unity.Entities;
 using Unity.Mathematics;

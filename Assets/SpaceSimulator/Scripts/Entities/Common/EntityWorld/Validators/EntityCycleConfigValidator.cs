@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace SpaceSimulator.Entities.EntityWorld
+namespace SpaceSimulator.Entities
 {
     public class EntityCycleConfigValidator : IValidator<EntityCycleConfig>
     {

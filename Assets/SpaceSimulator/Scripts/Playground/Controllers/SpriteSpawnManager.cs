@@ -1,6 +1,5 @@
 using System.IO;
 using SpaceSimulator.Entities;
-using SpaceSimulator.Entities.EntityWorld;
 using SpaceSimulator.Entities.Rendering.Sprites;
 using Unity.Collections;
 using Unity.Entities;

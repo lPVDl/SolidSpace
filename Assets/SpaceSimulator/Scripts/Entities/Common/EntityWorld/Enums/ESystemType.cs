@@ -1,4 +1,4 @@
-namespace SpaceSimulator.Entities.EntityWorld
+namespace SpaceSimulator.Entities
 {
     public enum ESystemType
     {
