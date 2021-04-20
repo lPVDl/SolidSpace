@@ -4,7 +4,7 @@ using Unity.Mathematics;
 
 namespace SpaceSimulator.Entities.Extensions
 {
-    public struct EntitySystemUtil
+    public struct NativeArrayUtil
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NativeArray<T> CreateTempJobArray<T>(int length) where T : struct

@@ -8,8 +8,14 @@ namespace SpaceSimulator.Playground
     {
         public Texture2D SpriteTexture => _spriteTexture;
         public string OutputAtlasPath => _outputAtlasPath;
+        public int SpawnCount => _spawnCount;
+        public Vector2 SpawnRangeX => _spawnRangeX;
+        public Vector2 SpawnRangeY => _spawnRangeY;
         
         [SerializeField] private Texture2D _spriteTexture;
         [SerializeField] private string _outputAtlasPath;
+        [SerializeField] private int _spawnCount;
+        [SerializeField] private Vector2 _spawnRangeX;
+        [SerializeField] private Vector2 _spawnRangeY;
     }
 }

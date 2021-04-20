@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using SpaceSimulator.DebugUtils;
 using SpaceSimulator.Entities.EntityWorld;
 using SpaceSimulator.Entities.Extensions;
+using SpaceSimulator.Entities.Particles.Rendering;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -10,17 +11,17 @@ using UnityEngine;
 using UnityEngine.Profiling;
 using UnityEngine.Rendering;
 
-namespace SpaceSimulator.Entities.Particles.Rendering
+namespace SpaceSimulator.Entities.Rendering.Sprites
 {
-    public class ParticleMeshSystem : IEntitySystem
+    public class SpriteMeshSystem : IEntitySystem
     {
-        private const int ParticlePerMesh = 16384;
+        private const int SpritePerMesh = 16384;
         private const int RenderBounds = 8096;
-
+        
         public ESystemType SystemType => ESystemType.Render;
-
+        
         private readonly IEntityManager _entityManager;
-        private readonly ParticleMeshSystemConfig _config;
+        private readonly SpriteMeshSystemConfig _config;
 
         private EntityQuery _query;
         private SquareVertices _square;
@@ -32,7 +33,7 @@ namespace SpaceSimulator.Entities.Particles.Rendering
         private MeshUpdateFlags _meshUpdateFlags;
         private Material _material;
 
-        public ParticleMeshSystem(IEntityManager entityManager, ParticleMeshSystemConfig config)
+        public SpriteMeshSystem(IEntityManager entityManager, SpriteMeshSystemConfig config)
         {
             _entityManager = entityManager;
             _config = config;
@@ -52,7 +53,7 @@ namespace SpaceSimulator.Entities.Particles.Rendering
             _query = _entityManager.CreateEntityQuery(new ComponentType[]
             {
                 typeof(PositionComponent),
-                typeof(ParticleRenderComponent)
+                typeof(SpriteRenderComponent)
             });
             _square = new SquareVertices
             {
@@ -72,16 +73,16 @@ namespace SpaceSimulator.Entities.Particles.Rendering
             Profiler.BeginSample("Compute offsets");
             var chunkTotal = chunks.Length;
             var chunkPerMesh = _util.CreateTempJobArray<int>(chunkTotal);
-            var particlePerMesh = _util.CreateTempJobArray<int>(chunkTotal);
-            var totalParticleCount = 0;
+            var spritePerMesh = _util.CreateTempJobArray<int>(chunkTotal);
+            var totalSpriteCount = 0;
             var meshCount = 0;
             var chunkIndex = 0;
             while (chunkIndex < chunkTotal)
             {
-                FillMesh(chunks, chunkIndex, out var particleCount, out var chunkCount);
+                FillMesh(chunks, chunkIndex, out var spriteCount, out var chunkCount);
                 chunkPerMesh[meshCount] = chunkCount;
-                particlePerMesh[meshCount] = particleCount;
-                totalParticleCount += particleCount;
+                spritePerMesh[meshCount] = spriteCount;
+                totalSpriteCount += spriteCount;
                 chunkIndex += chunkCount;
                 meshCount++;
             }
@@ -95,15 +96,15 @@ namespace SpaceSimulator.Entities.Particles.Rendering
             for (var i = 0; i < meshCount; i++)
             {
                 var meshData = meshDataArray[i];
-                var particleCount = particlePerMesh[i];
-                meshData.SetVertexBufferParams(particleCount * 4, _meshLayout);
-                meshData.SetIndexBufferParams(particleCount * 6, IndexFormat.UInt16);
+                var spriteCount = spritePerMesh[i];
+                meshData.SetVertexBufferParams(spriteCount * 4, _meshLayout);
+                meshData.SetIndexBufferParams(spriteCount * 6, IndexFormat.UInt16);
                 meshData.subMeshCount = 1;
-                var subMeshDescriptor = new SubMeshDescriptor(0, particleCount * 6);
+                var subMeshDescriptor = new SubMeshDescriptor(0, spriteCount * 6);
                 meshData.SetSubMesh(0, subMeshDescriptor, _meshUpdateFlags);
 
                 var meshChunkCount = chunkPerMesh[i];
-                var job = new ParticleMeshComputeJob
+                var job = new SpriteMeshComputeJob
                 {
                     inChunks = chunks,
                     positionHandle = positionHandle,
@@ -111,7 +112,7 @@ namespace SpaceSimulator.Entities.Particles.Rendering
                     inChunkCount = meshChunkCount,
                     inFirstChunkIndex = chunkOffset,
                     outIndices = meshData.GetIndexData<ushort>(),
-                    outVertices = meshData.GetVertexData<ParticleVertexData>()
+                    outVertices = meshData.GetVertexData<SpriteVertexData>()
                 };
                 computeJobHandles[i] = job.Schedule();
 
@@ -125,7 +126,7 @@ namespace SpaceSimulator.Entities.Particles.Rendering
             Profiler.BeginSample("Create meshes");
             for (var i = _meshes.Count; i < meshCount; i++)
             {
-                var name = nameof(ParticleMeshSystem) + "_" + i;
+                var name = nameof(SpriteMeshSystem) + "_" + i;
                 _meshes.Add(CreateMesh(name));
             }
             _meshesForMeshArray.Clear();
@@ -154,29 +155,29 @@ namespace SpaceSimulator.Entities.Particles.Rendering
             Profiler.BeginSample("Dispose native arrays");
             chunks.Dispose();
             chunkPerMesh.Dispose();
-            particlePerMesh.Dispose();
+            spritePerMesh.Dispose();
             computeJobHandles.Dispose();
             Profiler.EndSample();
             
-            SpaceDebug.LogState("ParticleCount", totalParticleCount);
-            SpaceDebug.LogState("ParticleMeshCount", meshCount);
+            SpaceDebug.LogState("SpriteCount", totalSpriteCount);
+            SpaceDebug.LogState("SpriteMeshCount", meshCount);
         }
         
         private static void FillMesh(NativeArray<ArchetypeChunk> chunks, int startChunk, 
-            out int particleCount, out int chunkCount)
+            out int spriteCount, out int chunkCount)
         {
-            particleCount = 0;
+            spriteCount = 0;
             var chunkTotal = chunks.Length;
             var i = startChunk;
             for (; i < chunkTotal; i++)
             {
-                var chunkParticleCount = chunks[i].Count;
-                if (particleCount + chunkParticleCount > ParticlePerMesh)
+                var chunkSpriteCount = chunks[i].Count;
+                if (spriteCount + chunkSpriteCount > SpritePerMesh)
                 {
                     break;
                 }
 
-                particleCount += chunkParticleCount;
+                spriteCount += chunkSpriteCount;
             }
 
             chunkCount = i - startChunk;
@@ -202,12 +203,7 @@ namespace SpaceSimulator.Entities.Particles.Rendering
 
         public void FinalizeSystem()
         {
-            for (var i = 0; i < _meshes.Count; i++)
-            {
-                Object.Destroy(_meshes[i]);
-                _meshes[i] = null;
-            }
-            Object.Destroy(_material);
+            
         }
     }
 }

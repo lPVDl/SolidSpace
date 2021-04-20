@@ -24,7 +24,7 @@ namespace SpaceSimulator.Entities.Particles.Emission
         private EntityQuery _query;
         private NativeArray<ParticleEmissionData> _particles;
         private NativeArray<int> _particleCount;
-        private EntitySystemUtil _util;
+        private NativeArrayUtil _util;
 
         public ParticleEmitterComputeSystem(IEntityManager entityManager, IEntityWorldTime time)
         {

@@ -24,7 +24,7 @@ namespace SpaceSimulator.Entities.Despawn
         private NativeArray<int> _entityCount;
         private NativeArray<Entity> _entities;
         private int _lastOffset;
-        private EntitySystemUtil _util;
+        private NativeArrayUtil _util;
 
         public DespawnComputeSystem(IEntityManager entityManager, IEntityWorldTime time)
         {

@@ -12,15 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc8f12f6f4174149a67ab82a4b2b73be, type: 3}
   m_Name: SpriteRenderingInstaller
   m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects: []
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes: []
   _colorAtlasConfig:
     _atlasSize: 512
     _atlasFormat: 3
@@ -37,3 +28,5 @@ MonoBehaviour:
       itemCount: 4
     - spriteSize: 128
       itemCount: 1
+  _meshSystemConfig:
+    _shader: {fileID: 4800000, guid: 092dd92608ae482a98a5180c88fe0a45, type: 3}

@@ -11,7 +11,7 @@ namespace SpaceSimulator.Entities.Physics
         private struct GridUtil
         {
             private BoundsUtil _boundsUtil;
-            private EntitySystemUtil _systemUtil;
+            private NativeArrayUtil _systemUtil;
 
             public ColliderWorldGrid ComputeGrid(NativeArray<FloatBounds> colliders, int colliderCount)
             {

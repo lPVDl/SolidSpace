@@ -25,16 +25,15 @@ namespace SpaceSimulator.Playground
         
         public void Initialize()
         {
-            var componentTypes = new ComponentType[]
+            var archetype = _entityManager.CreateArchetype(new ComponentType[]
             {
                 typeof(PositionComponent),
                 typeof(ParticleEmitterComponent),
                 typeof(RandomValueComponent),
                 typeof(RepeatTimerComponent),
-            };
-            var shipArchetype = _entityManager.CreateArchetype(componentTypes);
+            });
             
-            using var entityArray = _entityManager.CreateEntity(shipArchetype, _config.EntityCount, Allocator.Temp);
+            using var entityArray = _entityManager.CreateEntity(archetype, _config.EntityCount, Allocator.Temp);
 
             foreach (var entity in entityArray)
             {

@@ -18,7 +18,7 @@ namespace SpaceSimulator.Entities.Randomization
         private NativeArray<float> _randomBuffer;
         private int _randomIndex;
         private EntityQuery _query;
-        private EntitySystemUtil _util;
+        private NativeArrayUtil _util;
 
         public RandomValueSystem(IEntityManager entityManager)
         {

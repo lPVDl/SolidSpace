@@ -23,7 +23,7 @@ namespace SpaceSimulator.Entities.Physics
         private readonly IEntityManager _entityManager;
         
         private EntityQuery _query;
-        private EntitySystemUtil _systemUtil;
+        private NativeArrayUtil _systemUtil;
         private GridUtil _gridUtil;
         private DebugUtil _debugUtil;
         private NativeArray<FloatBounds> _colliderBounds;

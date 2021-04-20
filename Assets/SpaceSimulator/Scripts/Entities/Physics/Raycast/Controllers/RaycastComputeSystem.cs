@@ -23,7 +23,7 @@ namespace SpaceSimulator.Entities.Physics
         private EntityQuery _raycasterQuery;
         private NativeArray<Entity> _entityBuffer;
         private NativeArray<int> _entityCount;
-        private EntitySystemUtil _util;
+        private NativeArrayUtil _util;
 
         public RaycastComputeSystem(IEntityManager entityManager, IColliderBakeSystem colliderSystem, IEntityWorldTime time)
         {

@@ -13,6 +13,6 @@ namespace SpaceSimulator.Entities.Rendering.Atlases
 
         public void ScheduleTextureCopy(Texture2D source, AtlasIndex target);
 
-        public void ReleaseSpace(AtlasIndex spriteAtlasIndex);
+        public void ReleaseSpace(AtlasIndex atlasIndex);
     }
 }

@@ -42,9 +42,9 @@ namespace SpaceSimulator.Entities.Rendering.Sprites
             return _indexManager.AllocateSpace(sizeX, sizeY);
         }
 
-        public void ReleaseSpace(AtlasIndex spriteAtlasIndex)
+        public void ReleaseSpace(AtlasIndex atlasIndex)
         {
-            _indexManager.ReleaseSpace(spriteAtlasIndex);
+            _indexManager.ReleaseSpace(atlasIndex);
         }
 
         public void ScheduleTextureCopy(Texture2D source, AtlasIndex target)
@@ -55,7 +55,7 @@ namespace SpaceSimulator.Entities.Rendering.Sprites
         public void FinalizeSystem()
         {
             _indexManager.Dispose();
-            UnityEngine.Object.Destroy(Texture);
+            Object.Destroy(Texture);
             Texture = null;
         }
     }
