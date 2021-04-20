@@ -6,7 +6,7 @@ namespace SpaceSimulator.Editor.CodeInspection.Nammy
 {
     public class NammyExporter
     {
-        private const string LocalDirectoryNameRegex = @"\\((?i)assets\/.*)";
+        private const string LocalDirectoryNameRegex = @"\/((?i)assets\/.*)";
         
         public void ExportFoldersForSkip(string exportPath, IEnumerable<string> folders)
         {
@@ -23,8 +23,7 @@ namespace SpaceSimulator.Editor.CodeInspection.Nammy
             {
                 var localPath = Regex.Match(path, LocalDirectoryNameRegex).Groups[1].Value;
                 localPath = localPath.ToLower().Replace("/", "_005C");
-                localPath = localPath.Replace("\\", "_005C");
-                
+
                 writer.Write("\t<s:Boolean x:Key=\"/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=");
                 writer.Write(localPath);
                 writer.Write("/@EntryIndexedValue\">True</s:Boolean>");

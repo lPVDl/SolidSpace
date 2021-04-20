@@ -15,8 +15,9 @@ namespace SpaceSimulator.Editor.CodeInspection.Nammy
         {
             var folderScanner = new NammyFolderScanner();
             var output = new List<NammyFolderInfo>();
+            var projectRoot = Application.dataPath.Substring(0, Application.dataPath.Length - 7);
             
-            folderScanner.Scan(_config, output);
+            folderScanner.Scan(projectRoot, _config, output);
 
             for (var i = 0; i < output.Count; i++)
             {
@@ -33,12 +34,11 @@ namespace SpaceSimulator.Editor.CodeInspection.Nammy
         {
             var folderScanner = new NammyFolderScanner();
             var output = new List<NammyFolderInfo>();
+            var projectRoot = Application.dataPath.Substring(0, Application.dataPath.Length - 7);
             
-            folderScanner.Scan(_config, output);
+            folderScanner.Scan(projectRoot, _config, output);
 
             var exporter = new NammyExporter();
-
-            var projectRoot = Application.dataPath.Substring(0, Application.dataPath.Length - 7);
 
             var sharpFile = Path.Combine(projectRoot, "Assembly-CSharp.csproj.DotSettings");
             

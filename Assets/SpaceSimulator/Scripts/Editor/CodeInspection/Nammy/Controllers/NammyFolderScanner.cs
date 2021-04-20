@@ -1,29 +1,19 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using UnityEngine;
 
 namespace SpaceSimulator.Editor.CodeInspection.Nammy
 {
     public class NammyFolderScanner
     {
-        public void Scan(NammyConfig config, ICollection<NammyFolderInfo> output)
+        public void Scan(string projectRoot, NammyConfig config, ICollection<NammyFolderInfo> output)
         {
-            var projectRoot = Application.dataPath.Substring(0, Application.dataPath.Length - 7);
-            var rootPath = Path.Combine(projectRoot, config.ScriptsRoot);
-            
-            var state = new NammyFolderInfo
-            {
-                fullPath = rootPath,
-                regexId = -1
-            };
-            
             output.Clear();
             
-            ScanRecursive(state, config.FolderFilters, output);
+            ScanRecursive(projectRoot + "/" + config.ScriptsRoot, config.FolderFilters, output);
         }
 
-        private void ScanRecursive(NammyFolderInfo state, IReadOnlyList<NammyFolderFilter> filters, ICollection<NammyFolderInfo> output)
+        private void ScanRecursive(string path, IReadOnlyList<NammyFolderFilter> filters, ICollection<NammyFolderInfo> output)
         {
             for (var i = 0; i < filters.Count; i++)
             {
@@ -32,23 +22,26 @@ namespace SpaceSimulator.Editor.CodeInspection.Nammy
                 {
                     continue;
                 }
-                
-                if (!Regex.IsMatch(state.fullPath, filter.regex))
+
+                if (!Regex.IsMatch(path, filter.regex))
                 {
                     continue;
                 }
 
-                state.regexId = i;
-                output.Add(state);
+                output.Add(new NammyFolderInfo
+                {
+                    fullPath = path,
+                    regexId = i
+                });
+                
                 break;
             }
-
-            var subDirectories = Directory.GetDirectories(state.fullPath);
+            
+            var subDirectories = Directory.GetDirectories(path);
+            
             foreach (var directory in subDirectories)
             {
-                state.fullPath = directory;
-
-                ScanRecursive(state, filters, output);
+                ScanRecursive(path + "/" + Path.GetFileName(directory), filters, output);
             }
         }
     }
