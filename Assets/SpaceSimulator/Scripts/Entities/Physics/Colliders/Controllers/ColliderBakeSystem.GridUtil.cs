@@ -1,4 +1,3 @@
-using SpaceSimulator.Entities.Extensions;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;

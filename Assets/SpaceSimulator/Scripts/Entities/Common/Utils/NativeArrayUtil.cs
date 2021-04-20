@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 using Unity.Collections;
 using Unity.Mathematics;
 
-namespace SpaceSimulator.Entities.Extensions
+namespace SpaceSimulator.Entities
 {
     public struct NativeArrayUtil
     {

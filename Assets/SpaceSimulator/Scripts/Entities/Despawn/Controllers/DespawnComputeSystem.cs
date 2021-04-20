@@ -1,5 +1,4 @@
 using SpaceSimulator.Entities.EntityWorld;
-using SpaceSimulator.Entities.Extensions;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
