@@ -7,5 +7,6 @@ namespace SpaceSimulator.Entities.Rendering.Sprites
     public struct SpriteVertexData
     {
         public float2 position;
+        public half2 uv;
     }
 }

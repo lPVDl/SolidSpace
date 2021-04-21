@@ -24,6 +24,7 @@ namespace SpaceSimulator.Entities.Rendering.Sprites
         {
             Texture = new Texture2D(_config.AtlasSize, _config.AtlasSize, _config.AtlasFormat, false, true);
             Texture.name = nameof(SpriteColorSystem);
+            Texture.filterMode = FilterMode.Point;
             
             var squareManager = new AtlasSquareManager(_config.AtlasSize);
             _indexManager = new AtlasIndexManager(squareManager, _config.Chunks);

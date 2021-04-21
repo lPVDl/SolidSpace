@@ -14,6 +14,8 @@ namespace SpaceSimulator.Entities.Rendering.Atlases
         
         private readonly IAtlasSystem _atlas;
         private readonly List<CopyTextureCommand> _commands;
+
+        private AtlasMathUtil _atlasMath;
         
         public AtlasCommandManager(IAtlasSystem atlas)
         {
@@ -37,15 +39,11 @@ namespace SpaceSimulator.Entities.Rendering.Atlases
             {
                 var command = _commands[i];
                 var sprite = command.target;
-                var chunk = _atlas.Chunks[sprite.chunkId];
-                
-                chunk.GetPower(out var indexPower, out var itemPower);
-                var offsetX = chunk.offsetX << 2 + (sprite.itemId & ((1 << indexPower) - 1)) * (1 << itemPower);
-                var offsetY = chunk.offsetY << 2 + (sprite.itemId >> indexPower) * (1 << itemPower);
-                
+                var offset = _atlasMath.ComputeOffset(_atlas.Chunks[sprite.chunkId], sprite);
                 var source = command.source;
+                
                 Graphics.CopyTexture(source, 0, 0, 0, 0, source.width, source.height, 
-                    _atlas.Texture, 0, 0, offsetX, offsetY);
+                    _atlas.Texture, 0, 0, offset.x, offset.y);
             }
             Profiler.EndSample();
             

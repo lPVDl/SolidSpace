@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace SpaceSimulator.Entities
 {
@@ -12,6 +13,8 @@ namespace SpaceSimulator.Entities
         private readonly EntityCycleConfig _config;
 
         private List<IEntitySystem> _systems;
+        private Dictionary<object, string> _systemNames;
+        private string _thisName;
 
         public EntityCycleController(List<IEntitySystem> systems, EntityCycleConfig config)
         {
@@ -41,19 +44,28 @@ namespace SpaceSimulator.Entities
             }
 
             _systems = _systems.OrderBy(i => order[i.SystemType]).ToList();
+            _systemNames = new Dictionary<object, string>();
+            _thisName = GetType().ToString();
 
             foreach (var system in _systems)
             {
                 system.Initialize();
+                _systemNames[system] = system.GetType().ToString();
             }
         }
         
         public void Update()
         {
+            Profiler.BeginSample(_thisName);
+            
             foreach (var system in _systems)
             {
+                Profiler.BeginSample(_systemNames[system]);
                 system.Update();
+                Profiler.EndSample();
             }
+            
+            Profiler.EndSample();
         }
 
         public void FinalizeObject()

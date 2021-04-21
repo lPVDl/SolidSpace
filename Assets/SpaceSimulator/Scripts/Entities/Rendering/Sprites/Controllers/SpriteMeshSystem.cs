@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using SpaceSimulator.DebugUtils;
-using SpaceSimulator.Entities.Rendering.Particles;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -13,13 +12,15 @@ namespace SpaceSimulator.Entities.Rendering.Sprites
 {
     public class SpriteMeshSystem : IEntitySystem
     {
+        private static readonly int MainTexturePropertyId = Shader.PropertyToID("_MainTex");
+        
         public ESystemType SystemType => ESystemType.Render;
         
         private readonly IEntityManager _entityManager;
         private readonly SpriteMeshSystemConfig _config;
+        private readonly ISpriteColorSystem _colorSystem;
 
         private EntityQuery _query;
-        private SquareVertices _square;
         private NativeArrayUtil _arrayUtil;
         private MeshRenderingUtil _meshUtil;
         private VertexAttributeDescriptor[] _meshLayout;
@@ -29,10 +30,11 @@ namespace SpaceSimulator.Entities.Rendering.Sprites
         private MeshUpdateFlags _meshUpdateFlags;
         private Material _material;
 
-        public SpriteMeshSystem(IEntityManager entityManager, SpriteMeshSystemConfig config)
+        public SpriteMeshSystem(IEntityManager entityManager, SpriteMeshSystemConfig config, ISpriteColorSystem colorSystem)
         {
             _entityManager = entityManager;
             _config = config;
+            _colorSystem = colorSystem;
         }
         
         public void Initialize()
@@ -45,19 +47,13 @@ namespace SpaceSimulator.Entities.Rendering.Sprites
             _meshLayout = new[]
             {
                 new VertexAttributeDescriptor(VertexAttribute.Position, VertexAttributeFormat.Float32, 2),
+                new VertexAttributeDescriptor(VertexAttribute.TexCoord0, VertexAttributeFormat.Float16, 2)
             };
             _query = _entityManager.CreateEntityQuery(new ComponentType[]
             {
                 typeof(PositionComponent),
                 typeof(SpriteRenderComponent)
             });
-            _square = new SquareVertices
-            {
-                point0 = new float2(-0.5f, -0.5f),
-                point1 = new float2(-0.5f, +0.5f),
-                point2 = new float2(+0.5f, +0.5f),
-                point3 = new float2(+0.5f, -0.5f)
-            };
         }
 
         public void Update()
@@ -88,6 +84,9 @@ namespace SpaceSimulator.Entities.Rendering.Sprites
             var meshDataArray = Mesh.AllocateWritableMeshData(meshCount);
             var computeJobHandles = _arrayUtil.CreateTempJobArray<JobHandle>(meshCount);
             var positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true);
+            var spriteHandle = _entityManager.GetComponentTypeHandle<SpriteRenderComponent>(true);
+            var atlasChunks = _colorSystem.Chunks;
+            var atlasSize = new int2(_colorSystem.Texture.width, _colorSystem.Texture.height);
             var chunkOffset = 0;
             for (var i = 0; i < meshCount; i++)
             {
@@ -104,9 +103,11 @@ namespace SpaceSimulator.Entities.Rendering.Sprites
                 {
                     inChunks = chunks,
                     positionHandle = positionHandle,
-                    inBakedSquare = _square,
+                    spriteHandle = spriteHandle,
                     inChunkCount = meshChunkCount,
                     inFirstChunkIndex = chunkOffset,
+                    inAtlasChunks = atlasChunks,
+                    inAtlasSize = atlasSize,
                     outIndices = meshData.GetIndexData<ushort>(),
                     outVertices = meshData.GetVertexData<SpriteVertexData>()
                 };
@@ -137,6 +138,7 @@ namespace SpaceSimulator.Entities.Rendering.Sprites
             Profiler.EndSample();
             
             Profiler.BeginSample("Draw mesh");
+            _material.SetTexture(MainTexturePropertyId, _colorSystem.Texture);
             for (var i = 0; i < meshCount; i++)
             {
                 _meshUtil.DrawMesh(new MeshDrawingData
