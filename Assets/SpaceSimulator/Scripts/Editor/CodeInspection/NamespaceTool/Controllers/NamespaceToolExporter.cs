@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace SpaceSimulator.Editor.CodeInspection.Nammy
+namespace SpaceSimulator.Editor.CodeInspection.NamespaceTool
 {
-    public class NammyExporter
+    public class NamespaceToolExporter
     {
         private const string LocalDirectoryNameRegex = @"\/((?i)assets\/.*)";
         

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9a88272e5fa440e8881d0ea564017e5f, type: 3}
-  m_Name: Nammy
+  m_Name: NamespaceTool
   m_EditorClassIdentifier: 
   _config:
     _scriptsRoot: Assets/SpaceSimulator/Scripts

@@ -4,17 +4,17 @@ using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace SpaceSimulator.Editor.CodeInspection.Nammy
+namespace SpaceSimulator.Editor.CodeInspection.NamespaceTool
 {
-    public class NammyAsset : ScriptableObject
+    public class NamespaceToolAsset : ScriptableObject
     {
-        [SerializeField] private NammyConfig _config;
+        [SerializeField] private NamespaceToolConfig _config;
 
         [HorizontalGroup("Control"), Button("Scan & Log")]
         private void ScanAndLog()
         {
-            var folderScanner = new NammyFolderScanner();
-            var output = new List<NammyFolderInfo>();
+            var folderScanner = new NamespaceToolFolderScanner();
+            var output = new List<NamespaceToolFolderInfo>();
             var projectRoot = Application.dataPath.Substring(0, Application.dataPath.Length - 7);
             
             folderScanner.Scan(projectRoot, _config, output);
@@ -32,13 +32,13 @@ namespace SpaceSimulator.Editor.CodeInspection.Nammy
         [HorizontalGroup("Export"), Button("Export to NamespaceProvider")]
         private void ExportToNamespaceProvider()
         {
-            var folderScanner = new NammyFolderScanner();
-            var output = new List<NammyFolderInfo>();
+            var folderScanner = new NamespaceToolFolderScanner();
+            var output = new List<NamespaceToolFolderInfo>();
             var projectRoot = Application.dataPath.Substring(0, Application.dataPath.Length - 7);
             
             folderScanner.Scan(projectRoot, _config, output);
 
-            var exporter = new NammyExporter();
+            var exporter = new NamespaceToolExporter();
 
             var sharpFile = Path.Combine(projectRoot, "Assembly-CSharp.csproj.DotSettings");
             

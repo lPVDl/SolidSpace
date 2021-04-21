@@ -2,18 +2,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace SpaceSimulator.Editor.CodeInspection.Nammy
+namespace SpaceSimulator.Editor.CodeInspection.NamespaceTool
 {
-    public class NammyFolderScanner
+    public class NamespaceToolFolderScanner
     {
-        public void Scan(string projectRoot, NammyConfig config, ICollection<NammyFolderInfo> output)
+        public void Scan(string projectRoot, NamespaceToolConfig config, ICollection<NamespaceToolFolderInfo> output)
         {
             output.Clear();
             
             ScanRecursive(projectRoot + "/" + config.ScriptsRoot, config.FolderFilters, output);
         }
 
-        private void ScanRecursive(string path, IReadOnlyList<NammyFolderFilter> filters, ICollection<NammyFolderInfo> output)
+        private void ScanRecursive(string path, IReadOnlyList<NamespaceToolFolderFilter> filters, ICollection<NamespaceToolFolderInfo> output)
         {
             for (var i = 0; i < filters.Count; i++)
             {
@@ -28,7 +28,7 @@ namespace SpaceSimulator.Editor.CodeInspection.Nammy
                     continue;
                 }
 
-                output.Add(new NammyFolderInfo
+                output.Add(new NamespaceToolFolderInfo
                 {
                     fullPath = path,
                     regexId = i

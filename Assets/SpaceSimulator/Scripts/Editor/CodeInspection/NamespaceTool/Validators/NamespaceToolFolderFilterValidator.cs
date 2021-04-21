@@ -1,11 +1,11 @@
 using System;
 using System.Text.RegularExpressions;
 
-namespace SpaceSimulator.Editor.CodeInspection.Nammy
+namespace SpaceSimulator.Editor.CodeInspection.NamespaceTool
 {
-    public class NammyFolderFilterValidator : IValidator<NammyFolderFilter>
+    public class NamespaceToolFolderFilterValidator : IValidator<NamespaceToolFolderFilter>
     {
-        public string Validate(NammyFolderFilter data)
+        public string Validate(NamespaceToolFolderFilter data)
         {
             if (data.regex is null)
             {

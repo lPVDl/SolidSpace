@@ -1,18 +1,18 @@
 using System.IO;
 using UnityEngine;
 
-namespace SpaceSimulator.Editor.CodeInspection.Nammy
+namespace SpaceSimulator.Editor.CodeInspection.NamespaceTool
 {
-    public class NammyConfigValidator : IValidator<NammyConfig>
+    public class NamespaceToolConfigValidator : IValidator<NamespaceToolConfig>
     {
         private readonly string _projectRoot;
         
-        public NammyConfigValidator()
+        public NamespaceToolConfigValidator()
         {
             _projectRoot = Application.dataPath.Substring(0, Application.dataPath.Length - 7);
         }
         
-        public string Validate(NammyConfig data)
+        public string Validate(NamespaceToolConfig data)
         {
             if (data.ScriptsRoot is null)
             {
