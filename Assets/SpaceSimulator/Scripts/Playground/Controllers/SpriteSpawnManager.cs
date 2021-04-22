@@ -37,18 +37,20 @@ namespace SpaceSimulator.Playground
             var archetype = _entityManager.CreateArchetype(new ComponentType[]
             {
                 typeof(PositionComponent),
-                typeof(SpriteRenderComponent)
+                typeof(SpriteRenderComponent),
+                typeof(SizeComponent)
             });
 
             using var entityArray = _entityManager.CreateEntity(archetype, _config.SpawnCount, Allocator.Temp);
 
-            var sizeX = (byte) spriteTexture.width;
-            var sizeY = (byte) spriteTexture.height;
+            var sizeX = (half) spriteTexture.width;
+            var sizeY = (half) spriteTexture.height;
 
             foreach (var entity in entityArray)
             {
                 var x = Random.Range(_config.SpawnRangeX.x, _config.SpawnRangeX.y);
                 var y = Random.Range(_config.SpawnRangeY.x, _config.SpawnRangeY.y);
+                
                 _entityManager.SetComponentData(entity, new PositionComponent
                 {
                     value = new float2(x, y)
@@ -56,8 +58,10 @@ namespace SpaceSimulator.Playground
                 _entityManager.SetComponentData(entity, new SpriteRenderComponent
                 {
                     colorIndex = spriteIndex,
-                    sizeX = sizeX,
-                    sizeY = sizeY
+                });
+                _entityManager.SetComponentData(entity, new SizeComponent
+                {
+                    value = new half2(sizeX, sizeY)
                 });
             }
         }

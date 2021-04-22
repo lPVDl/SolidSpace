@@ -52,7 +52,8 @@ namespace SpaceSimulator.Entities.Rendering.Sprites
             _query = _entityManager.CreateEntityQuery(new ComponentType[]
             {
                 typeof(PositionComponent),
-                typeof(SpriteRenderComponent)
+                typeof(SpriteRenderComponent),
+                typeof(SizeComponent)
             });
         }
 
@@ -85,6 +86,7 @@ namespace SpaceSimulator.Entities.Rendering.Sprites
             var computeJobHandles = _arrayUtil.CreateTempJobArray<JobHandle>(meshCount);
             var positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true);
             var spriteHandle = _entityManager.GetComponentTypeHandle<SpriteRenderComponent>(true);
+            var sizeHandle = _entityManager.GetComponentTypeHandle<SizeComponent>(true);
             var atlasChunks = _colorSystem.Chunks;
             var atlasSize = new int2(_colorSystem.Texture.width, _colorSystem.Texture.height);
             var chunkOffset = 0;
@@ -103,6 +105,7 @@ namespace SpaceSimulator.Entities.Rendering.Sprites
                 {
                     inChunks = chunks,
                     positionHandle = positionHandle,
+                    sizeHandle = sizeHandle,
                     spriteHandle = spriteHandle,
                     inChunkCount = meshChunkCount,
                     inFirstChunkIndex = chunkOffset,

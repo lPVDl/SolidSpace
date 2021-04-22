@@ -17,6 +17,7 @@ namespace SpaceSimulator.Entities.Rendering.Sprites
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
         [ReadOnly] public NativeArray<AtlasChunk> inAtlasChunks;
         [ReadOnly] public ComponentTypeHandle<SpriteRenderComponent> spriteHandle;
+        [ReadOnly] public ComponentTypeHandle<SizeComponent> sizeHandle;
         [ReadOnly] public int2 inAtlasSize;
 
         [WriteOnly, NativeDisableContainerSafetyRestriction] public NativeArray<SpriteVertexData> outVertices;
@@ -35,6 +36,7 @@ namespace SpaceSimulator.Entities.Rendering.Sprites
             {
                 var archetypeChunk = inChunks[chunkIndex];
                 var positions = archetypeChunk.GetNativeArray(positionHandle);
+                var sizes = archetypeChunk.GetNativeArray(sizeHandle);
                 var renders = archetypeChunk.GetNativeArray(spriteHandle);
                 var spriteCount = archetypeChunk.Count;
                 
@@ -43,7 +45,7 @@ namespace SpaceSimulator.Entities.Rendering.Sprites
                     var position = positions[i].value;
                     var spriteRender = renders[i];
                     var spriteIndex = spriteRender.colorIndex;
-                    var spriteSize = new int2(spriteRender.sizeX, spriteRender.sizeY);
+                    var spriteSize = sizes[i].value;
                     var spriteSizeHalf = new float2(spriteSize.x * 0.5f, spriteSize.x * 0.5f);
 
                     var uvPixelOffset = (float2) _atlasMath.ComputeOffset(inAtlasChunks[spriteIndex.chunkId], spriteIndex);
