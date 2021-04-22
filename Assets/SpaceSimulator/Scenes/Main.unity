@@ -152,15 +152,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89715ad69b973a14899afa2c6730b30b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects: []
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes: []
   _installers:
   - {fileID: 11400000, guid: a6e12ab3cad17c04eb89edea04cbc9ea, type: 2}
   - {fileID: 11400000, guid: ae458ab3f83a4c74ca3837ea371bfebf, type: 2}
@@ -174,6 +165,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 845fd695684c34442abcc5e47c83433b, type: 2}
   - {fileID: 11400000, guid: 05d6c86471d691b459be0c54fb2be6cc, type: 2}
   - {fileID: 11400000, guid: caf945961a0a88a4b8b986a791f1b703, type: 2}
+  - {fileID: 11400000, guid: 2fa691c397d763945b5ae1ebd67017fc, type: 2}
 --- !u!4 &159399329
 Transform:
   m_ObjectHideFlags: 0
@@ -237,7 +229,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0
   far clip plane: 1000
   field of view: 90
   orthographic: 1
@@ -265,7 +257,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 353976492}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -300}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
