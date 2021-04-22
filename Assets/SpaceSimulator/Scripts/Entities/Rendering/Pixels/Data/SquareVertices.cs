@@ -1,6 +1,6 @@
 using Unity.Mathematics;
 
-namespace SpaceSimulator.Entities.Rendering.Particles
+namespace SpaceSimulator.Entities.Rendering.Pixels
 {
     public struct SquareVertices
     {

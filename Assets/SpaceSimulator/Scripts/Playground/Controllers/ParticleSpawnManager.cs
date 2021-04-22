@@ -1,6 +1,6 @@
 using SpaceSimulator.Entities;
 using SpaceSimulator.Entities.Physics;
-using SpaceSimulator.Entities.Rendering.Particles;
+using SpaceSimulator.Entities.Rendering.Pixels;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -28,7 +28,7 @@ namespace SpaceSimulator.Playground
             {
                 typeof(PositionComponent),
                 typeof(VelocityComponent),
-                typeof(ParticleRenderComponent),
+                typeof(PixelRenderComponent),
             });
 
             using var entityArray = _entityManager.CreateEntity(archetype, _config.SpawnCount, Allocator.Temp);

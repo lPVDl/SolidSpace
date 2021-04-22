@@ -1,10 +1,10 @@
 using System;
 using UnityEngine;
 
-namespace SpaceSimulator.Entities.Rendering.Particles
+namespace SpaceSimulator.Entities.Rendering.Pixels
 {
     [Serializable]
-    public class ParticleMeshSystemConfig
+    public class PixelMeshSystemConfig
     {
         public Shader Shader => _shader;
         

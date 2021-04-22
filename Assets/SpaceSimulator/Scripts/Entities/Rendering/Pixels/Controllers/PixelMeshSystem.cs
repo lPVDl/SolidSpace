@@ -8,14 +8,14 @@ using UnityEngine;
 using UnityEngine.Profiling;
 using UnityEngine.Rendering;
 
-namespace SpaceSimulator.Entities.Rendering.Particles
+namespace SpaceSimulator.Entities.Rendering.Pixels
 {
-    public class ParticleMeshSystem : IEntitySystem
+    public class PixelMeshSystem : IEntitySystem
     {
         public ESystemType SystemType => ESystemType.Render;
 
         private readonly IEntityManager _entityManager;
-        private readonly ParticleMeshSystemConfig _config;
+        private readonly PixelMeshSystemConfig _config;
 
         private EntityQuery _query;
         private SquareVertices _square;
@@ -28,7 +28,7 @@ namespace SpaceSimulator.Entities.Rendering.Particles
         private MeshUpdateFlags _meshUpdateFlags;
         private Material _material;
 
-        public ParticleMeshSystem(IEntityManager entityManager, ParticleMeshSystemConfig config)
+        public PixelMeshSystem(IEntityManager entityManager, PixelMeshSystemConfig config)
         {
             _entityManager = entityManager;
             _config = config;
@@ -48,7 +48,7 @@ namespace SpaceSimulator.Entities.Rendering.Particles
             _query = _entityManager.CreateEntityQuery(new ComponentType[]
             {
                 typeof(PositionComponent),
-                typeof(ParticleRenderComponent)
+                typeof(PixelRenderComponent)
             });
             _square = new SquareVertices
             {
@@ -99,7 +99,7 @@ namespace SpaceSimulator.Entities.Rendering.Particles
                 meshData.SetSubMesh(0, subMeshDescriptor, _meshUpdateFlags);
 
                 var meshChunkCount = chunkPerMesh[i];
-                var job = new ParticleMeshComputeJob
+                var job = new PixelMeshComputeJob
                 {
                     inChunks = chunks,
                     positionHandle = positionHandle,
@@ -107,7 +107,7 @@ namespace SpaceSimulator.Entities.Rendering.Particles
                     inChunkCount = meshChunkCount,
                     inFirstChunkIndex = chunkOffset,
                     outIndices = meshData.GetIndexData<ushort>(),
-                    outVertices = meshData.GetVertexData<ParticleVertexData>()
+                    outVertices = meshData.GetVertexData<PixelVertexData>()
                 };
                 computeJobHandles[i] = job.Schedule();
 
@@ -121,7 +121,7 @@ namespace SpaceSimulator.Entities.Rendering.Particles
             Profiler.BeginSample("Create meshes");
             for (var i = _meshes.Count; i < meshCount; i++)
             {
-                var name = nameof(ParticleMeshSystem) + "_" + i;
+                var name = nameof(PixelMeshSystem) + "_" + i;
                 _meshes.Add( _meshUtil.CreateMesh(name));
             }
             _meshesForMeshArray.Clear();

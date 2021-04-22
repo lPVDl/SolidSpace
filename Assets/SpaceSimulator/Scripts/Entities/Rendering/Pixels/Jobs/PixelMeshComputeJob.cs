@@ -4,10 +4,10 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Jobs;
 
-namespace SpaceSimulator.Entities.Rendering.Particles
+namespace SpaceSimulator.Entities.Rendering.Pixels
 {
     [BurstCompile]
-    public struct ParticleMeshComputeJob : IJob
+    public struct PixelMeshComputeJob : IJob
     {
         [ReadOnly, NativeDisableContainerSafetyRestriction] public NativeArray<ArchetypeChunk> inChunks;
         [ReadOnly] public int inFirstChunkIndex;
@@ -15,7 +15,7 @@ namespace SpaceSimulator.Entities.Rendering.Particles
         [ReadOnly] public SquareVertices inBakedSquare;
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
 
-        [WriteOnly, NativeDisableContainerSafetyRestriction] public NativeArray<ParticleVertexData> outVertices;
+        [WriteOnly, NativeDisableContainerSafetyRestriction] public NativeArray<PixelVertexData> outVertices;
         [WriteOnly, NativeDisableContainerSafetyRestriction] public NativeArray<ushort> outIndices;
         
         public void Execute()
@@ -32,7 +32,7 @@ namespace SpaceSimulator.Entities.Rendering.Particles
                 {
                     var position = positions[i].value;
                 
-                    ParticleVertexData vertex;
+                    PixelVertexData vertex;
 
                     vertex.position = position + inBakedSquare.point0;
                     outVertices[vertexOffset + 0] = vertex;

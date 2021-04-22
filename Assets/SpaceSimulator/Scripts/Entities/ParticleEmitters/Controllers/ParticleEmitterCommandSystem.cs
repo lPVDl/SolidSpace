@@ -1,7 +1,7 @@
 using SpaceSimulator.DebugUtils;
 using SpaceSimulator.Entities.Despawn;
 using SpaceSimulator.Entities.Physics;
-using SpaceSimulator.Entities.Rendering.Particles;
+using SpaceSimulator.Entities.Rendering.Pixels;
 using Unity.Collections;
 using Unity.Entities;
 
@@ -30,7 +30,7 @@ namespace SpaceSimulator.Entities.ParticleEmitters
                 typeof(VelocityComponent),
                 typeof(DespawnComponent),
                 typeof(RaycastComponent),
-                typeof(ParticleRenderComponent)
+                typeof(PixelRenderComponent)
             });
         }
 

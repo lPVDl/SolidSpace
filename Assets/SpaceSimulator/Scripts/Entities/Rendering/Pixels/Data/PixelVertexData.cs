@@ -1,10 +1,10 @@
 using System.Runtime.InteropServices;
 using Unity.Mathematics;
 
-namespace SpaceSimulator.Entities.Rendering.Particles
+namespace SpaceSimulator.Entities.Rendering.Pixels
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct ParticleVertexData
+    public struct PixelVertexData
     {
         public float2 position;
     }
