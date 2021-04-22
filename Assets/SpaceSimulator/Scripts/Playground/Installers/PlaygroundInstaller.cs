@@ -6,7 +6,8 @@ namespace SpaceSimulator.Playground
     {
         [SerializeField] private ColliderSpawnManagerConfig _colliderSpawnManagerConfig;
         [SerializeField] private EmitterSpawnManagerConfig _emitterSpawnManagerConfig;
-        [SerializeField] private SpriteSpawnManagerConfig _spriteSpawnManagerConfig; 
+        [SerializeField] private SpriteSpawnManagerConfig _spriteSpawnManagerConfig;
+        [SerializeField] private ParticleSpawnManagerConfig _particleSpawnManagerConfig;
         
         public override void InstallBindings(IContainer container)
         {
@@ -14,6 +15,7 @@ namespace SpaceSimulator.Playground
             container.Bind<ColliderSpawnManager>(_colliderSpawnManagerConfig);
             container.Bind<EmitterSpawnManager>(_emitterSpawnManagerConfig);
             container.Bind<SpriteSpawnManager>(_spriteSpawnManagerConfig);
+            container.Bind<ParticleSpawnManager>(_particleSpawnManagerConfig);
         }
     }
 }
