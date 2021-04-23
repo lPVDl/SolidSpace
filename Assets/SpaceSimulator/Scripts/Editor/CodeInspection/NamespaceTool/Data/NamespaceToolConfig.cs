@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace SpaceSimulator.Editor.CodeInspection.NamespaceTool
@@ -12,6 +11,6 @@ namespace SpaceSimulator.Editor.CodeInspection.NamespaceTool
 
         [SerializeField] private string _scriptsRoot;
         
-        [SerializeField, TableList] private List<NamespaceToolFolderFilter> _folderFilters;
+        [SerializeField] private List<NamespaceToolFolderFilter> _folderFilters;
     }
 }

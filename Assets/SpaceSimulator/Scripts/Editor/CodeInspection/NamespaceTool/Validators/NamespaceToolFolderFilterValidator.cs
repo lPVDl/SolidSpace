@@ -9,7 +9,7 @@ namespace SpaceSimulator.Editor.CodeInspection.NamespaceTool
         {
             if (data.regex is null)
             {
-                return $"'{nameof(data.regex)}' is null";
+                return string.Empty;
             }
 
             try

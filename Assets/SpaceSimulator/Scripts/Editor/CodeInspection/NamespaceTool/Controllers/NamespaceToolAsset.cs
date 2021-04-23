@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Sirenix.OdinInspector;
+using SpaceSimulator.Editor.Common;
 using UnityEngine;
 
 namespace SpaceSimulator.Editor.CodeInspection.NamespaceTool
@@ -10,9 +11,11 @@ namespace SpaceSimulator.Editor.CodeInspection.NamespaceTool
     {
         [SerializeField] private NamespaceToolConfig _config;
 
-        [HorizontalGroup("Control"), Button("Scan & Log")]
+        [Button]
         private void ScanAndLog()
         {
+            EditorConsoleUtil.Clear();
+            
             var folderScanner = new NamespaceToolFolderScanner();
             var output = new List<NamespaceToolFolderInfo>();
             var projectRoot = Application.dataPath.Substring(0, Application.dataPath.Length - 7);
@@ -29,7 +32,7 @@ namespace SpaceSimulator.Editor.CodeInspection.NamespaceTool
             Debug.Log($"Total folders: {output.Count};");
         }
 
-        [HorizontalGroup("Export"), Button("Export to NamespaceProvider")]
+        [Button]
         private void ExportToNamespaceProvider()
         {
             var folderScanner = new NamespaceToolFolderScanner();
@@ -50,7 +53,7 @@ namespace SpaceSimulator.Editor.CodeInspection.NamespaceTool
             Debug.Log("Done");
         }
         
-        [HorizontalGroup("Control"), Button("Regex Help")]
+        [Button]
         private void RegexHelp()
         {
             Application.OpenURL("https://regex101.com/");

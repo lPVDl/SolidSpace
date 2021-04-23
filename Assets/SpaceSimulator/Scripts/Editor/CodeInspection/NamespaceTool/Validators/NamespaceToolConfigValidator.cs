@@ -22,7 +22,7 @@ namespace SpaceSimulator.Editor.CodeInspection.NamespaceTool
             var scriptsPath = Path.Combine(_projectRoot, data.ScriptsRoot);
             if (!Directory.Exists(scriptsPath))
             {
-                return $"'Path {scriptsPath}' is invalid";
+                return $"Path '{scriptsPath}' is invalid";
             }
 
             return string.Empty;
