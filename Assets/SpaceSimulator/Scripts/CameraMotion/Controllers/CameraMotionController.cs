@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace SpaceSimulator.CameraMotion.Controllers
 {
-    public class CameraMotionController : IUpdatable
+    public class CameraMotionController : IUpdatable, IInitializable
     {
         public EControllerType ControllerType => EControllerType.Common;
         
@@ -20,19 +20,30 @@ namespace SpaceSimulator.CameraMotion.Controllers
             _cameraTransform = camera.transform;
         }
         
+        public void Initialize()
+        {
+            SetCameraPosition(Vector2.zero);
+            _camera.orthographicSize = GetScreenSize().y / 2;
+        }
+        
         public void Update()
         {
+            var mousePosition = GetMousePosition();
+            var screenSize = GetScreenSize();
             var scrollDelta = (int) Input.mouseScrollDelta.y;
-            if (scrollDelta != 0)
+            
+            var newZoom = Mathf.Clamp(_zoom + scrollDelta, 0, 3);
+            if (newZoom != _zoom)
             {
-                _zoom = Mathf.Clamp(_zoom + scrollDelta, 0, 3);
+                var cursor = mousePosition / screenSize - new Vector2(0.5f, 0.5f);
+                var offset = cursor * screenSize * (1f / (1 << _zoom) - 1f / (1 << newZoom));
+                SetCameraPosition(GetCameraPosition() + offset);
+                
+                _zoom = newZoom;
+                _camera.orthographicSize = screenSize.y / (1 << (_zoom + 1));
                 _isMoving = false;
             }
 
-            var mousePosition = GetMousePosition();
-            var screenSize = GetScreenSize();
-            _camera.orthographicSize = screenSize.y / (1 << (_zoom + 1));
-            
             if (_isMoving)
             {
                 var mouseDelta = mousePosition / screenSize - _startMousePosition;
