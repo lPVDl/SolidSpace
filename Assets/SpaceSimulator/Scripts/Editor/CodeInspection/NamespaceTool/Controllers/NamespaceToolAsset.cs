@@ -14,7 +14,7 @@ namespace SpaceSimulator.Editor.CodeInspection.NamespaceTool
         [Button]
         private void ScanAndLog()
         {
-            EditorConsoleUtil.Clear();
+            EditorConsoleUtil.ClearLog();
             
             var folderScanner = new NamespaceToolFolderScanner();
             var output = new List<NamespaceToolFolderInfo>();

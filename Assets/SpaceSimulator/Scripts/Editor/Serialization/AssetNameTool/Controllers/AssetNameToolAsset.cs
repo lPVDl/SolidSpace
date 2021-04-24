@@ -1,8 +1,7 @@
-using System.Linq;
-using System.Text.RegularExpressions;
+using System.Collections.Generic;
+using System.Text;
 using Sirenix.OdinInspector;
 using SpaceSimulator.Editor.Common;
-using UnityEditor;
 using UnityEngine;
 
 namespace SpaceSimulator.Editor.Serialization.AssetNameTool
@@ -14,30 +13,29 @@ namespace SpaceSimulator.Editor.Serialization.AssetNameTool
         [Button]
         private void ScanAndLog()
         {
-            EditorConsoleUtil.Clear();
+            EditorConsoleUtil.ClearLog();
             
-            var assetGUIDs = AssetDatabase.FindAssets("t:ScriptableObject");
-            var activeFilters = _config.Folders.Where(f => f.enabled).ToArray();
-
-            for (var i = 0; i < assetGUIDs.Length; i++)
+            var processor = new AssetNameToolProcessor();
+            var files = new List<AssetNameToolFile>();
+            processor.Process(_config, files);
+            
+            foreach (var file in files)
             {
-                var assetPath = AssetDatabase.GUIDToAssetPath(assetGUIDs[i]);
-                
-                for (var j = 0; j < activeFilters.Length; j++)
-                {
-                    var filter = activeFilters[j];
-
-                    if (Regex.IsMatch(assetPath, filter.scannerRegex))
-                    {
-                        var obj = AssetDatabase.LoadAssetAtPath<ScriptableObject>(assetPath);
-                        var objName = obj.GetType().ToString();
-
-                        var newName = Regex.Replace(objName, filter.nameRegex, filter.nameSubstitution);
-
-                        Debug.Log($"'{assetPath}' by ({j}); type: '{objName}'; newName : '{newName}'");
-                    }
-                }
+                Debug.Log($"({file.typeName}) ({file.foundByRegexId}) '{file.originalPath}' -> '{file.modifiedPath}'");
             }
+        }
+
+        [Button]
+        private void RenameAssets()
+        {
+            EditorConsoleUtil.ClearLog();
+            
+            var processor = new AssetNameToolProcessor();
+            var renamer = new AssetNameToolRenamer();
+            var files = new List<AssetNameToolFile>();
+            
+            processor.Process(_config, files);
+            renamer.Rename(files);
         }
     }
 }

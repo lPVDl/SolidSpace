@@ -26,7 +26,7 @@ namespace SpaceSimulator.Editor.Common
             }
         }
 
-        public static void Clear()
+        public static void ClearLog()
         {
             if (!IsClearConsoleMethodFound)
             {
