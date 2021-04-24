@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cc8f12f6f4174149a67ab82a4b2b73be, type: 3}
-  m_Name: SpriteRenderingInstaller
+  m_Name: Entities.Rendering.Sprites.SpriteRenderingInstaller
   m_EditorClassIdentifier: 
   _colorAtlasConfig:
     _atlasSize: 512

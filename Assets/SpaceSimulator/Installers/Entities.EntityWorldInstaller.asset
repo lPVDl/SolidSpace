@@ -10,16 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c2052214279f4b0280e1ed65f5a0531c, type: 3}
-  m_Name: EntityWorldInstaller
+  m_Name: Entities.EntityWorldInstaller
   m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects: []
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes: []
   _entityCycleConfig:
     _invocationOrder: 04000000010000000200000003000000
