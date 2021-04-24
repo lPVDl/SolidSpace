@@ -7,7 +7,7 @@ namespace FuchaTools
         private readonly TypeScannerWindow _scannerWindow;
         private readonly RepaintEventsView _repaintEvents;
 
-        [MenuItem("Window/Open...", priority = -1)]
+        [MenuItem("Window/Open...", priority = int.MinValue)]
         private static void OpenWindow()
         {
             WindowUtil.OpenToolWindow<EditorWindowFactoryWindow>();
