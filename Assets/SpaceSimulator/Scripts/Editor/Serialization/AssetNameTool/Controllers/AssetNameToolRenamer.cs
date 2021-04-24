@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -52,12 +53,19 @@ namespace SpaceSimulator.Editor.Serialization.AssetNameTool
             for (var i = 0; i < files.Count; i++)
             {
                 var file = files[i];
-                if (CheckRequiresRenaming(file))
+                if (!CheckRequiresRenaming(file))
                 {
                     continue;
                 }
 
-                var message = AssetDatabase.RenameAsset(file.originalPath, file.modifiedPath);
+                var fileName = Path.GetFileName(file.modifiedPath);
+                var message = AssetDatabase.RenameAsset(file.originalPath, fileName);
+                if (!string.IsNullOrEmpty(message))
+                {
+                    Debug.LogError($"Abort. RenameAsset: '{message}'");
+                    return;
+                }
+                
                 Debug.Log($"Renamed '{file.originalPath}' -> '{file.modifiedPath}'; extraInfo: '{message}'");
             }
         }
