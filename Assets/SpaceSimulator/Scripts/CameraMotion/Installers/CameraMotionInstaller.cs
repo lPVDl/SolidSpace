@@ -1,6 +1,4 @@
-using SpaceSimulator.CameraMotion.Controllers;
-
-namespace SpaceSimulator.Cinematics.Installers
+namespace SpaceSimulator.CameraMotion
 {
     public class CameraMotionInstaller : ScriptableObjectInstaller
     {

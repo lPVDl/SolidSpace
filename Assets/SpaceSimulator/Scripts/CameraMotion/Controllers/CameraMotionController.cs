@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace SpaceSimulator.CameraMotion.Controllers
+namespace SpaceSimulator.CameraMotion
 {
     public class CameraMotionController : IUpdatable, IInitializable
     {
