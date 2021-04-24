@@ -5,6 +5,6 @@ namespace SolidSpace.Entities.Rendering.Sprites
 {
     public struct SpriteRenderComponent : IComponentData
     {
-        public AtlasIndex colorIndex;
+        public AtlasIndex index;
     }
 }

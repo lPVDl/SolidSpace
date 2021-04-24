@@ -86,6 +86,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             var computeJobHandles = _arrayUtil.CreateTempJobArray<JobHandle>(meshCount);
             var positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true);
             var spriteHandle = _entityManager.GetComponentTypeHandle<SpriteRenderComponent>(true);
+            var rotationHandle = _entityManager.GetComponentTypeHandle<RotationComponent>(true);
             var sizeHandle = _entityManager.GetComponentTypeHandle<SizeComponent>(true);
             var atlasChunks = _colorSystem.Chunks;
             var atlasSize = new int2(_colorSystem.Texture.width, _colorSystem.Texture.height);
@@ -105,8 +106,9 @@ namespace SolidSpace.Entities.Rendering.Sprites
                 {
                     inChunks = chunks,
                     positionHandle = positionHandle,
-                    sizeHandle = sizeHandle,
                     spriteHandle = spriteHandle,
+                    rotationHandle = rotationHandle,
+                    sizeHandle = sizeHandle,
                     inChunkCount = meshChunkCount,
                     inFirstChunkIndex = chunkOffset,
                     inAtlasChunks = atlasChunks,

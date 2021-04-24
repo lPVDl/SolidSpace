@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using SolidSpace.Entities;
 using SolidSpace.Entities.Rendering.Sprites;
@@ -5,6 +6,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+
 using Random = UnityEngine.Random;
 
 namespace SolidSpace.Playground
@@ -32,13 +34,18 @@ namespace SolidSpace.Playground
             var spriteIndex = _colorSystem.AllocateSpace(spriteTexture.width, spriteTexture.height);
             _colorSystem.ScheduleTextureCopy(spriteTexture, spriteIndex);
             _flushedAtlas = false;
-            
-            var archetype = _entityManager.CreateArchetype(new ComponentType[]
+
+            var typeList = new List<ComponentType>
             {
                 typeof(PositionComponent),
                 typeof(SpriteRenderComponent),
-                typeof(SizeComponent)
-            });
+                typeof(SizeComponent),
+            };
+            if (_config.RotateSprites)
+            {
+                typeList.Add(typeof(RotationComponent));
+            }
+            var archetype = _entityManager.CreateArchetype(typeList.ToArray());
 
             using var entityArray = _entityManager.CreateEntity(archetype, _config.SpawnCount, Allocator.Temp);
 
@@ -56,11 +63,21 @@ namespace SolidSpace.Playground
                 });
                 _entityManager.SetComponentData(entity, new SpriteRenderComponent
                 {
-                    colorIndex = spriteIndex,
+                    index = spriteIndex,
                 });
                 _entityManager.SetComponentData(entity, new SizeComponent
                 {
                     value = new half2(sizeX, sizeY)
+                });
+
+                if (!_config.RotateSprites)
+                {
+                    continue;
+                }
+                
+                _entityManager.SetComponentData(entity, new RotationComponent
+                {
+                    value = (half) Random.value
                 });
             }
         }
