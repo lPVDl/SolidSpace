@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace SolidSpace.Profiling.Data
+namespace SolidSpace.Profiling
 {
     public struct ProfilingRecord
     {

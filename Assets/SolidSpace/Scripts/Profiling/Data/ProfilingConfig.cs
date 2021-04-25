@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace SolidSpace.Profiling.Data
+namespace SolidSpace.Profiling
 {
     [System.Serializable]
     public class ProfilingConfig

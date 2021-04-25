@@ -1,8 +1,6 @@
-using SolidSpace.Profiling.Controllers;
-using SolidSpace.Profiling.Data;
 using UnityEngine;
 
-namespace SolidSpace.Profiling.Installers
+namespace SolidSpace.Profiling
 {
     public class ProfilingInstaller : ScriptableObjectInstaller
     {

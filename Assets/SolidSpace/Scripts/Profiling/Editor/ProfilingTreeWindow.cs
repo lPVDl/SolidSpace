@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using SolidSpace.DebugUtils;
-using SolidSpace.Profiling.Controllers;
-using SolidSpace.Profiling.Data;
 using UnityEditor;
 using UnityEngine;
 

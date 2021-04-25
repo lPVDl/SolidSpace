@@ -1,6 +1,6 @@
 using Unity.Collections;
 
-namespace SolidSpace.Profiling.Data
+namespace SolidSpace.Profiling
 {
     public struct ProfilingTree
     {

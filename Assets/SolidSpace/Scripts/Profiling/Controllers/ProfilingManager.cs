@@ -1,11 +1,9 @@
 using System;
 using System.Diagnostics;
-using SolidSpace.Profiling.Data;
-using SolidSpace.Profiling.Interfaces;
 using Unity.Collections;
 using UnityEngine.Profiling;
 
-namespace SolidSpace.Profiling.Controllers
+namespace SolidSpace.Profiling
 {
     // TODO: Rename profiling to profiler
     public partial class ProfilingManager : IProfilingHandler, IProfilingManager, IInitializable, IFinalazable, IUpdatable

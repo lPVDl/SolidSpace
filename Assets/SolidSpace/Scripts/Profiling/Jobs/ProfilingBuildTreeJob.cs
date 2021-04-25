@@ -1,12 +1,11 @@
 using System;
 using System.Runtime.CompilerServices;
-using SolidSpace.Profiling.Data;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 
-namespace SolidSpace.Profiling.Jobs
+namespace SolidSpace.Profiling
 {
     [BurstCompile]
     public struct ProfilingBuildTreeJob : IJob

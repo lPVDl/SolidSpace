@@ -1,4 +1,4 @@
-namespace SolidSpace.Profiling.Data
+namespace SolidSpace.Profiling
 {
     public struct ProfilingNodeFriendly
     {

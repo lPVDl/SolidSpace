@@ -1,14 +1,11 @@
-using System.Collections.Generic;
 using System.Diagnostics;
 using SolidSpace.DebugUtils;
 using SolidSpace.Entities;
-using SolidSpace.Profiling.Data;
-using SolidSpace.Profiling.Jobs;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine.Profiling;
 
-namespace SolidSpace.Profiling.Controllers
+namespace SolidSpace.Profiling
 {
     public partial class ProfilingManager
     {

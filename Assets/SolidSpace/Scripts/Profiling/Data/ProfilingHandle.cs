@@ -1,7 +1,6 @@
 using System.Runtime.CompilerServices;
-using SolidSpace.Profiling.Interfaces;
 
-namespace SolidSpace.Profiling.Data
+namespace SolidSpace.Profiling
 {
     public readonly struct ProfilingHandle
     {

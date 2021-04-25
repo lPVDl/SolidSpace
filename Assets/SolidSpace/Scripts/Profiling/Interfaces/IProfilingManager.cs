@@ -1,7 +1,4 @@
-using SolidSpace.Profiling.Controllers;
-using SolidSpace.Profiling.Data;
-
-namespace SolidSpace.Profiling.Interfaces
+namespace SolidSpace.Profiling
 {
     public interface IProfilingManager
     {

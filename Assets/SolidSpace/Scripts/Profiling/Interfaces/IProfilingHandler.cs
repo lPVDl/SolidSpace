@@ -1,4 +1,4 @@
-namespace SolidSpace.Profiling.Interfaces
+namespace SolidSpace.Profiling
 {
     public interface IProfilingHandler
     {

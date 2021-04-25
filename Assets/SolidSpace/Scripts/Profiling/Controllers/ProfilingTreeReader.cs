@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
 using SolidSpace.Entities;
-using SolidSpace.Profiling.Data;
-using SolidSpace.Profiling.Jobs;
 using Unity.Jobs;
 using Unity.Mathematics;
 
-namespace SolidSpace.Profiling.Controllers
+namespace SolidSpace.Profiling
 {
     public struct ProfilingTreeReader
     {

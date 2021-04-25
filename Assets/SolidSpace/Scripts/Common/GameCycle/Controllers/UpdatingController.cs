@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SolidSpace.Profiling.Data;
-using SolidSpace.Profiling.Interfaces;
+using SolidSpace.Profiling;
 using UnityEngine;
 
 using Debug = UnityEngine.Debug;
