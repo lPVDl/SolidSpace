@@ -24,9 +24,10 @@ namespace SolidSpace.Profiling.Controllers
                 owner._buildTreeJobStopwatch = new Stopwatch();
                 owner._records = new NativeArray<ProfilingRecord>(MaxRecordCount, Allocator.Persistent);
                 owner._recordCount = 0;
-                owner._namesActive = new List<string>(MaxRecordCount);
-                owner._namesPassive = new List<string>(MaxRecordCount);
-                owner._namesPassive.Add(RootNodeName);
+                owner._nameCount = 1;
+                owner._namesActive = new string[MaxRecordCount];
+                owner._namesPassive = new string[MaxRecordCount];
+                owner._namesPassive[0] = RootNodeName;
                 owner._stopwatch = new Stopwatch();
                 owner._profilingTree = new ProfilingTree
                 {
@@ -47,8 +48,8 @@ namespace SolidSpace.Profiling.Controllers
                 var temp = owner._namesActive;
                 owner._namesActive = owner._namesPassive;
                 owner._namesPassive = temp;
-                owner._namesActive.Clear();
-                owner._namesActive.Add(RootNodeName);
+                owner._namesActive[0] = RootNodeName;
+                owner._nameCount = 1;
 
                 owner._enableSolidProfiling = owner._config.EnableSolidProfiling;
                 owner._enableUnityProfiling = owner._config.EnableUnityProfiling;

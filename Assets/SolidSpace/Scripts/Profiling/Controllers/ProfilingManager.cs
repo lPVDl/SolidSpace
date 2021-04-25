@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using SolidSpace.Profiling.Data;
 using SolidSpace.Profiling.Interfaces;
@@ -28,8 +27,9 @@ namespace SolidSpace.Profiling.Controllers
         private bool _enableUnityProfiling;
         private NativeArray<ProfilingRecord> _records;
         private int _recordCount;
-        private List<string> _namesActive;
-        private List<string> _namesPassive;
+        private int _nameCount;
+        private string[] _namesActive;
+        private string[] _namesPassive;
         private Stopwatch _stopwatch;
         private Stopwatch _buildTreeJobStopwatch;
         private Processor _processor;
@@ -55,7 +55,7 @@ namespace SolidSpace.Profiling.Controllers
         public void OnBeginSample(string name)
         {
             if (name is null) throw new ArgumentNullException(nameof(name));
-            
+
             if (_enableUnityProfiling)
             {
                 Profiler.BeginSample(name);
@@ -67,9 +67,9 @@ namespace SolidSpace.Profiling.Controllers
             }
 
             var record = new ProfilingRecord();
-            record.Write((int) _stopwatch.ElapsedMilliseconds, true);
+            record.Write((int) _stopwatch.ElapsedTicks, true);
             _records[_recordCount++] = record;
-            _namesActive.Add(name);
+            _namesActive[_nameCount++] = name;
         }
 
         public void OnEndSample()

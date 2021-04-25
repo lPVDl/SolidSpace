@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using SolidSpace.DebugUtils;
 using SolidSpace.Profiling.Data;
 using SolidSpace.Profiling.Interfaces;
 using UnityEngine;
+
 using Debug = UnityEngine.Debug;
 
 namespace SolidSpace
@@ -18,12 +17,10 @@ namespace SolidSpace
         private readonly IProfilingManager _profilingManager;
 
         private List<IUpdatable> _updatables;
+        private List<string> _names;
 
         private UpdateHandler _updateHandler;
         private ProfilingHandle _profiler;
-        private Stopwatch _stopwatch;
-
-        private List<string> _testSamples;
 
         public UpdatingController(List<IUpdatable> updatables, GameCycleConfig config, IProfilingManager profilingManager)
         {
@@ -34,13 +31,7 @@ namespace SolidSpace
         
         public void Initialize()
         {
-            _testSamples = new List<string>();
-            for (var i = 0; i < 1 << 16; i++)
-            {
-                _testSamples.Add("Sample " + i);
-            }
             _profiler = _profilingManager.GetHandle(this);
-            _stopwatch = new Stopwatch();
             
             var order = new Dictionary<EControllerType, int>();
             for (var i = 0; i < _config.InvocationOrder.Count; i++)
@@ -62,6 +53,12 @@ namespace SolidSpace
             }
 
             _updatables = _updatables.OrderBy(i => order[i.ControllerType]).ToList();
+            _names = _updatables.Select(i => i.GetType().Name).ToList();
+
+            if (_updatables.Count == 0 || _updatables[0].ControllerType != EControllerType.Profiling)
+            {
+                throw new InvalidOperationException("Profiling controller was not recognized.");
+            }
 
             var gameObject = new GameObject("UpdatingController");
             _updateHandler = gameObject.AddComponent<UpdateHandler>();
@@ -70,30 +67,14 @@ namespace SolidSpace
 
         private void OnUpdate()
         {
-            foreach (var item in _updatables)
-            {
-                item.Update();
-            }
-
-            ModifyTree(_profiler);
+            _updatables[0].Update();
             
-            SpaceDebug.LogState("ModifyTree ms", 
-                _stopwatch.ElapsedTicks / (float) Stopwatch.Frequency * 1000);
-        }
-        
-        private void ModifyTree(ProfilingHandle handle)
-        {
-            _stopwatch.Reset();
-            _stopwatch.Start();
-            
-            for (var i = 0; i < _testSamples.Count; i++)
+            for (var i = 1; i < _updatables.Count; i++)
             {
-                var name = _testSamples[i];
-                handle.BeginSample(name);
-                handle.EndSample(name);
+                _profiler.BeginSample(_names[i]);
+                _updatables[i].Update();
+                _profiler.EndSample();
             }
-
-            _stopwatch.Stop();
         }
 
         public void FinalizeObject()
