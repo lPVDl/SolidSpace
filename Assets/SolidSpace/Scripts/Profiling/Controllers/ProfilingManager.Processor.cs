@@ -1,10 +1,11 @@
 using System.Collections.Generic;
+using System.Diagnostics;
+using SolidSpace.DebugUtils;
 using SolidSpace.Entities;
 using SolidSpace.Profiling.Data;
 using SolidSpace.Profiling.Jobs;
 using Unity.Collections;
 using Unity.Jobs;
-using UnityEngine;
 using UnityEngine.Profiling;
 
 namespace SolidSpace.Profiling.Controllers
@@ -20,21 +21,23 @@ namespace SolidSpace.Profiling.Controllers
 
             public void Initialize()
             {
+                owner._buildTreeJobStopwatch = new Stopwatch();
                 owner._records = new NativeArray<ProfilingRecord>(MaxRecordCount, Allocator.Persistent);
                 owner._recordCount = 0;
-                owner._namesActive = new List<string>();
-                owner._namesPassive = new List<string>();
+                owner._namesActive = new List<string>(MaxRecordCount);
+                owner._namesPassive = new List<string>(MaxRecordCount);
                 owner._namesPassive.Add(RootNodeName);
-                owner._profilingResult = new ProfilingResult
+                owner._stopwatch = new Stopwatch();
+                owner._profilingTree = new ProfilingTree
                 {
-                    childIndexes = _arrayUtil.CreateTempJobArray<ushort>(1),
-                    nameIndexes = _arrayUtil.CreateTempJobArray<ushort>(1),
-                    siblingIndexes = _arrayUtil.CreateTempJobArray<ushort>(1),
-                    names = owner._namesPassive
+                    childs = _arrayUtil.CreateTempJobArray<ushort>(1),
+                    names = _arrayUtil.CreateTempJobArray<ushort>(1),
+                    siblings = _arrayUtil.CreateTempJobArray<ushort>(1),
+                    text = owner._namesPassive
                 };
-                owner._profilingResult.childIndexes[0] = 0;
-                owner._profilingResult.nameIndexes[0] = 0;
-                owner._profilingResult.siblingIndexes[0] = 0;
+                owner._profilingTree.childs[0] = 0;
+                owner._profilingTree.names[0] = 0;
+                owner._profilingTree.siblings[0] = 0;
                 
                 Instance = owner;
             }
@@ -49,11 +52,10 @@ namespace SolidSpace.Profiling.Controllers
 
                 owner._enableSolidProfiling = owner._config.EnableSolidProfiling;
                 owner._enableUnityProfiling = owner._config.EnableUnityProfiling;
-                owner._frameStartTime = Time.realtimeSinceStartupAsDouble;
 
-                owner._profilingResult.childIndexes.Dispose();
-                owner._profilingResult.nameIndexes.Dispose();
-                owner._profilingResult.siblingIndexes.Dispose();
+                owner._profilingTree.childs.Dispose();
+                owner._profilingTree.names.Dispose();
+                owner._profilingTree.siblings.Dispose();
 
                 var nodeCount = owner._recordCount / 2 + 2;
 
@@ -67,32 +69,41 @@ namespace SolidSpace.Profiling.Controllers
                     parentStack = _arrayUtil.CreateTempJobArray<ushort>(JobStackSize),
                     siblingStack = _arrayUtil.CreateTempJobArray<ushort>(JobStackSize),
                 };
-                
+
+                var timer = owner._buildTreeJobStopwatch;
                 Profiler.BeginSample("ProfilingManager.BuildTreeJob");
+                timer.Reset();
+                timer.Start();
                 job.Schedule().Complete();
+                timer.Stop();
                 Profiler.EndSample();
+                
+                SpaceDebug.LogState("BuildTreeJob ms", timer.ElapsedTicks / (float) Stopwatch.Frequency * 1000);
                 
                 owner._recordCount = 0;
 
                 job.parentStack.Dispose();
                 job.siblingStack.Dispose();
 
-                owner._profilingResult = new ProfilingResult
+                owner._profilingTree = new ProfilingTree
                 {
-                    childIndexes = job.outChilds,
-                    nameIndexes = job.outNames,
-                    siblingIndexes = job.outSiblings,
-                    names = owner._namesPassive
+                    childs = job.outChilds,
+                    names = job.outNames,
+                    siblings = job.outSiblings,
+                    text = owner._namesPassive
                 };
+                
+                owner._stopwatch.Reset();
+                owner._stopwatch.Start();
             }
 
             public void FinalizeObject()
             {
                 owner._records.Dispose();
-                owner._profilingResult.childIndexes.Dispose();
-                owner._profilingResult.nameIndexes.Dispose();
-                owner._profilingResult.siblingIndexes.Dispose();
-                
+                owner._profilingTree.childs.Dispose();
+                owner._profilingTree.names.Dispose();
+                owner._profilingTree.siblings.Dispose();
+
                 Instance = null;
             }
         }

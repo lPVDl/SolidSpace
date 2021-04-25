@@ -12,7 +12,7 @@ namespace SolidSpace.Profiling.Data
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write(int timeSamples, bool isBeginSampleCommand)
         {
-            _value = (uint) timeSamples | (isBeginSampleCommand ? CommandTypeMask : 0);
+            _value = (uint) (timeSamples & TimeSamplesMask) | (isBeginSampleCommand ? CommandTypeMask : 0);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -21,7 +21,7 @@ namespace SolidSpace.Profiling.Data
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void EndSample(string name)
         {
-            _handler.OnEndSample(name);
+            _handler.OnEndSample();
         }
     }
 }

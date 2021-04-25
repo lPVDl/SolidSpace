@@ -1,10 +1,11 @@
+using SolidSpace.Profiling.Controllers;
 using SolidSpace.Profiling.Data;
 
 namespace SolidSpace.Profiling.Interfaces
 {
     public interface IProfilingManager
     {
-        ProfilingResultReadOnly Result { get; }
+        ProfilingTreeReader Reader { get; }
         
         ProfilingHandle GetHandle(object owner);
     }

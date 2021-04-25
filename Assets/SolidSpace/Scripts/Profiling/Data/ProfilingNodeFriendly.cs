@@ -1,8 +1,8 @@
 namespace SolidSpace.Profiling.Data
 {
-    public struct ProfilingNode
+    public struct ProfilingNodeFriendly
     {
-        public int name;
+        public string name;
         public int deep;
     }
 }

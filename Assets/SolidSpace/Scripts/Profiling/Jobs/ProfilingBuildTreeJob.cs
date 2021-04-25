@@ -35,6 +35,8 @@ namespace SolidSpace.Profiling.Jobs
             outNames[0] = 0;
             outSiblings[0] = 0;
             _stackMax = math.min(parentStack.Length, siblingStack.Length);
+
+            var nameIndex = 1;
             
             for (var i = 0; i < inRecordCount; i++)
             {
@@ -44,11 +46,11 @@ namespace SolidSpace.Profiling.Jobs
                 
                 if (isBeginSampleCommand)
                 {
-                    FlushBeginSample(i, timeSamples);
+                    FlushBeginSample(nameIndex++, timeSamples);
                 }
                 else
                 {
-                    FlushEndSample(i, timeSamples);
+                    FlushEndSample();
                 }
             }
         }
@@ -84,7 +86,7 @@ namespace SolidSpace.Profiling.Jobs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void FlushEndSample(int nameIndex, int timeSamples)
+        private void FlushEndSample()
         {
             if (_stackLast == 0)
             {

@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using SolidSpace.Profiling.Data;
 using SolidSpace.Profiling.Interfaces;
 using Unity.Collections;
+using UnityEngine.Profiling;
 
 namespace SolidSpace.Profiling.Controllers
 {
@@ -11,12 +13,10 @@ namespace SolidSpace.Profiling.Controllers
     {
         // TODO: Make editor window search container, add funcs to container to resolve, editor only, remove this field
         public static IProfilingManager Instance { get; private set; }
-
-        // TODO: Rename profiling result to tree
-        public ProfilingResultReadOnly Result => new ProfilingResultReadOnly(_profilingResult);
         
-        private const int MaxRecordCount = 1 << 17 - 2;
-        private const int SamplesPerSecond = 1 << 24;
+        public ProfilingTreeReader Reader => new ProfilingTreeReader(_profilingTree);
+
+        private const int MaxRecordCount = (1 << 17) - 2;
         private const int JobStackSize = 64;
         private const string RootNodeName = "_root";
         
@@ -30,15 +30,14 @@ namespace SolidSpace.Profiling.Controllers
         private int _recordCount;
         private List<string> _namesActive;
         private List<string> _namesPassive;
-        private double _frameStartTime;
-        private Handler _handler;
+        private Stopwatch _stopwatch;
+        private Stopwatch _buildTreeJobStopwatch;
         private Processor _processor;
-        private ProfilingResult _profilingResult;
+        private ProfilingTree _profilingTree;
 
         public ProfilingManager(ProfilingConfig config)
         {
             _config = config;
-            _handler = new Handler { owner = this };
             _processor = new Processor { owner = this };
         }
 
@@ -48,17 +47,47 @@ namespace SolidSpace.Profiling.Controllers
 
         public ProfilingHandle GetHandle(object owner)
         {
-            if (owner is null)
-            {
-                throw new ArgumentNullException(nameof(owner));
-            }
+            if (owner is null) throw new ArgumentNullException(nameof(owner));
 
             return new ProfilingHandle(this);
         }
 
-        public void OnBeginSample(string name) => _handler.OnBeginSample(name);
+        public void OnBeginSample(string name)
+        {
+            if (name is null) throw new ArgumentNullException(nameof(name));
+            
+            if (_enableUnityProfiling)
+            {
+                Profiler.BeginSample(name);
+            }
 
-        public void OnEndSample(string name) => _handler.OnEndSample(name);
+            if (!_enableSolidProfiling || _recordCount >= MaxRecordCount)
+            {
+                return;
+            }
+
+            var record = new ProfilingRecord();
+            record.Write((int) _stopwatch.ElapsedMilliseconds, true);
+            _records[_recordCount++] = record;
+            _namesActive.Add(name);
+        }
+
+        public void OnEndSample()
+        {
+            if (_enableUnityProfiling)
+            {
+                Profiler.EndSample();
+            }
+            
+            if (!_enableSolidProfiling || _recordCount >= MaxRecordCount)
+            {
+                return;
+            }
+
+            var record = new ProfilingRecord();
+            record.Write((int) _stopwatch.ElapsedTicks, false);
+            _records[_recordCount++] = record;
+        }
 
         public void FinalizeObject() => _processor.FinalizeObject();
     }
