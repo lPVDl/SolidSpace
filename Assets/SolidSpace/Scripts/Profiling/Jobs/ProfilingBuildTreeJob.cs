@@ -12,20 +12,26 @@ namespace SolidSpace.Profiling
     {
         [ReadOnly] public NativeArray<ProfilingRecord> inRecords;
         [ReadOnly] public int inRecordCount;
+        [ReadOnly] public long inFrequency;
 
         public NativeArray<ushort> parentStack;
         public NativeArray<ushort> siblingStack;
+        public NativeArray<int> timeStack;
 
         public NativeArray<ushort> outChilds;
         public NativeArray<ushort> outSiblings;
         public NativeArray<ushort> outNames;
+        public NativeArray<float> outTimes;
 
         private int _stackLast;
         private int _nodeCount;
         private int _stackMax;
+        private long _ticksTotal;
+        private float _ticksToMilliseconds;
 
         public void Execute()
         {
+            _ticksToMilliseconds = 1000f / inFrequency;
             _stackLast = 0;
             _nodeCount = 1;
             parentStack[0] = 0;
@@ -33,6 +39,7 @@ namespace SolidSpace.Profiling
             outChilds[0] = 0;
             outNames[0] = 0;
             outSiblings[0] = 0;
+            outTimes[0] = 0;
             _stackMax = math.min(parentStack.Length, siblingStack.Length);
 
             var nameIndex = 1;
@@ -49,9 +56,11 @@ namespace SolidSpace.Profiling
                 }
                 else
                 {
-                    FlushEndSample();
+                    FlushEndSample(timeSamples);
                 }
             }
+
+            outTimes[0] = _ticksTotal * _ticksToMilliseconds;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -78,6 +87,7 @@ namespace SolidSpace.Profiling
             siblingStack[_stackLast++] = nodeIndex;
             siblingStack[_stackLast] = 0;
             parentStack[_stackLast] = nodeIndex;
+            timeStack[_stackLast] = timeSamples;
 
             outNames[nodeIndex] = (ushort) nameIndex;
             outChilds[nodeIndex] = 0;
@@ -85,13 +95,23 @@ namespace SolidSpace.Profiling
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void FlushEndSample()
+        private void FlushEndSample(int timeSamples)
         {
             if (_stackLast == 0)
             {
                 throw new InvalidOperationException("EndSample() was called without StartSample()");
             }
 
+            var nodeIndex = parentStack[_stackLast];
+            var ticks = timeSamples - timeStack[_stackLast];
+
+            if (outChilds[nodeIndex] == 0)
+            {
+                _ticksTotal += ticks;
+            }
+
+            outTimes[nodeIndex] = ticks * _ticksToMilliseconds;
+            
             _stackLast--;
         }
     }

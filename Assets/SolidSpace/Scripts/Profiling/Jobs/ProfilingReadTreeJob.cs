@@ -11,6 +11,7 @@ namespace SolidSpace.Profiling
         [ReadOnly] public NativeArray<ushort> inChilds;
         [ReadOnly] public NativeArray<ushort> inSiblings;
         [ReadOnly] public NativeArray<ushort> inNames;
+        [ReadOnly] public NativeArray<float> inTimes;
         [ReadOnly] public int2 inReadRange;
 
         [WriteOnly] public NativeArray<ProfilingNode> outNodes;
@@ -40,6 +41,7 @@ namespace SolidSpace.Profiling
                 outNodes[_bakedNodeCount++] = new ProfilingNode
                 {
                     name = inNames[nodeIndex],
+                    time = inTimes[nodeIndex],
                     deep = deep
                 };
             }

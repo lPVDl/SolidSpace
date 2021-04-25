@@ -29,7 +29,7 @@ MonoBehaviour:
   _spriteSpawnManagerConfig:
     _spriteTexture: {fileID: 2800000, guid: d51b8917003f48442892e8c7a6035160, type: 3}
     _outputAtlasPath: T:\Atlas.png
-    _spawnCount: 100
+    _spawnCount: 1000000
     _spawnRangeX: {x: -300, y: 300}
     _spawnRangeY: {x: -250, y: 250}
     _rotateSprites: 1

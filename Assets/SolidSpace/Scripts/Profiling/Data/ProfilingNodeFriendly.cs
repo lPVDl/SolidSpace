@@ -4,5 +4,6 @@ namespace SolidSpace.Profiling
     {
         public string name;
         public int deep;
+        public float time;
     }
 }

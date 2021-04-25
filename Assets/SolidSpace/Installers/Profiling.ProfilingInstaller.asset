@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _config:
     _enableSolidProfiling: 1
-    _enableUnityProfiling: 0
+    _enableUnityProfiling: 1

@@ -27,6 +27,7 @@ namespace SolidSpace.Profiling
                 inChilds = _tree.childs,
                 inNames = _tree.names,
                 inSiblings = _tree.siblings,
+                inTimes = _tree.times,
                 inReadRange = new int2(offset, offset + count - 1),
                 outNodeCount = _arrayUtil.CreateTempJobArray<int>(1),
                 outTotalNodeCount = _arrayUtil.CreateTempJobArray<int>(1),
@@ -44,7 +45,8 @@ namespace SolidSpace.Profiling
                 result.Add(new ProfilingNodeFriendly
                 {
                     name = _tree.text[node.name],
-                    deep = node.deep
+                    deep = node.deep,
+                    time = node.time
                 });
             }
 
