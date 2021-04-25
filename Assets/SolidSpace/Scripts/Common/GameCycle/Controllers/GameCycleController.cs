@@ -8,22 +8,20 @@ using Debug = UnityEngine.Debug;
 
 namespace SolidSpace
 {
-    public partial class UpdatingController : IInitializable, IFinalazable
+    public partial class GameCycleController : Zenject.IInitializable, IDisposable
     {
-        public EControllerType ControllerType => EControllerType.Common;
-        
         private readonly GameCycleConfig _config;
         private readonly IProfilingManager _profilingManager;
 
-        private List<IUpdatable> _updatables;
+        private List<IController> _controllers;
         private List<string> _names;
 
         private UpdateHandler _updateHandler;
         private ProfilingHandle _profiler;
 
-        public UpdatingController(List<IUpdatable> updatables, GameCycleConfig config, IProfilingManager profilingManager)
+        public GameCycleController(List<IController> controllers, GameCycleConfig config, IProfilingManager profilingManager)
         {
-            _updatables = updatables;
+            _controllers = controllers;
             _config = config;
             _profilingManager = profilingManager;
         }
@@ -38,7 +36,7 @@ namespace SolidSpace
                 order[_config.InvocationOrder[i]] = i;
             }
 
-            var unordered = _updatables.Where(i => !order.ContainsKey(i.ControllerType)).ToList();
+            var unordered = _controllers.Where(i => !order.ContainsKey(i.ControllerType)).ToList();
             
             if (unordered.Any())
             {
@@ -48,37 +46,47 @@ namespace SolidSpace
                     Debug.LogError(message);
                 }
                 
-                throw new InvalidOperationException("Failed to create update order.");
+                throw new InvalidOperationException("Failed to create execution order.");
             }
 
-            _updatables = _updatables.OrderBy(i => order[i.ControllerType]).ToList();
-            _names = _updatables.Select(i => i.GetType().Name).ToList();
+            _controllers = _controllers.OrderBy(i => order[i.ControllerType]).ToList();
+            _names = _controllers.Select(i => i.GetType().Name).ToList();
 
-            if (_updatables.Count == 0 || _updatables[0].ControllerType != EControllerType.Profiling)
+            if (_controllers.Count == 0 || _controllers[0].ControllerType != EControllerType.Profiling)
             {
                 throw new InvalidOperationException("Profiling controller was not recognized.");
             }
 
-            var gameObject = new GameObject("UpdatingController");
+            foreach (var controller in _controllers)
+            {
+                controller.Initialize();
+            }
+
+            var gameObject = new GameObject("GameCycleController");
             _updateHandler = gameObject.AddComponent<UpdateHandler>();
             _updateHandler.OnUpdate += OnUpdate;
         }
 
         private void OnUpdate()
         {
-            _updatables[0].Update();
+            _controllers[0].Update();
             
-            for (var i = 1; i < _updatables.Count; i++)
+            for (var i = 1; i < _controllers.Count; i++)
             {
                 _profiler.BeginSample(_names[i]);
-                _updatables[i].Update();
+                _controllers[i].Update();
                 _profiler.EndSample();
             }
         }
 
-        public void FinalizeObject()
+        public void Dispose()
         {
             _updateHandler.OnUpdate -= OnUpdate;
+
+            foreach (var controller in _controllers)
+            {
+                controller.FinalizeObject();
+            }
         }
     }
 }

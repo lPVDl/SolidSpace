@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace SolidSpace.Entities
 {
-    public class EntityCycleController : IInitializable, IUpdatable, IFinalazable
+    public class EntityCycleController : IController
     {
         public EControllerType ControllerType => EControllerType.Common;
 

@@ -11,7 +11,7 @@ using Random = UnityEngine.Random;
 
 namespace SolidSpace.Playground
 {
-    public class SpriteSpawnManager : IInitializable, IUpdatable
+    public class SpriteSpawnManager : IController
     {
         public EControllerType ControllerType => EControllerType.Playground;
         
@@ -92,6 +92,11 @@ namespace SolidSpace.Playground
             _flushedAtlas = true;
             
             File.WriteAllBytes(_config.OutputAtlasPath, _colorSystem.Texture.EncodeToPNG());
+        }
+
+        public void FinalizeObject()
+        {
+            
         }
     }
 }

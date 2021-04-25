@@ -8,9 +8,7 @@ namespace SolidSpace
 
         public override void InstallBindings(IContainer container)
         {
-            container.Bind<InitializationController>(_gameCycleConfig);
-            container.Bind<UpdatingController>(_gameCycleConfig);
-            container.Bind<FinalizationController>();
+            container.Bind<GameCycleController>(_gameCycleConfig);
         }
     }
 }

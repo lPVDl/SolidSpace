@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace SolidSpace
 {
-    public partial class UpdatingController
+    public partial class GameCycleController
     {
         private class UpdateHandler : MonoBehaviour
         {

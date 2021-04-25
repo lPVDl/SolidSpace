@@ -8,7 +8,7 @@ using Random = UnityEngine.Random;
 
 namespace SolidSpace.Playground
 {
-    public class ParticleSpawnManager : IInitializable
+    public class ParticleSpawnManager : IController
     {
         public EControllerType ControllerType => EControllerType.Playground;
         
@@ -48,6 +48,16 @@ namespace SolidSpace.Playground
                     value = new float2(velocity.x, velocity.y)
                 });
             }
+        }
+
+        public void Update()
+        {
+            
+        }
+
+        public void FinalizeObject()
+        {
+            
         }
     }
 }

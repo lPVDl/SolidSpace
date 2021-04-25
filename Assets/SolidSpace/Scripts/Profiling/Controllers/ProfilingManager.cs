@@ -5,8 +5,7 @@ using UnityEngine.Profiling;
 
 namespace SolidSpace.Profiling
 {
-    // TODO: Rename profiling to profiler
-    public partial class ProfilingManager : IProfilingHandler, IProfilingManager, IInitializable, IFinalazable, IUpdatable
+    public partial class ProfilingManager : IProfilingHandler, IProfilingManager, IController
     {
         // TODO: Make editor window search container, add funcs to container to resolve, editor only, remove this field
         public static IProfilingManager Instance { get; private set; }

@@ -5,11 +5,12 @@ using SolidSpace.Entities.RepeatTimer;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+
 using Random = UnityEngine.Random;
 
 namespace SolidSpace.Playground
 {
-    public class EmitterSpawnManager : IInitializable
+    public class EmitterSpawnManager : IController
     {
         public EControllerType ControllerType => EControllerType.Playground;
 
@@ -51,6 +52,16 @@ namespace SolidSpace.Playground
                     particleVelocity = _config.ParticleVelocity
                 });
             }
+        }
+
+        public void Update()
+        {
+            
+        }
+
+        public void FinalizeObject()
+        {
+            
         }
     }
 }

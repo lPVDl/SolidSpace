@@ -8,7 +8,7 @@ using Random = UnityEngine.Random;
 
 namespace SolidSpace.Playground
 {
-    public class ColliderSpawnManager : IInitializable, IUpdatable
+    public class ColliderSpawnManager : IController
     {
         private struct ColliderInfo
         {
@@ -137,6 +137,11 @@ namespace SolidSpace.Playground
             {
                 Gizmos.DrawWireSphere(colliderInfo.position, _config.ColliderRadius);
             }
+        }
+
+        public void FinalizeObject()
+        {
+            
         }
     }
 }

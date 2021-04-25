@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace SolidSpace.CameraMotion
 {
-    public class CameraMotionController : IUpdatable, IInitializable
+    public class CameraMotionController : IController
     {
         public EControllerType ControllerType => EControllerType.Common;
         
@@ -83,6 +83,11 @@ namespace SolidSpace.CameraMotion
         private Vector2 GetScreenSize()
         {
             return new Vector2(Screen.width, Screen.height);
+        }
+
+        public void FinalizeObject()
+        {
+            
         }
     }
 }
