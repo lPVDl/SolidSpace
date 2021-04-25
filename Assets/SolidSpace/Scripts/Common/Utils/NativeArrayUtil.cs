@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 using Unity.Collections;
 using Unity.Mathematics;
 
-namespace SolidSpace.Entities
+namespace SolidSpace
 {
     public struct NativeArrayUtil
     {

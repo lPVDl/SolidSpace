@@ -13,7 +13,6 @@ namespace SolidSpace.Profiling
         {
             public ProfilingManager owner;
 
-            // TODO: Move array util to SolidSpace.Common
             private NativeArrayUtil _arrayUtil;
 
             public void Initialize()
