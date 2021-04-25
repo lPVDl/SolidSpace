@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using SolidSpace.DebugUtils;
+using SolidSpace.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -17,7 +18,7 @@ namespace SolidSpace.Profiling.Editor
 
         private void OnGUI()
         {
-            var profilingManager = ProfilingManager.Instance;
+            var profilingManager = SceneContextUtil.TryResolve<IProfilingManager>();
             if (profilingManager is null)
             {
                 return;

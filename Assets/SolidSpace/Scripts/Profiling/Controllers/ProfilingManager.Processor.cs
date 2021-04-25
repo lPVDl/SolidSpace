@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using SolidSpace.DebugUtils;
-using SolidSpace.Entities;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine.Profiling;
@@ -35,8 +34,6 @@ namespace SolidSpace.Profiling
                 owner._profilingTree.childs[0] = 0;
                 owner._profilingTree.names[0] = 0;
                 owner._profilingTree.siblings[0] = 0;
-                
-                Instance = owner;
             }
 
             public void Update()
@@ -100,8 +97,6 @@ namespace SolidSpace.Profiling
                 owner._profilingTree.childs.Dispose();
                 owner._profilingTree.names.Dispose();
                 owner._profilingTree.siblings.Dispose();
-
-                Instance = null;
             }
         }
     }

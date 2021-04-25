@@ -16,20 +16,27 @@ namespace SolidSpace
         [InlineEditor(InlineEditorObjectFieldModes.Foldout)]
         [SerializeField] private List<ScriptableObjectInstaller> _installers;
 
+        private DiContainer _container;
+
         public void Awake()
         {
-            var container = new DiContainer();
-            container.DefaultParent = transform;
-            container.IsInstalling = true;
+            _container = new DiContainer();
+            _container.DefaultParent = transform;
+            _container.IsInstalling = true;
             
-            InstallBindings(container);
+            InstallBindings(_container);
 
-            container.IsInstalling = false;
+            _container.IsInstalling = false;
             
-            container.ResolveRoots();
+            _container.ResolveRoots();
         }
 
-        void InstallBindings(DiContainer container)
+        public TContract TryResolve<TContract>() where TContract : class
+        {
+            return _container.TryResolve<TContract>();
+        }
+
+        public void InstallBindings(DiContainer container)
         {
             container.Bind<IContext>().FromInstance(this);
             container.Bind<TickableManager>().AsSingle().NonLazy();
