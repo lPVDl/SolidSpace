@@ -1,7 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using SolidSpace.Profiling.Data;
+using SolidSpace.Profiling.Interfaces;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace SolidSpace
 {
@@ -10,19 +14,24 @@ namespace SolidSpace
         public EControllerType ControllerType => EControllerType.Common;
         
         private readonly GameCycleConfig _config;
-        
+        private readonly IProfilingManager _profilingManager;
+
         private List<IUpdatable> _updatables;
 
         private UpdateHandler _updateHandler;
+        private ProfilingHandle _profiler;
 
-        public UpdatingController(List<IUpdatable> updatables, GameCycleConfig config)
+        public UpdatingController(List<IUpdatable> updatables, GameCycleConfig config, IProfilingManager profilingManager)
         {
             _updatables = updatables;
             _config = config;
+            _profilingManager = profilingManager;
         }
         
         public void Initialize()
         {
+            _profiler = _profilingManager.GetHandle(this);
+            
             var order = new Dictionary<EControllerType, int>();
             for (var i = 0; i < _config.InvocationOrder.Count; i++)
             {
@@ -48,6 +57,8 @@ namespace SolidSpace
             _updateHandler = gameObject.AddComponent<UpdateHandler>();
             _updateHandler.OnUpdate += OnUpdate;
         }
+        
+        
 
         private void OnUpdate()
         {
