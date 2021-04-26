@@ -62,7 +62,7 @@ namespace SolidSpace.Entities
             {
                 _profiler.BeginSample(_names[i]);
                 _systems[i].Update();
-                _profiler.EndSample();
+                _profiler.EndSample(_names[i]);
             }
         }
 

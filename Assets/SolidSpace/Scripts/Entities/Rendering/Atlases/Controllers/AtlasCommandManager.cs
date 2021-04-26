@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Profiling;
 
 namespace SolidSpace.Entities.Rendering.Atlases
 {
@@ -34,7 +33,6 @@ namespace SolidSpace.Entities.Rendering.Atlases
 
         public void ProcessCommands()
         {
-            Profiler.BeginSample("Copy Textures");
             for (var i = 0; i < _commands.Count; i++)
             {
                 var command = _commands[i];
@@ -45,7 +43,6 @@ namespace SolidSpace.Entities.Rendering.Atlases
                 Graphics.CopyTexture(source, 0, 0, 0, 0, source.width, source.height, 
                     _atlas.Texture, 0, 0, offset.x, offset.y);
             }
-            Profiler.EndSample();
             
             _commands.Clear();
         }

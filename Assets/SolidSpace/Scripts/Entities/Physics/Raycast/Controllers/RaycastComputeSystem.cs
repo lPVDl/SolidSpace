@@ -1,7 +1,7 @@
+using SolidSpace.Profiling;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
-using UnityEngine.Profiling;
 
 namespace SolidSpace.Entities.Physics
 {
@@ -17,17 +17,21 @@ namespace SolidSpace.Entities.Physics
         private readonly IEntityManager _entityManager;
         private readonly IColliderBakeSystem _colliderSystem;
         private readonly IEntityWorldTime _time;
+        private readonly IProfilingManager _profilingManager;
 
         private EntityQuery _raycasterQuery;
         private NativeArray<Entity> _entityBuffer;
         private NativeArray<int> _entityCount;
         private NativeArrayUtil _arrayUtil;
+        private ProfilingHandle _profiler;
 
-        public RaycastComputeSystem(IEntityManager entityManager, IColliderBakeSystem colliderSystem, IEntityWorldTime time)
+        public RaycastComputeSystem(IEntityManager entityManager, IColliderBakeSystem colliderSystem,
+            IEntityWorldTime time, IProfilingManager profilingManager)
         {
+            _time = time;
             _entityManager = entityManager;
             _colliderSystem = colliderSystem;
-            _time = time;
+            _profilingManager = profilingManager;
         }
         
         public void Initialize()
@@ -41,15 +45,16 @@ namespace SolidSpace.Entities.Physics
             _entityBuffer = _arrayUtil.CreatePersistentArray<Entity>(EntityBufferChunkSize);
             _entityCount = _arrayUtil.CreatePersistentArray<int>(1);
             _entityCount[0] = 0;
+            _profiler = _profilingManager.GetHandle(this);
         }
 
         public void Update()
         {
-            Profiler.BeginSample("_raycasterQuery.CreateArchetypeChunkArray");
+            _profiler.BeginSample("Query Chunks");
             var raycasterChunks = _raycasterQuery.CreateArchetypeChunkArray(Allocator.TempJob);
-            Profiler.EndSample();
+            _profiler.EndSample("Query Chunks");
 
-            Profiler.BeginSample("Raycaster offsets");
+            _profiler.BeginSample("Compute Offsets");
             var raycasterChunkCount = raycasterChunks.Length;
             var raycasterOffsets = _arrayUtil.CreateTempJobArray<int>(raycasterChunkCount);
             var raycasterCount = 0;
@@ -58,9 +63,9 @@ namespace SolidSpace.Entities.Physics
                 raycasterOffsets[i] = raycasterCount;
                 raycasterCount += raycasterChunks[i].Count;
             }
-            Profiler.EndSample();
+            _profiler.EndSample("Compute Offsets");
 
-            Profiler.BeginSample("Raycast");
+            _profiler.BeginSample("Raycast");
             var raycastResultCounts = _arrayUtil.CreateTempJobArray<int>(raycasterChunkCount);
             _arrayUtil.MaintainPersistentArrayLength(ref _entityBuffer, raycasterCount, EntityBufferChunkSize);
             var raycastJob = new RaycastJob
@@ -77,9 +82,9 @@ namespace SolidSpace.Entities.Physics
             };
             var raycastHandle = raycastJob.Schedule(raycasterChunkCount, 1);
             raycastHandle.Complete();
-            Profiler.EndSample();
+            _profiler.EndSample("Raycast");
             
-            Profiler.BeginSample("Collect results");
+            _profiler.BeginSample("Collect Results");
             var collectJob = new SingleBufferedDataCollectJob<Entity>
             {
                 inOutData = _entityBuffer,
@@ -89,15 +94,13 @@ namespace SolidSpace.Entities.Physics
             };
             var collectHandle = collectJob.Schedule(raycastHandle);
             collectHandle.Complete();
-            Profiler.EndSample();
+            _profiler.EndSample("Collect Results");
             
-            Profiler.BeginSample("Dispose arrays");
-            
+            _profiler.BeginSample("Dispose arrays");
             raycasterChunks.Dispose();
             raycasterOffsets.Dispose();
             raycastResultCounts.Dispose();
-            
-            Profiler.EndSample();
+            _profiler.EndSample("Dispose arrays");
         }
 
         public void FinalizeSystem()

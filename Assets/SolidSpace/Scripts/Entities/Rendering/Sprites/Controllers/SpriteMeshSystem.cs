@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using SolidSpace.DebugUtils;
+using SolidSpace.Profiling;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Profiling;
 using UnityEngine.Rendering;
 
 namespace SolidSpace.Entities.Rendering.Sprites
@@ -19,6 +19,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
         private readonly IEntityManager _entityManager;
         private readonly SpriteMeshSystemConfig _config;
         private readonly ISpriteColorSystem _colorSystem;
+        private readonly IProfilingManager _profilingManager;
 
         private EntityQuery _query;
         private NativeArrayUtil _arrayUtil;
@@ -29,16 +30,20 @@ namespace SolidSpace.Entities.Rendering.Sprites
         private Matrix4x4 _matrixDefault;
         private MeshUpdateFlags _meshUpdateFlags;
         private Material _material;
+        private ProfilingHandle _profiler;
 
-        public SpriteMeshSystem(IEntityManager entityManager, SpriteMeshSystemConfig config, ISpriteColorSystem colorSystem)
+        public SpriteMeshSystem(IEntityManager entityManager, SpriteMeshSystemConfig config,
+            ISpriteColorSystem colorSystem, IProfilingManager profilingManager)
         {
             _entityManager = entityManager;
             _config = config;
             _colorSystem = colorSystem;
+            _profilingManager = profilingManager;
         }
         
         public void Initialize()
         {
+            _profiler = _profilingManager.GetHandle(this);
             _material = new Material(_config.Shader);
             _matrixDefault = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, 1, -1));
             _meshes = new List<Mesh>();
@@ -59,11 +64,11 @@ namespace SolidSpace.Entities.Rendering.Sprites
 
         public void Update()
         {
-            Profiler.BeginSample("Query chunks");
+            _profiler.BeginSample("Query chunks");
             var chunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
-            Profiler.EndSample();
+            _profiler.EndSample("Query chunks");
             
-            Profiler.BeginSample("Compute offsets");
+            _profiler.BeginSample("Compute offsets");
             var chunkTotal = chunks.Length;
             var chunkPerMesh = _arrayUtil.CreateTempJobArray<int>(chunkTotal);
             var spritePerMesh = _arrayUtil.CreateTempJobArray<int>(chunkTotal);
@@ -79,9 +84,9 @@ namespace SolidSpace.Entities.Rendering.Sprites
                 chunkIndex += chunkCount;
                 meshCount++;
             }
-            Profiler.EndSample();
+            _profiler.EndSample("Compute offsets");
 
-            Profiler.BeginSample("Compute meshes");
+            _profiler.BeginSample("Compute meshes");
             var meshDataArray = Mesh.AllocateWritableMeshData(meshCount);
             var computeJobHandles = _arrayUtil.CreateTempJobArray<JobHandle>(meshCount);
             var positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true);
@@ -123,9 +128,9 @@ namespace SolidSpace.Entities.Rendering.Sprites
 
             var computeHandle = JobHandle.CombineDependencies(computeJobHandles);
             computeHandle.Complete();
-            Profiler.EndSample();
+            _profiler.EndSample("Compute meshes");
 
-            Profiler.BeginSample("Create meshes");
+            _profiler.BeginSample("Create meshes");
             for (var i = _meshes.Count; i < meshCount; i++)
             {
                 var name = nameof(SpriteMeshSystem) + "_" + i;
@@ -136,13 +141,13 @@ namespace SolidSpace.Entities.Rendering.Sprites
             {
                 _meshesForMeshArray.Add(_meshes[i]);
             }
-            Profiler.EndSample();
+            _profiler.EndSample("Create meshes");
             
-            Profiler.BeginSample("Apply and dispose writable mesh data");
+            _profiler.BeginSample("Apply and dispose writable mesh data");
             Mesh.ApplyAndDisposeWritableMeshData(meshDataArray, _meshesForMeshArray, _meshUpdateFlags);
-            Profiler.EndSample();
+            _profiler.EndSample("Apply and dispose writable mesh data");
             
-            Profiler.BeginSample("Draw mesh");
+            _profiler.BeginSample("Draw mesh");
             _material.SetTexture(MainTexturePropertyId, _colorSystem.Texture);
             for (var i = 0; i < meshCount; i++)
             {
@@ -153,14 +158,14 @@ namespace SolidSpace.Entities.Rendering.Sprites
                     matrix = _matrixDefault
                 });
             }
-            Profiler.EndSample();
+            _profiler.EndSample("Draw mesh");
             
-            Profiler.BeginSample("Dispose native arrays");
+            _profiler.BeginSample("Dispose native arrays");
             chunks.Dispose();
             chunkPerMesh.Dispose();
             spritePerMesh.Dispose();
             computeJobHandles.Dispose();
-            Profiler.EndSample();
+            _profiler.EndSample("Dispose native arrays");
             
             SpaceDebug.LogState("SpriteCount", totalSpriteCount);
             SpaceDebug.LogState("SpriteMeshCount", meshCount);

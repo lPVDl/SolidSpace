@@ -1,9 +1,9 @@
 using SolidSpace.Entities.Randomization;
 using SolidSpace.Entities.RepeatTimer;
+using SolidSpace.Profiling;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
-using UnityEngine.Profiling;
 
 namespace SolidSpace.Entities.ParticleEmitters
 {
@@ -18,20 +18,24 @@ namespace SolidSpace.Entities.ParticleEmitters
         
         private readonly IEntityManager _entityManager;
         private readonly IEntityWorldTime _time;
+        private readonly IProfilingManager _profilingManager;
 
         private EntityQuery _query;
         private NativeArray<ParticleEmitterData> _particles;
         private NativeArray<int> _particleCount;
         private NativeArrayUtil _arrayUtil;
+        private ProfilingHandle _profiler;
 
-        public ParticleEmitterComputeSystem(IEntityManager entityManager, IEntityWorldTime time)
+        public ParticleEmitterComputeSystem(IEntityManager entityManager, IEntityWorldTime time, IProfilingManager profilingManager)
         {
             _entityManager = entityManager;
             _time = time;
+            _profilingManager = profilingManager;
         }
 
         public void Initialize()
         {
+            _profiler = _profilingManager.GetHandle(this);
             _query = _entityManager.CreateEntityQuery(new ComponentType[]
             {
                 typeof(ParticleEmitterComponent),
@@ -46,11 +50,11 @@ namespace SolidSpace.Entities.ParticleEmitters
 
         public void Update()
         {
-            Profiler.BeginSample("CreateArchetypeChunkArray");
+            _profiler.BeginSample("Query Chunks");
             var chunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
-            Profiler.EndSample();
+            _profiler.EndSample("Query Chunks");
 
-            Profiler.BeginSample("ComputeEntityOffsets");
+            _profiler.BeginSample("Entity Offsets");
             var chunkCount = chunks.Length;
             var offsets = _arrayUtil.CreateTempJobArray<int>(chunkCount);
             var counts = _arrayUtil.CreateTempJobArray<int>(chunkCount);
@@ -60,11 +64,11 @@ namespace SolidSpace.Entities.ParticleEmitters
                 offsets[i] = maxEntityCount;
                 maxEntityCount += chunks[i].Count;
             }
-            Profiler.EndSample();
+            _profiler.EndSample("Entity Offsets");
             
             _arrayUtil.MaintainPersistentArrayLength(ref _particles, maxEntityCount, BufferChunkSize);
 
-            Profiler.BeginSample("Compute And Collect Job");
+            _profiler.BeginSample("Compute & Collect");
             var computeJob = new ParticleEmitterComputeJob
             {
                 inChunks = chunks,
@@ -88,7 +92,7 @@ namespace SolidSpace.Entities.ParticleEmitters
             };
             var collectHandle = collectJob.Schedule(computeHandle);
             collectHandle.Complete();
-            Profiler.EndSample();
+            _profiler.EndSample("Compute & Collect");
 
             chunks.Dispose();
             offsets.Dispose();

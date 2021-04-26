@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using SolidSpace.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 

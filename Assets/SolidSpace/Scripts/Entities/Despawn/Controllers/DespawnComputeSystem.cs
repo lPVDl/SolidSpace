@@ -1,8 +1,8 @@
+using SolidSpace.Profiling;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using UnityEngine;
-using UnityEngine.Profiling;
 
 namespace SolidSpace.Entities.Despawn
 {
@@ -17,21 +17,25 @@ namespace SolidSpace.Entities.Despawn
         
         private readonly IEntityManager _entityManager;
         private readonly IEntityWorldTime _time;
+        private readonly IProfilingManager _profilingManager;
 
         private EntityQuery _query;
         private NativeArray<int> _entityCount;
         private NativeArray<Entity> _entities;
         private int _lastOffset;
         private NativeArrayUtil _arrayUtil;
+        private ProfilingHandle _profiler;
 
-        public DespawnComputeSystem(IEntityManager entityManager, IEntityWorldTime time)
+        public DespawnComputeSystem(IEntityManager entityManager, IEntityWorldTime time, IProfilingManager profilingManager)
         {
             _entityManager = entityManager;
             _time = time;
+            _profilingManager = profilingManager;
         }
         
         public void Initialize()
         {
+            _profiler = _profilingManager.GetHandle(this);
             _query = _entityManager.CreateEntityQuery(typeof(DespawnComponent));
             _lastOffset = -1;
             _entities = _arrayUtil.CreatePersistentArray<Entity>(4096);
@@ -41,11 +45,11 @@ namespace SolidSpace.Entities.Despawn
 
         public void Update()
         {
-            Profiler.BeginSample("CalculateChunkCount");
+            _profiler.BeginSample("Compute Chunk Count");
             var chunkCount = _query.CalculateChunkCount();
-            Profiler.EndSample();
+            _profiler.EndSample("Compute Chunk Count");
             
-            Profiler.BeginSample("Create Compute Buffer");
+            _profiler.BeginSample("Create Compute Buffer");
             _lastOffset = (_lastOffset + 1) % IterationCycle;
             var rawChunks = _query.CreateArchetypeChunkArray(Allocator.Temp);
             var computeChunkCount = Mathf.CeilToInt((chunkCount - _lastOffset) / (float) IterationCycle);
@@ -63,17 +67,17 @@ namespace SolidSpace.Entities.Despawn
                 entityCount += rawChunk.Count;
                 chunkIndex++;
             }
-            Profiler.EndSample();
+            _profiler.EndSample("Create Compute Buffer");
 
-            Profiler.BeginSample("Update Entities Buffer");
+            _profiler.BeginSample("Update Entity Buffer");
             if (_entities.Length < entityCount)
             {
                 _entities.Dispose();
                 _entities = _arrayUtil.CreatePersistentArray<Entity>(entityCount * 2);
             }
-            Profiler.EndSample();
+            _profiler.EndSample("Update Entity Buffer");
 
-            Profiler.BeginSample("Compute and collect");
+            _profiler.BeginSample("Compute & Collect");
             var computeJob = new DespawnComputeJob
             {
                 inChunks = computeChunks,
@@ -95,7 +99,7 @@ namespace SolidSpace.Entities.Despawn
             };
             var collectJobHandle = collectJob.Schedule(computeJobHandle);
             collectJobHandle.Complete();
-            Profiler.EndSample();
+            _profiler.EndSample("Compute & Collect");
 
             countsBuffer.Dispose();
             rawChunks.Dispose();

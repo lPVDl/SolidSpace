@@ -2,7 +2,6 @@ using System.Diagnostics;
 using SolidSpace.DebugUtils;
 using Unity.Collections;
 using Unity.Jobs;
-using Unity.Jobs.LowLevel.Unsafe;
 using UnityEngine.Profiling;
 
 namespace SolidSpace.Profiling

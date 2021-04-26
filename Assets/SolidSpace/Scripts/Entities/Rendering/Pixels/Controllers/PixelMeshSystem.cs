@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using SolidSpace.DebugUtils;
+using SolidSpace.Profiling;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Profiling;
 using UnityEngine.Rendering;
 
 namespace SolidSpace.Entities.Rendering.Pixels
@@ -16,6 +16,7 @@ namespace SolidSpace.Entities.Rendering.Pixels
 
         private readonly IEntityManager _entityManager;
         private readonly PixelMeshSystemConfig _config;
+        private readonly IProfilingManager _profilingManager;
 
         private EntityQuery _query;
         private SquareVertices _square;
@@ -27,15 +28,18 @@ namespace SolidSpace.Entities.Rendering.Pixels
         private Matrix4x4 _matrixDefault;
         private MeshUpdateFlags _meshUpdateFlags;
         private Material _material;
+        private ProfilingHandle _profiler;
 
-        public PixelMeshSystem(IEntityManager entityManager, PixelMeshSystemConfig config)
+        public PixelMeshSystem(IEntityManager entityManager, PixelMeshSystemConfig config, IProfilingManager profilingManager)
         {
             _entityManager = entityManager;
             _config = config;
+            _profilingManager = profilingManager;
         }
         
         public void Initialize()
         {
+            _profiler = _profilingManager.GetHandle(this);
             _material = new Material(_config.Shader);
             _matrixDefault = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, 1, -1));
             _meshes = new List<Mesh>();
@@ -61,11 +65,11 @@ namespace SolidSpace.Entities.Rendering.Pixels
 
         public void Update()
         {
-            Profiler.BeginSample("Query chunks");
+            _profiler.BeginSample("Query Chunks");
             var chunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
-            Profiler.EndSample();
+            _profiler.EndSample("Query Chunks");
             
-            Profiler.BeginSample("Compute offsets");
+            _profiler.BeginSample("Compute Offsets");
             var chunkTotal = chunks.Length;
             var chunkPerMesh = _arrayUtil.CreateTempJobArray<int>(chunkTotal);
             var particlePerMesh = _arrayUtil.CreateTempJobArray<int>(chunkTotal);
@@ -81,9 +85,9 @@ namespace SolidSpace.Entities.Rendering.Pixels
                 chunkIndex += chunkCount;
                 meshCount++;
             }
-            Profiler.EndSample();
+            _profiler.EndSample("Compute Offsets");
 
-            Profiler.BeginSample("Compute meshes");
+            _profiler.BeginSample("Compute Meshes");
             var meshDataArray = Mesh.AllocateWritableMeshData(meshCount);
             var computeJobHandles = _arrayUtil.CreateTempJobArray<JobHandle>(meshCount);
             var positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true);
@@ -116,9 +120,9 @@ namespace SolidSpace.Entities.Rendering.Pixels
 
             var computeHandle = JobHandle.CombineDependencies(computeJobHandles);
             computeHandle.Complete();
-            Profiler.EndSample();
+            _profiler.EndSample("Compute Meshes");
 
-            Profiler.BeginSample("Create meshes");
+            _profiler.BeginSample("Create meshes");
             for (var i = _meshes.Count; i < meshCount; i++)
             {
                 var name = nameof(PixelMeshSystem) + "_" + i;
@@ -129,13 +133,13 @@ namespace SolidSpace.Entities.Rendering.Pixels
             {
                 _meshesForMeshArray.Add(_meshes[i]);
             }
-            Profiler.EndSample();
+            _profiler.EndSample("Create meshes");
             
-            Profiler.BeginSample("Apply and dispose writable mesh data");
+            _profiler.BeginSample("Apply & Dispose Writable Mesh Data");
             Mesh.ApplyAndDisposeWritableMeshData(meshDataArray, _meshesForMeshArray, _meshUpdateFlags);
-            Profiler.EndSample();
+            _profiler.EndSample("Apply & Dispose Writable Mesh Data");
             
-            Profiler.BeginSample("Draw mesh");
+            _profiler.BeginSample("Draw Mesh");
             for (var i = 0; i < meshCount; i++)
             {
                 _meshUtil.DrawMesh(new MeshDrawingData
@@ -145,14 +149,14 @@ namespace SolidSpace.Entities.Rendering.Pixels
                     matrix = _matrixDefault
                 });
             }
-            Profiler.EndSample();
+            _profiler.EndSample("Draw Mesh");
             
-            Profiler.BeginSample("Dispose native arrays");
+            _profiler.BeginSample("Dispose Arrays");
             chunks.Dispose();
             chunkPerMesh.Dispose();
             particlePerMesh.Dispose();
             computeJobHandles.Dispose();
-            Profiler.EndSample();
+            _profiler.EndSample("Dispose Arrays");
             
             SpaceDebug.LogState("ParticleCount", totalParticleCount);
             SpaceDebug.LogState("ParticleMeshCount", meshCount);

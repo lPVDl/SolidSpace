@@ -1,9 +1,9 @@
 using SolidSpace.DebugUtils;
+using SolidSpace.Profiling;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
-using UnityEngine.Profiling;
 
 namespace SolidSpace.Entities.Physics
 {
@@ -19,7 +19,8 @@ namespace SolidSpace.Entities.Physics
         private const int MaxCellCount = 65536;
 
         private readonly IEntityManager _entityManager;
-        
+        private readonly IProfilingManager _profilingManager;
+
         private EntityQuery _query;
         private NativeArrayUtil _arrayUtil;
         private GridUtil _gridUtil;
@@ -27,14 +28,17 @@ namespace SolidSpace.Entities.Physics
         private NativeArray<FloatBounds> _colliderBounds;
         private NativeArray<ushort> _worldColliders;
         private NativeArray<ColliderListPointer> _worldChunks;
+        private ProfilingHandle _profiler;
 
-        public ColliderBakeSystem(IEntityManager entityManager)
+        public ColliderBakeSystem(IEntityManager entityManager, IProfilingManager profilingManager)
         {
             _entityManager = entityManager;
+            _profilingManager = profilingManager;
         }
         
         public void Initialize()
         {
+            _profiler = _profilingManager.GetHandle(this);
             _query = _entityManager.CreateEntityQuery(new ComponentType[]
             {
                 typeof(PositionComponent),
@@ -47,11 +51,11 @@ namespace SolidSpace.Entities.Physics
 
         public void Update()
         {
-            Profiler.BeginSample("Query collider chunks");
+            _profiler.BeginSample("Query Chunks");
             var colliderChunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
-            Profiler.EndSample();
+            _profiler.EndSample("Query Chunks");
 
-            Profiler.BeginSample("Collider Offsets");
+            _profiler.BeginSample("Collider Offsets");
             var colliderChunkCount = colliderChunks.Length;
             var colliderOffsets = _arrayUtil.CreateTempJobArray<int>(colliderChunkCount);
             var colliderCount = 0;
@@ -60,9 +64,9 @@ namespace SolidSpace.Entities.Physics
                 colliderOffsets[i] = colliderCount;
                 colliderCount += colliderChunks[i].Count;
             }
-            Profiler.EndSample();
+            _profiler.EndSample("Collider Offsets");
             
-            Profiler.BeginSample("Compute Colliders Bounds");
+            _profiler.BeginSample("Colliders Bounds");
             _arrayUtil.MaintainPersistentArrayLength(ref _colliderBounds, colliderCount, ColliderBufferChunkSize);
             var computeBoundsJob = new ComputeBoundsJob
             {
@@ -74,11 +78,13 @@ namespace SolidSpace.Entities.Physics
             };
             var computeBoundsJobHandle = computeBoundsJob.Schedule(colliderChunkCount, 8);
             computeBoundsJobHandle.Complete();
-            Profiler.EndSample();
-
-            var worldGrid = _gridUtil.ComputeGrid(_colliderBounds, colliderCount);
+            _profiler.EndSample("Colliders Bounds");
             
-            Profiler.BeginSample("Reset Chunks");
+            _profiler.BeginSample("Grid");
+            var worldGrid = _gridUtil.ComputeGrid(_colliderBounds, colliderCount, _profiler);
+            _profiler.EndSample("Grid");
+            
+            _profiler.BeginSample("Reset Chunks");
             var worldChunkTotal = worldGrid.size.x * worldGrid.size.y;
             
             _arrayUtil.MaintainPersistentArrayLength(ref _worldChunks, worldChunkTotal, ChunkBufferChunkSize);
@@ -93,9 +99,9 @@ namespace SolidSpace.Entities.Physics
             var jobCount = (int) math.ceil(worldChunkTotal / 128f);
             var resetChunksJobHandle = resetChunksJob.Schedule(jobCount, 8);
             resetChunksJobHandle.Complete();
-            Profiler.EndSample();
+            _profiler.EndSample("Reset Chunks");
 
-            Profiler.BeginSample("Chunk colliders");
+            _profiler.BeginSample("Chunk Colliders");
             jobCount = (int) math.ceil(colliderCount / 128f);
             var chunkedColliders = _arrayUtil.CreateTempJobArray<ChunkedCollider>(colliderCount * 4);
             var chunkedColliderCounts = _arrayUtil.CreateTempJobArray<int>(jobCount);
@@ -111,9 +117,9 @@ namespace SolidSpace.Entities.Physics
             };
             var chunkingJobHandle = chunkingJob.Schedule(jobCount, 8);
             chunkingJobHandle.Complete();
-            Profiler.EndSample();
+            _profiler.EndSample("Chunk Colliders");
             
-            Profiler.BeginSample("Lists capacity");
+            _profiler.BeginSample("Lists Capacity");
             var listCapacityJob = new WorldChunkListsCapacityJob
             {
                 inColliders = chunkedColliders,
@@ -123,9 +129,9 @@ namespace SolidSpace.Entities.Physics
             };
             var listCapacityJobHandle = listCapacityJob.Schedule();
             listCapacityJobHandle.Complete();
-            Profiler.EndSample();
+            _profiler.EndSample("Lists Capacity");
             
-            Profiler.BeginSample("Lists offsets");
+            _profiler.BeginSample("Lists Offsets");
             var listOffsetsJob = new WorldChunkListsOffsetJob
             {
                 inListCount = worldChunkTotal,
@@ -133,9 +139,9 @@ namespace SolidSpace.Entities.Physics
             };
             var listOffsetsJobHandle = listOffsetsJob.Schedule();
             listOffsetsJobHandle.Complete();
-            Profiler.EndSample();
+            _profiler.EndSample("Lists Offsets");
             
-            Profiler.BeginSample("Lists fill");
+            _profiler.BeginSample("Lists Fill");
             _arrayUtil.MaintainPersistentArrayLength(ref _worldColliders, colliderCount * 4, ChunkBufferChunkSize * 4);
             var listFillJob = new WorldChunkListsFillJob
             {
@@ -147,14 +153,14 @@ namespace SolidSpace.Entities.Physics
             };
             var listFillJobHandle = listFillJob.Schedule();
             listFillJobHandle.Complete();
-            Profiler.EndSample();
+            _profiler.EndSample("Lists Fill");
 
-            Profiler.BeginSample("Dispose arrays");
+            _profiler.BeginSample("Dispose Arrays");
             colliderChunks.Dispose();
             colliderOffsets.Dispose();
             chunkedColliderCounts.Dispose();
             chunkedColliders.Dispose();
-            Profiler.EndSample();
+            _profiler.EndSample("Dispose Arrays");
 
             ColliderWorld = new ColliderWorld
             {
