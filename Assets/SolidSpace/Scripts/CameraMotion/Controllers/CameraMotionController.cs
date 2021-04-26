@@ -31,9 +31,11 @@ namespace SolidSpace.CameraMotion
             var mousePosition = GetMousePosition();
             var screenSize = GetScreenSize();
             var scrollDelta = (int) Input.mouseScrollDelta.y;
-            
+            var isCursorInsideScreen = (mousePosition.x > 0) && (mousePosition.x < screenSize.x) &&
+                                       (mousePosition.y > 0) && (mousePosition.y < screenSize.y);
             var newZoom = Mathf.Clamp(_zoom + scrollDelta, 0, 3);
-            if (newZoom != _zoom)
+            
+            if (isCursorInsideScreen && newZoom != _zoom)
             {
                 var cursor = mousePosition / screenSize - new Vector2(0.5f, 0.5f);
                 var offset = cursor * screenSize * (1f / (1 << _zoom) - 1f / (1 << newZoom));
