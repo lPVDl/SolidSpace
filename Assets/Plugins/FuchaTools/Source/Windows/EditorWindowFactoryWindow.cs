@@ -1,12 +1,15 @@
-﻿using UnityEditor;
+﻿using System.Text.RegularExpressions;
+using UnityEditor;
 
 namespace FuchaTools
 {
     public class EditorWindowFactoryWindow : EditorWindow
     {
+        private const string NameRegex = "(Window$)|([A-Z][a-z0-9]+)";
+
         private readonly TypeScannerWindow _scannerWindow;
         private readonly RepaintEventsView _repaintEvents;
-
+        
         [MenuItem("Window/Open...", priority = int.MinValue)]
         private static void OpenWindow()
         {
@@ -30,7 +33,9 @@ namespace FuchaTools
                 return;
             }
 
-            GetWindow(selectedType.Type, false, selectedType.NameShort);
+            var windowTitle = Regex.Replace(selectedType.NameShort, NameRegex, "$2 ").Trim();
+            
+            GetWindow(selectedType.Type, false, windowTitle);
             
             Close();
         }
