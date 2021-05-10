@@ -15,3 +15,4 @@ MonoBehaviour:
   _config:
     _enableSolidProfiling: 1
     _enableUnityProfiling: 1
+    _maxRecordCount: 1024

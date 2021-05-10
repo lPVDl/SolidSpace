@@ -17,7 +17,7 @@ namespace SolidSpace.Profiling.Editor
         public void SetUp()
         {
             _nodes = new List<ProfilingNodeFriendly>();
-            _config = new ProfilingConfig(true, true);
+            _config = new ProfilingConfig(true, true, 2);
             _manager = new ProfilingManager(_config);
             _totalNodeCount = 0;
             _manager.Initialize();
@@ -79,8 +79,28 @@ namespace SolidSpace.Profiling.Editor
         [Test]
         public void OnUpdate_WithDummy_DummyNameIsCorrect()
         {
-            BeginEndDummySample_UpdateManager_ReadResults(); 
+            BeginEndDummySample_UpdateManager_ReadResults();
             Assert.That(_nodes[1].name, Is.EqualTo(DummySampleName));
+        }
+
+        [Test]
+        public void OnBeginSample_ExceedRecordLimit_ThrowsException()
+        {
+            for (var i = 0; i < _config.MaxRecordCount; i++)
+            {
+                _manager.OnBeginSample(DummySampleName);
+            }
+            Assert.Throws<OutOfMemoryException>(() => _manager.OnBeginSample(DummySampleName));
+        }
+
+        [Test]
+        public void OnEndSample_ExceedRecordLimit_ThrowsException()
+        {
+            for (var i = 0; i < _config.MaxRecordCount; i++)
+            {
+                _manager.OnEndSample(DummySampleName);
+            }
+            Assert.Throws<OutOfMemoryException>(() => _manager.OnEndSample(DummySampleName));
         }
 
         private void BeginEndDummySample_UpdateManager_ReadResults()
