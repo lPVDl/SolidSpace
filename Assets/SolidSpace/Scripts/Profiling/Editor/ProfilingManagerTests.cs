@@ -118,6 +118,14 @@ namespace SolidSpace.Profiling.Editor
             Assert.That(exception.Message, Does.Contain("_root/SampleA/SampleB"));
         }
 
+        [Test]
+        public void OnEndSample_WithoutOnBeginSample_OnUpdate_ThrowsException_WithPath()
+        {
+            _manager.OnEndSample("TestSample");
+            var exception = Assert.Throws<InvalidOperationException>(() => _manager.Update());
+            Assert.That(exception.Message, Does.Contain("_root/TestSample"));
+        }
+
         private void BeginEndDummySample_UpdateManager_ReadResults()
         {
             _manager.OnBeginSample("TestSample");

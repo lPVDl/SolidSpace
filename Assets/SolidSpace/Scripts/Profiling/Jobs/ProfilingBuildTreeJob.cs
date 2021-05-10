@@ -132,7 +132,8 @@ namespace SolidSpace.Profiling
         {
             if (_stackLast == 0)
             {
-                throw new InvalidOperationException("EndSample() was called without StartSample()");
+                _code = EProfilingBuildTreeCode.StackUnderflow;
+                return;
             }
 
             var nodeIndex = parentStack[_stackLast];

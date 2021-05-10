@@ -21,10 +21,13 @@ namespace SolidSpace.Profiling
                 switch (state.code)
                 {
                     case EProfilingBuildTreeCode.StackIsNotEmptyAfterJobComplete:
-                        throw new InvalidOperationException($"EndSample() was not called for ${stackTrace}");
+                        throw new InvalidOperationException($"EndSample() was not called for {stackTrace}");
                     
                     case EProfilingBuildTreeCode.StackOverflow:
                         throw new StackOverflowException($"{stackTrace}{names[state.recordLast + 1]} caused stack overflow");
+                    
+                    case EProfilingBuildTreeCode.StackUnderflow:
+                        throw new InvalidOperationException($"EndSample() was not called for {stackTrace}{names[state.recordLast + 1]}");
                 }
 
                 throw new InvalidOperationException($"Error during tree building: {state.code}");
