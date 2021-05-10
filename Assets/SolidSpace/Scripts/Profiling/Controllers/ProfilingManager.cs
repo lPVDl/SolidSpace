@@ -66,8 +66,10 @@ namespace SolidSpace.Profiling
             _namesActive[_nameCount++] = name;
         }
 
-        public void OnEndSample()
+        public void OnEndSample(string name)
         {
+            if (name is null) throw new ArgumentNullException(nameof(name));
+            
             if (_enableUnityProfiling)
             {
                 Profiler.EndSample();

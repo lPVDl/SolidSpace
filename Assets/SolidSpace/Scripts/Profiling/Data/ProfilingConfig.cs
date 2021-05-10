@@ -10,5 +10,11 @@ namespace SolidSpace.Profiling
         
         [SerializeField] private bool _enableSolidProfiling;
         [SerializeField] private bool _enableUnityProfiling;
+
+        public ProfilingConfig(bool enableSolidProfiling, bool enableUnityProfiling)
+        {
+            _enableSolidProfiling = enableSolidProfiling;
+            _enableUnityProfiling = enableUnityProfiling;
+        }
     }
 }

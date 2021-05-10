@@ -16,11 +16,14 @@ namespace SolidSpace.Profiling
 
             public void Initialize()
             {
+                owner._enableSolidProfiling = owner._config.EnableSolidProfiling;
+                owner._enableUnityProfiling = owner._config.EnableUnityProfiling;
                 owner._buildTreeJobStopwatch = new Stopwatch();
                 owner._records = new NativeArray<ProfilingRecord>(MaxRecordCount, Allocator.Persistent);
                 owner._recordCount = 0;
                 owner._nameCount = 1;
                 owner._namesActive = new string[MaxRecordCount];
+                owner._namesActive[0] = RootNodeName;
                 owner._namesPassive = new string[MaxRecordCount];
                 owner._namesPassive[0] = RootNodeName;
                 owner._stopwatch = new Stopwatch();
@@ -30,7 +33,7 @@ namespace SolidSpace.Profiling
                     names = _arrayUtil.CreateTempJobArray<ushort>(1),
                     siblings = _arrayUtil.CreateTempJobArray<ushort>(1),
                     times = _arrayUtil.CreateTempJobArray<float>(1),
-                    text = owner._namesPassive
+                    text = owner._namesActive
                 };
                 owner._profilingTree.times[0] = 0;
                 owner._profilingTree.childs[0] = 0;
@@ -40,12 +43,6 @@ namespace SolidSpace.Profiling
 
             public void Update()
             {
-                var temp = owner._namesActive;
-                owner._namesActive = owner._namesPassive;
-                owner._namesPassive = temp;
-                owner._namesActive[0] = RootNodeName;
-                owner._nameCount = 1;
-
                 owner._enableSolidProfiling = owner._config.EnableSolidProfiling;
                 owner._enableUnityProfiling = owner._config.EnableUnityProfiling;
 
@@ -89,11 +86,21 @@ namespace SolidSpace.Profiling
                     names = job.outNames,
                     siblings = job.outSiblings,
                     times = job.outTimes,
-                    text = owner._namesPassive
+                    text = owner._namesActive
                 };
+                
+                Swap(ref owner._namesActive, ref owner._namesPassive);
+                owner._nameCount = 1;
                 
                 owner._stopwatch.Reset();
                 owner._stopwatch.Start();
+            }
+
+            private static void Swap<T>(ref T a, ref T b)
+            {
+                var t = a;
+                a = b;
+                b = t;
             }
 
             public void FinalizeObject()

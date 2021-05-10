@@ -4,6 +4,6 @@ namespace SolidSpace.Profiling
     {
         void OnBeginSample(string name);
 
-        void OnEndSample();
+        void OnEndSample(string name);
     }
 }
