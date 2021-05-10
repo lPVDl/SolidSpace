@@ -6,7 +6,7 @@ namespace SolidSpace.Profiling.Editor
 {
     public class ProfilingManagerTests
     {
-        private const string DummySampleName = "TestSample";
+        private const string RootName = "_root";
         
         private ProfilingManager _manager;
         private ProfilingConfig _config;
@@ -80,7 +80,7 @@ namespace SolidSpace.Profiling.Editor
         public void OnUpdate_WithDummy_DummyNameIsCorrect()
         {
             BeginEndDummySample_UpdateManager_ReadResults();
-            Assert.That(_nodes[1].name, Is.EqualTo(DummySampleName));
+            Assert.That(_nodes[1].name, Is.EqualTo("TestSample"));
         }
 
         [Test]
@@ -88,9 +88,9 @@ namespace SolidSpace.Profiling.Editor
         {
             for (var i = 0; i < _config.MaxRecordCount; i++)
             {
-                _manager.OnBeginSample(DummySampleName);
+                _manager.OnBeginSample("TestSample");
             }
-            Assert.Throws<OutOfMemoryException>(() => _manager.OnBeginSample(DummySampleName));
+            Assert.Throws<OutOfMemoryException>(() => _manager.OnBeginSample("TestSample"));
         }
 
         [Test]
@@ -98,15 +98,23 @@ namespace SolidSpace.Profiling.Editor
         {
             for (var i = 0; i < _config.MaxRecordCount; i++)
             {
-                _manager.OnEndSample(DummySampleName);
+                _manager.OnEndSample("TestSample");
             }
-            Assert.Throws<OutOfMemoryException>(() => _manager.OnEndSample(DummySampleName));
+            Assert.Throws<OutOfMemoryException>(() => _manager.OnEndSample("TestSample"));
+        }
+
+        [Test]
+        public void OnBeginSample_WithoutOnEndSample_OnUpdate_ThrowsException_WithDummyPath()
+        {
+            _manager.OnBeginSample("TestSample");
+            var exception = Assert.Throws<InvalidOperationException>(() => _manager.Update());
+            Assert.That(exception.Message, Does.Contain("_root/TestSample"));
         }
 
         private void BeginEndDummySample_UpdateManager_ReadResults()
         {
-            _manager.OnBeginSample(DummySampleName);
-            _manager.OnEndSample(DummySampleName);
+            _manager.OnBeginSample("TestSample");
+            _manager.OnEndSample("TestSample");
             _manager.Update();
 
             _manager.Reader.Read(0, 2, _nodes, out _totalNodeCount);

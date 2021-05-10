@@ -1,19 +1,20 @@
 using System;
 using System.Diagnostics;
 using SolidSpace.DebugUtils;
+using SolidSpace.Profiling.Enums;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine.Profiling;
 
 namespace SolidSpace.Profiling
 {
-    public class ProfilingManager : IProfilingHandler, IProfilingManager, IController
+    public partial class ProfilingManager : IProfilingHandler, IProfilingManager, IController
     {
         public ProfilingTreeReader Reader => new ProfilingTreeReader(_profilingTree);
-        
+
         private const int JobStackSize = 64;
         private const string RootNodeName = "_root";
-        
+
         public EControllerType ControllerType => EControllerType.Profiling;
 
         private readonly ProfilingConfig _config;
@@ -30,6 +31,7 @@ namespace SolidSpace.Profiling
         private Stopwatch _buildTreeJobStopwatch;
         private ProfilingTree _profilingTree;
         private NativeArrayUtil _arrayUtil;
+        private ErrorHandler _errorHandler;
 
         public ProfilingManager(ProfilingConfig config)
         {
@@ -46,8 +48,8 @@ namespace SolidSpace.Profiling
             _recordCount = 0;
             _nameCount = 1;
             _namesActive = new string[_maxRecordCount + 1];
-            _namesActive[0] = RootNodeName;
             _namesPassive = new string[_maxRecordCount + 1];
+            _namesActive[0] = RootNodeName;
             _namesPassive[0] = RootNodeName;
             _stopwatch = new Stopwatch();
             _profilingTree = new ProfilingTree
@@ -68,37 +70,47 @@ namespace SolidSpace.Profiling
         {
             _profilingTree.Dispose();
 
-                var nodeCount = _recordCount / 2 + 2;
+            var nodeCount = _recordCount / 2 + _recordCount % 2 + 1;
 
-                var job = new ProfilingBuildTreeJob
-                {
-                    inRecords = _records,
-                    inRecordCount = _recordCount,
-                    inFrequency = Stopwatch.Frequency,
-                    outChilds = _arrayUtil.CreateTempJobArray<ushort>(nodeCount),
-                    outNames = _arrayUtil.CreateTempJobArray<ushort>(nodeCount),
-                    outSiblings = _arrayUtil.CreateTempJobArray<ushort>(nodeCount),
-                    outTimes = _arrayUtil.CreateTempJobArray<float>(nodeCount),
-                    parentStack = _arrayUtil.CreateTempJobArray<ushort>(JobStackSize),
-                    siblingStack = _arrayUtil.CreateTempJobArray<ushort>(JobStackSize),
-                    timeStack = _arrayUtil.CreateTempJobArray<int>(JobStackSize)
-                };
+            var job = new ProfilingBuildTreeJob
+            {
+                inRecords = _records,
+                inRecordCount = _recordCount,
+                inFrequency = Stopwatch.Frequency,
+                outChilds = _arrayUtil.CreateTempJobArray<ushort>(nodeCount),
+                outNames = _arrayUtil.CreateTempJobArray<ushort>(nodeCount),
+                outSiblings = _arrayUtil.CreateTempJobArray<ushort>(nodeCount),
+                outTimes = _arrayUtil.CreateTempJobArray<float>(nodeCount),
+                outStatus = _arrayUtil.CreateTempJobArray<EProfilingBuildTreeStatus>(1),
+                outStackLast = _arrayUtil.CreateTempJobArray<int>(1),
+                parentStack = _arrayUtil.CreateTempJobArray<ushort>(JobStackSize),
+                siblingStack = _arrayUtil.CreateTempJobArray<ushort>(JobStackSize),
+                timeStack = _arrayUtil.CreateTempJobArray<int>(JobStackSize)
+            };
 
-                var timer = _buildTreeJobStopwatch;
-                Profiler.BeginSample("ProfilingManager.BuildTreeJob");
-                timer.Reset();
-                timer.Start();
-                job.Schedule().Complete();
-                timer.Stop();
-                Profiler.EndSample();
-                
-                SpaceDebug.LogState("BuildTreeJob ms", timer.ElapsedTicks / (float) Stopwatch.Frequency * 1000);
-                
-                _recordCount = 0;
+            var timer = _buildTreeJobStopwatch;
+            Profiler.BeginSample("ProfilingManager.BuildTreeJob");
+            timer.Reset();
+            timer.Start();
+            job.Schedule().Complete();
+            timer.Stop();
+            Profiler.EndSample();
 
+            SpaceDebug.LogState("BuildTreeJob ms", timer.ElapsedTicks / (float) Stopwatch.Frequency * 1000);
+
+            _recordCount = 0;
+
+            try
+            {
+                _errorHandler.HandleJobState(_namesActive, job);
+            }
+            finally
+            {
                 job.parentStack.Dispose();
                 job.siblingStack.Dispose();
                 job.timeStack.Dispose();
+                job.outStatus.Dispose();
+                job.outStackLast.Dispose();
 
                 _profilingTree = new ProfilingTree
                 {
@@ -111,9 +123,10 @@ namespace SolidSpace.Profiling
                 
                 Swap(ref _namesActive, ref _namesPassive);
                 _nameCount = 1;
-                
+
                 _stopwatch.Reset();
                 _stopwatch.Start();
+            }
         }
 
         public ProfilingHandle GetHandle(object owner)
@@ -139,7 +152,7 @@ namespace SolidSpace.Profiling
 
             if (_recordCount >= _maxRecordCount)
             {
-                var message = $"Too many records ({_maxRecordCount}). Adjust record count in the config.";
+                var message = $"Too many records ({_maxRecordCount}). Try adjusting record count in the config.";
                 throw new OutOfMemoryException(message);
             }
 
@@ -152,17 +165,17 @@ namespace SolidSpace.Profiling
         public void OnEndSample(string name)
         {
             if (name is null) throw new ArgumentNullException(nameof(name));
-            
+
             if (_enableUnityProfiling)
             {
                 Profiler.EndSample();
             }
-            
+
             if (!_enableSolidProfiling)
             {
                 return;
             }
-            
+
             if (_recordCount >= _maxRecordCount)
             {
                 var message = $"Too many records ({_maxRecordCount}). Adjust record count in the config.";
@@ -179,7 +192,7 @@ namespace SolidSpace.Profiling
             _records.Dispose();
             _profilingTree.Dispose();
         }
-        
+
         private static void Swap<T>(ref T a, ref T b)
         {
             var t = a;

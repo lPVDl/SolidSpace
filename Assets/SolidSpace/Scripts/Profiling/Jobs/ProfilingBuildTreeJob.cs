@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
+using SolidSpace.Profiling.Enums;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
@@ -22,12 +23,15 @@ namespace SolidSpace.Profiling
         public NativeArray<ushort> outSiblings;
         public NativeArray<ushort> outNames;
         public NativeArray<float> outTimes;
+        public NativeArray<EProfilingBuildTreeStatus> outStatus;
+        public NativeArray<int> outStackLast;
 
         private int _stackLast;
         private int _nodeCount;
         private int _stackMax;
         private long _ticksTotal;
         private float _ticksToMilliseconds;
+        private EProfilingBuildTreeStatus _status;
 
         public void Execute()
         {
@@ -40,6 +44,8 @@ namespace SolidSpace.Profiling
             outNames[0] = 0;
             outSiblings[0] = 0;
             outTimes[0] = 0;
+            outStackLast[0] = 0;
+            _status = EProfilingBuildTreeStatus.Unknown;
             _stackMax = math.min(parentStack.Length, siblingStack.Length);
 
             var nameIndex = 1;
@@ -58,9 +64,24 @@ namespace SolidSpace.Profiling
                 {
                     FlushEndSample(timeSamples);
                 }
+
+                if (_status != EProfilingBuildTreeStatus.Unknown)
+                {
+                    outStatus[0] = _status;
+                    outStackLast[0] = _stackLast;
+                    return;
+                }
+            }
+
+            if (_stackLast != 0)
+            {
+                outStatus[0] = EProfilingBuildTreeStatus.StackIsNotEmptyAfterJobComplete;
+                outStackLast[0] = _stackLast;
+                return;
             }
 
             outTimes[0] = _ticksTotal * _ticksToMilliseconds;
+            outStatus[0] = EProfilingBuildTreeStatus.Success;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -68,7 +89,8 @@ namespace SolidSpace.Profiling
         {
             if (_stackLast + 1 >= _stackMax)
             {
-                throw new StackOverflowException();
+                _status = EProfilingBuildTreeStatus.StackOverflow;
+                return;
             }
             
             var nodeIndex =  (ushort) _nodeCount++;
