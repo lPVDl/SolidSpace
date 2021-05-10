@@ -6,8 +6,6 @@ namespace SolidSpace.Profiling.Editor
 {
     public class ProfilingManagerTests
     {
-        private const string RootName = "_root";
-        
         private ProfilingManager _manager;
         private ProfilingConfig _config;
         private List<ProfilingNodeFriendly> _nodes;
@@ -17,7 +15,7 @@ namespace SolidSpace.Profiling.Editor
         public void SetUp()
         {
             _nodes = new List<ProfilingNodeFriendly>();
-            _config = new ProfilingConfig(true, true, 2);
+            _config = new ProfilingConfig(true, true, 2, 2);
             _manager = new ProfilingManager(_config);
             _totalNodeCount = 0;
             _manager.Initialize();
@@ -109,6 +107,15 @@ namespace SolidSpace.Profiling.Editor
             _manager.OnBeginSample("TestSample");
             var exception = Assert.Throws<InvalidOperationException>(() => _manager.Update());
             Assert.That(exception.Message, Does.Contain("_root/TestSample"));
+        }
+
+        [Test]
+        public void OnBeginSample_WhenOverflow_OnUpdate_ThrowsException_WithPath()
+        {
+            _manager.OnBeginSample("SampleA");
+            _manager.OnBeginSample("SampleB");
+            var exception = Assert.Throws<StackOverflowException>(() => _manager.Update());
+            Assert.That(exception.Message, Does.Contain("_root/SampleA/SampleB"));
         }
 
         private void BeginEndDummySample_UpdateManager_ReadResults()

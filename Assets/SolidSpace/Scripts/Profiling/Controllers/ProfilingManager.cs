@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using SolidSpace.DebugUtils;
-using SolidSpace.Profiling.Enums;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine.Profiling;
@@ -11,10 +10,7 @@ namespace SolidSpace.Profiling
     public partial class ProfilingManager : IProfilingHandler, IProfilingManager, IController
     {
         public ProfilingTreeReader Reader => new ProfilingTreeReader(_profilingTree);
-
-        private const int JobStackSize = 64;
-        private const string RootNodeName = "_root";
-
+        
         public EControllerType ControllerType => EControllerType.Profiling;
 
         private readonly ProfilingConfig _config;
@@ -31,7 +27,7 @@ namespace SolidSpace.Profiling
         private Stopwatch _buildTreeJobStopwatch;
         private ProfilingTree _profilingTree;
         private NativeArrayUtil _arrayUtil;
-        private ErrorHandler _errorHandler;
+        private ExceptionHandler _exceptionHandler;
 
         public ProfilingManager(ProfilingConfig config)
         {
@@ -49,8 +45,8 @@ namespace SolidSpace.Profiling
             _nameCount = 1;
             _namesActive = new string[_maxRecordCount + 1];
             _namesPassive = new string[_maxRecordCount + 1];
-            _namesActive[0] = RootNodeName;
-            _namesPassive[0] = RootNodeName;
+            _namesActive[0] = "_root";
+            _namesPassive[0] = "_root";
             _stopwatch = new Stopwatch();
             _profilingTree = new ProfilingTree
             {
@@ -81,11 +77,10 @@ namespace SolidSpace.Profiling
                 outNames = _arrayUtil.CreateTempJobArray<ushort>(nodeCount),
                 outSiblings = _arrayUtil.CreateTempJobArray<ushort>(nodeCount),
                 outTimes = _arrayUtil.CreateTempJobArray<float>(nodeCount),
-                outStatus = _arrayUtil.CreateTempJobArray<EProfilingBuildTreeStatus>(1),
-                outStackLast = _arrayUtil.CreateTempJobArray<int>(1),
-                parentStack = _arrayUtil.CreateTempJobArray<ushort>(JobStackSize),
-                siblingStack = _arrayUtil.CreateTempJobArray<ushort>(JobStackSize),
-                timeStack = _arrayUtil.CreateTempJobArray<int>(JobStackSize)
+                outState = _arrayUtil.CreateTempJobArray<ProfilingBuiltTreeState>(1),
+                parentStack = _arrayUtil.CreateTempJobArray<ushort>(_config.StackSize),
+                siblingStack = _arrayUtil.CreateTempJobArray<ushort>(_config.StackSize),
+                timeStack = _arrayUtil.CreateTempJobArray<int>(_config.StackSize)
             };
 
             var timer = _buildTreeJobStopwatch;
@@ -102,15 +97,14 @@ namespace SolidSpace.Profiling
 
             try
             {
-                _errorHandler.HandleJobState(_namesActive, job);
+                _exceptionHandler.HandleJobState(_namesActive, job);
             }
             finally
             {
                 job.parentStack.Dispose();
                 job.siblingStack.Dispose();
                 job.timeStack.Dispose();
-                job.outStatus.Dispose();
-                job.outStackLast.Dispose();
+                job.outState.Dispose();
 
                 _profilingTree = new ProfilingTree
                 {
@@ -185,6 +179,7 @@ namespace SolidSpace.Profiling
             var record = new ProfilingRecord();
             record.Write((int) _stopwatch.ElapsedTicks, false);
             _records[_recordCount++] = record;
+            _namesActive[_nameCount++] = name;
         }
 
         public void FinalizeObject()

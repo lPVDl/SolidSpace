@@ -11,6 +11,11 @@ namespace SolidSpace.Profiling
                 return $"{nameof(data.MaxRecordCount)} must be in range [0, {MaxRecordCount}]";
             }
 
+            if (data.StackSize < 0)
+            {
+                return $"{nameof(data.StackSize)} must be more or equal zero";
+            }
+
             return string.Empty;
         }
     }
