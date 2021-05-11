@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SolidSpace.Entities.Rendering.Atlases
 {
-    public class AtlasConfigValidator : IValidator<AtlasConfig>
+    public class AtlasConfigValidator : IDataValidator<AtlasConfig>
     {
         private readonly HashSet<int> _spriteSizeCash;
 

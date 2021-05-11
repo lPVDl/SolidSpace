@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace SolidSpace.Entities
 {
-    public class EntityCycleConfigValidator : IValidator<EntityCycleConfig>
+    public class EntityCycleConfigValidator : IDataValidator<EntityCycleConfig>
     {
         private readonly HashSet<ESystemType> _itemHash;
 

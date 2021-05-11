@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace SolidSpace.Editor.Serialization.AssetNameTool
 {
-    public class AssetNameToolFolderValidator : IValidator<AssetNameToolFolderFilter>
+    public class AssetNameToolFolderValidator : IDataValidator<AssetNameToolFolderFilter>
     {
         public string Validate(AssetNameToolFolderFilter data)
         {

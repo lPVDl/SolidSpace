@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace SolidSpace.Editor.CodeInspection.NamespaceTool
 {
-    public class NamespaceToolConfigValidator : IValidator<NamespaceToolConfig>
+    public class NamespaceToolConfigValidator : IDataValidator<NamespaceToolConfig>
     {
         private readonly string _projectRoot;
         

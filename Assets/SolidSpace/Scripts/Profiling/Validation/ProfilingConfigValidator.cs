@@ -1,6 +1,6 @@
 namespace SolidSpace.Profiling
 {
-    public class ProfilingConfigValidator : IValidator<ProfilingConfig>
+    public class ProfilingConfigValidator : IDataValidator<ProfilingConfig>
     {
         private const int MaxRecordCount = (1 << 16) - 2;
         

@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace SolidSpace.Editor.CodeInspection.NamespaceTool
 {
-    public class NamespaceToolFolderFilterValidator : IValidator<NamespaceToolFolderFilter>
+    public class NamespaceToolFolderFilterValidator : IDataValidator<NamespaceToolFolderFilter>
     {
         public string Validate(NamespaceToolFolderFilter data)
         {

@@ -2,7 +2,7 @@ using System.Reflection;
 
 namespace SolidSpace.Editor
 {
-    public struct ValidationMethod
+    internal struct ValidationMethod
     {
         public MethodInfo method;
         public object validator;

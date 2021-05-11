@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace SolidSpace
 {
-    public class GameCycleConfigValidator : IValidator<GameCycleConfig>
+    public class GameCycleConfigValidator : IDataValidator<GameCycleConfig>
     {
         private readonly HashSet<EControllerType> _itemHash;
 

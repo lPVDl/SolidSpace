@@ -1,6 +1,6 @@
 namespace SolidSpace
 {
-    public interface IValidator<T>
+    public interface IDataValidator<T>
     {
         public string Validate(T data);
     }

@@ -6,7 +6,7 @@ using Debug = UnityEngine.Debug;
 
 namespace SolidSpace.Editor
 {
-    public static class AssemblyValidatorFactory
+    internal static class AssemblyValidatorFactory
     {
         private static readonly Dictionary<Type, ValidationMethod> Validators;
         private static readonly Type[] ArgumentTypes;
@@ -43,7 +43,7 @@ namespace SolidSpace.Editor
                     }
 
                     var genericDefinition = inter.GetGenericTypeDefinition();
-                    if (genericDefinition != typeof(IValidator<>))
+                    if (genericDefinition != typeof(IDataValidator<>))
                     {
                         continue;
                     }
@@ -91,7 +91,7 @@ namespace SolidSpace.Editor
 
         private static MethodInfo GetValidationMethod(Type objectType, Type genericArgumentType)
         {
-            IValidator<object> dummy;
+            IDataValidator<object> dummy;
 
             ArgumentTypes[0] = genericArgumentType;
 
