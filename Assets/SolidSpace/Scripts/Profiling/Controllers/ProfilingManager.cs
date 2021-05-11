@@ -23,8 +23,8 @@ namespace SolidSpace.Profiling
         private int _nameCount;
         private string[] _namesActive;
         private string[] _namesPassive;
-        private Stopwatch _stopwatch;
-        private Stopwatch _buildTreeJobStopwatch;
+        private Stopwatch _samplesTimer;
+        private Stopwatch _buildTreeJobTimer;
         private ProfilingTree _profilingTree;
         private NativeArrayUtil _arrayUtil;
         private ExceptionHandler _exceptionHandler;
@@ -38,7 +38,7 @@ namespace SolidSpace.Profiling
         {
             _enableSolidProfiling = _config.EnableSolidProfiling;
             _enableUnityProfiling = _config.EnableUnityProfiling;
-            _buildTreeJobStopwatch = new Stopwatch();
+            _buildTreeJobTimer = new Stopwatch();
             _maxRecordCount = _config.MaxRecordCount;
             _records = new NativeArray<ProfilingRecord>(_maxRecordCount, Allocator.Persistent);
             _recordCount = 0;
@@ -47,7 +47,8 @@ namespace SolidSpace.Profiling
             _namesPassive = new string[_maxRecordCount + 1];
             _namesActive[0] = "_root";
             _namesPassive[0] = "_root";
-            _stopwatch = new Stopwatch();
+            _samplesTimer = new Stopwatch();
+            _samplesTimer.Start();
             _profilingTree = new ProfilingTree
             {
                 childs = _arrayUtil.CreateTempJobArray<ushort>(1),
@@ -83,16 +84,14 @@ namespace SolidSpace.Profiling
                 timeStack = _arrayUtil.CreateTempJobArray<int>(_config.StackSize),
                 nameHashStack = _arrayUtil.CreateTempJobArray<int>(_config.StackSize)
             };
-
-            var timer = _buildTreeJobStopwatch;
+            
             Profiler.BeginSample("ProfilingManager.BuildTreeJob");
-            timer.Reset();
-            timer.Start();
+            _buildTreeJobTimer.Restart();
             job.Schedule().Complete();
-            timer.Stop();
+            _buildTreeJobTimer.Stop();
             Profiler.EndSample();
 
-            SpaceDebug.LogState("BuildTreeJob ms", timer.ElapsedTicks / (float) Stopwatch.Frequency * 1000);
+            SpaceDebug.LogState("BuildTreeJob ms", _buildTreeJobTimer.ElapsedTicks / (float) Stopwatch.Frequency * 1000);
 
             _recordCount = 0;
 
@@ -120,8 +119,7 @@ namespace SolidSpace.Profiling
                 Swap(ref _namesActive, ref _namesPassive);
                 _nameCount = 1;
 
-                _stopwatch.Reset();
-                _stopwatch.Start();
+                _samplesTimer.Restart();
             }
         }
 
@@ -153,7 +151,7 @@ namespace SolidSpace.Profiling
             }
 
             var record = new ProfilingRecord();
-            record.Write((int) _stopwatch.ElapsedTicks, true, name.GetHashCode());
+            record.Write((int) _samplesTimer.ElapsedTicks, true, name.GetHashCode());
             _records[_recordCount++] = record;
             _namesActive[_nameCount++] = name;
         }
@@ -179,7 +177,7 @@ namespace SolidSpace.Profiling
             }
 
             var record = new ProfilingRecord();
-            record.Write((int) _stopwatch.ElapsedTicks, false, name.GetHashCode());
+            record.Write((int) _samplesTimer.ElapsedTicks, false, name.GetHashCode());
             _records[_recordCount++] = record;
             _namesActive[_nameCount++] = name;
         }

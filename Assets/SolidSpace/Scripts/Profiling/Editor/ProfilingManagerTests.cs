@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
 using NUnit.Framework;
 
 namespace SolidSpace.Profiling.Editor
@@ -133,6 +135,25 @@ namespace SolidSpace.Profiling.Editor
             _manager.OnEndSample("SampleB");
             var exception = Assert.Throws<InvalidOperationException>(() => _manager.Update());
             Assert.That(exception.Message, Does.Contain("_root/SampleA").And.Contain("_root/SampleB"));
+        }
+
+        [Test]
+        public void OnBeginSample_OnEndSample_WithTimeDelay_TimeIsCorrect()
+        {
+            var timer = new Stopwatch();
+            
+            timer.Start();
+            _manager.OnBeginSample("TestSample");
+            Thread.SpinWait((int)(Stopwatch.Frequency * 0.001f));
+            _manager.OnEndSample("TestSample");
+            timer.Stop();
+            
+            _manager.Update();
+            _manager.Reader.Read(0, 2, _nodes, out _totalNodeCount);
+
+            var actualTime = _nodes[1].time;
+            var expectedTime = timer.ElapsedTicks / (float) Stopwatch.Frequency * 1000;
+            Assert.That(actualTime, Is.EqualTo(expectedTime).Within(actualTime * 0.01f));
         }
 
         private void BeginEndDummySample_UpdateManager_ReadResults()
