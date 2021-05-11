@@ -45,6 +45,8 @@ MonoBehaviour:
       regex: \/(?i)runtime$
     - enabled: 1
       regex: \/(?i)source$
+    - enabled: 1
+      regex: \/(?i)plugins$
     _assemblyFilters:
     - enabled: 1
       regex: ^Assembly-CSharp$
