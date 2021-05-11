@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: NamespaceTool
   m_EditorClassIdentifier: 
   _config:
-    _scriptsRoot: Assets/SolidSpace/Scripts
+    _scriptsRoot: Assets
     _folderFilters:
     - enabled: 1
       regex: \/(?i)scripts$
@@ -43,3 +43,18 @@ MonoBehaviour:
       regex: \/(?i)common\/\w*$
     - enabled: 1
       regex: \/(?i)runtime$
+    - enabled: 1
+      regex: \/(?i)source$
+    _assemblyFilters:
+    - enabled: 1
+      regex: ^Assembly-CSharp$
+    - enabled: 1
+      regex: ^Assembly-CSharp-Editor$
+    - enabled: 1
+      regex: ^Zenject$
+    - enabled: 1
+      regex: ^Zenject-Editor$
+    - enabled: 1
+      regex: ^SolidSpace\-.*
+    - enabled: 1
+      regex: ^FuchaTools$

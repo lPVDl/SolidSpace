@@ -1,8 +1,8 @@
 namespace SolidSpace.Editor.CodeInspection.NamespaceTool
 {
-    public struct NamespaceToolFolderInfo
+    public struct NamespaceToolEntityInfo
     {
-        public string fullPath;
+        public string name;
         public int regexId;
     }
 }

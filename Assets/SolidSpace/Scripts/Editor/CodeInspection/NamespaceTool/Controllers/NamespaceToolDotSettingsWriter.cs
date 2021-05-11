@@ -4,13 +4,13 @@ using System.Text.RegularExpressions;
 
 namespace SolidSpace.Editor.CodeInspection.NamespaceTool
 {
-    public class NamespaceToolExporter
+    public class NamespaceToolDotSettingsWriter
     {
         private const string LocalDirectoryNameRegex = @"\/((?i)assets\/.*)";
         
-        public void ExportFoldersForSkip(string exportPath, IEnumerable<string> folders)
+        public void Write(string toFile, IEnumerable<string> foldersToIgnore)
         {
-            using var writer = new StreamWriter(exportPath);
+            using var writer = new StreamWriter(toFile);
             
             writer.Write("<wpf:ResourceDictionary xml:space=\"preserve\" ");
             writer.Write("xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\" ");
@@ -19,7 +19,7 @@ namespace SolidSpace.Editor.CodeInspection.NamespaceTool
             writer.Write("xmlns:wpf=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\">");
             writer.WriteLine();
 
-            foreach (var path in folders)
+            foreach (var path in foldersToIgnore)
             {
                 var localPath = Regex.Match(path, LocalDirectoryNameRegex).Groups[1].Value;
                 localPath = localPath.ToLower().Replace("/", "_005C");

@@ -6,14 +6,14 @@ namespace SolidSpace.Editor.CodeInspection.NamespaceTool
 {
     public class NamespaceToolFolderScanner
     {
-        public void Scan(string projectRoot, NamespaceToolConfig config, ICollection<NamespaceToolFolderInfo> output)
+        public void Scan(string projectRoot, NamespaceToolConfig config, ICollection<NamespaceToolEntityInfo> output)
         {
             output.Clear();
             
             ScanRecursive(projectRoot + "/" + config.ScriptsRoot, config.FolderFilters, output);
         }
 
-        private void ScanRecursive(string path, IReadOnlyList<NamespaceToolFolderFilter> filters, ICollection<NamespaceToolFolderInfo> output)
+        private void ScanRecursive(string path, IReadOnlyList<NamespaceToolFilter> filters, ICollection<NamespaceToolEntityInfo> output)
         {
             for (var i = 0; i < filters.Count; i++)
             {
@@ -28,9 +28,9 @@ namespace SolidSpace.Editor.CodeInspection.NamespaceTool
                     continue;
                 }
 
-                output.Add(new NamespaceToolFolderInfo
+                output.Add(new NamespaceToolEntityInfo
                 {
-                    fullPath = path,
+                    name = path,
                     regexId = i
                 });
                 

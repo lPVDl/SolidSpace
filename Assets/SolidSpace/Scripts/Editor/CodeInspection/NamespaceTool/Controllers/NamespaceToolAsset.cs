@@ -11,20 +11,19 @@ namespace SolidSpace.Editor.CodeInspection.NamespaceTool
         [SerializeField] private NamespaceToolConfig _config;
 
         [Button]
-        private void ScanAndLog()
+        private void ScanFoldersAndLog()
         {
             EditorConsoleUtil.ClearLog();
             
             var folderScanner = new NamespaceToolFolderScanner();
-            var output = new List<NamespaceToolFolderInfo>();
+            var output = new List<NamespaceToolEntityInfo>();
             var projectRoot = Application.dataPath.Substring(0, Application.dataPath.Length - 7);
-            
             folderScanner.Scan(projectRoot, _config, output);
 
-            for (var i = 0; i < output.Count; i++)
+            foreach (var info in output)
             {
-                var folderInfo = output[i];
-                var message = $"'{folderInfo.fullPath}' by regex '{_config.FolderFilters[folderInfo.regexId].regex}' ({folderInfo.regexId})";
+                var regex = _config.FolderFilters[info.regexId].regex;
+                var message = $"'{info.name}' by regex '{regex}' ({info.regexId})";
                 Debug.Log(message);
             }
             
@@ -32,24 +31,55 @@ namespace SolidSpace.Editor.CodeInspection.NamespaceTool
         }
 
         [Button]
-        private void ExportToNamespaceProvider()
+        private void ScanAssembliesAndLog()
         {
-            var folderScanner = new NamespaceToolFolderScanner();
-            var output = new List<NamespaceToolFolderInfo>();
+            EditorConsoleUtil.ClearLog();
+
+            var assemblyUtil = new NamespaceToolAssemblyUtil();
+            var output = new List<NamespaceToolEntityInfo>();
+            assemblyUtil.Scan(_config, output);
+
+            foreach (var info in output)
+            {
+                var regex = _config.AssemblyFilters[info.regexId].regex;
+                var fileName = assemblyUtil.AssemblyToFileName(info.name);
+                var message = $"'{info.name}' -> '{fileName}' by regex '{regex}' ({info.regexId})";
+                Debug.Log(message);
+            }
+            
+            Debug.Log($"Total assemblies: {output.Count}");
+        }
+
+        [Button]
+        private void OverrideProjDotSettings()
+        {
             var projectRoot = Application.dataPath.Substring(0, Application.dataPath.Length - 7);
+            var folderScanner = new NamespaceToolFolderScanner();
+            var entities = new List<NamespaceToolEntityInfo>();
+            folderScanner.Scan(projectRoot, _config, entities);
+
+            var tempFile = Path.GetTempFileName();
+            var dotSettingsWriter = new NamespaceToolDotSettingsWriter();
+            dotSettingsWriter.Write(tempFile, entities.Select(i => i.name));
             
-            folderScanner.Scan(projectRoot, _config, output);
-
-            var exporter = new NamespaceToolExporter();
-
-            var sharpFile = Path.Combine(projectRoot, "Assembly-CSharp.csproj.DotSettings");
+            var oldFiles = Directory.GetFiles(projectRoot, "*.csproj.DotSettings");
+            foreach (var file in oldFiles)
+            {
+                File.Delete(file);
+            }
             
-            exporter.ExportFoldersForSkip(sharpFile, output.Select(i => i.fullPath));
+            var assemblyUtil = new NamespaceToolAssemblyUtil();
+            assemblyUtil.Scan(_config, entities);
+            foreach (var assembly in entities)
+            {
+                var fileName = assemblyUtil.AssemblyToFileName(assembly.name);
+                fileName = Path.Combine(projectRoot, fileName);
+                File.Copy(tempFile, fileName);
+            }
+            
+            File.Delete(tempFile);
 
-            var editorFile = Path.Combine(projectRoot, "Assembly-CSharp-Editor.csproj.DotSettings");
-            File.Copy(sharpFile, editorFile, true);
-
-            Debug.Log("Done");
+            Debug.Log("Done. Don't forget to restart Rider.");
         }
         
         [Button]

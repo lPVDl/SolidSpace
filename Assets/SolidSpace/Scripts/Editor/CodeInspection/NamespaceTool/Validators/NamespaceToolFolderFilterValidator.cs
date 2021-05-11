@@ -3,9 +3,9 @@ using System.Text.RegularExpressions;
 
 namespace SolidSpace.Editor.CodeInspection.NamespaceTool
 {
-    public class NamespaceToolFolderFilterValidator : IDataValidator<NamespaceToolFolderFilter>
+    public class NamespaceToolFolderFilterValidator : IDataValidator<NamespaceToolFilter>
     {
-        public string Validate(NamespaceToolFolderFilter data)
+        public string Validate(NamespaceToolFilter data)
         {
             if (data.regex is null)
             {
