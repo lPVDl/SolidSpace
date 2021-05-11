@@ -41,3 +41,5 @@ MonoBehaviour:
       regex: \/(?i)common$
     - enabled: 1
       regex: \/(?i)common\/\w*$
+    - enabled: 1
+      regex: \/(?i)runtime$
