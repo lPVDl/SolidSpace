@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace FuchaTools
 {
-    public class RepaintEventsView
+    internal class RepaintEventsView
     {
         private readonly EditorWindow _owner;
 

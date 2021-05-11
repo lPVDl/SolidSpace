@@ -3,7 +3,7 @@ using UnityEditor;
 
 namespace FuchaTools
 {
-    public class EditorWindowFactoryWindow : EditorWindow
+    internal class EditorWindowFactoryWindow : EditorWindow
     {
         private const string NameRegex = "(Window$)|([A-Z][a-z0-9]+)";
 

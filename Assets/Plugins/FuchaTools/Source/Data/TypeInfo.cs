@@ -2,7 +2,7 @@
 
 namespace FuchaTools
 {
-    public struct TypeInfo
+    internal struct TypeInfo
     {
         public Type Type;
         public string NameShort;

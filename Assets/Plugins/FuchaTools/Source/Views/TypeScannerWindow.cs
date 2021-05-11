@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace FuchaTools
 {
-    public class TypeScannerWindow
+    internal class TypeScannerWindow
     {
         private const string FilterFocusControlName = "FilterFocusControlName";
         

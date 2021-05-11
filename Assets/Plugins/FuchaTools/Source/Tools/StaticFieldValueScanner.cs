@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace FuchaTools
 {
-    public static class StaticFieldValueScanner
+    internal static class StaticFieldValueScanner
     {
         private static readonly Dictionary<Assembly, List<Type>> AssemblyTypesCash;
 

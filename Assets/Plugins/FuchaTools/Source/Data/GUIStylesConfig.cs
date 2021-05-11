@@ -1,6 +1,6 @@
 ﻿namespace FuchaTools
 {
-    public static class GUIStylesConfig
+    internal static class GUIStylesConfig
     {
         public const string SearchField = "SearchTextField";
         public const string ListItemNormal = "textfield";

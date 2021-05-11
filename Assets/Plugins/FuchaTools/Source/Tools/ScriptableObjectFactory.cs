@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace FuchaTools
 {
-    public static class ScriptableObjectFactory
+    internal static class ScriptableObjectFactory
     {
         private const int MaxAssetNameGenerationIterations = 1024;
         

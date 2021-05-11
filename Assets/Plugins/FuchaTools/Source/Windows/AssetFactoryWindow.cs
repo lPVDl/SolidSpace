@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace FuchaTools
 {
-    public class AssetFactoryWindow : EditorWindow
+    internal class AssetFactoryWindow : EditorWindow
     {
         private readonly TypeScannerWindow _scannerWindow;
         private readonly RepaintEventsView _repaintEvents;

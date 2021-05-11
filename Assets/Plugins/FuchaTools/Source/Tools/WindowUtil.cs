@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace FuchaTools
 {
-    public static class WindowUtil
+    internal static class WindowUtil
     {
         private const int WindowWidth = 200;
         private const int WindowHeight = 300;

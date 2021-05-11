@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace FuchaTools
 {
-    public static class TypeScanner
+    internal static class TypeScanner
     {
         private static readonly Dictionary<Type, List<TypeInfo>> Cash;
         private static readonly List<Type> AllTypes;

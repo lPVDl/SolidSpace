@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace FuchaTools
 {
-    public class GUIStyleScannerWindow : EditorWindow
+    internal class GUIStyleScannerWindow : EditorWindow
     {
         private static readonly List<GUIStyle> Buffer = new List<GUIStyle>();
         

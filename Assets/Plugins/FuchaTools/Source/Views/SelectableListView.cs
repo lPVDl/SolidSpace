@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace FuchaTools
 {
-    public class SelectableListView<T>
+    internal class SelectableListView<T>
     {
         private readonly Func<T, string> _getName;
         private readonly GUILayoutOption[] _scrollViewLayoutOptions;
