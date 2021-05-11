@@ -28,9 +28,7 @@ namespace SolidSpace.DataValidation.Editor
 
         private static void Initialize()
         {
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies()
-                .Where(a => a.FullName.Contains("Assembly-CSharp"));
-            
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             var allTypes = assemblies.SelectMany(a => a.GetTypes()).ToList();
 
             foreach (var type in allTypes)
