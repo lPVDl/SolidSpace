@@ -1,4 +1,3 @@
-using System;
 using System.Runtime.CompilerServices;
 using Unity.Burst;
 using Unity.Collections;
@@ -16,13 +15,14 @@ namespace SolidSpace.Profiling
 
         public NativeArray<ushort> parentStack;
         public NativeArray<ushort> siblingStack;
+        public NativeArray<int> nameHashStack;
         public NativeArray<int> timeStack;
 
         public NativeArray<ushort> outChilds;
-        public NativeArray<ushort> outSiblings;
-        public NativeArray<ushort> outNames;
-        public NativeArray<float> outTimes;
-        public NativeArray<ProfilingBuiltTreeState> outState;
+        [WriteOnly] public NativeArray<ushort> outSiblings;
+        [WriteOnly] public NativeArray<ushort> outNames;
+        [WriteOnly] public NativeArray<float> outTimes;
+        [WriteOnly] public NativeArray<ProfilingBuiltTreeState> outState;
 
         private int _stackLast;
         private int _nodeCount;
@@ -38,6 +38,7 @@ namespace SolidSpace.Profiling
             _nodeCount = 1;
             parentStack[0] = 0;
             siblingStack[0] = 0;
+            nameHashStack[0] = 0;
             outChilds[0] = 0;
             outNames[0] = 0;
             outSiblings[0] = 0;
@@ -53,15 +54,15 @@ namespace SolidSpace.Profiling
             {
                 var record = inRecords[i];
                 
-                record.Read(out var timeSamples, out var isBeginSampleCommand);
+                record.Read(out var timeSamples, out var isBeginSampleCommand, out var nameHash);
                 
                 if (isBeginSampleCommand)
                 {
-                    FlushBeginSample(i + 1, timeSamples);
+                    FlushBeginSample(i + 1, timeSamples, nameHash);
                 }
                 else
                 {
-                    FlushEndSample(timeSamples);
+                    FlushEndSample(timeSamples, nameHash);
                 }
 
                 if (_code != EProfilingBuildTreeCode.Unknown)
@@ -96,7 +97,7 @@ namespace SolidSpace.Profiling
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void FlushBeginSample(int nameIndex, int timeSamples)
+        private void FlushBeginSample(int nameIndex, int timeSamples, int nameHash)
         {
             if (_stackLast + 1 >= _stackMax)
             {
@@ -119,6 +120,7 @@ namespace SolidSpace.Profiling
 
             siblingStack[_stackLast++] = nodeIndex;
             siblingStack[_stackLast] = 0;
+            nameHashStack[_stackLast] = nameHash;
             parentStack[_stackLast] = nodeIndex;
             timeStack[_stackLast] = timeSamples;
 
@@ -128,11 +130,17 @@ namespace SolidSpace.Profiling
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void FlushEndSample(int timeSamples)
+        private void FlushEndSample(int timeSamples, int nameHash)
         {
             if (_stackLast == 0)
             {
                 _code = EProfilingBuildTreeCode.StackUnderflow;
+                return;
+            }
+
+            if (nameHash != nameHashStack[_stackLast])
+            {
+                _code = EProfilingBuildTreeCode.NameMismatch;
                 return;
             }
 

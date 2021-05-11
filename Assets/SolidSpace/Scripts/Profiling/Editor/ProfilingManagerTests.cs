@@ -82,7 +82,7 @@ namespace SolidSpace.Profiling.Editor
         }
 
         [Test]
-        public void OnBeginSample_ExceedRecordLimit_ThrowsException()
+        public void OnBeginSample_WithRecordLimit_ThrowsException()
         {
             for (var i = 0; i < _config.MaxRecordCount; i++)
             {
@@ -92,7 +92,7 @@ namespace SolidSpace.Profiling.Editor
         }
 
         [Test]
-        public void OnEndSample_ExceedRecordLimit_ThrowsException()
+        public void OnEndSample_WithRecordLimit_ThrowsException()
         {
             for (var i = 0; i < _config.MaxRecordCount; i++)
             {
@@ -102,7 +102,7 @@ namespace SolidSpace.Profiling.Editor
         }
 
         [Test]
-        public void OnBeginSample_WithoutOnEndSample_OnUpdate_ThrowsException_WithDummyPath()
+        public void OnBeginSample_WithoutOnEndSample_WhenUpdate_ThrowsException_WithDummyPath()
         {
             _manager.OnBeginSample("TestSample");
             var exception = Assert.Throws<InvalidOperationException>(() => _manager.Update());
@@ -110,7 +110,7 @@ namespace SolidSpace.Profiling.Editor
         }
 
         [Test]
-        public void OnBeginSample_WhenOverflow_OnUpdate_ThrowsException_WithPath()
+        public void OnBeginSample_WithOverflow_WhenUpdate_ThrowsException_WithPath()
         {
             _manager.OnBeginSample("SampleA");
             _manager.OnBeginSample("SampleB");
@@ -119,11 +119,20 @@ namespace SolidSpace.Profiling.Editor
         }
 
         [Test]
-        public void OnEndSample_WithoutOnBeginSample_OnUpdate_ThrowsException_WithPath()
+        public void OnEndSample_WithoutOnBeginSample_WhenUpdate_ThrowsException_WithPath()
         {
             _manager.OnEndSample("TestSample");
             var exception = Assert.Throws<InvalidOperationException>(() => _manager.Update());
             Assert.That(exception.Message, Does.Contain("_root/TestSample"));
+        }
+
+        [Test]
+        public void OnBeginSample_OnEndSample_WithDifferentNames_WhenUpdate_ThrowsException_WithPaths()
+        {
+            _manager.OnBeginSample("SampleA");
+            _manager.OnEndSample("SampleB");
+            var exception = Assert.Throws<InvalidOperationException>(() => _manager.Update());
+            Assert.That(exception.Message, Does.Contain("_root/SampleA").And.Contain("_root/SampleB"));
         }
 
         private void BeginEndDummySample_UpdateManager_ReadResults()

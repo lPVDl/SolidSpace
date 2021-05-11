@@ -7,5 +7,6 @@ namespace SolidSpace.Profiling
         StackIsNotEmptyAfterJobComplete = 3,
         StackOverflow = 4,
         StackUnderflow = 5,
+        NameMismatch = 6,
     }
 }

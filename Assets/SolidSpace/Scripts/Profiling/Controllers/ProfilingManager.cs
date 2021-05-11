@@ -80,7 +80,8 @@ namespace SolidSpace.Profiling
                 outState = _arrayUtil.CreateTempJobArray<ProfilingBuiltTreeState>(1),
                 parentStack = _arrayUtil.CreateTempJobArray<ushort>(_config.StackSize),
                 siblingStack = _arrayUtil.CreateTempJobArray<ushort>(_config.StackSize),
-                timeStack = _arrayUtil.CreateTempJobArray<int>(_config.StackSize)
+                timeStack = _arrayUtil.CreateTempJobArray<int>(_config.StackSize),
+                nameHashStack = _arrayUtil.CreateTempJobArray<int>(_config.StackSize)
             };
 
             var timer = _buildTreeJobStopwatch;
@@ -104,6 +105,7 @@ namespace SolidSpace.Profiling
                 job.parentStack.Dispose();
                 job.siblingStack.Dispose();
                 job.timeStack.Dispose();
+                job.nameHashStack.Dispose();
                 job.outState.Dispose();
 
                 _profilingTree = new ProfilingTree
@@ -151,7 +153,7 @@ namespace SolidSpace.Profiling
             }
 
             var record = new ProfilingRecord();
-            record.Write((int) _stopwatch.ElapsedTicks, true);
+            record.Write((int) _stopwatch.ElapsedTicks, true, name.GetHashCode());
             _records[_recordCount++] = record;
             _namesActive[_nameCount++] = name;
         }
@@ -177,7 +179,7 @@ namespace SolidSpace.Profiling
             }
 
             var record = new ProfilingRecord();
-            record.Write((int) _stopwatch.ElapsedTicks, false);
+            record.Write((int) _stopwatch.ElapsedTicks, false, name.GetHashCode());
             _records[_recordCount++] = record;
             _namesActive[_nameCount++] = name;
         }

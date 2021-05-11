@@ -28,6 +28,10 @@ namespace SolidSpace.Profiling
                     
                     case EProfilingBuildTreeCode.StackUnderflow:
                         throw new InvalidOperationException($"EndSample() was not called for {stackTrace}{names[state.recordLast + 1]}");
+                    
+                    case EProfilingBuildTreeCode.NameMismatch:
+                        var newNodePath = BuildPath(names, job.parentStack, state.stackLast - 1) + names[state.recordLast + 1];
+                        throw new InvalidOperationException($"BeginSample({stackTrace}) name does not match EndSample({newNodePath})");
                 }
 
                 throw new InvalidOperationException($"Error during tree building: {state.code}");
