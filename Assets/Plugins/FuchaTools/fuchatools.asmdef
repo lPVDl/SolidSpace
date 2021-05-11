@@ -1,6 +1,6 @@
 {
     "name": "FuchaTools",
-    "rootNamespace": "FuchaTools",
+    "rootNamespace": "",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
