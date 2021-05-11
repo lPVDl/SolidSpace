@@ -16,47 +16,55 @@ MonoBehaviour:
     _scriptsRoot: Assets
     _folderFilters:
     - enabled: 1
-      regex: \/(?i)scripts$
+      regex: \/(?i)Scripts$
     - enabled: 1
-      regex: \/(?i)controllers$
+      regex: \/(?i)Controllers$
     - enabled: 1
-      regex: \/(?i)enums$
+      regex: \/(?i)Enums$
     - enabled: 1
-      regex: \/(?i)interfaces$
+      regex: \/(?i)Interfaces$
     - enabled: 1
-      regex: \/(?i)data$
+      regex: \/(?i)Data$
     - enabled: 1
-      regex: \/(?i)validators$
+      regex: \/(?i)Validators$
     - enabled: 1
-      regex: \/(?i)jobs$
+      regex: \/(?i)Jobs$
     - enabled: 1
-      regex: \/(?i)components$
+      regex: \/(?i)Components$
     - enabled: 1
-      regex: \/(?i)installers$
+      regex: \/(?i)Installers$
     - enabled: 1
-      regex: \/(?i)utils$
+      regex: \/(?i)Utils$
     - enabled: 1
-      regex: \/(?i)physics\/\w*$
+      regex: \/(?i)Physics\/\w*$
     - enabled: 1
-      regex: \/(?i)common$
+      regex: \/(?i)Common$
     - enabled: 1
-      regex: \/(?i)common\/\w*$
+      regex: \/(?i)Common\/\w*$
     - enabled: 1
-      regex: \/(?i)runtime$
+      regex: \/(?i)Runtime$
     - enabled: 1
-      regex: \/(?i)source$
+      regex: \/(?i)Source$
     - enabled: 1
-      regex: \/(?i)plugins$
+      regex: \/(?i)Plugins$
+    - enabled: 1
+      regex: \/(?i)Plugins\/Zenject\/.*
+    - enabled: 1
+      regex: \/(?i)Plugins\/FuchaTools\/.*
+    - enabled: 1
+      regex: \/(?i)OdinValidator\/.*\/Profiles$
+    - enabled: 1
+      regex: \/(?i)OdinValidator\/.*\/Automation$
+    - enabled: 1
+      regex: \/(?i)OdinValidator\/.*\/Editors$
     _assemblyFilters:
     - enabled: 1
-      regex: ^Assembly-CSharp$
+      regex: ^Assembly-CSharp
     - enabled: 1
-      regex: ^Assembly-CSharp-Editor$
+      regex: ^SolidSpace
     - enabled: 1
-      regex: ^Zenject$
+      regex: ^FuchaTools
     - enabled: 1
-      regex: ^Zenject-Editor$
+      regex: ^Sirenix
     - enabled: 1
-      regex: ^SolidSpace\-.*
-    - enabled: 1
-      regex: ^FuchaTools$
+      regex: ^Zenject
