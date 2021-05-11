@@ -1,6 +1,6 @@
-namespace SolidSpace.Editor.Serialization.AssetNameTool
+namespace SolidSpace.Automation.AssetNameTool
 {
-    public struct AssetNameToolFile
+    internal struct FileInfo
     {
         public string originalPath;
         public string modifiedPath;

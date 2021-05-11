@@ -1,9 +1,9 @@
 using System;
 
-namespace SolidSpace.Editor.Serialization.AssetNameTool
+namespace SolidSpace.Automation.AssetNameTool
 {
     [Serializable]
-    public struct AssetNameToolFolderFilter
+    internal struct FilterInfo
     {
         public bool enabled;
         public string scannerRegex;

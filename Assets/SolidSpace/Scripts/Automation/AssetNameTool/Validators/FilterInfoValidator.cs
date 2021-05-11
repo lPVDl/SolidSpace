@@ -2,11 +2,11 @@ using System;
 using System.Text.RegularExpressions;
 using SolidSpace.DataValidation;
 
-namespace SolidSpace.Editor.Serialization.AssetNameTool
+namespace SolidSpace.Automation.AssetNameTool
 {
-    public class AssetNameToolFolderValidator : IDataValidator<AssetNameToolFolderFilter>
+    internal class FilterInfoValidator : IDataValidator<FilterInfo>
     {
-        public string Validate(AssetNameToolFolderFilter data)
+        public string Validate(FilterInfo data)
         {
             if (data.scannerRegex is null || data.nameRegex is null || data.nameSubstitution is null)
             {

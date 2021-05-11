@@ -4,11 +4,11 @@ using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
-namespace SolidSpace.Editor.Serialization.AssetNameTool
+namespace SolidSpace.Automation.AssetNameTool
 {
-    public class AssetNameToolProcessor
+    internal class FileProcessor
     {
-        public void Process(AssetNameToolConfig config, ICollection<AssetNameToolFile> result)
+        public void Process(Config config, ICollection<FileInfo> result)
         {
             result.Clear();
             
@@ -39,7 +39,7 @@ namespace SolidSpace.Editor.Serialization.AssetNameTool
                     var newName = Regex.Replace(typeName, filter.nameRegex, filter.nameSubstitution);
                     var assetRoot = assetPath.Substring(0, assetPath.LastIndexOf(oldName));
 
-                    result.Add( new AssetNameToolFile
+                    result.Add( new FileInfo
                     {
                         foundByRegexId = j,
                         typeName = typeName,

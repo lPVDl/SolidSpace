@@ -2,19 +2,19 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace SolidSpace.Editor.Serialization.AssetNameTool
+namespace SolidSpace.Automation.AssetNameTool
 {
     public class AssetNameToolAsset : ScriptableObject
     {
-        [SerializeField] private AssetNameToolConfig _config;
+        [SerializeField] private Config _config;
 
         [Button]
         private void ScanAndLog()
         {
-            EditorConsoleUtil.ClearLog();
+            ConsoleUtil.ClearLog();
             
-            var processor = new AssetNameToolProcessor();
-            var files = new List<AssetNameToolFile>();
+            var processor = new FileProcessor();
+            var files = new List<FileInfo>();
             processor.Process(_config, files);
             
             foreach (var file in files)
@@ -26,11 +26,11 @@ namespace SolidSpace.Editor.Serialization.AssetNameTool
         [Button]
         private void RenameAssets()
         {
-            EditorConsoleUtil.ClearLog();
+            ConsoleUtil.ClearLog();
             
-            var processor = new AssetNameToolProcessor();
-            var renamer = new AssetNameToolRenamer();
-            var files = new List<AssetNameToolFile>();
+            var processor = new FileProcessor();
+            var renamer = new FileNameUtil();
+            var files = new List<FileInfo>();
             
             processor.Process(_config, files);
             renamer.Rename(files);

@@ -2,14 +2,14 @@ using System;
 using System.Reflection;
 using UnityEngine;
 
-namespace SolidSpace.Editor
+namespace SolidSpace.Automation.AssetNameTool
 {
-    public static class EditorConsoleUtil
+    public static class ConsoleUtil
     {
         private static readonly MethodInfo ClearConsoleMethod;
         private static readonly bool IsClearConsoleMethodFound;
         
-        static EditorConsoleUtil()
+        static ConsoleUtil()
         {
             try
             {

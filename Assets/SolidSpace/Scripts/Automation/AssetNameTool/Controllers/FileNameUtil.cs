@@ -4,18 +4,18 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace SolidSpace.Editor.Serialization.AssetNameTool
+namespace SolidSpace.Automation.AssetNameTool
 {
-    public class AssetNameToolRenamer
+    internal class FileNameUtil
     {
         private readonly HashSet<string> _textHash;
 
-        public AssetNameToolRenamer()
+        public FileNameUtil()
         {
             _textHash = new HashSet<string>();
         }
         
-        public void Rename(IReadOnlyList<AssetNameToolFile> files)
+        public void Rename(IReadOnlyList<FileInfo> files)
         {
             _textHash.Clear();
             
@@ -70,11 +70,11 @@ namespace SolidSpace.Editor.Serialization.AssetNameTool
             }
         }
 
-        private bool CheckRequiresRenaming(AssetNameToolFile file)
+        private bool CheckRequiresRenaming(FileInfo fileInfo)
         {
             const StringComparison comparison = StringComparison.InvariantCultureIgnoreCase;
 
-            return string.Compare(file.originalPath, file.modifiedPath, comparison) != 0;
+            return string.Compare(fileInfo.originalPath, fileInfo.modifiedPath, comparison) != 0;
         }
     }
 }
