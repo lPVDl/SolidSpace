@@ -69,13 +69,22 @@ namespace SolidSpace
 
         private void OnUpdate()
         {
-            _controllers[0].Update();
-            
-            for (var i = 1; i < _controllers.Count; i++)
+            try
             {
-                _profiler.BeginSample(_names[i]);
-                _controllers[i].Update();
-                _profiler.EndSample(_names[i]);
+                _controllers[0].Update();
+
+                for (var i = 1; i < _controllers.Count; i++)
+                {
+                    _profiler.BeginSample(_names[i]);
+                    _controllers[i].Update();
+                    _profiler.EndSample(_names[i]);
+                }
+            }
+            catch
+            {
+                _updateHandler.OnUpdate -= OnUpdate;
+                
+                throw;
             }
         }
 
