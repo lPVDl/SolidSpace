@@ -1,5 +1,5 @@
 {
-    "name": "SolidSpace.DataValidation.Editor",
+    "name": "SolidSpace-DataValidation-Editor",
     "rootNamespace": "SolidSpace.DataValidation.Editor",
     "references": [
         "GUID:33107023e80e4beb8dbcf98b6c23d4a2"

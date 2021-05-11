@@ -1,5 +1,5 @@
 {
-    "name": "SolidSpace.DataValidation",
+    "name": "SolidSpace-DataValidation",
     "rootNamespace": "SolidSpace.DataValidation",
     "references": [],
     "includePlatforms": [],
