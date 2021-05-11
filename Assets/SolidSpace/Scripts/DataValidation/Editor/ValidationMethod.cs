@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace SolidSpace.Editor
+namespace SolidSpace.DataValidation.Editor
 {
     internal struct ValidationMethod
     {

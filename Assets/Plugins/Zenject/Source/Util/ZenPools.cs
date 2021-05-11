@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Zenject.Internal
+namespace Zenject
 {
     public static class ZenPools
     {

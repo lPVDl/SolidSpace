@@ -1,4 +1,8 @@
-﻿#if UNITY_2017_2_OR_NEWER
+﻿using Sirenix.OdinInspector.Editor;
+using Sirenix.Serialization;
+using UnityEngine;
+
+#if UNITY_2017_2_OR_NEWER
 
 //-----------------------------------------------------------------------
 // <copyright file="VectorIntFormatters.cs" company="Sirenix IVS">
@@ -6,12 +10,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-[assembly: Sirenix.Serialization.RegisterFormatter(typeof(Sirenix.Serialization.Vector2IntFormatter))]
-[assembly: Sirenix.Serialization.RegisterFormatter(typeof(Sirenix.Serialization.Vector3IntFormatter))]
-namespace Sirenix.Serialization
+[assembly: Sirenix.Serialization.RegisterFormatter(typeof(Vector2IntFormatter))]
+[assembly: Sirenix.Serialization.RegisterFormatter(typeof(Vector3IntFormatter))]
+namespace Sirenix.OdinInspector.Editor
 {
-    using UnityEngine;
-
     /// <summary>
     /// Custom formatter for the <see cref="Vector2Int"/> type.
     /// </summary>

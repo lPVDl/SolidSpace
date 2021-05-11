@@ -2,7 +2,6 @@
 
 #pragma warning disable 649
 
-using ModestTree;
 using UnityEngine;
 using UnityEngine.Analytics;
 

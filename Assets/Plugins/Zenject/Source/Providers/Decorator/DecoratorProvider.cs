@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using ModestTree;
 
-namespace Zenject.Internal
+namespace Zenject
 {
     public interface IDecoratorProvider
     {

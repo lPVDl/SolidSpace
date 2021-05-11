@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using ModestTree;
 using Zenject.Internal;
 using System.Linq;
-using TypeExtensions = ModestTree.TypeExtensions;
+using TypeExtensions = Zenject.TypeExtensions;
 
 #if !NOT_UNITY3D
 using UnityEngine;

@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 
-namespace ModestTree
+namespace Zenject
 {
     // Simple wrapper around unity's logging system
     public static class Log

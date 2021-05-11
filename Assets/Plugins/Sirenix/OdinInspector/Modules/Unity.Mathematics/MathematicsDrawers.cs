@@ -4,19 +4,19 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using Sirenix.OdinInspector.Editor;
+using Sirenix.Utilities;
+using Sirenix.Utilities.Editor;
+using Unity.Mathematics;
+using UnityEditor;
+using UnityEngine;
+
+namespace Sirenix.OdinInspector.Modules.Unity.Mathematics
 {
 #if UNITY_EDITOR
-    using System;
-    using System.Collections.Generic;
-    using System.Reflection;
-    using Sirenix.OdinInspector.Editor;
-    using Sirenix.Utilities;
-    using Sirenix.Utilities.Editor;
-    using Unity.Mathematics;
-    using UnityEditor;
-    using UnityEngine;
-
     public sealed class MatrixFloat2x2Processor : MatrixProcessor<float2x2> { }
     public sealed class MatrixFloat3x2Processor : MatrixProcessor<float3x2> { }
     public sealed class MatrixFloat4x2Processor : MatrixProcessor<float4x2> { }

@@ -1,3 +1,5 @@
+using SolidSpace.DataValidation;
+
 namespace SolidSpace.Entities.Rendering.Atlases
 {
     public class AtlasChunkConfigValidator : IDataValidator<AtlasChunkConfig>

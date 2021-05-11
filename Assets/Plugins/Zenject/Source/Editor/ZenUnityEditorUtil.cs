@@ -1,14 +1,12 @@
 #if !NOT_UNITY3D
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using ModestTree;
 using UnityEditor;
 using UnityEngine;
 
-namespace Zenject.Internal
+namespace Zenject
 {
     public static class ZenUnityEditorUtil
     {

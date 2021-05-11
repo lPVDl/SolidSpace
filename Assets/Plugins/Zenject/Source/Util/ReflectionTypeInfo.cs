@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Zenject.Internal
+namespace Zenject
 {
     [NoReflectionBaking]
     public class ReflectionTypeInfo

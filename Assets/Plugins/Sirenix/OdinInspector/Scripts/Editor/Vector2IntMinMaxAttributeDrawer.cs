@@ -4,19 +4,15 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using Sirenix.OdinInspector.Editor.ValueResolvers;
+using Sirenix.Utilities.Editor;
+using UnityEditor;
+using UnityEngine;
+
 #if UNITY_EDITOR && UNITY_2017_2_OR_NEWER
 
-namespace Sirenix.OdinInspector.Editor.Drawers
+namespace Sirenix.OdinInspector.Editor
 {
-    using Sirenix.OdinInspector;
-    using Sirenix.OdinInspector.Editor;
-    using Sirenix.OdinInspector.Editor.ValueResolvers;
-    using Sirenix.Utilities;
-    using Sirenix.Utilities.Editor;
-    using System.Reflection;
-    using UnityEditor;
-    using UnityEngine;
-
     /// <summary>
     /// Draws Vector2Int properties marked with <see cref="MinMaxSliderAttribute"/>.
     /// </summary>

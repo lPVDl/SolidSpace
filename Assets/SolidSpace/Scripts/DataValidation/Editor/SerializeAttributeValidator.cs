@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Reflection;
 using Sirenix.OdinInspector.Editor;
 using Sirenix.OdinInspector.Editor.Validation;
-using SolidSpace.Editor;
+using SolidSpace.DataValidation.Editor;
 using UnityEngine;
 
 [assembly: RegisterValidator(typeof(SerializeAttributeValidator))]
 
-namespace SolidSpace.Editor
+namespace SolidSpace.DataValidation.Editor
 {
     internal class SerializeAttributeValidator : AttributeValidator<SerializeField>
     {

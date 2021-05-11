@@ -4,14 +4,14 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using Sirenix.Utilities.Editor;
+using UnityEditor;
+using UnityEngine;
+
 #if UNITY_EDITOR && UNITY_2017_2_OR_NEWER
 
-namespace Sirenix.OdinInspector.Editor.Drawers
+namespace Sirenix.OdinInspector.Editor
 {
-    using Utilities.Editor;
-    using UnityEditor;
-    using UnityEngine;
-
     /// <summary>
     /// Vector2Int proprety drawer.
     /// </summary>

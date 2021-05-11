@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Debug = UnityEngine.Debug;
 
-namespace SolidSpace.Editor
+namespace SolidSpace.DataValidation.Editor
 {
     internal static class AssemblyValidatorFactory
     {

@@ -1,10 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Collections;
-using ModestTree.Util;
 
-namespace ModestTree
+namespace Zenject
 {
     public static class LinqExtensions
     {

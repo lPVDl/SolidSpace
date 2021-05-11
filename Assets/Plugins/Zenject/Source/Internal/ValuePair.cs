@@ -1,7 +1,6 @@
 using System;
-using System.Collections.Generic;
 
-namespace ModestTree.Util
+namespace Zenject
 {
     public class ValuePair<T1, T2>
     {

@@ -1,6 +1,4 @@
-using ModestTree;
-
-namespace Zenject.Internal
+namespace Zenject
 {
     [NoReflectionBaking]
     public class LookupId

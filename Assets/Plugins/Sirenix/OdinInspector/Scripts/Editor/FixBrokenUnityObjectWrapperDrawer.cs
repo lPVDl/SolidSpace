@@ -4,19 +4,17 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Linq;
+using Sirenix.Utilities;
+using Sirenix.Utilities.Editor;
+using UnityEditor;
+using UnityEngine;
+
 #if UNITY_EDITOR && UNITY_2018_3_OR_NEWER
 #pragma warning disable
 
-namespace Sirenix.OdinInspector.Editor.Drawers
+namespace Sirenix.OdinInspector.Editor
 {
-    using Sirenix.OdinInspector;
-    using Sirenix.OdinInspector.Editor;
-    using Sirenix.Utilities;
-    using Sirenix.Utilities.Editor;
-    using System.Linq;
-    using UnityEditor;
-    using UnityEngine;
-
     [DrawerPriority(0.001, 0, 0)]
     public class FixBrokenUnityObjectWrapperDrawer<T> : OdinValueDrawer<T>, IDefinesGenericMenuItems
         where T : UnityEngine.Component

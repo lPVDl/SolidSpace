@@ -1,3 +1,5 @@
+using SolidSpace.DataValidation;
+
 namespace SolidSpace.Profiling
 {
     public class ProfilingConfigValidator : IDataValidator<ProfilingConfig>

@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
-namespace ModestTree
+namespace Zenject
 {
     public static class TypeExtensions
     {

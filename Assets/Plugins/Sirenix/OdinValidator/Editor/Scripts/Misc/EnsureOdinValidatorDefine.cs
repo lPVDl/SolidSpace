@@ -4,14 +4,14 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
+using System.Linq;
+using UnityEditor;
+
 #if UNITY_EDITOR
 
-namespace Sirenix.Utilities
+namespace Sirenix.OdinValidator.Editor.Misc
 {
-    using System;
-    using System.Linq;
-    using UnityEditor;
-
     /// <summary>
     /// Defines the ODIN_VALIDATOR symbol.
     /// </summary>

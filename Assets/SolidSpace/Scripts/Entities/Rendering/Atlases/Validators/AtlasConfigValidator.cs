@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using SolidSpace.DataValidation;
 
 namespace SolidSpace.Entities.Rendering.Atlases
 {

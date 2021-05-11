@@ -1,4 +1,4 @@
-namespace SolidSpace
+namespace SolidSpace.DataValidation
 {
     public interface IDataValidator<T>
     {
