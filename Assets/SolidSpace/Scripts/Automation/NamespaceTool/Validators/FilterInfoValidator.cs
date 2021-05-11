@@ -2,11 +2,11 @@ using System;
 using System.Text.RegularExpressions;
 using SolidSpace.DataValidation;
 
-namespace SolidSpace.Editor.CodeInspection.NamespaceTool
+namespace SolidSpace.Automation.NamespaceTool
 {
-    public class NamespaceToolFolderFilterValidator : IDataValidator<NamespaceToolFilter>
+    internal class FilterInfoValidator : IDataValidator<FilterInfo>
     {
-        public string Validate(NamespaceToolFilter data)
+        public string Validate(FilterInfo data)
         {
             if (data.regex is null)
             {

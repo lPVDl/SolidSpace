@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace SolidSpace.Editor.CodeInspection.NamespaceTool
+namespace SolidSpace.Automation.NamespaceTool
 {
-    public class NamespaceToolDotSettingsWriter
+    internal class DotSettingsWriter
     {
         private const string LocalDirectoryNameRegex = @"\/((?i)assets\/.*)";
         

@@ -2,18 +2,18 @@ using System.IO;
 using SolidSpace.DataValidation;
 using UnityEngine;
 
-namespace SolidSpace.Editor.CodeInspection.NamespaceTool
+namespace SolidSpace.Automation.NamespaceTool
 {
-    public class NamespaceToolConfigValidator : IDataValidator<NamespaceToolConfig>
+    internal class ConfigValidator : IDataValidator<Config>
     {
         private readonly string _projectRoot;
         
-        public NamespaceToolConfigValidator()
+        public ConfigValidator()
         {
             _projectRoot = Application.dataPath.Substring(0, Application.dataPath.Length - 7);
         }
         
-        public string Validate(NamespaceToolConfig data)
+        public string Validate(Config data)
         {
             if (data.ScriptsRoot is null)
             {

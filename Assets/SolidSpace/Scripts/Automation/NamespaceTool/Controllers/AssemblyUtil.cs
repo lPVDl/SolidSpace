@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace SolidSpace.Editor.CodeInspection.NamespaceTool
+namespace SolidSpace.Automation.NamespaceTool
 {
-    public class NamespaceToolAssemblyUtil
+    internal class AssemblyUtil
     {
-        public void Scan(NamespaceToolConfig config, ICollection<NamespaceToolEntityInfo> output)
+        public void Scan(Config config, ICollection<EntityInfo> output)
         {
             output.Clear();
 
@@ -31,7 +31,7 @@ namespace SolidSpace.Editor.CodeInspection.NamespaceTool
                         continue;
                     }
                     
-                    output.Add(new NamespaceToolEntityInfo
+                    output.Add(new EntityInfo
                     {
                         name = assemblyName,
                         regexId = j

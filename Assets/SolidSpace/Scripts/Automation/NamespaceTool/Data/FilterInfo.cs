@@ -1,7 +1,7 @@
-namespace SolidSpace.Editor.CodeInspection.NamespaceTool
+namespace SolidSpace.Automation.NamespaceTool
 {
     [System.Serializable]
-    public struct NamespaceToolFilter
+    internal struct FilterInfo
     {
         public bool enabled;
         public string regex;

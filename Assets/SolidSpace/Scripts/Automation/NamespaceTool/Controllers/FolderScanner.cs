@@ -2,18 +2,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace SolidSpace.Editor.CodeInspection.NamespaceTool
+namespace SolidSpace.Automation.NamespaceTool
 {
-    public class NamespaceToolFolderScanner
+    internal class FolderScanner
     {
-        public void Scan(string projectRoot, NamespaceToolConfig config, ICollection<NamespaceToolEntityInfo> output)
+        public void Scan(string projectRoot, Config config, ICollection<EntityInfo> output)
         {
             output.Clear();
             
             ScanRecursive(projectRoot + "/" + config.ScriptsRoot, config.FolderFilters, output);
         }
 
-        private void ScanRecursive(string path, IReadOnlyList<NamespaceToolFilter> filters, ICollection<NamespaceToolEntityInfo> output)
+        private void ScanRecursive(string path, IReadOnlyList<FilterInfo> filters, ICollection<EntityInfo> output)
         {
             for (var i = 0; i < filters.Count; i++)
             {
@@ -28,7 +28,7 @@ namespace SolidSpace.Editor.CodeInspection.NamespaceTool
                     continue;
                 }
 
-                output.Add(new NamespaceToolEntityInfo
+                output.Add(new EntityInfo
                 {
                     name = path,
                     regexId = i
