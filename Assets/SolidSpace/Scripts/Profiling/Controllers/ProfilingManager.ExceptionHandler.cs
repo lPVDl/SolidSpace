@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Unity.Collections;
 
 namespace SolidSpace.Profiling
 {
@@ -17,7 +16,7 @@ namespace SolidSpace.Profiling
                     return;
                 }
                 
-                var stackTrace = BuildPath(names, job.parentStack, state.stackLast);
+                var stackTrace = BuildPath(names, job, state.stackLast);
                 switch (state.code)
                 {
                     case EProfilingBuildTreeCode.StackIsNotEmptyAfterJobComplete:
@@ -27,23 +26,23 @@ namespace SolidSpace.Profiling
                         throw new StackOverflowException($"{stackTrace}{names[state.recordLast + 1]} caused stack overflow");
                     
                     case EProfilingBuildTreeCode.StackUnderflow:
-                        throw new InvalidOperationException($"EndSample() was not called for {stackTrace}{names[state.recordLast + 1]}");
+                        throw new InvalidOperationException($"BeginSample() is missing for {stackTrace}{names[state.recordLast + 1]}");
                     
                     case EProfilingBuildTreeCode.NameMismatch:
-                        var newNodePath = BuildPath(names, job.parentStack, state.stackLast - 1) + names[state.recordLast + 1];
-                        throw new InvalidOperationException($"BeginSample({stackTrace}) name does not match EndSample({newNodePath})");
+                        var newNodePath = BuildPath(names, job, state.stackLast - 1) + names[state.recordLast + 1];
+                        throw new InvalidOperationException($"BeginSample({stackTrace}) does not match EndSample({newNodePath})");
                 }
 
                 throw new InvalidOperationException($"Error during tree building: {state.code}");
             }
             
-            private string BuildPath(IList<string> names, NativeArray<ushort> stack, int stackLast)
+            private string BuildPath(IList<string> names, ProfilingBuildTreeJob job, int stackLast)
             {
                 var result = string.Empty;
 
                 for (var i = 0; i <= stackLast; i++)
                 {
-                    result += names[stack[i]] + "/";
+                    result += names[job.outNames[job.parentStack[i]]] + "/";
                 }
 
                 return result;
