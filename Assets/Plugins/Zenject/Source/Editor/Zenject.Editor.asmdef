@@ -1,8 +1,12 @@
 {
-    "name": "SolidSpace-DataValidation",
+    "name": "Zenject.Editor",
     "rootNamespace": "",
-    "references": [],
-    "includePlatforms": [],
+    "references": [
+        "Zenject"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
