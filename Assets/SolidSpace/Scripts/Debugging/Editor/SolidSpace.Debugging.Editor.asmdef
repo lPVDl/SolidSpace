@@ -1,0 +1,18 @@
+{
+    "name": "SolidSpace.Debugging.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:599f3de92652f3542ac6453a0dd4b89e"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

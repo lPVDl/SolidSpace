@@ -1,4 +1,4 @@
-namespace SolidSpace.DebugUtils
+namespace SolidSpace.Debugging
 {
     public struct SpaceDebugValue<T>
     {

@@ -1,4 +1,4 @@
-using SolidSpace.DebugUtils;
+using SolidSpace.Debugging;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;

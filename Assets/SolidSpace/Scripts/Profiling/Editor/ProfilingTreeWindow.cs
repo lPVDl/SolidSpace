@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using SolidSpace.DebugUtils;
+using SolidSpace.Debugging;
 using SolidSpace.Editor;
 using UnityEditor;
 using UnityEngine;

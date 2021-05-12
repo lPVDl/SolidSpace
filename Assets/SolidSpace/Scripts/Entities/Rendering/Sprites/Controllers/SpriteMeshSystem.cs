@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using SolidSpace.DebugUtils;
+using SolidSpace.Debugging;
 using SolidSpace.Profiling;
 using Unity.Collections;
 using Unity.Entities;

@@ -1,16 +1,10 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace SolidSpace.DebugUtils.Editor
+namespace SolidSpace.Debugging.Editor
 {
-    public class SpaceDebugWindow : EditorWindow
+    internal class SolidSpaceDebugWindow : EditorWindow
     {
-        [MenuItem("Window/Analysis/Space Debug")]
-        private static void OpenWindow()
-        {
-            GetWindow<SpaceDebugWindow>("Space Debug");
-        }
-        
         private void OnGUI()
         {
             if (!Application.isPlaying)

@@ -1,6 +1,6 @@
 using System;
 using System.Diagnostics;
-using SolidSpace.DebugUtils;
+using SolidSpace.Debugging;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine.Profiling;

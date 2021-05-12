@@ -1,4 +1,4 @@
-using SolidSpace.DebugUtils;
+using SolidSpace.Debugging;
 using UnityEngine;
 
 namespace SolidSpace.Entities.Physics

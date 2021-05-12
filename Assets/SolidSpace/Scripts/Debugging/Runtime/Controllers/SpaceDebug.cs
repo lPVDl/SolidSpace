@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SolidSpace.DebugUtils
+namespace SolidSpace.Debugging
 {
     public static class SpaceDebug
     {

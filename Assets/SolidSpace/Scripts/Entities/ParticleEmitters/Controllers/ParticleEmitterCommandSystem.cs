@@ -1,4 +1,4 @@
-using SolidSpace.DebugUtils;
+using SolidSpace.Debugging;
 using SolidSpace.Entities.Despawn;
 using SolidSpace.Entities.Physics;
 using SolidSpace.Entities.Rendering.Pixels;
