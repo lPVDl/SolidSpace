@@ -1,6 +1,6 @@
-namespace SolidSpace
+namespace SolidSpace.DependencyInjection
 {
-    public interface IContainer
+    public interface IDependencyContainer
     {
         void Bind<T>();
         void Bind<T>(object parameter);

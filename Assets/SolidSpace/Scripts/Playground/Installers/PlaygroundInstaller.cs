@@ -1,3 +1,4 @@
+using SolidSpace.DependencyInjection;
 using UnityEngine;
 
 namespace SolidSpace.Playground
@@ -9,7 +10,7 @@ namespace SolidSpace.Playground
         [SerializeField] private SpriteSpawnManagerConfig _spriteSpawnManagerConfig;
         [SerializeField] private ParticleSpawnManagerConfig _particleSpawnManagerConfig;
         
-        public override void InstallBindings(IContainer container)
+        public override void InstallBindings(IDependencyContainer container)
         {
             container.BindFromComponentInHierarchy<Camera>();
             container.Bind<ColliderSpawnManager>(_colliderSpawnManagerConfig);

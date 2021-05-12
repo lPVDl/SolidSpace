@@ -1,3 +1,4 @@
+using SolidSpace.DependencyInjection;
 using UnityEngine;
 
 namespace SolidSpace
@@ -6,7 +7,7 @@ namespace SolidSpace
     {
         [SerializeField] private GameCycleConfig _gameCycleConfig;
 
-        public override void InstallBindings(IContainer container)
+        public override void InstallBindings(IDependencyContainer container)
         {
             container.Bind<GameCycleController>(_gameCycleConfig);
         }

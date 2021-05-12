@@ -1,3 +1,4 @@
+using SolidSpace.DependencyInjection;
 using UnityEngine;
 
 namespace SolidSpace.Entities
@@ -6,7 +7,7 @@ namespace SolidSpace.Entities
     {
         [SerializeField] private EntityCycleConfig _entityCycleConfig;
 
-        public override void InstallBindings(IContainer container)
+        public override void InstallBindings(IDependencyContainer container)
         {
             container.Bind<EntityCycleController>(_entityCycleConfig);
             container.Bind<EntityManager>();

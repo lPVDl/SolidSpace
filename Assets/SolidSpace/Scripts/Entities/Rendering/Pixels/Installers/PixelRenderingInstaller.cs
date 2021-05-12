@@ -1,3 +1,4 @@
+using SolidSpace.DependencyInjection;
 using UnityEngine;
 
 namespace SolidSpace.Entities.Rendering.Pixels
@@ -6,7 +7,7 @@ namespace SolidSpace.Entities.Rendering.Pixels
     {
         [SerializeField] private PixelMeshSystemConfig _pixelMeshSystemConfig;
         
-        public override void InstallBindings(IContainer container)
+        public override void InstallBindings(IDependencyContainer container)
         {
             container.Bind<PixelMeshSystem>(_pixelMeshSystemConfig);
         }

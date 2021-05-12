@@ -1,3 +1,4 @@
+using SolidSpace.DependencyInjection;
 using SolidSpace.Entities.Rendering.Atlases;
 using UnityEngine;
 
@@ -8,7 +9,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
         [SerializeField] private AtlasConfig _colorAtlasConfig;
         [SerializeField] private SpriteMeshSystemConfig _meshSystemConfig;
         
-        public override void InstallBindings(IContainer container)
+        public override void InstallBindings(IDependencyContainer container)
         {
             container.Bind<SpriteColorSystem>(_colorAtlasConfig);
             container.Bind<SpriteMeshSystem>(_meshSystemConfig);

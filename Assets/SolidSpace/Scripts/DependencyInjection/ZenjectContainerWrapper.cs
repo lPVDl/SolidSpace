@@ -1,8 +1,8 @@
 using Zenject;
 
-namespace SolidSpace
+namespace SolidSpace.DependencyInjection
 {
-    public class ZenjectContainerWrapper : IContainer
+    internal class ZenjectContainerWrapper : IDependencyContainer
     {
         private readonly DiContainer _container;
 

@@ -3,7 +3,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using Zenject;
 
-namespace SolidSpace
+namespace SolidSpace.DependencyInjection
 {
     public class SceneContext : MonoBehaviour, IContext
     {
@@ -36,13 +36,14 @@ namespace SolidSpace
             return _container.TryResolve<TContract>();
         }
 
-        public void InstallBindings(DiContainer container)
+        private void InstallBindings(DiContainer container)
         {
             container.Bind<IContext>().FromInstance(this);
             container.Bind<TickableManager>().AsSingle().NonLazy();
             container.Bind<InitializableManager>().AsSingle().NonLazy();
             container.Bind<DisposableManager>().AsSingle().NonLazy();
-            container.Bind(typeof(SceneKernel), typeof(MonoKernel)).To<SceneKernel>().FromNewComponentOn(gameObject).AsSingle().NonLazy();
+            container.Bind(typeof(SceneKernel), typeof(MonoKernel)).To<SceneKernel>()
+                .FromNewComponentOn(gameObject).AsSingle().NonLazy();
 
             var wrappedContainer = new ZenjectContainerWrapper(container);
             foreach (var installer in _installers)
