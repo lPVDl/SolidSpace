@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 906ec737e14544a38ea4a507fa6a558b, type: 3}
   m_Name: GameCycleInstaller
   m_EditorClassIdentifier: 
-  _gameCycleConfig:
-    _invocationOrder: 030000000100000002000000
+  _config:
+    _invocationOrder: 0100000002000000
