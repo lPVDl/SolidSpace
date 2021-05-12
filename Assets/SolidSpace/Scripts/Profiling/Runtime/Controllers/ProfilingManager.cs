@@ -7,7 +7,7 @@ using UnityEngine.Profiling;
 
 namespace SolidSpace.Profiling
 {
-    public partial class ProfilingManager : IProfilingHandler, IProfilingManager
+    public partial class ProfilingManager : IProfilingProcessor, IProfilingManager
     {
         public ProfilingTreeReader Reader => new ProfilingTreeReader(_profilingTree);
         

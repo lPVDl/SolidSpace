@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SolidSpace
+namespace SolidSpace.GameCycle
 {
     [System.Serializable]
-    public class GameCycleConfig
+    internal class Config
     {
         public IReadOnlyList<EControllerType> InvocationOrder => _invocationOrder;
 

@@ -4,31 +4,34 @@ using System.Linq;
 using SolidSpace.Profiling;
 using UnityEngine;
 
-using Debug = UnityEngine.Debug;
-
-namespace SolidSpace
+namespace SolidSpace.GameCycle
 {
-    public partial class GameCycleController : Zenject.IInitializable, IDisposable
+    internal class GameCycleController : Zenject.IInitializable, IDisposable
     {
-        private readonly GameCycleConfig _config;
+        private readonly Config _config;
         private readonly IProfilingManager _profilingManager;
+        private readonly IProfilingProcessor _profilingProcessor;
 
         private List<IController> _controllers;
         private List<string> _names;
 
-        private UpdateHandler _updateHandler;
-        private ProfilingHandle _profiler;
+        private UpdatingBehaviour _updatingBehaviour;
+        private ProfilingHandle _profilingHandle;
 
-        public GameCycleController(List<IController> controllers, GameCycleConfig config, IProfilingManager profilingManager)
+        public GameCycleController(List<IController> controllers, Config config,
+            IProfilingManager profilingManager, IProfilingProcessor profilingProcessor)
         {
             _controllers = controllers;
             _config = config;
             _profilingManager = profilingManager;
+            _profilingProcessor = profilingProcessor;
         }
         
         public void Initialize()
         {
-            _profiler = _profilingManager.GetHandle(this);
+            _profilingProcessor.Initialize();
+            
+            _profilingHandle = _profilingManager.GetHandle(this);
             
             var order = new Dictionary<EControllerType, int>();
             for (var i = 0; i < _config.InvocationOrder.Count; i++)
@@ -42,20 +45,13 @@ namespace SolidSpace
             {
                 foreach (var controller in unordered)
                 {
-                    var message = $"{controller.GetType()} ({controller.ControllerType}) is missing in update order list.";
-                    Debug.LogError(message);
+                    var message = $"{controller.GetType()} ({controller.ControllerType}) is missing in the execution order list.";
+                    throw new InvalidOperationException(message);
                 }
-                
-                throw new InvalidOperationException("Failed to create execution order.");
             }
 
             _controllers = _controllers.OrderBy(i => order[i.ControllerType]).ToList();
             _names = _controllers.Select(i => i.GetType().Name).ToList();
-
-            if (_controllers.Count == 0 || _controllers[0].ControllerType != EControllerType.Profiling)
-            {
-                throw new InvalidOperationException("Profiling controller was not recognized.");
-            }
 
             foreach (var controller in _controllers)
             {
@@ -63,26 +59,26 @@ namespace SolidSpace
             }
 
             var gameObject = new GameObject("GameCycleController");
-            _updateHandler = gameObject.AddComponent<UpdateHandler>();
-            _updateHandler.OnUpdate += OnUpdate;
+            _updatingBehaviour = gameObject.AddComponent<UpdatingBehaviour>();
+            _updatingBehaviour.OnUpdate += OnUpdating;
         }
 
-        private void OnUpdate()
+        private void OnUpdating()
         {
             try
             {
-                _controllers[0].Update();
-
-                for (var i = 1; i < _controllers.Count; i++)
+                for (var i = 0; i < _controllers.Count; i++)
                 {
-                    _profiler.BeginSample(_names[i]);
+                    _profilingHandle.BeginSample(_names[i]);
                     _controllers[i].Update();
-                    _profiler.EndSample(_names[i]);
+                    _profilingHandle.EndSample(_names[i]);
                 }
+                
+                _profilingProcessor.Update();
             }
             catch
             {
-                _updateHandler.OnUpdate -= OnUpdate;
+                _updatingBehaviour.OnUpdate -= OnUpdating;
                 
                 throw;
             }
@@ -90,12 +86,14 @@ namespace SolidSpace
 
         public void Dispose()
         {
-            _updateHandler.OnUpdate -= OnUpdate;
+            _updatingBehaviour.OnUpdate -= OnUpdating;
 
             foreach (var controller in _controllers)
             {
                 controller.FinalizeObject();
             }
+            
+            _profilingProcessor.FinalizeObject();
         }
     }
 }

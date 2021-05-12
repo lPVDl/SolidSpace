@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using SolidSpace.Entities;
 using SolidSpace.Entities.Rendering.Sprites;
+using SolidSpace.GameCycle;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;

@@ -1,3 +1,4 @@
+using SolidSpace.GameCycle;
 using UnityEngine;
 
 namespace SolidSpace.CameraMotion

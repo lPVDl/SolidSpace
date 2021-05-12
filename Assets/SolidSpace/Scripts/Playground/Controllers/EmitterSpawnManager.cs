@@ -2,6 +2,7 @@ using SolidSpace.Entities;
 using SolidSpace.Entities.ParticleEmitters;
 using SolidSpace.Entities.Randomization;
 using SolidSpace.Entities.RepeatTimer;
+using SolidSpace.GameCycle;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;

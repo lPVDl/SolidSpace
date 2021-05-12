@@ -1,18 +1,18 @@
 using System.Collections.Generic;
 using SolidSpace.DataValidation;
 
-namespace SolidSpace
+namespace SolidSpace.GameCycle
 {
-    public class GameCycleConfigValidator : IDataValidator<GameCycleConfig>
+    internal class ConfigValidator : IDataValidator<Config>
     {
         private readonly HashSet<EControllerType> _itemHash;
 
-        public GameCycleConfigValidator()
+        public ConfigValidator()
         {
             _itemHash = new HashSet<EControllerType>();
         }
         
-        public string Validate(GameCycleConfig data)
+        public string Validate(Config data)
         {
             var order = data.InvocationOrder;
             _itemHash.Clear();

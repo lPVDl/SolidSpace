@@ -1,4 +1,4 @@
-namespace SolidSpace
+namespace SolidSpace.GameCycle
 {
     public interface IController
     {

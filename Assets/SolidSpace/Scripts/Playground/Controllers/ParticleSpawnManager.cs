@@ -1,6 +1,7 @@
 using SolidSpace.Entities;
 using SolidSpace.Entities.Physics;
 using SolidSpace.Entities.Rendering.Pixels;
+using SolidSpace.GameCycle;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
