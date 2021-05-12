@@ -1,12 +1,11 @@
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
-using Unity.Mathematics;
 
 namespace SolidSpace.Profiling
 {
     [BurstCompile]
-    public struct ProfilingReadTreeJob : IJob
+    internal struct ProfilingReadTreeJob : IJob
     {
         [ReadOnly] public NativeArray<ushort> inChilds;
         [ReadOnly] public NativeArray<ushort> inSiblings;
@@ -14,7 +13,7 @@ namespace SolidSpace.Profiling
         [ReadOnly] public NativeArray<float> inTimes;
         [ReadOnly] public int2 inReadRange;
 
-        [WriteOnly] public NativeArray<ProfilingNode> outNodes;
+        [WriteOnly] public NativeArray<NativeNode> outNodes;
         [WriteOnly] public NativeArray<int> outNodeCount;
         [WriteOnly] public NativeArray<int> outTotalNodeCount;
 
@@ -38,7 +37,7 @@ namespace SolidSpace.Profiling
 
             if (_nodeIndexLinear >= inReadRange.x && _nodeIndexLinear <= inReadRange.y)
             {
-                outNodes[_bakedNodeCount++] = new ProfilingNode
+                outNodes[_bakedNodeCount++] = new NativeNode
                 {
                     name = inNames[nodeIndex],
                     time = inTimes[nodeIndex],

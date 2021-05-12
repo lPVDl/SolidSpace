@@ -1,21 +1,20 @@
 using System;
 using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Jobs;
-using Unity.Mathematics;
 
 namespace SolidSpace.Profiling
 {
     public struct ProfilingTreeReader
     {
         private ProfilingTree _tree;
-        private NativeArrayUtil _arrayUtil;
 
         public ProfilingTreeReader(ProfilingTree tree)
         {
             _tree = tree;
         }
         
-        public void Read(int offset, int count, List<ProfilingNodeFriendly> result, out int totalNodeCount)
+        public void Read(int offset, int count, List<ProfilingNode> result, out int totalNodeCount)
         {
             if (offset < 0) throw new ArgumentException($"{nameof(offset)} can not be negative");
             if (count < 0) throw new ArgumentException($"{nameof(count)} can not be negative");
@@ -28,9 +27,9 @@ namespace SolidSpace.Profiling
                 inSiblings = _tree.siblings,
                 inTimes = _tree.times,
                 inReadRange = new int2(offset, offset + count - 1),
-                outNodeCount = _arrayUtil.CreateTempJobArray<int>(1),
-                outTotalNodeCount = _arrayUtil.CreateTempJobArray<int>(1),
-                outNodes = _arrayUtil.CreateTempJobArray<ProfilingNode>(count)
+                outNodeCount = CreateTempJobArray<int>(1),
+                outTotalNodeCount = CreateTempJobArray<int>(1),
+                outNodes = CreateTempJobArray<NativeNode>(count)
             };
             job.Schedule().Complete();
             
@@ -41,7 +40,7 @@ namespace SolidSpace.Profiling
             {
                 var node = job.outNodes[i];
                 
-                result.Add(new ProfilingNodeFriendly
+                result.Add(new ProfilingNode
                 {
                     name = _tree.text[node.name],
                     deep = node.deep,
@@ -54,6 +53,11 @@ namespace SolidSpace.Profiling
             job.outNodes.Dispose();
             job.outNodeCount.Dispose();
             job.outTotalNodeCount.Dispose();
+        }
+        
+        private static NativeArray<T> CreateTempJobArray<T>(int length) where T : struct
+        {
+            return new NativeArray<T>(length, Allocator.TempJob);
         }
     }
 }

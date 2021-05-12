@@ -11,7 +11,7 @@ namespace SolidSpace.Profiling
             {
                 var state = job.outState[0];
 
-                if (state.code == EProfilingBuildTreeCode.Success)
+                if (state.code == ETreeBuildCode.Success)
                 {
                     return;
                 }
@@ -19,16 +19,16 @@ namespace SolidSpace.Profiling
                 var stackTrace = BuildPath(names, job, state.stackLast);
                 switch (state.code)
                 {
-                    case EProfilingBuildTreeCode.StackIsNotEmptyAfterJobComplete:
+                    case ETreeBuildCode.StackIsNotEmptyAfterJobComplete:
                         throw new InvalidOperationException($"EndSample() was not called for {stackTrace}");
                     
-                    case EProfilingBuildTreeCode.StackOverflow:
+                    case ETreeBuildCode.StackOverflow:
                         throw new StackOverflowException($"{stackTrace}{names[state.recordLast + 1]} caused stack overflow");
                     
-                    case EProfilingBuildTreeCode.StackUnderflow:
+                    case ETreeBuildCode.StackUnderflow:
                         throw new InvalidOperationException($"BeginSample() is missing for {stackTrace}{names[state.recordLast + 1]}");
                     
-                    case EProfilingBuildTreeCode.NameMismatch:
+                    case ETreeBuildCode.NameMismatch:
                         var newNodePath = BuildPath(names, job, state.stackLast - 1) + names[state.recordLast + 1];
                         throw new InvalidOperationException($"BeginSample({stackTrace}) does not match EndSample({newNodePath})");
                 }

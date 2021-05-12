@@ -1,0 +1,18 @@
+{
+    "name": "SolidSpace.Profiling",
+    "rootNamespace": "",
+    "references": [
+        "GUID:599f3de92652f3542ac6453a0dd4b89e",
+        "GUID:33107023e80e4beb8dbcf98b6c23d4a2",
+        "GUID:2665a8d13d1b3f18800f46e256720795"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

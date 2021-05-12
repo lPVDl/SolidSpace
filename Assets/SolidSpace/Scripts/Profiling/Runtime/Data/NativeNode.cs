@@ -1,8 +1,8 @@
 namespace SolidSpace.Profiling
 {
-    public struct ProfilingNodeFriendly
+    internal struct NativeNode
     {
-        public string name;
+        public int name;
         public int deep;
         public float time;
     }

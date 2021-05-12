@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using SolidSpace.Debugging;
-using SolidSpace.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -11,7 +10,7 @@ namespace SolidSpace.Profiling.Editor
     public class ProfilingTreeWindow : EditorWindow
     {
         private Stopwatch _stopwatch;
-        private List<ProfilingNodeFriendly> _nodes;
+        private List<ProfilingNode> _nodes;
 
         private int _offset;
         private int _yScroll;
@@ -70,7 +69,7 @@ namespace SolidSpace.Profiling.Editor
 
             if (currentEvent.type == EventType.Layout)
             {
-                _nodes ??= new List<ProfilingNodeFriendly>();
+                _nodes ??= new List<ProfilingNode>();
                 var displayCount = position.height / 20;
                 tree.Read(_offset,  (int) Math.Ceiling(displayCount), _nodes, out var totalNodeCount);
 

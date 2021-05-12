@@ -1,0 +1,18 @@
+{
+    "name": "SolidSpace.Profiling.Tests",
+    "rootNamespace": "",
+    "references": [
+        "GUID:8ae4d0576b29f7642b7fa3548741812f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [
+        "Editor"
+    ],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

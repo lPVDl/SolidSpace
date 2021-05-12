@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 
 namespace SolidSpace.Profiling
 {
-    public struct ProfilingRecord
+    internal struct ProfilingRecord
     {
         private const uint TimeSamplesMask = 0x7FFFFFFF;
         private const uint CommandTypeMask = 0x80000000;

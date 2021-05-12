@@ -1,6 +1,6 @@
 namespace SolidSpace.Profiling
 {
-    public enum EProfilingBuildTreeCode
+    public enum ETreeBuildCode
     {
         Success = 1,
         Unknown = 2,

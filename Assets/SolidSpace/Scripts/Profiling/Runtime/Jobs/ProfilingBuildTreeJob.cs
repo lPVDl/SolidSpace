@@ -1,13 +1,13 @@
+using System;
 using System.Runtime.CompilerServices;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
-using Unity.Mathematics;
 
 namespace SolidSpace.Profiling
 {
     [BurstCompile]
-    public struct ProfilingBuildTreeJob : IJob
+    internal struct ProfilingBuildTreeJob : IJob
     {
         [ReadOnly] public NativeArray<ProfilingRecord> inRecords;
         [ReadOnly] public int inRecordCount;
@@ -22,14 +22,14 @@ namespace SolidSpace.Profiling
         [WriteOnly] public NativeArray<ushort> outSiblings;
         [WriteOnly] public NativeArray<ushort> outNames;
         [WriteOnly] public NativeArray<float> outTimes;
-        [WriteOnly] public NativeArray<ProfilingBuiltTreeState> outState;
+        [WriteOnly] public NativeArray<TreeBuildState> outState;
 
         private int _stackLast;
         private int _nodeCount;
         private int _stackMax;
         private long _ticksTotal;
         private float _ticksToMilliseconds;
-        private EProfilingBuildTreeCode _code;
+        private ETreeBuildCode _code;
 
         public void Execute()
         {
@@ -43,12 +43,12 @@ namespace SolidSpace.Profiling
             outNames[0] = 0;
             outSiblings[0] = 0;
             outTimes[0] = 0;
-            outState[0] = new ProfilingBuiltTreeState
+            outState[0] = new TreeBuildState
             {
-                code = EProfilingBuildTreeCode.Unknown
+                code = ETreeBuildCode.Unknown
             };
-            _code = EProfilingBuildTreeCode.Unknown;
-            _stackMax = math.min(parentStack.Length, siblingStack.Length);
+            _code = ETreeBuildCode.Unknown;
+            _stackMax = Math.Min(parentStack.Length, siblingStack.Length);
             
             for (var i = 0; i < inRecordCount; i++)
             {
@@ -65,9 +65,9 @@ namespace SolidSpace.Profiling
                     FlushEndSample(timeSamples, nameHash);
                 }
 
-                if (_code != EProfilingBuildTreeCode.Unknown)
+                if (_code != ETreeBuildCode.Unknown)
                 {
-                    outState[0] = new ProfilingBuiltTreeState
+                    outState[0] = new TreeBuildState
                     {
                         code = _code,
                         stackLast = _stackLast,
@@ -80,9 +80,9 @@ namespace SolidSpace.Profiling
 
             if (_stackLast != 0)
             {
-                outState[0] = new ProfilingBuiltTreeState
+                outState[0] = new TreeBuildState
                 {
-                    code = EProfilingBuildTreeCode.StackIsNotEmptyAfterJobComplete,
+                    code = ETreeBuildCode.StackIsNotEmptyAfterJobComplete,
                     stackLast = _stackLast
                 };
 
@@ -90,9 +90,9 @@ namespace SolidSpace.Profiling
             }
 
             outTimes[0] = _ticksTotal * _ticksToMilliseconds;
-            outState[0] = new ProfilingBuiltTreeState
+            outState[0] = new TreeBuildState
             {
-                code = EProfilingBuildTreeCode.Success
+                code = ETreeBuildCode.Success
             };
         }
 
@@ -101,7 +101,7 @@ namespace SolidSpace.Profiling
         {
             if (_stackLast + 1 >= _stackMax)
             {
-                _code = EProfilingBuildTreeCode.StackOverflow;
+                _code = ETreeBuildCode.StackOverflow;
                 return;
             }
             
@@ -134,13 +134,13 @@ namespace SolidSpace.Profiling
         {
             if (_stackLast == 0)
             {
-                _code = EProfilingBuildTreeCode.StackUnderflow;
+                _code = ETreeBuildCode.StackUnderflow;
                 return;
             }
 
             if (nameHash != nameHashStack[_stackLast])
             {
-                _code = EProfilingBuildTreeCode.NameMismatch;
+                _code = ETreeBuildCode.NameMismatch;
                 return;
             }
 

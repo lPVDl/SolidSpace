@@ -1,8 +1,8 @@
 namespace SolidSpace.Profiling
 {
-    public struct ProfilingBuiltTreeState
+    internal struct TreeBuildState
     {
-        public EProfilingBuildTreeCode code;
+        public ETreeBuildCode code;
         public int stackLast;
         public int recordLast;
     }

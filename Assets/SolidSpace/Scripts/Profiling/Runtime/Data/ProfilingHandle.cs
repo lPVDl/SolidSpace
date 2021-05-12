@@ -4,23 +4,23 @@ namespace SolidSpace.Profiling
 {
     public readonly struct ProfilingHandle
     {
-        private readonly IProfilingHandler _handler;
+        private readonly ProfilingManager _manager;
 
-        public ProfilingHandle(IProfilingHandler handler)
+        public ProfilingHandle(ProfilingManager manager)
         {
-            _handler = handler;
+            _manager = manager;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void BeginSample(string name)
         {
-            _handler.OnBeginSample(name);
+            _manager.OnBeginSample(name);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void EndSample(string name)
         {
-            _handler.OnEndSample(name);
+            _manager.OnEndSample(name);
         }
     }
 }
