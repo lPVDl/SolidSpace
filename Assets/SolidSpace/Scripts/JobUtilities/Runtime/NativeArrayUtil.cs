@@ -2,7 +2,7 @@ using System;
 using System.Runtime.CompilerServices;
 using Unity.Collections;
 
-namespace SolidSpace.Utilities
+namespace SolidSpace.JobUtilities
 {
     public static class NativeArrayUtil
     {

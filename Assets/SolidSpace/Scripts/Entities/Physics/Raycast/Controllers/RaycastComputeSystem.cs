@@ -1,8 +1,8 @@
 using SolidSpace.Entities.Physics.Colliders;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
+using SolidSpace.JobUtilities;
 using SolidSpace.Profiling;
-using SolidSpace.Utilities;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;

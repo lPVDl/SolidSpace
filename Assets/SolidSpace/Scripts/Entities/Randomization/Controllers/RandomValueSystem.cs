@@ -1,6 +1,6 @@
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
-using SolidSpace.Utilities;
+using SolidSpace.JobUtilities;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;

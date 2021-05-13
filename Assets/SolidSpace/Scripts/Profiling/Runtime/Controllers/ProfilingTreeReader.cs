@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using SolidSpace.Utilities;
+using SolidSpace.JobUtilities;
 using Unity.Collections;
 using Unity.Jobs;
 
