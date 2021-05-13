@@ -10,19 +10,19 @@ namespace SolidSpace.Entities
         
         public float DeltaTime { get; private set; }
         
-        public void Initialize()
+        public void InitializeController()
         {
             
         }
 
-        public void Update()
+        public void UpdateController()
         {
             var deltaTime = UnityEngine.Time.deltaTime;
             ElapsedTime += deltaTime;
             DeltaTime = deltaTime;
         }
 
-        public void FinalizeObject()
+        public void FinalizeController()
         {
             
         }

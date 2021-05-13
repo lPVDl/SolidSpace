@@ -24,7 +24,7 @@ namespace SolidSpace.Playground
             _entityManager = entityManager;
         }
         
-        public void Initialize()
+        public void InitializeController()
         {
             var archetype = _entityManager.CreateArchetype(new ComponentType[]
             {
@@ -55,12 +55,12 @@ namespace SolidSpace.Playground
             }
         }
 
-        public void Update()
+        public void UpdateController()
         {
             
         }
 
-        public void FinalizeObject()
+        public void FinalizeController()
         {
             
         }

@@ -56,7 +56,7 @@ namespace SolidSpace.GameCycle
 
             foreach (var controller in _controllers)
             {
-                controller.Initialize();
+                controller.InitializeController();
             }
 
             var gameObject = new GameObject("GameCycleController");
@@ -71,7 +71,7 @@ namespace SolidSpace.GameCycle
                 for (var i = 0; i < _controllers.Count; i++)
                 {
                     _profilingHandle.BeginSample(_names[i]);
-                    _controllers[i].Update();
+                    _controllers[i].UpdateController();
                     _profilingHandle.EndSample(_names[i]);
                 }
                 
@@ -91,7 +91,7 @@ namespace SolidSpace.GameCycle
 
             foreach (var controller in _controllers)
             {
-                controller.FinalizeObject();
+                controller.FinalizeController();
             }
             
             _profilingProcessor.FinalizeObject();

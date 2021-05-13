@@ -18,12 +18,12 @@ namespace SolidSpace.Entities.Physics
             _computeSystem = computeSystem;
         }
 
-        public void Initialize()
+        public void InitializeController()
         {
             
         }
 
-        public void Update()
+        public void UpdateController()
         {
             var hitCount = _computeSystem.HitCount;
             var slice = new NativeSlice<Entity>(_computeSystem.HitEntities, 0, hitCount);
@@ -32,7 +32,7 @@ namespace SolidSpace.Entities.Physics
             SpaceDebug.LogState("RayHit", hitCount);
         }
 
-        public void FinalizeObject()
+        public void FinalizeController()
         {
             
         }

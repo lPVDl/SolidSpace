@@ -19,12 +19,12 @@ namespace SolidSpace.Entities.Despawn
             _entityManager = entityManager;
         }
         
-        public void Initialize()
+        public void InitializeController()
         {
             
         }
 
-        public void Update()
+        public void UpdateController()
         {
             var slice = new NativeSlice<Entity>(_computeSystem.ResultBuffer, 0, _computeSystem.ResultCount);
             
@@ -33,7 +33,7 @@ namespace SolidSpace.Entities.Despawn
             SpaceDebug.LogState("DespawnCount", _computeSystem.ResultCount);
         }
 
-        public void FinalizeObject()
+        public void FinalizeController()
         {
             
         }

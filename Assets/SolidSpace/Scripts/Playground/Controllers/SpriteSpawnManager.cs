@@ -29,7 +29,7 @@ namespace SolidSpace.Playground
             _entityManager = entityManager;
         }
         
-        public void Initialize()
+        public void InitializeController()
         {
             var spriteTexture = _config.SpriteTexture;
             var spriteIndex = _colorSystem.AllocateSpace(spriteTexture.width, spriteTexture.height);
@@ -83,7 +83,7 @@ namespace SolidSpace.Playground
             }
         }
         
-        public void Update()
+        public void UpdateController()
         {
             if (_flushedAtlas)
             {
@@ -95,7 +95,7 @@ namespace SolidSpace.Playground
             File.WriteAllBytes(_config.OutputAtlasPath, _colorSystem.Texture.EncodeToPNG());
         }
 
-        public void FinalizeObject()
+        public void FinalizeController()
         {
             
         }

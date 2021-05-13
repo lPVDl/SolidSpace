@@ -21,7 +21,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             _config = config;
         }
         
-        public void Initialize()
+        public void InitializeController()
         {
             Texture = new Texture2D(_config.AtlasSize, _config.AtlasSize, _config.AtlasFormat, false, true);
             Texture.name = nameof(SpriteColorSystem);
@@ -33,7 +33,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             _commandManager = new AtlasCommandManager(this);
         }
         
-        public void Update()
+        public void UpdateController()
         {
             _commandManager.ProcessCommands();
         }
@@ -53,7 +53,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             _commandManager.ScheduleTextureCopy(source, target);
         }
 
-        public void FinalizeObject()
+        public void FinalizeController()
         {
             _indexManager.Dispose();
             Object.Destroy(Texture);

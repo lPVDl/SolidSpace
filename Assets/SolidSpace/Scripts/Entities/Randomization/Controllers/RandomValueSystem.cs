@@ -24,7 +24,7 @@ namespace SolidSpace.Entities.Randomization
             _entityManager = entityManager;
         }
 
-        public void Initialize()
+        public void InitializeController()
         {
             _randomBuffer = _arrayUtil.CreatePersistentArray<float>(BufferChunkSize);
             for (var i = 0; i < BufferChunkSize; i++)
@@ -34,7 +34,7 @@ namespace SolidSpace.Entities.Randomization
             _query = _entityManager.CreateEntityQuery(typeof(RandomValueComponent));
         }
 
-        public void Update()
+        public void UpdateController()
         {
             var entityCount = _query.CalculateEntityCount();
             var requiredBufferCapacity = Mathf.CeilToInt(entityCount / (float) BufferChunkSize) * BufferChunkSize;
@@ -71,7 +71,7 @@ namespace SolidSpace.Entities.Randomization
             chunks.Dispose();
         }
 
-        public void FinalizeObject()
+        public void FinalizeController()
         {
             _randomBuffer.Dispose();
         }

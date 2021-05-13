@@ -37,7 +37,7 @@ namespace SolidSpace.Entities.Physics
             _profilingManager = profilingManager;
         }
         
-        public void Initialize()
+        public void InitializeController()
         {
             _profiler = _profilingManager.GetHandle(this);
             _query = _entityManager.CreateEntityQuery(new ComponentType[]
@@ -50,7 +50,7 @@ namespace SolidSpace.Entities.Physics
             _worldChunks = _arrayUtil.CreatePersistentArray<ColliderListPointer>(ChunkBufferChunkSize);
         }
 
-        public void Update()
+        public void UpdateController()
         {
             _profiler.BeginSample("Query Chunks");
             var colliderChunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
@@ -175,7 +175,7 @@ namespace SolidSpace.Entities.Physics
             _debugUtil.LogWorld(worldGrid);
         }
 
-        public void FinalizeObject()
+        public void FinalizeController()
         {
             _colliderBounds.Dispose();
             _worldColliders.Dispose();

@@ -42,7 +42,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             _profilingManager = profilingManager;
         }
         
-        public void Initialize()
+        public void InitializeController()
         {
             _profiler = _profilingManager.GetHandle(this);
             _material = new Material(_config.Shader);
@@ -63,7 +63,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             });
         }
 
-        public void Update()
+        public void UpdateController()
         {
             _profiler.BeginSample("Query chunks");
             var chunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
@@ -172,7 +172,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             SpaceDebug.LogState("SpriteMeshCount", meshCount);
         }
 
-        public void FinalizeObject()
+        public void FinalizeController()
         {
             for (var i = 0; i < _meshes.Count; i++)
             {

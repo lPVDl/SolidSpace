@@ -38,7 +38,7 @@ namespace SolidSpace.Playground
             };
         }
         
-        public void Initialize()
+        public void InitializeController()
         {
             for (var i = 0; i < _config.OnStartSpawnCount; i++)
             {
@@ -54,7 +54,7 @@ namespace SolidSpace.Playground
             }
         }
 
-        public void Update()
+        public void UpdateController()
         {
             if (Input.GetMouseButtonDown(0) && GetClickPosition(out var clickPosition))
             {
@@ -140,7 +140,7 @@ namespace SolidSpace.Playground
             }
         }
 
-        public void FinalizeObject()
+        public void FinalizeController()
         {
             
         }

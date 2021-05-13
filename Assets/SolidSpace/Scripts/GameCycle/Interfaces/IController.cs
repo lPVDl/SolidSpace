@@ -4,10 +4,10 @@ namespace SolidSpace.GameCycle
     {
         EControllerType ControllerType { get; }
 
-        void Initialize();
+        void InitializeController();
         
-        void Update();
+        void UpdateController();
         
-        void FinalizeObject();
+        void FinalizeController();
     }
 }

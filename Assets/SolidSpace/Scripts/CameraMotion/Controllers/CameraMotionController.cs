@@ -21,13 +21,13 @@ namespace SolidSpace.CameraMotion
             _cameraTransform = camera.transform;
         }
         
-        public void Initialize()
+        public void InitializeController()
         {
             SetCameraPosition(Vector2.zero);
             _camera.orthographicSize = GetScreenSize().y / 2;
         }
         
-        public void Update()
+        public void UpdateController()
         {
             var mousePosition = GetMousePosition();
             var screenSize = GetScreenSize();
@@ -88,7 +88,7 @@ namespace SolidSpace.CameraMotion
             return new Vector2(Screen.width, Screen.height);
         }
 
-        public void FinalizeObject()
+        public void FinalizeController()
         {
             
         }

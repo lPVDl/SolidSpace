@@ -20,7 +20,7 @@ namespace SolidSpace.Entities.Physics
             _time = time;
         }
         
-        public void Initialize()
+        public void InitializeController()
         {
             _query = _entityManager.CreateEntityQuery(new ComponentType[]
             {
@@ -29,7 +29,7 @@ namespace SolidSpace.Entities.Physics
             });
         }
 
-        public void Update()
+        public void UpdateController()
         {
             var chunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
             var job = new VelocityJob
@@ -43,7 +43,7 @@ namespace SolidSpace.Entities.Physics
             job.Schedule(chunks.Length, 32).Complete();
         }
 
-        public void FinalizeObject()
+        public void FinalizeController()
         {
             
         }

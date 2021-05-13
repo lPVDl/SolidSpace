@@ -23,7 +23,7 @@ namespace SolidSpace.Entities.ParticleEmitters
             _computeSystem = computeSystem;
         }
 
-        public void Initialize()
+        public void InitializeController()
         {
             _particleArchetype = _entityManager.CreateArchetype(new ComponentType[]
             {
@@ -35,7 +35,7 @@ namespace SolidSpace.Entities.ParticleEmitters
             });
         }
 
-        public void Update()
+        public void UpdateController()
         {
             var entityCount = _computeSystem.ParticleCount;
             var particles = _computeSystem.Particles;
@@ -62,7 +62,7 @@ namespace SolidSpace.Entities.ParticleEmitters
             SpaceDebug.LogState("EmittedCount", entityCount);
         }
 
-        public void FinalizeObject()
+        public void FinalizeController()
         {
             
         }
