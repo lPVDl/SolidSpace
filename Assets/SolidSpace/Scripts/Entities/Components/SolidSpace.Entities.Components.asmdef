@@ -1,14 +1,10 @@
 {
-    "name": "SolidSpace.Entities.RepeatTimer",
+    "name": "SolidSpace.Entities.Components",
     "rootNamespace": "",
     "references": [
         "GUID:734d92eba21c94caba915361bd5ac177",
-        "GUID:2665a8d13d1b3f18800f46e256720795",
-        "GUID:f02c9093b2c58494692f122eec172065",
-        "GUID:5c74644554586d740ade4d6510ea99be",
-        "GUID:599f3de92652f3542ac6453a0dd4b89e",
-        "GUID:6b72c6813f5f975478b1052c31858430",
-        "GUID:afa998de7aa27f14e99bacae69a20266"
+        "GUID:d8b63aba1907145bea998dd612889d6b",
+        "GUID:34f73e87bc5622d468c27dd98c003e27"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

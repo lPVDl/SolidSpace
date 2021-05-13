@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Physics.Colliders;
 using SolidSpace.Entities.World;
 using SolidSpace.Mathematics;

@@ -1,4 +1,5 @@
 using SolidSpace.Entities;
+using SolidSpace.Entities.Components;
 using SolidSpace.Entities.ParticleEmitters;
 using SolidSpace.Entities.Randomization;
 using SolidSpace.Entities.RepeatTimer;

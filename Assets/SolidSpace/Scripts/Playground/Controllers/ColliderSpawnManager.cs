@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using SolidSpace.Entities;
+using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Physics;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;

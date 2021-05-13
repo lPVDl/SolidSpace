@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using SolidSpace.Debugging;
+using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Rendering.Utilities;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;

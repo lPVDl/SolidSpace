@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using SolidSpace.Entities;
+using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Rendering.Sprites;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;

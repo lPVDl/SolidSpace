@@ -1,7 +1,7 @@
 using SolidSpace.Mathematics;
 using Unity.Entities;
 
-namespace SolidSpace.Entities.World
+namespace SolidSpace.Entities.Components
 {
     public struct SpriteRenderComponent : IComponentData
     {

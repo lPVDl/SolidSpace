@@ -30,8 +30,6 @@ MonoBehaviour:
     - enabled: 1
       regex: \/(?i)Jobs$
     - enabled: 1
-      regex: \/(?i)Components$
-    - enabled: 1
       regex: \/(?i)Installers$
     - enabled: 1
       regex: \/(?i)Utils$

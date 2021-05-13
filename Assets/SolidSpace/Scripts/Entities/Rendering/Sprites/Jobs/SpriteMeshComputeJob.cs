@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Rendering.Atlases;
 using SolidSpace.Entities.World;
 using Unity.Burst;

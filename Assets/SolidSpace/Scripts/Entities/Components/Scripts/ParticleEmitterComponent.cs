@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-namespace SolidSpace.Entities.World
+namespace SolidSpace.Entities.Components
 {
     public struct ParticleEmitterComponent : IComponentData
     {
