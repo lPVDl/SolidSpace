@@ -1,12 +1,11 @@
 using System.Collections.Generic;
-using SolidSpace.Entities;
 using SolidSpace.Entities.Components;
-using SolidSpace.Entities.Physics;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+
 using Random = UnityEngine.Random;
 
 namespace SolidSpace.Playground
