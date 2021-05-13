@@ -1,8 +1,8 @@
 using SolidSpace.GameCycle;
 
-namespace SolidSpace.Entities
+namespace SolidSpace.Entities.World
 {
-    public class EntityWorldTime : IEntityWorldTime, IController
+    internal class EntityWorldTime : IEntityWorldTime, IController
     {
         public EControllerType ControllerType => EControllerType.EntityTime;
         

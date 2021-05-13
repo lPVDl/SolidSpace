@@ -1,4 +1,5 @@
 using SolidSpace.Debugging;
+using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
 using SolidSpace.Profiling;
 using Unity.Collections;

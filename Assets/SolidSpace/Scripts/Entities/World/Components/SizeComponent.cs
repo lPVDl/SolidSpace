@@ -1,7 +1,7 @@
 using Unity.Entities;
 using Unity.Mathematics;
 
-namespace SolidSpace.Entities
+namespace SolidSpace.Entities.World
 {
     public struct SizeComponent : IComponentData
     {

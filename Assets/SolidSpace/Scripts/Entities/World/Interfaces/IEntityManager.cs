@@ -1,7 +1,7 @@
 using Unity.Collections;
 using Unity.Entities;
 
-namespace SolidSpace.Entities
+namespace SolidSpace.Entities.World
 {
     public interface IEntityManager
     {

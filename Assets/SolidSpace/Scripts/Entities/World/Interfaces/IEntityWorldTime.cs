@@ -1,4 +1,4 @@
-namespace SolidSpace.Entities
+namespace SolidSpace.Entities.World
 {
     public interface IEntityWorldTime
     {

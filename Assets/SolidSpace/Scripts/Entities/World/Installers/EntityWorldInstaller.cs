@@ -1,9 +1,8 @@
 using SolidSpace.DependencyInjection;
-using UnityEngine;
 
-namespace SolidSpace.Entities
+namespace SolidSpace.Entities.World
 {
-    public class EntityWorldInstaller : ScriptableObjectInstaller
+    internal class EntityWorldInstaller : ScriptableObjectInstaller
     {
         public override void InstallBindings(IDependencyContainer container)
         {

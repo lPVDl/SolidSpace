@@ -2,6 +2,7 @@ using SolidSpace.Debugging;
 using SolidSpace.Entities.Despawn;
 using SolidSpace.Entities.Physics;
 using SolidSpace.Entities.Rendering.Pixels;
+using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
 using Unity.Collections;
 using Unity.Entities;

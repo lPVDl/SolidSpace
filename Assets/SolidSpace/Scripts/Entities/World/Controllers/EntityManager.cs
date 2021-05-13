@@ -1,15 +1,15 @@
 using Unity.Collections;
 using Unity.Entities;
 
-namespace SolidSpace.Entities
+namespace SolidSpace.Entities.World
 {
-    public class EntityManager : IEntityManager
+    internal class EntityManager : IEntityManager
     {
-        private readonly World _world;
+        private readonly Unity.Entities.World _world;
 
         public EntityManager()
         {
-            _world = new World("SpaceSimulator");
+            _world = new Unity.Entities.World("SpaceSimulator");
         }
         
         public void DestroyEntity(NativeSlice<Entity> entities)

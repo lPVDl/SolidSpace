@@ -1,5 +1,6 @@
 using SolidSpace.Entities.Randomization;
 using SolidSpace.Entities.RepeatTimer;
+using SolidSpace.Entities.World;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;

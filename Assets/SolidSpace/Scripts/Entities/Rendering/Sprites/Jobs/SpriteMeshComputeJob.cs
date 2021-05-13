@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using SolidSpace.Entities.Rendering.Atlases;
+using SolidSpace.Entities.World;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
