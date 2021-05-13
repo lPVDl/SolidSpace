@@ -3,14 +3,13 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 
-namespace SolidSpace.Entities.Physics
+namespace SolidSpace.Entities.Physics.Colliders
 {
     partial class ColliderBakeSystem
     {
         private struct GridUtil
         {
             private BoundsUtil _boundsUtil;
-            private LegacyNativeArrayUtil _arrayUtil;
 
             public ColliderWorldGrid ComputeGrid(NativeArray<FloatBounds> colliders, int colliderCount, ProfilingHandle profiler)
             {
@@ -47,7 +46,7 @@ namespace SolidSpace.Entities.Physics
             private FloatBounds ComputeWorldBounds(NativeArray<FloatBounds> colliders, int colliderCount, ProfilingHandle profiler)
             {
                 var colliderJobCount = (int)math.ceil(colliderCount / 128f);
-                var colliderJoinedBounds = _arrayUtil.CreateTempJobArray<FloatBounds>(colliderJobCount);
+                var colliderJoinedBounds = NativeArrayUtil.CreateTempJobArray<FloatBounds>(colliderJobCount);
                 var worldBoundsJob = new JoinBoundsJob
                 {
                     inBounds = colliders,
@@ -73,7 +72,7 @@ namespace SolidSpace.Entities.Physics
             private float2 FindMaxColliderSize(NativeArray<FloatBounds> colliders, int colliderCount, ProfilingHandle profiler)
             {
                 var colliderJobCount = (int)math.ceil(colliderCount / 128f);
-                var colliderMaxSizes = _arrayUtil.CreateTempJobArray<float2>(colliderJobCount);
+                var colliderMaxSizes = NativeArrayUtil.CreateTempJobArray<float2>(colliderJobCount);
                 var colliderSizesJob = new FindMaxColliderSizeJob
                 {
                     inBounds = colliders,

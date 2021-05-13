@@ -3,10 +3,10 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 
-namespace SolidSpace.Entities.Physics
+namespace SolidSpace.Entities.Physics.Colliders
 {
     [BurstCompile]
-    public struct FindMaxColliderSizeJob : IJobParallelFor
+    internal struct FindMaxColliderSizeJob : IJobParallelFor
     {
         [ReadOnly] public NativeArray<FloatBounds> inBounds;
         [ReadOnly] public int inBoundsPerJob;

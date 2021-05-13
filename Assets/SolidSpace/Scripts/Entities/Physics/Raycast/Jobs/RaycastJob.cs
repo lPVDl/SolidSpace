@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using SolidSpace.Entities.Physics.Colliders;
 using SolidSpace.Entities.World;
 using Unity.Burst;
 using Unity.Collections;

@@ -3,10 +3,10 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 
-namespace SolidSpace.Entities.Physics
+namespace SolidSpace.Entities.Physics.Colliders
 {
     [BurstCompile]
-    public struct FillNativeArrayJob<T> : IJobParallelFor where T : struct
+    internal struct FillNativeArrayJob<T> : IJobParallelFor where T : struct
     {
         [ReadOnly] public T inValue;
         [ReadOnly] public int inItemPerJob;

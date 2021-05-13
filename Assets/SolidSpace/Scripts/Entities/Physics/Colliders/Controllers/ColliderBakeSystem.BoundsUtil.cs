@@ -1,9 +1,9 @@
 using Unity.Collections;
 using Unity.Mathematics;
 
-namespace SolidSpace.Entities.Physics
+namespace SolidSpace.Entities.Physics.Colliders
 {
-    public partial class ColliderBakeSystem
+    partial class ColliderBakeSystem
     {
         private struct BoundsUtil
         {

@@ -1,8 +1,8 @@
 using SolidSpace.DependencyInjection;
 
-namespace SolidSpace.Entities.Physics
+namespace SolidSpace.Entities.Physics.Colliders
 {
-    public class CollidersInstaller : ScriptableObjectInstaller
+    internal class CollidersInstaller : ScriptableObjectInstaller
     {
         public override void InstallBindings(IDependencyContainer container)
         {

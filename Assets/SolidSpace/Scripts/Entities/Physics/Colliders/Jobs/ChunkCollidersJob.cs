@@ -3,10 +3,10 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 
-namespace SolidSpace.Entities.Physics
+namespace SolidSpace.Entities.Physics.Colliders
 {
     [BurstCompile]
-    public struct ChunkCollidersJob : IJobParallelFor
+    internal struct ChunkCollidersJob : IJobParallelFor
     {
         [ReadOnly, NativeDisableParallelForRestriction] public NativeArray<FloatBounds> inColliderBounds;
         [ReadOnly] public int inColliderTotalCount;

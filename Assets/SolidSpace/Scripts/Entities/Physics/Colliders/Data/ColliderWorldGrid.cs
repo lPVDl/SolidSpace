@@ -1,6 +1,6 @@
 using Unity.Mathematics;
 
-namespace SolidSpace.Entities.Physics
+namespace SolidSpace.Entities.Physics.Colliders
 {
     public struct ColliderWorldGrid
     {

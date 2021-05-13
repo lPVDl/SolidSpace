@@ -1,6 +1,6 @@
 using Unity.Collections;
 
-namespace SolidSpace.Entities.Physics
+namespace SolidSpace.Entities.Physics.Colliders
 {
     public struct ColliderWorld
     {

@@ -1,6 +1,6 @@
-namespace SolidSpace.Entities.Physics
+namespace SolidSpace.Entities.Physics.Colliders
 {
-    public struct ChunkedCollider
+    internal struct ChunkedCollider
     {
         public ushort colliderIndex;
         public ushort chunkIndex;

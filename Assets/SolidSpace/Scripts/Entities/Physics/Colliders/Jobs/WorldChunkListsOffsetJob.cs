@@ -2,10 +2,10 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 
-namespace SolidSpace.Entities.Physics
+namespace SolidSpace.Entities.Physics.Colliders
 {
     [BurstCompile]
-    public struct WorldChunkListsOffsetJob : IJob
+    internal struct WorldChunkListsOffsetJob : IJob
     {
         [ReadOnly] public int inListCount;
         

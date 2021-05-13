@@ -2,10 +2,10 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 
-namespace SolidSpace.Entities.Physics
+namespace SolidSpace.Entities.Physics.Colliders
 {
     [BurstCompile]
-    public struct WorldChunkListsFillJob : IJob
+    internal struct WorldChunkListsFillJob : IJob
     {
         [ReadOnly] public NativeArray<ChunkedCollider> inColliders;
         [ReadOnly] public int inColliderBatchCapacity;

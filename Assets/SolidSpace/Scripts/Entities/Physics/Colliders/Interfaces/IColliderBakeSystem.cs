@@ -1,4 +1,4 @@
-namespace SolidSpace.Entities.Physics
+namespace SolidSpace.Entities.Physics.Colliders
 {
     public interface IColliderBakeSystem
     {

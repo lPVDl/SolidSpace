@@ -4,10 +4,10 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
-namespace SolidSpace.Entities.Physics
+namespace SolidSpace.Entities.Physics.Colliders
 {
     [BurstCompile]
-    public struct ComputeBoundsJob : IJobParallelFor
+    internal struct ComputeBoundsJob : IJobParallelFor
     {
         [ReadOnly] public NativeArray<ArchetypeChunk> colliderChunks;
         [ReadOnly] public NativeArray<int> boundsWriteOffsets;
