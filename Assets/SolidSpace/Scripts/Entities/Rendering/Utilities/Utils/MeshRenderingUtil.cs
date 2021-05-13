@@ -3,7 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-namespace SolidSpace.Entities.Rendering
+namespace SolidSpace.Entities.Rendering.Utilities
 {
     public struct MeshRenderingUtil
     {

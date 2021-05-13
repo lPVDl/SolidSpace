@@ -1,4 +1,5 @@
 using SolidSpace.JobUtilities;
+using SolidSpace.Mathematics;
 using SolidSpace.Profiling;
 using Unity.Collections;
 using Unity.Jobs;

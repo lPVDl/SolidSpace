@@ -1,3 +1,4 @@
+using SolidSpace.Mathematics;
 using Unity.Collections;
 using Unity.Mathematics;
 

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace SolidSpace.Entities.Rendering
+namespace SolidSpace.Entities.Rendering.Utilities
 {
     public struct MeshDrawingData
     {

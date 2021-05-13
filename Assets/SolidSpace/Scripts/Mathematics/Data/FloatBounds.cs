@@ -1,4 +1,4 @@
-namespace SolidSpace.Entities.Physics.Colliders
+namespace SolidSpace.Mathematics
 {
     public struct FloatBounds
     {

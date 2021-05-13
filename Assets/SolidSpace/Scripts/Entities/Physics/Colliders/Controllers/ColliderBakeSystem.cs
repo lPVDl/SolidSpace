@@ -2,6 +2,7 @@ using SolidSpace.Debugging;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
 using SolidSpace.JobUtilities;
+using SolidSpace.Mathematics;
 using SolidSpace.Profiling;
 using Unity.Collections;
 using Unity.Entities;
