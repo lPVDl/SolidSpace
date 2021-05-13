@@ -1,3 +1,4 @@
+using SolidSpace.GameCycle;
 using SolidSpace.Profiling;
 using Unity.Collections;
 using Unity.Entities;
@@ -6,11 +7,11 @@ using UnityEngine;
 
 namespace SolidSpace.Entities.Despawn
 {
-    public class DespawnComputeSystem : IEntitySystem, IDespawnComputeSystem
+    public class DespawnComputeSystem : IController, IDespawnComputeSystem
     {
         private const int IterationCycle = 8;
 
-        public ESystemType SystemType => ESystemType.Compute;
+        public EControllerType ControllerType => EControllerType.EntityCompute;
 
         public NativeArray<Entity> ResultBuffer => _entities;
         public int ResultCount => _entityCount[0];
@@ -107,7 +108,7 @@ namespace SolidSpace.Entities.Despawn
             computeOffsets.Dispose();
         }
 
-        public void FinalizeSystem()
+        public void FinalizeObject()
         {
             _entities.Dispose();
             _entityCount.Dispose();

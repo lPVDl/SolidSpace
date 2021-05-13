@@ -1,3 +1,4 @@
+using SolidSpace.GameCycle;
 using SolidSpace.Profiling;
 using Unity.Collections;
 using Unity.Entities;
@@ -5,11 +6,11 @@ using Unity.Jobs;
 
 namespace SolidSpace.Entities.Physics
 {
-    public class RaycastComputeSystem : IEntitySystem, IRaycastComputeSystem
+    public class RaycastComputeSystem : IController, IRaycastComputeSystem
     {
         private const int EntityBufferChunkSize = 4096;
 
-        public ESystemType SystemType => ESystemType.Compute;
+        public EControllerType ControllerType => EControllerType.EntityCompute;
         
         public NativeArray<Entity> HitEntities => _entityBuffer;
         public int HitCount => _entityCount[0];
@@ -103,7 +104,7 @@ namespace SolidSpace.Entities.Physics
             _profiler.EndSample("Dispose arrays");
         }
 
-        public void FinalizeSystem()
+        public void FinalizeObject()
         {
             _entityBuffer.Dispose();
             _entityCount.Dispose();

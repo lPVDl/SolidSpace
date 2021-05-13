@@ -1,4 +1,5 @@
 using SolidSpace.Debugging;
+using SolidSpace.GameCycle;
 using SolidSpace.Profiling;
 using Unity.Collections;
 using Unity.Entities;
@@ -7,9 +8,9 @@ using Unity.Mathematics;
 
 namespace SolidSpace.Entities.Physics
 {
-    public partial class ColliderBakeSystem : IEntitySystem, IColliderBakeSystem
+    public partial class ColliderBakeSystem : IController, IColliderBakeSystem
     {
-        public ESystemType SystemType => ESystemType.Compute;
+        public EControllerType ControllerType => EControllerType.EntityCompute;
         
         public ColliderWorld ColliderWorld { get; private set; }
         
@@ -174,7 +175,7 @@ namespace SolidSpace.Entities.Physics
             _debugUtil.LogWorld(worldGrid);
         }
 
-        public void FinalizeSystem()
+        public void FinalizeObject()
         {
             _colliderBounds.Dispose();
             _worldColliders.Dispose();

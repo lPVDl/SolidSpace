@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using SolidSpace.Debugging;
+using SolidSpace.GameCycle;
 using SolidSpace.Profiling;
 using Unity.Collections;
 using Unity.Entities;
@@ -10,9 +11,9 @@ using UnityEngine.Rendering;
 
 namespace SolidSpace.Entities.Rendering.Pixels
 {
-    public class PixelMeshSystem : IEntitySystem
+    public class PixelMeshSystem : IController
     {
-        public ESystemType SystemType => ESystemType.Render;
+        public EControllerType ControllerType => EControllerType.EntityRender;
 
         private readonly IEntityManager _entityManager;
         private readonly PixelMeshSystemConfig _config;
@@ -162,7 +163,7 @@ namespace SolidSpace.Entities.Rendering.Pixels
             SpaceDebug.LogState("ParticleMeshCount", meshCount);
         }
 
-        public void FinalizeSystem()
+        public void FinalizeObject()
         {
             for (var i = 0; i < _meshes.Count; i++)
             {

@@ -1,12 +1,13 @@
 using SolidSpace.Entities.Rendering.Atlases;
+using SolidSpace.GameCycle;
 using Unity.Collections;
 using UnityEngine;
 
 namespace SolidSpace.Entities.Rendering.Sprites
 {
-    public class SpriteColorSystem : ISpriteColorSystem, IEntitySystem
+    public class SpriteColorSystem : ISpriteColorSystem, IController
     {
-        public ESystemType SystemType => ESystemType.Command;
+        public EControllerType ControllerType => EControllerType.EntityCommand;
         public Texture2D Texture { get; private set; }
         public NativeList<AtlasChunk> Chunks => _indexManager.Chunks;
         
@@ -52,7 +53,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             _commandManager.ScheduleTextureCopy(source, target);
         }
 
-        public void FinalizeSystem()
+        public void FinalizeObject()
         {
             _indexManager.Dispose();
             Object.Destroy(Texture);

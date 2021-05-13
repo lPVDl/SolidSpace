@@ -1,12 +1,13 @@
+using SolidSpace.GameCycle;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
 namespace SolidSpace.Entities.Physics
 {
-    public class VelocitySystem : IEntitySystem
+    public class VelocitySystem : IController
     {
-        public ESystemType SystemType => ESystemType.Compute;
+        public EControllerType ControllerType => EControllerType.EntityCompute;
         
         private readonly IEntityManager _entityManager;
         private readonly IEntityWorldTime _time;
@@ -42,7 +43,7 @@ namespace SolidSpace.Entities.Physics
             job.Schedule(chunks.Length, 32).Complete();
         }
 
-        public void FinalizeSystem()
+        public void FinalizeObject()
         {
             
         }

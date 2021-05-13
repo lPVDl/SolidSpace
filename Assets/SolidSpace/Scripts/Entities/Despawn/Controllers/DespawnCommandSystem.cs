@@ -1,13 +1,14 @@
 using SolidSpace.Debugging;
+using SolidSpace.GameCycle;
 using Unity.Collections;
 using Unity.Entities;
 
 namespace SolidSpace.Entities.Despawn
 {
     [UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = false, OrderLast = true)]
-    public class DespawnCommandSystem : IEntitySystem
+    public class DespawnCommandSystem : IController
     {
-        public ESystemType SystemType => ESystemType.Command;
+        public EControllerType ControllerType => EControllerType.EntityCommand;
         
         private readonly IDespawnComputeSystem _computeSystem;
         private readonly IEntityManager _entityManager;
@@ -32,7 +33,7 @@ namespace SolidSpace.Entities.Despawn
             SpaceDebug.LogState("DespawnCount", _computeSystem.ResultCount);
         }
 
-        public void FinalizeSystem()
+        public void FinalizeObject()
         {
             
         }

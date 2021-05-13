@@ -1,12 +1,13 @@
 using SolidSpace.Debugging;
+using SolidSpace.GameCycle;
 using Unity.Collections;
 using Unity.Entities;
 
 namespace SolidSpace.Entities.Physics
 {
-    public class RaycastCommandSystem : IEntitySystem
+    public class RaycastCommandSystem : IController
     {
-        public ESystemType SystemType => ESystemType.Command;
+        public EControllerType ControllerType => EControllerType.EntityCommand;
 
         private readonly IEntityManager _entityManager;
         private readonly IRaycastComputeSystem _computeSystem;
@@ -31,7 +32,7 @@ namespace SolidSpace.Entities.Physics
             SpaceDebug.LogState("RayHit", hitCount);
         }
 
-        public void FinalizeSystem()
+        public void FinalizeObject()
         {
             
         }

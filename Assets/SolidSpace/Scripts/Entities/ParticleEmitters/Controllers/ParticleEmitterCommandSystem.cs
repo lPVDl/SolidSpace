@@ -2,14 +2,15 @@ using SolidSpace.Debugging;
 using SolidSpace.Entities.Despawn;
 using SolidSpace.Entities.Physics;
 using SolidSpace.Entities.Rendering.Pixels;
+using SolidSpace.GameCycle;
 using Unity.Collections;
 using Unity.Entities;
 
 namespace SolidSpace.Entities.ParticleEmitters
 {
-    public class ParticleEmitterCommandSystem : IEntitySystem
+    public class ParticleEmitterCommandSystem : IController
     {
-        public ESystemType SystemType => ESystemType.Command;
+        public EControllerType ControllerType => EControllerType.EntityCommand;
         
         private readonly IEntityManager _entityManager;
         private readonly IParticleEmitterComputeSystem _computeSystem;
@@ -61,7 +62,7 @@ namespace SolidSpace.Entities.ParticleEmitters
             SpaceDebug.LogState("EmittedCount", entityCount);
         }
 
-        public void FinalizeSystem()
+        public void FinalizeObject()
         {
             
         }

@@ -1,8 +1,10 @@
+using SolidSpace.GameCycle;
+
 namespace SolidSpace.Entities
 {
-    public class EntityWorldTime : IEntityWorldTime, IEntitySystem
+    public class EntityWorldTime : IEntityWorldTime, IController
     {
-        public ESystemType SystemType => ESystemType.Time;
+        public EControllerType ControllerType => EControllerType.EntityTime;
         
         public double ElapsedTime { get; private set; }
         
@@ -20,7 +22,7 @@ namespace SolidSpace.Entities
             DeltaTime = deltaTime;
         }
 
-        public void FinalizeSystem()
+        public void FinalizeObject()
         {
             
         }

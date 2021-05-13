@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using SolidSpace.Debugging;
+using SolidSpace.GameCycle;
 using SolidSpace.Profiling;
 using Unity.Collections;
 using Unity.Entities;
@@ -10,11 +11,11 @@ using UnityEngine.Rendering;
 
 namespace SolidSpace.Entities.Rendering.Sprites
 {
-    public class SpriteMeshSystem : IEntitySystem
+    public class SpriteMeshSystem : IController
     {
         private static readonly int MainTexturePropertyId = Shader.PropertyToID("_MainTex");
         
-        public ESystemType SystemType => ESystemType.Render;
+        public EControllerType ControllerType => EControllerType.EntityRender;
         
         private readonly IEntityManager _entityManager;
         private readonly SpriteMeshSystemConfig _config;
@@ -171,7 +172,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             SpaceDebug.LogState("SpriteMeshCount", meshCount);
         }
 
-        public void FinalizeSystem()
+        public void FinalizeObject()
         {
             for (var i = 0; i < _meshes.Count; i++)
             {

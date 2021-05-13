@@ -1,13 +1,14 @@
 using SolidSpace.Debugging;
+using SolidSpace.GameCycle;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
 namespace SolidSpace.Entities.RepeatTimer
 {
-    public class RepeatTimerSystem : IEntitySystem
+    public class RepeatTimerSystem : IController
     {
-        public ESystemType SystemType => ESystemType.Compute;
+        public EControllerType ControllerType => EControllerType.EntityCompute;
 
         private readonly IEntityManager _entityManager;
         private readonly IEntityWorldTime _time;
@@ -43,7 +44,7 @@ namespace SolidSpace.Entities.RepeatTimer
             chunks.Dispose();
         }
 
-        public void FinalizeSystem()
+        public void FinalizeObject()
         {
             
         }

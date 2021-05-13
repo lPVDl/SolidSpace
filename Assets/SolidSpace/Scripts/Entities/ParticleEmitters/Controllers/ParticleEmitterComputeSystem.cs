@@ -1,5 +1,6 @@
 using SolidSpace.Entities.Randomization;
 using SolidSpace.Entities.RepeatTimer;
+using SolidSpace.GameCycle;
 using SolidSpace.Profiling;
 using Unity.Collections;
 using Unity.Entities;
@@ -7,11 +8,11 @@ using Unity.Jobs;
 
 namespace SolidSpace.Entities.ParticleEmitters
 {
-    public class ParticleEmitterComputeSystem : IEntitySystem, IParticleEmitterComputeSystem
+    public class ParticleEmitterComputeSystem : IController, IParticleEmitterComputeSystem
     {
         private const int BufferChunkSize = 128;
 
-        public ESystemType SystemType => ESystemType.Compute;
+        public EControllerType ControllerType => EControllerType.EntityCompute;
 
         public NativeArray<ParticleEmitterData> Particles => _particles;
         public int ParticleCount => _particleCount[0];
@@ -99,7 +100,7 @@ namespace SolidSpace.Entities.ParticleEmitters
             counts.Dispose();
         }
 
-        public void FinalizeSystem()
+        public void FinalizeObject()
         {
             _particles.Dispose();
             _particleCount.Dispose();

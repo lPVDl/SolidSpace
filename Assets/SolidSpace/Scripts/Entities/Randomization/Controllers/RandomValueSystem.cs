@@ -1,3 +1,4 @@
+using SolidSpace.GameCycle;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -5,11 +6,11 @@ using UnityEngine;
 
 namespace SolidSpace.Entities.Randomization
 {
-    public class RandomValueSystem : IEntitySystem
+    public class RandomValueSystem : IController
     {
         private const int BufferChunkSize = 1024;
 
-        public ESystemType SystemType => ESystemType.Compute;
+        public EControllerType ControllerType => EControllerType.EntityCompute;
 
         private readonly IEntityManager _entityManager;
         
@@ -70,7 +71,7 @@ namespace SolidSpace.Entities.Randomization
             chunks.Dispose();
         }
 
-        public void FinalizeSystem()
+        public void FinalizeObject()
         {
             _randomBuffer.Dispose();
         }
