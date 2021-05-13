@@ -4,7 +4,7 @@ using UnityEngine;
 namespace SolidSpace.Entities.Rendering.Pixels
 {
     [Serializable]
-    public class PixelMeshSystemConfig
+    internal class PixelMeshSystemConfig
     {
         public Shader Shader => _shader;
         

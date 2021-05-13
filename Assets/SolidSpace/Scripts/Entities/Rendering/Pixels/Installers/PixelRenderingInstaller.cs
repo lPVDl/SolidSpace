@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace SolidSpace.Entities.Rendering.Pixels
 {
-    public class PixelRenderingInstaller : ScriptableObjectInstaller
+    internal class PixelRenderingInstaller : ScriptableObjectInstaller
     {
         [SerializeField] private PixelMeshSystemConfig _pixelMeshSystemConfig;
         

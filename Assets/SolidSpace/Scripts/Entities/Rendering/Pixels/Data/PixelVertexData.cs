@@ -4,7 +4,7 @@ using Unity.Mathematics;
 namespace SolidSpace.Entities.Rendering.Pixels
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct PixelVertexData
+    internal struct PixelVertexData
     {
         public float2 position;
     }

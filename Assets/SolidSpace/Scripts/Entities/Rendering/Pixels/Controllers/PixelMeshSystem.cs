@@ -3,6 +3,7 @@ using SolidSpace.Debugging;
 using SolidSpace.Entities.Rendering.Utilities;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
+using SolidSpace.JobUtilities;
 using SolidSpace.Profiling;
 using Unity.Collections;
 using Unity.Entities;
@@ -13,7 +14,7 @@ using UnityEngine.Rendering;
 
 namespace SolidSpace.Entities.Rendering.Pixels
 {
-    public class PixelMeshSystem : IController
+    internal class PixelMeshSystem : IController
     {
         public EControllerType ControllerType => EControllerType.EntityRender;
 
@@ -23,7 +24,6 @@ namespace SolidSpace.Entities.Rendering.Pixels
 
         private EntityQuery _query;
         private SquareVertices _square;
-        private LegacyNativeArrayUtil _arrayUtil;
         private MeshRenderingUtil _meshUtil;
         private VertexAttributeDescriptor[] _meshLayout;
         private List<Mesh> _meshes;
@@ -74,8 +74,8 @@ namespace SolidSpace.Entities.Rendering.Pixels
             
             _profiler.BeginSample("Compute Offsets");
             var chunkTotal = chunks.Length;
-            var chunkPerMesh = _arrayUtil.CreateTempJobArray<int>(chunkTotal);
-            var particlePerMesh = _arrayUtil.CreateTempJobArray<int>(chunkTotal);
+            var chunkPerMesh = NativeArrayUtil.CreateTempJobArray<int>(chunkTotal);
+            var particlePerMesh = NativeArrayUtil.CreateTempJobArray<int>(chunkTotal);
             var totalParticleCount = 0;
             var meshCount = 0;
             var chunkIndex = 0;
@@ -92,7 +92,7 @@ namespace SolidSpace.Entities.Rendering.Pixels
 
             _profiler.BeginSample("Compute Meshes");
             var meshDataArray = Mesh.AllocateWritableMeshData(meshCount);
-            var computeJobHandles = _arrayUtil.CreateTempJobArray<JobHandle>(meshCount);
+            var computeJobHandles = NativeArrayUtil.CreateTempJobArray<JobHandle>(meshCount);
             var positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true);
             var chunkOffset = 0;
             for (var i = 0; i < meshCount; i++)

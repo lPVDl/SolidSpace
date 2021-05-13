@@ -2,7 +2,7 @@ using Unity.Mathematics;
 
 namespace SolidSpace.Entities.Rendering.Pixels
 {
-    public struct SquareVertices
+    internal struct SquareVertices
     {
         public float2 point0;
         public float2 point1;

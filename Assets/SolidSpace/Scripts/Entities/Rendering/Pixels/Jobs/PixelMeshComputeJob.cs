@@ -8,7 +8,7 @@ using Unity.Jobs;
 namespace SolidSpace.Entities.Rendering.Pixels
 {
     [BurstCompile]
-    public struct PixelMeshComputeJob : IJob
+    internal struct PixelMeshComputeJob : IJob
     {
         [ReadOnly, NativeDisableContainerSafetyRestriction] public NativeArray<ArchetypeChunk> inChunks;
         [ReadOnly] public int inFirstChunkIndex;
