@@ -2,7 +2,7 @@ using SolidSpace.DependencyInjection;
 
 namespace SolidSpace.Entities.Randomization
 {
-    public class RandomizationInstaller : ScriptableObjectInstaller
+    internal class RandomizationInstaller : ScriptableObjectInstaller
     {
         public override void InstallBindings(IDependencyContainer container)
         {

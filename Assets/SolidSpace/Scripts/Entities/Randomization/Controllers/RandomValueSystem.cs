@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace SolidSpace.Entities.Randomization
 {
-    public class RandomValueSystem : IController
+    internal class RandomValueSystem : IController
     {
         private const int BufferChunkSize = 1024;
 
@@ -18,7 +18,6 @@ namespace SolidSpace.Entities.Randomization
         private NativeArray<float> _randomBuffer;
         private int _randomIndex;
         private EntityQuery _query;
-        private NativeArrayUtil _arrayUtil;
 
         public RandomValueSystem(IEntityManager entityManager)
         {
@@ -27,7 +26,7 @@ namespace SolidSpace.Entities.Randomization
 
         public void InitializeController()
         {
-            _randomBuffer = _arrayUtil.CreatePersistentArray<float>(BufferChunkSize);
+            _randomBuffer = CreatePersistentArray<float>(BufferChunkSize);
             for (var i = 0; i < BufferChunkSize; i++)
             {
                 _randomBuffer[i] = Random.value;
@@ -41,7 +40,7 @@ namespace SolidSpace.Entities.Randomization
             var requiredBufferCapacity = Mathf.CeilToInt(entityCount / (float) BufferChunkSize) * BufferChunkSize;
             if (_randomBuffer.Length < requiredBufferCapacity)
             {
-                var newRandomBuffer = _arrayUtil.CreatePersistentArray<float>(requiredBufferCapacity);
+                var newRandomBuffer = CreatePersistentArray<float>(requiredBufferCapacity);
                 for (var i = 0; i < _randomBuffer.Length; i++)
                 {
                     newRandomBuffer[i] = _randomBuffer[i];
@@ -75,6 +74,11 @@ namespace SolidSpace.Entities.Randomization
         public void FinalizeController()
         {
             _randomBuffer.Dispose();
+        }
+        
+        public NativeArray<T> CreatePersistentArray<T>(int length) where T : struct
+        {
+            return new NativeArray<T>(length, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
         }
     }
 }

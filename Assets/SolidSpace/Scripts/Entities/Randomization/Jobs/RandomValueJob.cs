@@ -6,7 +6,7 @@ using Unity.Jobs;
 namespace SolidSpace.Entities.Randomization
 {
     [BurstCompile]
-    public struct RandomValueJob : IJobParallelFor
+    internal struct RandomValueJob : IJobParallelFor
     {
         [ReadOnly] public NativeArray<ArchetypeChunk> chunks;
         [ReadOnly] public NativeArray<float> randomValues;
