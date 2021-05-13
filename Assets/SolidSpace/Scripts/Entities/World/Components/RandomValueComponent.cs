@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-namespace SolidSpace.Entities.Randomization
+namespace SolidSpace.Entities.World
 {
     public struct RandomValueComponent : IComponentData
     {

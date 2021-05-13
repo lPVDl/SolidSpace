@@ -1,7 +1,4 @@
 using SolidSpace.Debugging;
-using SolidSpace.Entities.Despawn;
-using SolidSpace.Entities.Physics;
-using SolidSpace.Entities.Rendering.Pixels;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
 using Unity.Collections;
@@ -9,7 +6,7 @@ using Unity.Entities;
 
 namespace SolidSpace.Entities.ParticleEmitters
 {
-    public class ParticleEmitterCommandSystem : IController
+    internal class ParticleEmitterCommandSystem : IController
     {
         public EControllerType ControllerType => EControllerType.EntityCommand;
         
@@ -29,10 +26,13 @@ namespace SolidSpace.Entities.ParticleEmitters
             _particleArchetype = _entityManager.CreateArchetype(new ComponentType[]
             {
                 typeof(PositionComponent),
-                typeof(VelocityComponent),
+                // TODO : Fix reference!
+                // typeof(VelocityComponent),
                 typeof(DespawnComponent),
-                typeof(RaycastComponent),
-                typeof(PixelRenderComponent)
+                // TODO : Fix reference!
+                // typeof(RaycastComponent),
+                // TODO : Fix reference!
+                // typeof(PixelRenderComponent)
             });
         }
 
@@ -50,10 +50,11 @@ namespace SolidSpace.Entities.ParticleEmitters
                 {
                     value = particle.position
                 });
-                _entityManager.SetComponentData(entity, new VelocityComponent
-                {
-                    value = particle.velocity
-                });
+                // TODO : Fix reference!
+                // _entityManager.SetComponentData(entity, new VelocityComponent
+                // {
+                //     value = particle.velocity
+                // });
                 _entityManager.SetComponentData(entity, new DespawnComponent
                 {
                     despawnTime = particle.despawnTime

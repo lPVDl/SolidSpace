@@ -2,7 +2,7 @@ using SolidSpace.DependencyInjection;
 
 namespace SolidSpace.Entities.ParticleEmitters
 {
-    public class ParticleEmittersInstaller : ScriptableObjectInstaller
+    internal class ParticleEmittersInstaller : ScriptableObjectInstaller
     {
         public override void InstallBindings(IDependencyContainer container)
         {

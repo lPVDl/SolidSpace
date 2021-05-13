@@ -1,5 +1,3 @@
-using SolidSpace.Entities.Randomization;
-using SolidSpace.Entities.RepeatTimer;
 using SolidSpace.Entities.World;
 using Unity.Burst;
 using Unity.Collections;
@@ -10,7 +8,7 @@ using Unity.Mathematics;
 namespace SolidSpace.Entities.ParticleEmitters
 {
     [BurstCompile]
-    public struct ParticleEmitterComputeJob : IJobParallelFor
+    internal struct ParticleEmitterComputeJob : IJobParallelFor
     {
         private const float TwoPI = (float)(2 * math.PI_DBL);
         
@@ -18,7 +16,7 @@ namespace SolidSpace.Entities.ParticleEmitters
         [ReadOnly] public NativeArray<int> inWriteOffsets;
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
         [ReadOnly] public ComponentTypeHandle<RandomValueComponent> randomHandle;
-        [ReadOnly] public ComponentTypeHandle<ParticleEmitterComponent> emittterHandle;
+        [ReadOnly] public ComponentTypeHandle<ParticleEmitterComponent> emitterHandle;
         [ReadOnly] public float inTime;
 
         public ComponentTypeHandle<RepeatTimerComponent> timerHandle;
@@ -31,7 +29,7 @@ namespace SolidSpace.Entities.ParticleEmitters
             var chunk = inChunks[chunkIndex];
             var writeOffset = inWriteOffsets[chunkIndex];
             var entityCount = chunk.Count;
-            var emitters = chunk.GetNativeArray(emittterHandle);
+            var emitters = chunk.GetNativeArray(emitterHandle);
             var positions = chunk.GetNativeArray(positionHandle);
             var timers = chunk.GetNativeArray(timerHandle);
             var randoms = chunk.GetNativeArray(randomHandle);
