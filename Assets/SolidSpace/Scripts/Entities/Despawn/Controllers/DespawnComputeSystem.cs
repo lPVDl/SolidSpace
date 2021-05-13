@@ -39,8 +39,8 @@ namespace SolidSpace.Entities.Despawn
             _profiler = _profilingManager.GetHandle(this);
             _query = _entityManager.CreateEntityQuery(typeof(DespawnComponent));
             _lastOffset = -1;
-            _entities = CreatePersistentArray<Entity>(4096);
-            _entityCount = CreatePersistentArray<int>(1);
+            _entities = NativeArrayUtil.CreatePersistentArray<Entity>(4096);
+            _entityCount = NativeArrayUtil.CreatePersistentArray<int>(1);
             _entityCount[0] = 0;
         }
 
@@ -54,9 +54,9 @@ namespace SolidSpace.Entities.Despawn
             _lastOffset = (_lastOffset + 1) % IterationCycle;
             var rawChunks = _query.CreateArchetypeChunkArray(Allocator.Temp);
             var computeChunkCount = Mathf.CeilToInt((chunkCount - _lastOffset) / (float) IterationCycle);
-            var computeChunks = CreateTempJobArray<ArchetypeChunk>(computeChunkCount);
-            var computeOffsets = CreateTempJobArray<int>(computeChunkCount);
-            var countsBuffer = CreateTempJobArray<int>(computeChunkCount);
+            var computeChunks = NativeArrayUtil.CreateTempJobArray<ArchetypeChunk>(computeChunkCount);
+            var computeOffsets = NativeArrayUtil.CreateTempJobArray<int>(computeChunkCount);
+            var countsBuffer = NativeArrayUtil.CreateTempJobArray<int>(computeChunkCount);
             var entityCount = 0;
             var chunkIndex = 0;
 
@@ -74,7 +74,7 @@ namespace SolidSpace.Entities.Despawn
             if (_entities.Length < entityCount)
             {
                 _entities.Dispose();
-                _entities = CreatePersistentArray<Entity>(entityCount * 2);
+                _entities = NativeArrayUtil.CreatePersistentArray<Entity>(entityCount * 2);
             }
             _profiler.EndSample("Update Entity Buffer");
 
@@ -112,16 +112,6 @@ namespace SolidSpace.Entities.Despawn
         {
             _entities.Dispose();
             _entityCount.Dispose();
-        }
-        
-        private NativeArray<T> CreateTempJobArray<T>(int length) where T : struct
-        {
-            return new NativeArray<T>(length, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
-        }
-        
-        private NativeArray<T> CreatePersistentArray<T>(int length) where T : struct
-        {
-            return new NativeArray<T>(length, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
         }
     }
 }

@@ -15,8 +15,8 @@ namespace SolidSpace.Entities.Randomization
 
         private readonly IEntityManager _entityManager;
         
-        private NativeArray<float> _randomBuffer;
-        private int _randomIndex;
+        private NativeArray<float> _buffer;
+        private int _index;
         private EntityQuery _query;
 
         public RandomValueSystem(IEntityManager entityManager)
@@ -26,10 +26,10 @@ namespace SolidSpace.Entities.Randomization
 
         public void InitializeController()
         {
-            _randomBuffer = CreatePersistentArray<float>(BufferChunkSize);
+            _buffer = NativeArrayUtil.CreatePersistentArray<float>(BufferChunkSize);
             for (var i = 0; i < BufferChunkSize; i++)
             {
-                _randomBuffer[i] = Random.value;
+                _buffer[i] = Random.value;
             }
             _query = _entityManager.CreateEntityQuery(typeof(RandomValueComponent));
         }
@@ -37,32 +37,32 @@ namespace SolidSpace.Entities.Randomization
         public void UpdateController()
         {
             var entityCount = _query.CalculateEntityCount();
-            var requiredBufferCapacity = Mathf.CeilToInt(entityCount / (float) BufferChunkSize) * BufferChunkSize;
-            if (_randomBuffer.Length < requiredBufferCapacity)
+            var requiredCapacity = Mathf.CeilToInt(entityCount / (float) BufferChunkSize) * BufferChunkSize;
+            if (_buffer.Length < requiredCapacity)
             {
-                var newRandomBuffer = CreatePersistentArray<float>(requiredBufferCapacity);
-                for (var i = 0; i < _randomBuffer.Length; i++)
+                var newBuffer = NativeArrayUtil.CreatePersistentArray<float>(requiredCapacity);
+                for (var i = 0; i < _buffer.Length; i++)
                 {
-                    newRandomBuffer[i] = _randomBuffer[i];
+                    newBuffer[i] = _buffer[i];
                 }
-                for (var i = _randomBuffer.Length; i < newRandomBuffer.Length; i++)
+                for (var i = _buffer.Length; i < newBuffer.Length; i++)
                 {
-                    newRandomBuffer[i] = Random.value;
+                    newBuffer[i] = Random.value;
                 }
-                _randomBuffer.Dispose();
-                _randomBuffer = newRandomBuffer;
+                _buffer.Dispose();
+                _buffer = newBuffer;
             }
             
-            _randomIndex = (_randomIndex + 1) % _randomBuffer.Length;
-            _randomBuffer[_randomIndex] = Random.value;
+            _index = (_index + 1) % _buffer.Length;
+            _buffer[_index] = Random.value;
             
             var chunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
             var job = new RandomValueJob
             {
                 chunks = chunks,
                 randomHandle = _entityManager.GetComponentTypeHandle<RandomValueComponent>(false),
-                randomIndex = _randomIndex,
-                randomValues = _randomBuffer
+                randomIndex = _index,
+                randomValues = _buffer
             };
             var handle = job.Schedule(chunks.Length, 32);
             
@@ -73,12 +73,7 @@ namespace SolidSpace.Entities.Randomization
 
         public void FinalizeController()
         {
-            _randomBuffer.Dispose();
-        }
-        
-        public NativeArray<T> CreatePersistentArray<T>(int length) where T : struct
-        {
-            return new NativeArray<T>(length, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
+            _buffer.Dispose();
         }
     }
 }

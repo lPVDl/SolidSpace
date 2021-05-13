@@ -48,10 +48,10 @@ namespace SolidSpace.Profiling
             _samplesTimer.Start();
             _profilingTree = new ProfilingTree
             {
-                childs = CreateTempJobArray<ushort>(1),
-                names = CreateTempJobArray<ushort>(1),
-                siblings = CreateTempJobArray<ushort>(1),
-                times = CreateTempJobArray<float>(1),
+                childs = NativeArrayUtil.CreateTempJobArray<ushort>(1),
+                names = NativeArrayUtil.CreateTempJobArray<ushort>(1),
+                siblings = NativeArrayUtil.CreateTempJobArray<ushort>(1),
+                times = NativeArrayUtil.CreateTempJobArray<float>(1),
                 text = _namesActive
             };
             _profilingTree.times[0] = 0;
@@ -71,15 +71,15 @@ namespace SolidSpace.Profiling
                 inRecords = _records,
                 inRecordCount = _recordCount,
                 inFrequency = Stopwatch.Frequency,
-                outChilds = CreateTempJobArray<ushort>(nodeCount),
-                outNames = CreateTempJobArray<ushort>(nodeCount),
-                outSiblings = CreateTempJobArray<ushort>(nodeCount),
-                outTimes = CreateTempJobArray<float>(nodeCount),
-                outState = CreateTempJobArray<TreeBuildState>(1),
-                parentStack = CreateTempJobArray<ushort>(_config.StackSize),
-                siblingStack = CreateTempJobArray<ushort>(_config.StackSize),
-                timeStack = CreateTempJobArray<int>(_config.StackSize),
-                nameHashStack = CreateTempJobArray<int>(_config.StackSize)
+                outChilds = NativeArrayUtil.CreateTempJobArray<ushort>(nodeCount),
+                outNames = NativeArrayUtil.CreateTempJobArray<ushort>(nodeCount),
+                outSiblings = NativeArrayUtil.CreateTempJobArray<ushort>(nodeCount),
+                outTimes = NativeArrayUtil.CreateTempJobArray<float>(nodeCount),
+                outState = NativeArrayUtil.CreateTempJobArray<TreeBuildState>(1),
+                parentStack = NativeArrayUtil.CreateTempJobArray<ushort>(_config.StackSize),
+                siblingStack = NativeArrayUtil.CreateTempJobArray<ushort>(_config.StackSize),
+                timeStack = NativeArrayUtil.CreateTempJobArray<int>(_config.StackSize),
+                nameHashStack = NativeArrayUtil.CreateTempJobArray<int>(_config.StackSize)
             };
             
             Profiler.BeginSample("ProfilingManager.BuildTreeJob");
@@ -190,11 +190,6 @@ namespace SolidSpace.Profiling
             var t = a;
             a = b;
             b = t;
-        }
-
-        private NativeArray<T> CreateTempJobArray<T>(int length) where T : struct
-        {
-            return new NativeArray<T>(length, Allocator.TempJob);
         }
     }
 }

@@ -27,9 +27,9 @@ namespace SolidSpace.Profiling
                 inSiblings = _tree.siblings,
                 inTimes = _tree.times,
                 inReadRange = new int2(offset, offset + count - 1),
-                outNodeCount = CreateTempJobArray<int>(1),
-                outTotalNodeCount = CreateTempJobArray<int>(1),
-                outNodes = CreateTempJobArray<NativeNode>(count)
+                outNodeCount = NativeArrayUtil.CreateTempJobArray<int>(1),
+                outTotalNodeCount = NativeArrayUtil.CreateTempJobArray<int>(1),
+                outNodes = NativeArrayUtil.CreateTempJobArray<NativeNode>(count)
             };
             job.Schedule().Complete();
             
@@ -53,11 +53,6 @@ namespace SolidSpace.Profiling
             job.outNodes.Dispose();
             job.outNodeCount.Dispose();
             job.outTotalNodeCount.Dispose();
-        }
-        
-        private static NativeArray<T> CreateTempJobArray<T>(int length) where T : struct
-        {
-            return new NativeArray<T>(length, Allocator.TempJob);
         }
     }
 }
