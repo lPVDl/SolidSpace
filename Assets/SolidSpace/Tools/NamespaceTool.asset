@@ -34,10 +34,6 @@ MonoBehaviour:
     - enabled: 1
       regex: \/(?i)Utils$
     - enabled: 1
-      regex: \/(?i)Common$
-    - enabled: 1
-      regex: \/(?i)Common\/\w*$
-    - enabled: 1
       regex: \/(?i)Runtime$
     - enabled: 1
       regex: \/(?i)Source$
