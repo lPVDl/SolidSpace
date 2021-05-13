@@ -22,7 +22,7 @@ namespace SolidSpace.Entities.Rendering.Pixels
 
         private EntityQuery _query;
         private SquareVertices _square;
-        private NativeArrayUtil _arrayUtil;
+        private LegacyNativeArrayUtil _arrayUtil;
         private MeshRenderingUtil _meshUtil;
         private VertexAttributeDescriptor[] _meshLayout;
         private List<Mesh> _meshes;

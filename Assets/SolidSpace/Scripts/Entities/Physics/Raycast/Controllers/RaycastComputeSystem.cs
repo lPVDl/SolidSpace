@@ -24,7 +24,7 @@ namespace SolidSpace.Entities.Physics
         private EntityQuery _raycasterQuery;
         private NativeArray<Entity> _entityBuffer;
         private NativeArray<int> _entityCount;
-        private NativeArrayUtil _arrayUtil;
+        private LegacyNativeArrayUtil _arrayUtil;
         private ProfilingHandle _profiler;
 
         public RaycastComputeSystem(IEntityManager entityManager, IColliderBakeSystem colliderSystem,

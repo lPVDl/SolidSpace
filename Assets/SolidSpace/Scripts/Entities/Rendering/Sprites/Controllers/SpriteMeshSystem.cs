@@ -24,7 +24,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
         private readonly IProfilingManager _profilingManager;
 
         private EntityQuery _query;
-        private NativeArrayUtil _arrayUtil;
+        private LegacyNativeArrayUtil _arrayUtil;
         private MeshRenderingUtil _meshUtil;
         private VertexAttributeDescriptor[] _meshLayout;
         private List<Mesh> _meshes;

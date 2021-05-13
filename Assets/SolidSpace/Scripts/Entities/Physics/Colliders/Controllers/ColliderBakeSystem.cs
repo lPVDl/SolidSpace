@@ -24,7 +24,7 @@ namespace SolidSpace.Entities.Physics
         private readonly IProfilingManager _profilingManager;
 
         private EntityQuery _query;
-        private NativeArrayUtil _arrayUtil;
+        private LegacyNativeArrayUtil _arrayUtil;
         private GridUtil _gridUtil;
         private DebugUtil _debugUtil;
         private NativeArray<FloatBounds> _colliderBounds;

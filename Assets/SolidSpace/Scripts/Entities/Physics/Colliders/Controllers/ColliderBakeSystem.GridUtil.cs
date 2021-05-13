@@ -10,7 +10,7 @@ namespace SolidSpace.Entities.Physics
         private struct GridUtil
         {
             private BoundsUtil _boundsUtil;
-            private NativeArrayUtil _arrayUtil;
+            private LegacyNativeArrayUtil _arrayUtil;
 
             public ColliderWorldGrid ComputeGrid(NativeArray<FloatBounds> colliders, int colliderCount, ProfilingHandle profiler)
             {

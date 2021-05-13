@@ -25,7 +25,7 @@ namespace SolidSpace.Entities.ParticleEmitters
         private EntityQuery _query;
         private NativeArray<ParticleEmitterData> _particles;
         private NativeArray<int> _particleCount;
-        private NativeArrayUtil _arrayUtil;
+        private LegacyNativeArrayUtil _arrayUtil;
         private ProfilingHandle _profiler;
 
         public ParticleEmitterComputeSystem(IEntityManager entityManager, IEntityWorldTime time, IProfilingManager profilingManager)
