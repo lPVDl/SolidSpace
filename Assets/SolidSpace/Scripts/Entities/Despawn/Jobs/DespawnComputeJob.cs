@@ -1,3 +1,4 @@
+using SolidSpace.Entities.World;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -5,8 +6,8 @@ using Unity.Jobs;
 
 namespace SolidSpace.Entities.Despawn
 {
-    [BurstCompile]
-    public struct DespawnComputeJob : IJobParallelFor
+    [BurstCompile] 
+    internal struct DespawnComputeJob : IJobParallelFor
     {
         [ReadOnly] public NativeArray<ArchetypeChunk> inChunks;
         [ReadOnly] public NativeArray<int> inWriteOffsets;

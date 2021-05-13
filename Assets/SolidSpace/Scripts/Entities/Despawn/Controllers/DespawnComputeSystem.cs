@@ -25,7 +25,6 @@ namespace SolidSpace.Entities.Despawn
         private NativeArray<int> _entityCount;
         private NativeArray<Entity> _entities;
         private int _lastOffset;
-        private NativeArrayUtil _arrayUtil;
         private ProfilingHandle _profiler;
 
         public DespawnComputeSystem(IEntityManager entityManager, IEntityWorldTime time, IProfilingManager profilingManager)
@@ -40,8 +39,8 @@ namespace SolidSpace.Entities.Despawn
             _profiler = _profilingManager.GetHandle(this);
             _query = _entityManager.CreateEntityQuery(typeof(DespawnComponent));
             _lastOffset = -1;
-            _entities = _arrayUtil.CreatePersistentArray<Entity>(4096);
-            _entityCount = _arrayUtil.CreatePersistentArray<int>(1);
+            _entities = CreatePersistentArray<Entity>(4096);
+            _entityCount = CreatePersistentArray<int>(1);
             _entityCount[0] = 0;
         }
 
@@ -55,9 +54,9 @@ namespace SolidSpace.Entities.Despawn
             _lastOffset = (_lastOffset + 1) % IterationCycle;
             var rawChunks = _query.CreateArchetypeChunkArray(Allocator.Temp);
             var computeChunkCount = Mathf.CeilToInt((chunkCount - _lastOffset) / (float) IterationCycle);
-            var computeChunks = _arrayUtil.CreateTempJobArray<ArchetypeChunk>(computeChunkCount);
-            var computeOffsets = _arrayUtil.CreateTempJobArray<int>(computeChunkCount);
-            var countsBuffer = _arrayUtil.CreateTempJobArray<int>(computeChunkCount);
+            var computeChunks = CreateTempJobArray<ArchetypeChunk>(computeChunkCount);
+            var computeOffsets = CreateTempJobArray<int>(computeChunkCount);
+            var countsBuffer = CreateTempJobArray<int>(computeChunkCount);
             var entityCount = 0;
             var chunkIndex = 0;
 
@@ -75,7 +74,7 @@ namespace SolidSpace.Entities.Despawn
             if (_entities.Length < entityCount)
             {
                 _entities.Dispose();
-                _entities = _arrayUtil.CreatePersistentArray<Entity>(entityCount * 2);
+                _entities = CreatePersistentArray<Entity>(entityCount * 2);
             }
             _profiler.EndSample("Update Entity Buffer");
 
@@ -113,6 +112,16 @@ namespace SolidSpace.Entities.Despawn
         {
             _entities.Dispose();
             _entityCount.Dispose();
+        }
+        
+        private NativeArray<T> CreateTempJobArray<T>(int length) where T : struct
+        {
+            return new NativeArray<T>(length, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
+        }
+        
+        private NativeArray<T> CreatePersistentArray<T>(int length) where T : struct
+        {
+            return new NativeArray<T>(length, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
         }
     }
 }

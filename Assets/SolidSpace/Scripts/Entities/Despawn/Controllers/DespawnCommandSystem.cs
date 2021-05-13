@@ -6,8 +6,7 @@ using Unity.Entities;
 
 namespace SolidSpace.Entities.Despawn
 {
-    [UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = false, OrderLast = true)]
-    public class DespawnCommandSystem : IController
+    internal class DespawnCommandSystem : IController
     {
         public EControllerType ControllerType => EControllerType.EntityCommand;
         

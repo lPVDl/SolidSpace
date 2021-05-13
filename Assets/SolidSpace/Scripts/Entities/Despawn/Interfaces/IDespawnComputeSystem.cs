@@ -3,7 +3,7 @@ using Unity.Entities;
 
 namespace SolidSpace.Entities.Despawn
 {
-    public interface IDespawnComputeSystem
+    internal interface IDespawnComputeSystem
     {
         public NativeArray<Entity> ResultBuffer { get; }
         
