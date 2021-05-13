@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-namespace SolidSpace.Entities.RepeatTimer
+namespace SolidSpace.Entities.World
 {
     public struct RepeatTimerComponent : IComponentData
     {
