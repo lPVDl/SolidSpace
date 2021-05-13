@@ -4,19 +4,19 @@ using System.Diagnostics;
 using System.Threading;
 using NUnit.Framework;
 
-namespace SolidSpace.Profiling.Editor
+namespace SolidSpace.Profiling.Tests
 {
-    public class ProfilingManagerTests
+    internal class ProfilingManagerTests
     {
         private ProfilingManager _manager;
         private ProfilingConfig _config;
-        private List<ProfilingNodeFriendly> _nodes;
+        private List<ProfilingNode> _nodes;
         private int _totalNodeCount;
 
         [SetUp]
         public void SetUp()
         {
-            _nodes = new List<ProfilingNodeFriendly>();
+            _nodes = new List<ProfilingNode>();
             _config = new ProfilingConfig(true, true, 2, 2);
             _manager = new ProfilingManager(_config);
             _totalNodeCount = 0;
