@@ -8,7 +8,8 @@ using Unity.Jobs;
 
 namespace SolidSpace.Entities.Physics
 {
-    [BurstCompile]
+    // TODO : Burst error BC1054: Unable to resolve type `SolidSpace.Entities.Physics.VelocityComponent. Reason: Unknown.`
+    // [BurstCompile]
     public struct RaycastJob : IJobParallelFor
     {
         [ReadOnly] public ColliderWorld inColliderWorld;

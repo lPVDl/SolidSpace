@@ -36,8 +36,6 @@ MonoBehaviour:
     - enabled: 1
       regex: \/(?i)Utils$
     - enabled: 1
-      regex: \/(?i)Physics\/Velocity*$
-    - enabled: 1
       regex: \/(?i)Physics\/Raycast$
     - enabled: 1
       regex: \/(?i)Common$

@@ -4,9 +4,9 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
-namespace SolidSpace.Entities.Physics
+namespace SolidSpace.Entities.Physics.Velocity
 {
-    public class VelocitySystem : IController
+    internal class VelocitySystem : IController
     {
         public EControllerType ControllerType => EControllerType.EntityCompute;
         

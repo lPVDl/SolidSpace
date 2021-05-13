@@ -1,8 +1,8 @@
 using SolidSpace.DependencyInjection;
 
-namespace SolidSpace.Entities.Physics
+namespace SolidSpace.Entities.Physics.Velocity
 {
-    public class VelocityInstaller : ScriptableObjectInstaller
+    internal class VelocityInstaller : ScriptableObjectInstaller
     {
         public override void InstallBindings(IDependencyContainer container)
         {

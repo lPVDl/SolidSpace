@@ -4,10 +4,10 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
-namespace SolidSpace.Entities.Physics
+namespace SolidSpace.Entities.Physics.Velocity
 {
     [BurstCompile]
-    public struct VelocityJob : IJobParallelFor
+    internal struct VelocityJob : IJobParallelFor
     {
         [ReadOnly, DeallocateOnJobCompletion] public NativeArray<ArchetypeChunk> chunks;
         [ReadOnly] public ComponentTypeHandle<VelocityComponent> velocityHandle;
