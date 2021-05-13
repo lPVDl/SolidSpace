@@ -19,11 +19,11 @@ namespace SolidSpace.Playground
         
         private readonly SpriteSpawnManagerConfig _config;
         private readonly ISpriteColorSystem _colorSystem;
-        private readonly IEntityManager _entityManager;
+        private readonly IEntityWorldManager _entityManager;
 
         private bool _flushedAtlas;
 
-        public SpriteSpawnManager(SpriteSpawnManagerConfig config, ISpriteColorSystem colorSystem, IEntityManager entityManager)
+        public SpriteSpawnManager(SpriteSpawnManagerConfig config, ISpriteColorSystem colorSystem, IEntityWorldManager entityManager)
         {
             _config = config;
             _colorSystem = colorSystem;

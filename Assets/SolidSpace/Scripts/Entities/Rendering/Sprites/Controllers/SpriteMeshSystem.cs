@@ -18,7 +18,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
         
         public EControllerType ControllerType => EControllerType.EntityRender;
         
-        private readonly IEntityManager _entityManager;
+        private readonly IEntityWorldManager _entityManager;
         private readonly SpriteMeshSystemConfig _config;
         private readonly ISpriteColorSystem _colorSystem;
         private readonly IProfilingManager _profilingManager;
@@ -34,7 +34,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
         private Material _material;
         private ProfilingHandle _profiler;
 
-        public SpriteMeshSystem(IEntityManager entityManager, SpriteMeshSystemConfig config,
+        public SpriteMeshSystem(IEntityWorldManager entityManager, SpriteMeshSystemConfig config,
             ISpriteColorSystem colorSystem, IProfilingManager profilingManager)
         {
             _entityManager = entityManager;

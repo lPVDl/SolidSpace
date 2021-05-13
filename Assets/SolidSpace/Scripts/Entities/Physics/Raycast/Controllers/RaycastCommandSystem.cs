@@ -6,14 +6,14 @@ using Unity.Entities;
 
 namespace SolidSpace.Entities.Physics
 {
-    public class RaycastCommandSystem : IController
+    internal class RaycastCommandSystem : IController
     {
         public EControllerType ControllerType => EControllerType.EntityCommand;
 
-        private readonly IEntityManager _entityManager;
+        private readonly IEntityWorldManager _entityManager;
         private readonly IRaycastComputeSystem _computeSystem;
 
-        public RaycastCommandSystem(IEntityManager entityManager, IRaycastComputeSystem computeSystem)
+        public RaycastCommandSystem(IEntityWorldManager entityManager, IRaycastComputeSystem computeSystem)
         {
             _entityManager = entityManager;
             _computeSystem = computeSystem;

@@ -11,9 +11,9 @@ namespace SolidSpace.Entities.Despawn
         public EControllerType ControllerType => EControllerType.EntityCommand;
         
         private readonly IDespawnComputeSystem _computeSystem;
-        private readonly IEntityManager _entityManager;
+        private readonly IEntityWorldManager _entityManager;
 
-        public DespawnCommandSystem(IDespawnComputeSystem computeSystem, IEntityManager entityManager)
+        public DespawnCommandSystem(IDespawnComputeSystem computeSystem, IEntityWorldManager entityManager)
         {
             _computeSystem = computeSystem;
             _entityManager = entityManager;

@@ -20,13 +20,13 @@ namespace SolidSpace.Playground
 
         public EControllerType ControllerType => EControllerType.Playground;
 
-        private readonly IEntityManager _entityManager;
+        private readonly IEntityWorldManager _entityManager;
         private readonly ColliderSpawnManagerConfig _config;
         private readonly Camera _camera;
         private readonly List<ColliderInfo> _spawnedColliders;
         private readonly ComponentType[] _colliderArchetype;
 
-        public ColliderSpawnManager(IEntityManager entityManager, ColliderSpawnManagerConfig config, Camera camera)
+        public ColliderSpawnManager(IEntityWorldManager entityManager, ColliderSpawnManagerConfig config, Camera camera)
         {
             _entityManager = entityManager;
             _config = config;

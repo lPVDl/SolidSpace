@@ -3,7 +3,7 @@ using Unity.Entities;
 
 namespace SolidSpace.Entities.Physics
 {
-    public interface IRaycastComputeSystem
+    internal interface IRaycastComputeSystem
     {
         NativeArray<Entity> HitEntities { get; }
         int HitCount { get; }

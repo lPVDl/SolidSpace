@@ -8,7 +8,7 @@ using Unity.Jobs;
 
 namespace SolidSpace.Entities.Physics
 {
-    public class RaycastComputeSystem : IController, IRaycastComputeSystem
+    internal class RaycastComputeSystem : IController, IRaycastComputeSystem
     {
         private const int EntityBufferChunkSize = 4096;
 
@@ -17,7 +17,7 @@ namespace SolidSpace.Entities.Physics
         public NativeArray<Entity> HitEntities => _entityBuffer;
         public int HitCount => _entityCount[0];
 
-        private readonly IEntityManager _entityManager;
+        private readonly IEntityWorldManager _entityManager;
         private readonly IColliderBakeSystem _colliderSystem;
         private readonly IEntityWorldTime _time;
         private readonly IProfilingManager _profilingManager;
@@ -25,10 +25,9 @@ namespace SolidSpace.Entities.Physics
         private EntityQuery _raycasterQuery;
         private NativeArray<Entity> _entityBuffer;
         private NativeArray<int> _entityCount;
-        private LegacyNativeArrayUtil _arrayUtil;
         private ProfilingHandle _profiler;
 
-        public RaycastComputeSystem(IEntityManager entityManager, IColliderBakeSystem colliderSystem,
+        public RaycastComputeSystem(IEntityWorldManager entityManager, IColliderBakeSystem colliderSystem,
             IEntityWorldTime time, IProfilingManager profilingManager)
         {
             _time = time;
@@ -45,8 +44,8 @@ namespace SolidSpace.Entities.Physics
                 typeof(VelocityComponent),
                 typeof(RaycastComponent)
             });
-            _entityBuffer = _arrayUtil.CreatePersistentArray<Entity>(EntityBufferChunkSize);
-            _entityCount = _arrayUtil.CreatePersistentArray<int>(1);
+            _entityBuffer = NativeArrayUtil.CreatePersistentArray<Entity>(EntityBufferChunkSize);
+            _entityCount = NativeArrayUtil.CreatePersistentArray<int>(1);
             _entityCount[0] = 0;
             _profiler = _profilingManager.GetHandle(this);
         }
@@ -59,7 +58,7 @@ namespace SolidSpace.Entities.Physics
 
             _profiler.BeginSample("Compute Offsets");
             var raycasterChunkCount = raycasterChunks.Length;
-            var raycasterOffsets = _arrayUtil.CreateTempJobArray<int>(raycasterChunkCount);
+            var raycasterOffsets = NativeArrayUtil.CreateTempJobArray<int>(raycasterChunkCount);
             var raycasterCount = 0;
             for (var i = 0; i < raycasterChunkCount; i++)
             {
@@ -69,8 +68,8 @@ namespace SolidSpace.Entities.Physics
             _profiler.EndSample("Compute Offsets");
 
             _profiler.BeginSample("Raycast");
-            var raycastResultCounts = _arrayUtil.CreateTempJobArray<int>(raycasterChunkCount);
-            _arrayUtil.MaintainPersistentArrayLength(ref _entityBuffer, raycasterCount, EntityBufferChunkSize);
+            var raycastResultCounts = NativeArrayUtil.CreateTempJobArray<int>(raycasterChunkCount);
+            NativeArrayUtil.MaintainPersistentArrayLength(ref _entityBuffer, raycasterCount, EntityBufferChunkSize);
             var raycastJob = new RaycastJob
             {
                 raycasterChunks = raycasterChunks,

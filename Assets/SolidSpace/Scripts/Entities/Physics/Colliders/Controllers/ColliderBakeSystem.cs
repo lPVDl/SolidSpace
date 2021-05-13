@@ -20,7 +20,7 @@ namespace SolidSpace.Entities.Physics.Colliders
         private const int MappingJobCount = 8;
         private const int MaxCellCount = 65536;
 
-        private readonly IEntityManager _entityManager;
+        private readonly IEntityWorldManager _entityManager;
         private readonly IProfilingManager _profilingManager;
 
         private EntityQuery _query;
@@ -31,7 +31,7 @@ namespace SolidSpace.Entities.Physics.Colliders
         private NativeArray<ColliderListPointer> _worldChunks;
         private ProfilingHandle _profiler;
 
-        public ColliderBakeSystem(IEntityManager entityManager, IProfilingManager profilingManager)
+        public ColliderBakeSystem(IEntityWorldManager entityManager, IProfilingManager profilingManager)
         {
             _entityManager = entityManager;
             _profilingManager = profilingManager;

@@ -3,13 +3,13 @@ using Unity.Entities;
 
 namespace SolidSpace.Entities.World
 {
-    internal class EntityManager : IEntityManager
+    internal class EntityWorldManager : IEntityWorldManager
     {
         private readonly Unity.Entities.World _world;
 
-        public EntityManager()
+        public EntityWorldManager()
         {
-            _world = new Unity.Entities.World("SpaceSimulator");
+            _world = new Unity.Entities.World("SolidSpace");
         }
         
         public void DestroyEntity(NativeSlice<Entity> entities)

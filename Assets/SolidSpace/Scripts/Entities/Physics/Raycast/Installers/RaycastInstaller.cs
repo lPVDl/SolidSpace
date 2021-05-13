@@ -2,7 +2,7 @@ using SolidSpace.DependencyInjection;
 
 namespace SolidSpace.Entities.Physics
 {
-    public class RaycastInstaller : ScriptableObjectInstaller
+    internal class RaycastInstaller : ScriptableObjectInstaller
     {
         public override void InstallBindings(IDependencyContainer container)
         {

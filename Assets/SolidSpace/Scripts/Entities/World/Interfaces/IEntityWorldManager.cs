@@ -3,7 +3,7 @@ using Unity.Entities;
 
 namespace SolidSpace.Entities.World
 {
-    public interface IEntityManager
+    public interface IEntityWorldManager
     {
         void DestroyEntity(NativeSlice<Entity> entities);
         EntityQuery CreateEntityQuery(params ComponentType[] requiredComponents);

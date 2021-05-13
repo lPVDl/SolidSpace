@@ -13,13 +13,13 @@ namespace SolidSpace.Entities.Randomization
 
         public EControllerType ControllerType => EControllerType.EntityCompute;
 
-        private readonly IEntityManager _entityManager;
+        private readonly IEntityWorldManager _entityManager;
         
         private NativeArray<float> _buffer;
         private int _index;
         private EntityQuery _query;
 
-        public RandomValueSystem(IEntityManager entityManager)
+        public RandomValueSystem(IEntityWorldManager entityManager)
         {
             _entityManager = entityManager;
         }

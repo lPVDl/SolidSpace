@@ -15,9 +15,9 @@ namespace SolidSpace.Playground
         public EControllerType ControllerType => EControllerType.Playground;
         
         private readonly ParticleSpawnManagerConfig _config;
-        private readonly IEntityManager _entityManager;
+        private readonly IEntityWorldManager _entityManager;
 
-        public ParticleSpawnManager(ParticleSpawnManagerConfig config, IEntityManager entityManager)
+        public ParticleSpawnManager(ParticleSpawnManagerConfig config, IEntityWorldManager entityManager)
         {
             _config = config;
             _entityManager = entityManager;

@@ -16,7 +16,7 @@ namespace SolidSpace.Entities.Rendering.Pixels
     {
         public EControllerType ControllerType => EControllerType.EntityRender;
 
-        private readonly IEntityManager _entityManager;
+        private readonly IEntityWorldManager _entityManager;
         private readonly PixelMeshSystemConfig _config;
         private readonly IProfilingManager _profilingManager;
 
@@ -32,7 +32,7 @@ namespace SolidSpace.Entities.Rendering.Pixels
         private Material _material;
         private ProfilingHandle _profiler;
 
-        public PixelMeshSystem(IEntityManager entityManager, PixelMeshSystemConfig config, IProfilingManager profilingManager)
+        public PixelMeshSystem(IEntityWorldManager entityManager, PixelMeshSystemConfig config, IProfilingManager profilingManager)
         {
             _entityManager = entityManager;
             _config = config;

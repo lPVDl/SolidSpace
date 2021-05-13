@@ -10,12 +10,12 @@ namespace SolidSpace.Entities.Physics.Velocity
     {
         public EControllerType ControllerType => EControllerType.EntityCompute;
         
-        private readonly IEntityManager _entityManager;
+        private readonly IEntityWorldManager _entityManager;
         private readonly IEntityWorldTime _time;
 
         private EntityQuery _query;
 
-        public VelocitySystem(IEntityManager entityManager, IEntityWorldTime time)
+        public VelocitySystem(IEntityWorldManager entityManager, IEntityWorldTime time)
         {
             _entityManager = entityManager;
             _time = time;

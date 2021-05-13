@@ -10,12 +10,12 @@ namespace SolidSpace.Entities.ParticleEmitters
     {
         public EControllerType ControllerType => EControllerType.EntityCommand;
         
-        private readonly IEntityManager _entityManager;
+        private readonly IEntityWorldManager _entityManager;
         private readonly IParticleEmitterComputeSystem _computeSystem;
         
         private EntityArchetype _particleArchetype;
 
-        public ParticleEmitterCommandSystem(IEntityManager entityManager, IParticleEmitterComputeSystem computeSystem)
+        public ParticleEmitterCommandSystem(IEntityWorldManager entityManager, IParticleEmitterComputeSystem computeSystem)
         {
             _entityManager = entityManager;
             _computeSystem = computeSystem;
