@@ -2,7 +2,6 @@
     "name": "SolidSpace.GameCycle",
     "rootNamespace": "",
     "references": [
-        "GUID:0d8beb7f090555447a6cf5ce9e54dbb4",
         "GUID:f02c9093b2c58494692f122eec172065",
         "GUID:8ae4d0576b29f7642b7fa3548741812f",
         "GUID:33107023e80e4beb8dbcf98b6c23d4a2"

@@ -42,6 +42,7 @@ namespace SolidSpace.DependencyInjection
             container.Bind<TickableManager>().AsSingle().NonLazy();
             container.Bind<InitializableManager>().AsSingle().NonLazy();
             container.Bind<DisposableManager>().AsSingle().NonLazy();
+            container.BindInterfacesTo<ZenjectInitializationWrapper>().AsSingle();
             container.Bind(typeof(SceneKernel), typeof(MonoKernel)).To<SceneKernel>()
                 .FromNewComponentOn(gameObject).AsSingle().NonLazy();
 

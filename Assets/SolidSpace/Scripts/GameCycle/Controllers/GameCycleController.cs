@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SolidSpace.DependencyInjection;
 using SolidSpace.Profiling;
 using UnityEngine;
 
 namespace SolidSpace.GameCycle
 {
-    internal class GameCycleController : Zenject.IInitializable, IDisposable
+    internal class GameCycleController : IApplicationBootstrapper, IDisposable
     {
         private readonly Config _config;
         private readonly IProfilingManager _profilingManager;
@@ -27,7 +28,7 @@ namespace SolidSpace.GameCycle
             _profilingProcessor = profilingProcessor;
         }
         
-        public void Initialize()
+        public void Run()
         {
             _profilingProcessor.Initialize();
             
