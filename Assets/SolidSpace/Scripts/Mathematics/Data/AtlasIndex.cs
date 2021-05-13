@@ -1,4 +1,4 @@
-namespace SolidSpace.Entities.Rendering.Atlases
+namespace SolidSpace.Mathematics
 {
     public struct AtlasIndex
     {

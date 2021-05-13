@@ -1,4 +1,6 @@
 using System.Runtime.CompilerServices;
+using SolidSpace.Entities.World;
+using SolidSpace.Mathematics;
 using Unity.Mathematics;
 
 namespace SolidSpace.Entities.Rendering.Atlases

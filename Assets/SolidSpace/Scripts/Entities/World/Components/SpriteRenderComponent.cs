@@ -1,7 +1,7 @@
-using SolidSpace.Entities.Rendering.Atlases;
+using SolidSpace.Mathematics;
 using Unity.Entities;
 
-namespace SolidSpace.Entities.Rendering.Sprites
+namespace SolidSpace.Entities.World
 {
     public struct SpriteRenderComponent : IComponentData
     {

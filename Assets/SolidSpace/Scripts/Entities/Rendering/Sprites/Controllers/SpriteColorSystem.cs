@@ -1,11 +1,13 @@
 using SolidSpace.Entities.Rendering.Atlases;
+using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
+using SolidSpace.Mathematics;
 using Unity.Collections;
 using UnityEngine;
 
 namespace SolidSpace.Entities.Rendering.Sprites
 {
-    public class SpriteColorSystem : ISpriteColorSystem, IController
+    internal class SpriteColorSystem : ISpriteColorSystem, IController
     {
         public EControllerType ControllerType => EControllerType.EntityCommand;
         public Texture2D Texture { get; private set; }

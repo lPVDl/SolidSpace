@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using SolidSpace.Entities.World;
+using SolidSpace.Mathematics;
 using UnityEngine;
 
 namespace SolidSpace.Entities.Rendering.Atlases

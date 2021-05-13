@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SolidSpace.Entities.Rendering.Sprites
 {
-    public class SpriteRenderingInstaller : ScriptableObjectInstaller
+    internal class SpriteRenderingInstaller : ScriptableObjectInstaller
     {
         [SerializeField] private AtlasConfig _colorAtlasConfig;
         [SerializeField] private SpriteMeshSystemConfig _meshSystemConfig;

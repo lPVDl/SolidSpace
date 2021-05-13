@@ -4,7 +4,7 @@ using UnityEngine;
 namespace SolidSpace.Entities.Rendering.Sprites
 {
     [Serializable]
-    public class SpriteMeshSystemConfig
+    internal class SpriteMeshSystemConfig
     {
         public Shader Shader => _shader;
         

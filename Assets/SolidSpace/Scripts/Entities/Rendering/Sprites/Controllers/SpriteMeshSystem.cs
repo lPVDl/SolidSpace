@@ -3,6 +3,7 @@ using SolidSpace.Debugging;
 using SolidSpace.Entities.Rendering.Utilities;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
+using SolidSpace.JobUtilities;
 using SolidSpace.Profiling;
 using Unity.Collections;
 using Unity.Entities;
@@ -13,7 +14,7 @@ using UnityEngine.Rendering;
 
 namespace SolidSpace.Entities.Rendering.Sprites
 {
-    public class SpriteMeshSystem : IController
+    internal class SpriteMeshSystem : IController
     {
         private static readonly int MainTexturePropertyId = Shader.PropertyToID("_MainTex");
         
@@ -25,7 +26,6 @@ namespace SolidSpace.Entities.Rendering.Sprites
         private readonly IProfilingManager _profilingManager;
 
         private EntityQuery _query;
-        private LegacyNativeArrayUtil _arrayUtil;
         private MeshRenderingUtil _meshUtil;
         private VertexAttributeDescriptor[] _meshLayout;
         private List<Mesh> _meshes;
@@ -73,8 +73,8 @@ namespace SolidSpace.Entities.Rendering.Sprites
             
             _profiler.BeginSample("Compute offsets");
             var chunkTotal = chunks.Length;
-            var chunkPerMesh = _arrayUtil.CreateTempJobArray<int>(chunkTotal);
-            var spritePerMesh = _arrayUtil.CreateTempJobArray<int>(chunkTotal);
+            var chunkPerMesh = NativeArrayUtil.CreateTempJobArray<int>(chunkTotal);
+            var spritePerMesh = NativeArrayUtil.CreateTempJobArray<int>(chunkTotal);
             var totalSpriteCount = 0;
             var meshCount = 0;
             var chunkIndex = 0;
@@ -91,7 +91,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
 
             _profiler.BeginSample("Compute meshes");
             var meshDataArray = Mesh.AllocateWritableMeshData(meshCount);
-            var computeJobHandles = _arrayUtil.CreateTempJobArray<JobHandle>(meshCount);
+            var computeJobHandles = NativeArrayUtil.CreateTempJobArray<JobHandle>(meshCount);
             var positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true);
             var spriteHandle = _entityManager.GetComponentTypeHandle<SpriteRenderComponent>(true);
             var rotationHandle = _entityManager.GetComponentTypeHandle<RotationComponent>(true);

@@ -11,7 +11,7 @@ using Unity.Mathematics;
 namespace SolidSpace.Entities.Rendering.Sprites
 {
     [BurstCompile]
-    public struct SpriteMeshComputeJob : IJob
+    internal struct SpriteMeshComputeJob : IJob
     {
         private struct Square
         {

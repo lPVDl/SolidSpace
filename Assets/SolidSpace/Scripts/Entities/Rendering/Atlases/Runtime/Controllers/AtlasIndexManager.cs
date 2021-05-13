@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using SolidSpace.Entities.World;
+using SolidSpace.Mathematics;
 using Unity.Collections;
 
 namespace SolidSpace.Entities.Rendering.Atlases
