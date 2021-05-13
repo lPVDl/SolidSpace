@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
+using SolidSpace.Utilities;
 using Unity.Collections;
 using Unity.Mathematics;
 

@@ -1,12 +1,11 @@
 using System.Runtime.CompilerServices;
 using SolidSpace.Entities.Physics.Colliders;
 using SolidSpace.Entities.World;
-using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
-namespace SolidSpace.Entities.Physics
+namespace SolidSpace.Entities.Physics.Raycast
 {
     internal struct RaycastJob : IJobParallelFor
     {

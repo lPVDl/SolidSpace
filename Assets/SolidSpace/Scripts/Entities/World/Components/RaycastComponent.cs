@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-namespace SolidSpace.Entities.Physics
+namespace SolidSpace.Entities.World
 {
     public struct RaycastComponent : IComponentData
     {

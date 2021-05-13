@@ -1,6 +1,6 @@
 using SolidSpace.DependencyInjection;
 
-namespace SolidSpace.Entities.Physics
+namespace SolidSpace.Entities.Physics.Raycast
 {
     internal class RaycastInstaller : ScriptableObjectInstaller
     {

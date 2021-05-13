@@ -4,7 +4,7 @@ using SolidSpace.GameCycle;
 using Unity.Collections;
 using Unity.Entities;
 
-namespace SolidSpace.Entities.Physics
+namespace SolidSpace.Entities.Physics.Raycast
 {
     internal class RaycastCommandSystem : IController
     {

@@ -1,7 +1,7 @@
 using Unity.Collections;
 using Unity.Entities;
 
-namespace SolidSpace.Entities.Physics
+namespace SolidSpace.Entities.Physics.Raycast
 {
     internal interface IRaycastComputeSystem
     {

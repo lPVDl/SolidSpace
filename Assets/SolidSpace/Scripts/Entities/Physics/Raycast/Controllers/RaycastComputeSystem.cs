@@ -2,11 +2,12 @@ using SolidSpace.Entities.Physics.Colliders;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
 using SolidSpace.Profiling;
+using SolidSpace.Utilities;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
-namespace SolidSpace.Entities.Physics
+namespace SolidSpace.Entities.Physics.Raycast
 {
     internal class RaycastComputeSystem : IController, IRaycastComputeSystem
     {
