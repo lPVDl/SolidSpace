@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace SolidSpace.Entities.Rendering.Atlases.Editor
 {
-    public class AtlasChunkConfigDrawer : OdinValueDrawer<AtlasChunkConfig>
+    internal class AtlasChunkConfigDrawer : OdinValueDrawer<AtlasChunkConfig>
     {
         private readonly StringBuilder _stringBuilder;
         private readonly Dictionary<AtlasChunkConfig, string> _chunkInfoCash;

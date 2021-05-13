@@ -3,7 +3,7 @@ using Unity.Mathematics;
 
 namespace SolidSpace.Entities.Rendering.Atlases
 {
-    public struct AtlasMathUtil
+    public struct AtlasMath
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int2 ComputeOffset(AtlasChunk chunk, AtlasIndex index)

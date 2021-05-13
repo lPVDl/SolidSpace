@@ -37,7 +37,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
         [WriteOnly, NativeDisableContainerSafetyRestriction] public NativeArray<SpriteVertexData> outVertices;
         [WriteOnly, NativeDisableContainerSafetyRestriction] public NativeArray<ushort> outIndices;
 
-        private AtlasMathUtil _atlasMath;
+        private AtlasMath _atlasMath;
         
         public void Execute()
         {

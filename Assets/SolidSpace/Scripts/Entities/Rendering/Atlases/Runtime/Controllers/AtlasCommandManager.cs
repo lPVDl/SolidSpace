@@ -14,7 +14,7 @@ namespace SolidSpace.Entities.Rendering.Atlases
         private readonly IAtlasSystem _atlas;
         private readonly List<CopyTextureCommand> _commands;
 
-        private AtlasMathUtil _atlasMath;
+        private AtlasMath _atlasMath;
         
         public AtlasCommandManager(IAtlasSystem atlas)
         {

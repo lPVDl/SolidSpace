@@ -2,7 +2,7 @@ using SolidSpace.DataValidation;
 
 namespace SolidSpace.Entities.Rendering.Atlases
 {
-    public class AtlasChunkConfigValidator : IDataValidator<AtlasChunkConfig>
+    internal class AtlasChunkConfigValidator : IDataValidator<AtlasChunkConfig>
     {
         public string Validate(AtlasChunkConfig data)
         {

@@ -4,7 +4,7 @@ using SolidSpace.DataValidation;
 
 namespace SolidSpace.Entities.Rendering.Atlases
 {
-    public class AtlasConfigValidator : IDataValidator<AtlasConfig>
+    internal class AtlasConfigValidator : IDataValidator<AtlasConfig>
     {
         private readonly HashSet<int> _spriteSizeCash;
 
