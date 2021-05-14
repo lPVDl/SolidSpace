@@ -59,11 +59,11 @@ namespace SolidSpace.Automation.NamespaceTool
         private void OverrideProjDotSettings()
         {
             var projectRoot = Application.dataPath.Substring(0, Application.dataPath.Length - 7);
-            // var oldFiles = Directory.GetFiles(projectRoot, "*.csproj.DotSettings");
-            // foreach (var file in oldFiles)
-            // {
-            //     File.Delete(file);
-            // }
+            var oldFiles = Directory.GetFiles(projectRoot, "*.csproj.DotSettings");
+            foreach (var file in oldFiles)
+            {
+                File.Delete(file);
+            }
             
             var folderScanner = new FolderScanner();
             var assemblyUtil = new AssemblyUtil();
