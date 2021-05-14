@@ -6,8 +6,6 @@ namespace SolidSpace.Automation.NamespaceTool
 {
     internal class DotSettingsWriter
     {
-        private const string LocalDirectoryNameRegex = @"\/((?i)assets\/.*)";
-        
         public void Write(string toFile, IEnumerable<string> foldersToIgnore)
         {
             using var writer = new StreamWriter(toFile);
@@ -21,11 +19,10 @@ namespace SolidSpace.Automation.NamespaceTool
 
             foreach (var path in foldersToIgnore)
             {
-                var localPath = Regex.Match(path, LocalDirectoryNameRegex).Groups[1].Value;
-                localPath = localPath.ToLower().Replace("/", "_005C");
+                var pathEncoded = path.ToLower().Replace("/", "_005C");
 
                 writer.Write("\t<s:Boolean x:Key=\"/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=");
-                writer.Write(localPath);
+                writer.Write(pathEncoded);
                 writer.Write("/@EntryIndexedValue\">True</s:Boolean>");
                 writer.WriteLine();
             }

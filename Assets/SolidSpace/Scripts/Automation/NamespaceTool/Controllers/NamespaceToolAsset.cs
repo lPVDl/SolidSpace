@@ -16,18 +16,17 @@ namespace SolidSpace.Automation.NamespaceTool
             ConsoleUtil.ClearLog();
             
             var folderScanner = new FolderScanner();
-            var output = new List<EntityInfo>();
             var projectRoot = Application.dataPath.Substring(0, Application.dataPath.Length - 7);
-            folderScanner.Scan(projectRoot, _config, output);
+            var folders = folderScanner.Scan(projectRoot, _config);
 
-            foreach (var info in output)
+            foreach (var info in folders)
             {
                 var regex = _config.FolderFilters[info.regexId].regex;
                 var message = $"'{info.name}' by regex '{regex}' ({info.regexId})";
                 Debug.Log(message);
             }
             
-            Debug.Log($"Total folders: {output.Count};");
+            Debug.Log($"Total folders: {folders.Count};");
         }
 
         [Button]
@@ -36,52 +35,52 @@ namespace SolidSpace.Automation.NamespaceTool
             ConsoleUtil.ClearLog();
 
             var assemblyUtil = new AssemblyUtil();
-            var output = new List<EntityInfo>();
-            assemblyUtil.Scan(_config, output);
+            var assemblies = assemblyUtil.Scan(_config);
 
-            foreach (var info in output)
+            foreach (var assembly in assemblies)
             {
-                var regex = _config.AssemblyFilters[info.regexId].regex;
-                var fileName = assemblyUtil.AssemblyToFileName(info.name);
-                var message = $"'{info.name}' -> '{fileName}' by regex '{regex}' ({info.regexId})";
+                var regex = _config.AssemblyFilters[assembly.regexId].regex;
+                var fileName = assemblyUtil.AssemblyToFileName(assembly.name);
+                var message = $"'{assembly.name}' -> '{fileName}' by regex '{regex}' ({assembly.regexId}):";
+                
                 Debug.Log(message);
+                
+                foreach (var folder in assembly.folders)
+                {
+                    Debug.Log($"\t{folder}");
+                }
             }
-            
-            Debug.Log($"Total assemblies: {output.Count}");
+
+            var folderCount = assemblies.SelectMany(a => a.folders).Count();
+            Debug.Log($"Total assemblies: {assemblies.Count}; Total folders: {folderCount}");
         }
 
         [Button]
         private void OverrideProjDotSettings()
         {
             var projectRoot = Application.dataPath.Substring(0, Application.dataPath.Length - 7);
+            // var oldFiles = Directory.GetFiles(projectRoot, "*.csproj.DotSettings");
+            // foreach (var file in oldFiles)
+            // {
+            //     File.Delete(file);
+            // }
+            
             var folderScanner = new FolderScanner();
-            var entities = new List<EntityInfo>();
-            folderScanner.Scan(projectRoot, _config, entities);
-
-            var tempFile = Path.GetTempFileName();
-            var dotSettingsWriter = new DotSettingsWriter();
-            dotSettingsWriter.Write(tempFile, entities.Select(i => i.name));
-            
-            var oldFiles = Directory.GetFiles(projectRoot, "*.csproj.DotSettings");
-            foreach (var file in oldFiles)
-            {
-                File.Delete(file);
-            }
-            
             var assemblyUtil = new AssemblyUtil();
-            assemblyUtil.Scan(_config, entities);
-            foreach (var assembly in entities)
+            var dotSettingsWriter = new DotSettingsWriter();
+            var folders = folderScanner.Scan(projectRoot, _config);
+            var folderNames = new HashSet<string>(folders.Select(f => f.name));
+            var assemblies = assemblyUtil.Scan(_config);
+            foreach (var assembly in assemblies)
             {
-                var fileName = assemblyUtil.AssemblyToFileName(assembly.name);
-                fileName = Path.Combine(projectRoot, fileName);
-                File.Copy(tempFile, fileName);
+                var assemblyPath = assemblyUtil.AssemblyToFileName(assembly.name);
+                var foldersToSkip = assembly.folders.Where(f => folderNames.Contains(f));
+                dotSettingsWriter.Write(assemblyPath, foldersToSkip);
             }
-            
-            File.Delete(tempFile);
 
             Debug.Log("Done. Don't forget to restart Rider.");
         }
-        
+
         [Button]
         private void RegexHelp()
         {

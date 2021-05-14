@@ -1,6 +1,6 @@
 namespace SolidSpace.Automation.NamespaceTool
 {
-    internal struct EntityInfo
+    internal struct FolderInfo
     {
         public string name;
         public int regexId;

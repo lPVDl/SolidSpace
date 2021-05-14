@@ -1,23 +1,33 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using Sirenix.Utilities;
 
 namespace SolidSpace.Automation.NamespaceTool
 {
     internal class FolderScanner
     {
-        public void Scan(string projectRoot, Config config, ICollection<EntityInfo> output)
+        private HashSet<FolderInfo> _outFolders;
+        private IReadOnlyList<FilterInfo> _filters;
+        private int _rootLength;
+        
+        public HashSet<FolderInfo> Scan(string projectRoot, Config config)
         {
-            output.Clear();
+            _outFolders = new HashSet<FolderInfo>();
+            _filters = config.FolderFilters;
+            _rootLength = projectRoot.Length + 1;
             
-            ScanRecursive(projectRoot + "/" + config.ScriptsRoot, config.FolderFilters, output);
+            ScanRecursive(Path.Combine(projectRoot + "/" + config.ScriptsRoot));
+
+            return _outFolders;
         }
 
-        private void ScanRecursive(string path, IReadOnlyList<FilterInfo> filters, ICollection<EntityInfo> output)
+        private void ScanRecursive(string path)
         {
-            for (var i = 0; i < filters.Count; i++)
+            for (var i = 0; i < _filters.Count; i++)
             {
-                var filter = filters[i];
+                var filter = _filters[i];
                 if (!filter.enabled)
                 {
                     continue;
@@ -28,9 +38,9 @@ namespace SolidSpace.Automation.NamespaceTool
                     continue;
                 }
 
-                output.Add(new EntityInfo
+                _outFolders.Add(new FolderInfo
                 {
-                    name = path,
+                    name = path.Substring(_rootLength),
                     regexId = i
                 });
                 
@@ -38,10 +48,9 @@ namespace SolidSpace.Automation.NamespaceTool
             }
             
             var subDirectories = Directory.GetDirectories(path);
-            
             foreach (var directory in subDirectories)
             {
-                ScanRecursive(path + "/" + Path.GetFileName(directory), filters, output);
+                ScanRecursive(path + "/" + Path.GetFileName(directory));
             }
         }
     }
