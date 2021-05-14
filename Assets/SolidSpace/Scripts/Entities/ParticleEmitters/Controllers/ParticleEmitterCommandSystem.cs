@@ -27,13 +27,10 @@ namespace SolidSpace.Entities.ParticleEmitters
             _particleArchetype = _entityManager.CreateArchetype(new ComponentType[]
             {
                 typeof(PositionComponent),
-                // TODO : Fix reference!
-                // typeof(VelocityComponent),
+                typeof(VelocityComponent),
                 typeof(DespawnComponent),
-                // TODO : Fix reference!
-                // typeof(RaycastComponent),
-                // TODO : Fix reference!
-                // typeof(PixelRenderComponent)
+                typeof(RaycastComponent),
+                typeof(PixelRenderComponent)
             });
         }
 
@@ -51,11 +48,10 @@ namespace SolidSpace.Entities.ParticleEmitters
                 {
                     value = particle.position
                 });
-                // TODO : Fix reference!
-                // _entityManager.SetComponentData(entity, new VelocityComponent
-                // {
-                //     value = particle.velocity
-                // });
+                _entityManager.SetComponentData(entity, new VelocityComponent
+                {
+                    value = particle.velocity
+                });
                 _entityManager.SetComponentData(entity, new DespawnComponent
                 {
                     despawnTime = particle.despawnTime
