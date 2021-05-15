@@ -1,0 +1,22 @@
+Description (WIP):
+	2D massive space battle simulator with pixel graphics, pixel physics with features of per pixel ship design, forming fleet and confronting other players' fleets
+	
+Tech stack:
+	Current:
+		Unity3D, C#
+		ECS, Jobs, Burst
+		Zenject
+		NUnit
+		Git
+		OdinInspector, OdinValidator
+	Planning:
+		Roslyn
+		I2Loc
+		UIElements
+		UniRx
+		Rewired
+		Jira, Confluence
+		NSubstitute
+		CI / CD
+		Bug tracking
+		PlayFab / PHP backend

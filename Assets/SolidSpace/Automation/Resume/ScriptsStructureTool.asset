@@ -17,4 +17,4 @@ MonoBehaviour:
     _blacklistFilters:
     - enabled: 1
       regex: (?i).*\.meta$
-    _exportPath: Assets/SolidSpace/Automation/Resume/.Resume/Scripts/Scripts.txt
+    _exportPath: .resume/Scripts/Scripts.txt
