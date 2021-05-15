@@ -1,0 +1,333 @@
+Scripts
+|   Automation
+|   |   AssetNameTool
+|   |   |   Controllers
+|   |   |   |   AssetNameToolAsset.cs (1.1kb)
+|   |   |   |   ConsoleUtil.cs (1.2kb)
+|   |   |   |   FileNameUtil.cs (2.6kb)
+|   |   |   |   FileProcessor.cs (1.8kb)
+|   |   |   Data
+|   |   |   |   Config.cs (310b)
+|   |   |   |   FileInfo.cs (238b)
+|   |   |   |   FilterInfo.cs (276b)
+|   |   |   Validators
+|   |   |   |   FilterInfoValidator.cs (1.0kb)
+|   |   |   SolidSpace.Automation.AssetNameTool.asmdef (460b)
+|   |   NamespaceTool
+|   |   |   Controllers
+|   |   |   |   AssemblyUtil.cs (3.6kb)
+|   |   |   |   ConsoleUtil.cs (1.2kb)
+|   |   |   |   DotSettingsWriter.cs (1.2kb)
+|   |   |   |   FolderScanner.cs (1.6kb)
+|   |   |   |   NamespaceToolAsset.cs (3.2kb)
+|   |   |   Data
+|   |   |   |   AssemblyInfo.cs (235b)
+|   |   |   |   Config.cs (639b)
+|   |   |   |   FilterInfo.cs (184b)
+|   |   |   |   FolderInfo.cs (155b)
+|   |   |   Validators
+|   |   |   |   ConfigValidator.cs (885b)
+|   |   |   |   FilterInfoValidator.cs (671b)
+|   |   |   SolidSpace.Automation.NamespaceTool.asmdef (460b)
+|   |   ProjectStructureTool
+|   |   |   Controllers
+|   |   |   |   FileConsole.cs (552b)
+|   |   |   |   FileScanner.cs (2.2kb)
+|   |   |   |   FileWriter.cs (1.9kb)
+|   |   |   |   ProjectStructureToolAsset.cs (962b)
+|   |   |   |   UnityConsole.cs (460b)
+|   |   |   Data
+|   |   |   |   Validators
+|   |   |   |   |   ConfigValidator.cs (1.1kb)
+|   |   |   |   |   FileInfoValidator.cs (703b)
+|   |   |   |   Config.cs (552b)
+|   |   |   |   EntityInfo.cs (191b)
+|   |   |   |   FilterInfo.cs (189b)
+|   |   |   Interfaces
+|   |   |   |   IConsole.cs (143b)
+|   CameraMotion
+|   |   Controllers
+|   |   |   CameraMotionController.cs (3.0kb)
+|   |   Installers
+|   |   |   CameraMotionInstaller.cs (317b)
+|   DataValidation
+|   |   Editor
+|   |   |   AssemblyValidatorFactory.cs (3.7kb)
+|   |   |   SerializeAttributeValidator.cs (3.7kb)
+|   |   |   SolidSpace.DataValidation.Editor.asmdef (457b)
+|   |   |   ValidationMethod.cs (197b)
+|   |   Runtime
+|   |   |   Interfaces
+|   |   |   |   IDataValidator.cs (136b)
+|   |   |   SolidSpace.DataValidation.asmdef (371b)
+|   Debugging
+|   |   Editor
+|   |   |   SolidSpace.Debugging.Editor.asmdef (452b)
+|   |   |   SolidSpaceDebugWindow.cs (682b)
+|   |   Runtime
+|   |   |   Controllers
+|   |   |   |   SpaceDebug.cs (1.2kb)
+|   |   |   Data
+|   |   |   |   SpaceDebugValue.cs (144b)
+|   |   |   SolidSpace.Debugging.asmdef (39b)
+|   DependencyInjection
+|   |   Controllers
+|   |   |   SceneContext.cs (1.9kb)
+|   |   |   ScriptableObjectInstaller.cs (233b)
+|   |   |   ZenjectContainerWrapper.cs (738b)
+|   |   |   ZenjectInitializationWrapper.cs (459b)
+|   |   Interfaces
+|   |   |   IApplicationBootstrapper.cs (128b)
+|   |   |   IDependencyContainer.cs (218b)
+|   |   SolidSpace.DependencyInjection.asmdef (431b)
+|   Entities
+|   |   Components
+|   |   |   Scripts
+|   |   |   |   ColliderComponent.cs (169b)
+|   |   |   |   DespawnComponent.cs (173b)
+|   |   |   |   ParticleEmitterComponent.cs (186b)
+|   |   |   |   PixelRenderComponent.cs (152b)
+|   |   |   |   PositionComponent.cs (195b)
+|   |   |   |   RandomValueComponent.cs (171b)
+|   |   |   |   RaycastComponent.cs (148b)
+|   |   |   |   RepeatTimerComponent.cs (230b)
+|   |   |   |   RotationComponent.cs (193b)
+|   |   |   |   SizeComponent.cs (190b)
+|   |   |   |   SpriteRenderComponent.cs (208b)
+|   |   |   |   VelocityComponent.cs (195b)
+|   |   |   SolidSpace.Entities.Components.asmdef (531b)
+|   |   Despawn
+|   |   |   Controllers
+|   |   |   |   DespawnCommandSystem.cs (1.2kb)
+|   |   |   |   DespawnComputeSystem.cs (4.7kb)
+|   |   |   Installers
+|   |   |   |   DespawnInstaller.cs (369b)
+|   |   |   Interfaces
+|   |   |   |   IDespawnComputeSystem.cs (263b)
+|   |   |   Jobs
+|   |   |   |   DespawnComputeJob.cs (1.5kb)
+|   |   |   SolidSpace.Entities.Despawn.asmdef (828b)
+|   |   ParticleEmitters
+|   |   |   Controllers
+|   |   |   |   ParticleEmitterCommandSystem.cs (2.3kb)
+|   |   |   |   ParticleEmitterComputeSystem.cs (4.3kb)
+|   |   |   Data
+|   |   |   |   ParticleEmitterData.cs (236b)
+|   |   |   Installers
+|   |   |   |   ParticleEmittersInstaller.cs (403b)
+|   |   |   Interfaces
+|   |   |   |   IParticleEmitterComputeSystem.cs (245b)
+|   |   |   Jobs
+|   |   |   |   ParticleEmitterComputeJob.cs (2.4kb)
+|   |   |   SolidSpace.Entities.ParticleEmitters.asmdef (887b)
+|   |   Physics
+|   |   |   Colliders
+|   |   |   |   Controllers
+|   |   |   |   |   ColliderBakeSystem.BoundsUtil.cs (2.5kb)
+|   |   |   |   |   ColliderBakeSystem.cs (8.1kb)
+|   |   |   |   |   ColliderBakeSystem.DebugUtil.cs (1.9kb)
+|   |   |   |   |   ColliderBakeSystem.GridUtil.cs (4.4kb)
+|   |   |   |   Data
+|   |   |   |   |   ChunkedCollider.cs (177b)
+|   |   |   |   |   ColliderListPointer.cs (199b)
+|   |   |   |   |   ColliderWorld.cs (369b)
+|   |   |   |   |   ColliderWorldGrid.cs (215b)
+|   |   |   |   Installers
+|   |   |   |   |   CollidersInstaller.cs (326b)
+|   |   |   |   Interfaces
+|   |   |   |   |   IColliderBakeSystem.cs (162b)
+|   |   |   |   Jobs
+|   |   |   |   |   ChunkCollidersJob.cs (2.9kb)
+|   |   |   |   |   ComputeBoundsJob.cs (1.6kb)
+|   |   |   |   |   FillNativeArrayJob.cs (824b)
+|   |   |   |   |   FindMaxColliderSizeJob.cs (1.4kb)
+|   |   |   |   |   JoinBoundsJob.cs (1.7kb)
+|   |   |   |   |   WorldChunkListsCapacityJob.cs (1.2kb)
+|   |   |   |   |   WorldChunkListsFillJob.cs (1.4kb)
+|   |   |   |   |   WorldChunkListsOffsetJob.cs (799b)
+|   |   |   |   SolidSpace.Entities.Physics.Colliders.asmdef (938b)
+|   |   |   Raycast
+|   |   |   |   Controllers
+|   |   |   |   |   RaycastCommandSystem.cs (1.1kb)
+|   |   |   |   |   RaycastComputeSystem.cs (4.7kb)
+|   |   |   |   Installers
+|   |   |   |   |   RaycastInstaller.cs (377b)
+|   |   |   |   Interfaces
+|   |   |   |   |   IRaycastComputeSystem.cs (243b)
+|   |   |   |   Jobs
+|   |   |   |   |   RaycastJob.cs (5.4kb)
+|   |   |   |   SolidSpace.Entities.Physics.Raycast.asmdef (936b)
+|   |   |   Velocity
+|   |   |   |   Controllers
+|   |   |   |   |   VelocitySystem.cs (1.6kb)
+|   |   |   |   Installers
+|   |   |   |   |   VelocityInstaller.cs (320b)
+|   |   |   |   Jobs
+|   |   |   |   |   VelocityJob.cs (1.2kb)
+|   |   |   |   SolidSpace.Entities.Physics.Velocity.asmdef (737b)
+|   |   Randomization
+|   |   |   Controllers
+|   |   |   |   RandomValueSystem.cs (2.6kb)
+|   |   |   Installers
+|   |   |   |   RandomizationInstaller.cs (325b)
+|   |   |   Jobs
+|   |   |   |   RandomValueJob.cs (1.2kb)
+|   |   |   SolidSpace.Entities.Randomization.asmdef (734b)
+|   |   Rendering
+|   |   |   Atlases
+|   |   |   |   Editor
+|   |   |   |   |   AtlasChunkConfigDrawer.cs (2.6kb)
+|   |   |   |   |   SolidSpace.Entities.Rendering.Atlases.Editor.asmdef (469b)
+|   |   |   |   Runtime
+|   |   |   |   |   Controllers
+|   |   |   |   |   |   AtlasCommandManager.cs (1.5kb)
+|   |   |   |   |   |   AtlasIndexManager.cs (3.7kb)
+|   |   |   |   |   |   AtlasSquareManager.cs (2.3kb)
+|   |   |   |   |   Data
+|   |   |   |   |   |   AtlasChunk.cs (691b)
+|   |   |   |   |   |   AtlasChunkConfig.cs (257b)
+|   |   |   |   |   |   AtlasConfig.cs (548b)
+|   |   |   |   |   |   AtlasSquare.cs (158b)
+|   |   |   |   |   Interfaces
+|   |   |   |   |   |   IAtlasSystem.cs (530b)
+|   |   |   |   |   Utils
+|   |   |   |   |   |   AtlasMath.cs (682b)
+|   |   |   |   |   Validators
+|   |   |   |   |   |   AtlasChunkConfigValidator.cs (1.2kb)
+|   |   |   |   |   |   AtlasConfigValidator.cs (2.2kb)
+|   |   |   |   |   SolidSpace.Entities.Rendering.Atlases.asmdef (638b)
+|   |   |   Pixels
+|   |   |   |   Controllers
+|   |   |   |   |   PixelMeshSystem.cs (7.2kb)
+|   |   |   |   Data
+|   |   |   |   |   PixelMeshSystemConfig.cs (267b)
+|   |   |   |   |   PixelVertexData.cs (246b)
+|   |   |   |   |   SquareVertices.cs (254b)
+|   |   |   |   Installers
+|   |   |   |   |   PixelRenderingInstaller.cs (459b)
+|   |   |   |   Jobs
+|   |   |   |   |   PixelMeshComputeJob.cs (2.7kb)
+|   |   |   |   Shaders
+|   |   |   |   |   PixelSystem20.shader (935b)
+|   |   |   |   SolidSpace.Entities.Rendering.Pixels.asmdef (937b)
+|   |   |   Sprites
+|   |   |   |   Controllers
+|   |   |   |   |   SpriteColorSystem.cs (2.0kb)
+|   |   |   |   |   SpriteMeshSystem.cs (8.0kb)
+|   |   |   |   Data
+|   |   |   |   |   SpriteMeshSystemConfig.cs (269b)
+|   |   |   |   |   SpriteVertexData.cs (274b)
+|   |   |   |   Installers
+|   |   |   |   |   SpriteRenderingInstaller.cs (631b)
+|   |   |   |   Interfaces
+|   |   |   |   |   ISpriteColorSystem.cs (181b)
+|   |   |   |   Jobs
+|   |   |   |   |   SpriteMeshComputeJob.cs (5.5kb)
+|   |   |   |   Shaders
+|   |   |   |   |   SpriteSystem20.shader (1.1kb)
+|   |   |   |   SolidSpace.Entities.Rendering.Sprites.asmdef (1.1kb)
+|   |   |   Utilities
+|   |   |   |   Data
+|   |   |   |   |   MeshDrawingData.cs (472b)
+|   |   |   |   Utils
+|   |   |   |   |   MeshRenderingUtil.cs (1.7kb)
+|   |   |   |   SolidSpace.Entities.Rendering.Utilities.asmdef (440b)
+|   |   RepeatTimer
+|   |   |   Controllers
+|   |   |   |   RepeatTimerSystem.cs (1.5kb)
+|   |   |   Installers
+|   |   |   |   RepeatTimerInstaller.cs (319b)
+|   |   |   Jobs
+|   |   |   |   RepeatTimerJob.cs (1.2kb)
+|   |   |   SolidSpace.Entities.RepeatTimer.asmdef (732b)
+|   |   World
+|   |   |   Controllers
+|   |   |   |   EntityWorldManager.cs (1.9kb)
+|   |   |   |   EntityWorldTime.cs (729b)
+|   |   |   Installers
+|   |   |   |   EntityWorldInstaller.cs (364b)
+|   |   |   Interfaces
+|   |   |   |   IEntityWorldManager.cs (799b)
+|   |   |   |   IEntityWorldTime.cs (189b)
+|   |   |   SolidSpace.Entities.World.asmdef (626b)
+|   GameCycle
+|   |   Controllers
+|   |   |   GameCycleController.cs (3.3kb)
+|   |   |   UpdatingBehaviour.cs (268b)
+|   |   Data
+|   |   |   Config.cs (321b)
+|   |   Enums
+|   |   |   EControllerType.cs (237b)
+|   |   Installers
+|   |   |   GameCycleInstaller.cs (389b)
+|   |   Interfaces
+|   |   |   IController.cs (263b)
+|   |   Validators
+|   |   |   ConfigValidator.cs (856b)
+|   |   SolidSpace.GameCycle.asmdef (521b)
+|   JobUtilities
+|   |   Runtime
+|   |   |   Jobs
+|   |   |   |   SingleBufferedDataCollectJob.cs (1.1kb)
+|   |   |   Utils
+|   |   |   |   NativeArrayUtil.cs (1.3kb)
+|   |   |   SolidSpace.JobUtilities.asmdef (424b)
+|   Mathematics
+|   |   Data
+|   |   |   AtlasIndex.cs (143b)
+|   |   |   FloatBounds.cs (195b)
+|   |   SolidSpace.Mathematics.asmdef (41b)
+|   Playground
+|   |   Controllers
+|   |   |   ColliderSpawnManager.cs (4.7kb)
+|   |   |   EmitterSpawnManager.cs (2.1kb)
+|   |   |   ParticleSpawnManager.cs (2.0kb)
+|   |   |   SpriteSpawnManager.cs (3.4kb)
+|   |   Data
+|   |   |   ColliderSpawnManagerConfig.cs (1.0kb)
+|   |   |   EmitterSpawnManagerConfig.cs (778b)
+|   |   |   ParticleSpawnManagerConfig.cs (567b)
+|   |   |   SpriteSpawnManagerConfig.cs (824b)
+|   |   Installers
+|   |   |   PlaygroundInstaller.cs (1.0kb)
+|   |   SolidSpace.Playground.asmdef (822b)
+|   Profiling
+|   |   Editor
+|   |   |   ProfilingTreeWindow.cs (3.6kb)
+|   |   |   SceneContextUtil.cs (923b)
+|   |   |   SolidSpace.Profiling.Editor.asmdef (552b)
+|   |   Runtime
+|   |   |   Controllers
+|   |   |   |   ProfilingManager.cs (6.9kb)
+|   |   |   |   ProfilingManager.ExceptionHandler.cs (2.0kb)
+|   |   |   |   ProfilingTreeReader.cs (2.0kb)
+|   |   |   Data
+|   |   |   |   int2.cs (231b)
+|   |   |   |   NativeNode.cs (162b)
+|   |   |   |   ProfilingConfig.cs (955b)
+|   |   |   |   ProfilingHandle.cs (646b)
+|   |   |   |   ProfilingNode.cs (166b)
+|   |   |   |   ProfilingRecord.cs (1.0kb)
+|   |   |   |   ProfilingTree.cs (525b)
+|   |   |   |   TreeBuildState.cs (186b)
+|   |   |   Enums
+|   |   |   |   ETreeBuildCode.cs (256b)
+|   |   |   Installers
+|   |   |   |   ProfilingInstaller.cs (401b)
+|   |   |   Interfaces
+|   |   |   |   IProfilingManager.cs (195b)
+|   |   |   |   IProfilingProcessor.cs (176b)
+|   |   |   Jobs
+|   |   |   |   ProfilingBuildTreeJob.cs (4.9kb)
+|   |   |   |   ProfilingReadTreeJob.cs (1.7kb)
+|   |   |   Tests
+|   |   |   |   ProfilingManagerTests.cs (6.0kb)
+|   |   |   |   SolidSpace.Profiling.Tests.asmdef (451b)
+|   |   |   Validators
+|   |   |   |   ProfilingConfigValidator.cs (702b)
+|   |   |   SolidSpace.Profiling.asmdef (621b)
+
+Summary:
+	Directory count: 125
+	File count: 203
+	Files size total: 246.2kb
