@@ -2,7 +2,8 @@
     "name": "SolidSpace.Automation.AssetNameTool",
     "rootNamespace": "",
     "references": [
-        "GUID:33107023e80e4beb8dbcf98b6c23d4a2"
+        "GUID:33107023e80e4beb8dbcf98b6c23d4a2",
+        "GUID:eb9091b7172da1c4eb70f471b152b4d6"
     ],
     "includePlatforms": [
         "Editor"

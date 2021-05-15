@@ -13,15 +13,15 @@ MonoBehaviour:
   m_Name: Playground.PlaygroundInstaller
   m_EditorClassIdentifier: 
   _colliderSpawnManagerConfig:
-    _colliderRadius: 0
-    _onStartSpawnCount: 0
-    _spawnPerSpawn: 0
-    _spawnExtraRadius: 0
-    _spawnRangeX: {x: 0, y: 0}
-    _spawnRangeY: {x: 0, y: 0}
+    _colliderRadius: 16
+    _onStartSpawnCount: 100
+    _spawnPerSpawn: 5
+    _spawnExtraRadius: 5
+    _spawnRangeX: {x: -300, y: 300}
+    _spawnRangeY: {x: -250, y: 250}
     _drawGizmos: 0
   _emitterSpawnManagerConfig:
-    _entityCount: 0
+    _entityCount: 1000
     _spawnRate: 60
     _spawnRangeX: {x: -300, y: 300}
     _spawnRangeY: {x: -250, y: 250}
@@ -29,7 +29,7 @@ MonoBehaviour:
   _spriteSpawnManagerConfig:
     _spriteTexture: {fileID: 2800000, guid: d51b8917003f48442892e8c7a6035160, type: 3}
     _outputAtlasPath: T:\Atlas.png
-    _spawnCount: 1000000
+    _spawnCount: 0
     _spawnRangeX: {x: -300, y: 300}
     _spawnRangeY: {x: -250, y: 250}
     _rotateSprites: 1

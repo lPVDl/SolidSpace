@@ -3,12 +3,14 @@ using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Physics.Colliders;
 using SolidSpace.Entities.World;
 using SolidSpace.Mathematics;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
 namespace SolidSpace.Entities.Physics.Raycast
 {
+    [BurstCompile]
     internal struct RaycastJob : IJobParallelFor
     {
         [ReadOnly] public ColliderWorld inColliderWorld;

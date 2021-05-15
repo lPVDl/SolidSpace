@@ -2,7 +2,7 @@ using System;
 using System.Reflection;
 using UnityEngine;
 
-namespace SolidSpace.Automation.AssetNameTool
+namespace SolidSpace.EditorUtilities
 {
     public static class ConsoleUtil
     {

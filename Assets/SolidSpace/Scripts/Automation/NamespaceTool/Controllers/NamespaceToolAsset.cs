@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Sirenix.OdinInspector;
+using SolidSpace.EditorUtilities;
 using UnityEngine;
 
 namespace SolidSpace.Automation.NamespaceTool

@@ -1,4 +1,4 @@
-using SolidSpace.Automation.AssetNameTool;
+using SolidSpace.EditorUtilities;
 using UnityEngine;
 
 namespace SolidSpace.Automation.ProjectStructureTool
