@@ -1,7 +1,6 @@
 using System.Runtime.CompilerServices;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Rendering.Atlases;
-using SolidSpace.Entities.World;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
@@ -37,8 +36,6 @@ namespace SolidSpace.Entities.Rendering.Sprites
 
         [WriteOnly, NativeDisableContainerSafetyRestriction] public NativeArray<SpriteVertexData> outVertices;
         [WriteOnly, NativeDisableContainerSafetyRestriction] public NativeArray<ushort> outIndices;
-
-        private AtlasMath _atlasMath;
         
         public void Execute()
         {
@@ -69,7 +66,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
                     var renderIndex = renders[i].index;
                     var renderChunk = inAtlasChunks[renderIndex.chunkId];
                     var size = sizes[i].value;
-                    var uvPixelOffset = (float2) _atlasMath.ComputeOffset(renderChunk, renderIndex);
+                    var uvPixelOffset = (float2) AtlasMath.ComputeOffset(renderChunk, renderIndex);
                     
                     FlushSquare(ref indexOffset, ref vertexOffset, new Square
                     {

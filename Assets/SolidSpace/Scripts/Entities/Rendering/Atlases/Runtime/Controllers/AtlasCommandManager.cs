@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using SolidSpace.Entities.World;
 using SolidSpace.Mathematics;
 using UnityEngine;
 
@@ -15,8 +14,6 @@ namespace SolidSpace.Entities.Rendering.Atlases
         
         private readonly IAtlasSystem _atlas;
         private readonly List<CopyTextureCommand> _commands;
-
-        private AtlasMath _atlasMath;
         
         public AtlasCommandManager(IAtlasSystem atlas)
         {
@@ -39,7 +36,7 @@ namespace SolidSpace.Entities.Rendering.Atlases
             {
                 var command = _commands[i];
                 var sprite = command.target;
-                var offset = _atlasMath.ComputeOffset(_atlas.Chunks[sprite.chunkId], sprite);
+                var offset = AtlasMath.ComputeOffset(_atlas.Chunks[sprite.chunkId], sprite);
                 var source = command.source;
                 
                 Graphics.CopyTexture(source, 0, 0, 0, 0, source.width, source.height, 

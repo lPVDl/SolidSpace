@@ -1,14 +1,13 @@
 using System.Runtime.CompilerServices;
-using SolidSpace.Entities.World;
 using SolidSpace.Mathematics;
 using Unity.Mathematics;
 
 namespace SolidSpace.Entities.Rendering.Atlases
 {
-    public struct AtlasMath
+    public static class AtlasMath
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int2 ComputeOffset(AtlasChunk chunk, AtlasIndex index)
+        public static int2 ComputeOffset(AtlasChunk chunk, AtlasIndex index)
         {
             chunk.GetPower(out var indexPower, out var itemPower);
             var x = chunk.offsetX << 2 + (index.itemId & ((1 << indexPower) - 1)) * (1 << itemPower);
