@@ -3,7 +3,6 @@ Scripts
 |   |   AssetNameTool
 |   |   |   Controllers
 |   |   |   |   AssetNameToolAsset.cs (1.1kb)
-|   |   |   |   ConsoleUtil.cs (1.2kb)
 |   |   |   |   FileNameUtil.cs (2.6kb)
 |   |   |   |   FileProcessor.cs (1.8kb)
 |   |   |   Data
@@ -12,11 +11,10 @@ Scripts
 |   |   |   |   FilterInfo.cs (276b)
 |   |   |   Validators
 |   |   |   |   FilterInfoValidator.cs (1.0kb)
-|   |   |   SolidSpace.Automation.AssetNameTool.asmdef (460b)
+|   |   |   SolidSpace.Automation.AssetNameTool.asmdef (492b)
 |   |   NamespaceTool
 |   |   |   Controllers
 |   |   |   |   AssemblyUtil.cs (3.6kb)
-|   |   |   |   ConsoleUtil.cs (1.2kb)
 |   |   |   |   DotSettingsWriter.cs (1.2kb)
 |   |   |   |   FolderScanner.cs (1.6kb)
 |   |   |   |   NamespaceToolAsset.cs (3.2kb)
@@ -28,23 +26,24 @@ Scripts
 |   |   |   Validators
 |   |   |   |   ConfigValidator.cs (885b)
 |   |   |   |   FilterInfoValidator.cs (671b)
-|   |   |   SolidSpace.Automation.NamespaceTool.asmdef (460b)
+|   |   |   SolidSpace.Automation.NamespaceTool.asmdef (492b)
 |   |   ProjectStructureTool
 |   |   |   Controllers
 |   |   |   |   FileConsole.cs (552b)
 |   |   |   |   FileScanner.cs (2.2kb)
-|   |   |   |   FileWriter.cs (1.9kb)
+|   |   |   |   FileWriter.cs (2.0kb)
 |   |   |   |   ProjectStructureToolAsset.cs (962b)
-|   |   |   |   UnityConsole.cs (460b)
+|   |   |   |   UnityConsole.cs (451b)
 |   |   |   Data
 |   |   |   |   Validators
 |   |   |   |   |   ConfigValidator.cs (1.1kb)
 |   |   |   |   |   FileInfoValidator.cs (703b)
-|   |   |   |   Config.cs (552b)
+|   |   |   |   Config.cs (554b)
 |   |   |   |   EntityInfo.cs (191b)
-|   |   |   |   FilterInfo.cs (189b)
+|   |   |   |   FilterInfo.cs (191b)
 |   |   |   Interfaces
 |   |   |   |   IConsole.cs (143b)
+|   |   |   SolidSpace.Automation.ProjectStructureTool.asmdef (499b)
 |   CameraMotion
 |   |   Controllers
 |   |   |   CameraMotionController.cs (3.0kb)
@@ -80,6 +79,9 @@ Scripts
 |   |   |   IApplicationBootstrapper.cs (128b)
 |   |   |   IDependencyContainer.cs (218b)
 |   |   SolidSpace.DependencyInjection.asmdef (431b)
+|   EditorUtilities
+|   |   ConsoleUtil.cs (1.2kb)
+|   |   SolidSpace.EditorUtilities.asmdef (381b)
 |   Entities
 |   |   Components
 |   |   |   Scripts
@@ -156,7 +158,7 @@ Scripts
 |   |   |   |   |   IRaycastComputeSystem.cs (243b)
 |   |   |   |   Jobs
 |   |   |   |   |   RaycastJob.cs (5.4kb)
-|   |   |   |   SolidSpace.Entities.Physics.Raycast.asmdef (936b)
+|   |   |   |   SolidSpace.Entities.Physics.Raycast.asmdef (960b)
 |   |   |   Velocity
 |   |   |   |   Controllers
 |   |   |   |   |   VelocitySystem.cs (1.6kb)
@@ -180,7 +182,7 @@ Scripts
 |   |   |   |   |   SolidSpace.Entities.Rendering.Atlases.Editor.asmdef (469b)
 |   |   |   |   Runtime
 |   |   |   |   |   Controllers
-|   |   |   |   |   |   AtlasCommandManager.cs (1.5kb)
+|   |   |   |   |   |   AtlasCommandManager.cs (1.4kb)
 |   |   |   |   |   |   AtlasIndexManager.cs (3.7kb)
 |   |   |   |   |   |   AtlasSquareManager.cs (2.3kb)
 |   |   |   |   |   Data
@@ -191,7 +193,7 @@ Scripts
 |   |   |   |   |   Interfaces
 |   |   |   |   |   |   IAtlasSystem.cs (530b)
 |   |   |   |   |   Utils
-|   |   |   |   |   |   AtlasMath.cs (682b)
+|   |   |   |   |   |   AtlasMath.cs (661b)
 |   |   |   |   |   Validators
 |   |   |   |   |   |   AtlasChunkConfigValidator.cs (1.2kb)
 |   |   |   |   |   |   AtlasConfigValidator.cs (2.2kb)
@@ -222,7 +224,7 @@ Scripts
 |   |   |   |   Interfaces
 |   |   |   |   |   ISpriteColorSystem.cs (181b)
 |   |   |   |   Jobs
-|   |   |   |   |   SpriteMeshComputeJob.cs (5.5kb)
+|   |   |   |   |   SpriteMeshComputeJob.cs (5.4kb)
 |   |   |   |   Shaders
 |   |   |   |   |   SpriteSystem20.shader (1.1kb)
 |   |   |   |   SolidSpace.Entities.Rendering.Sprites.asmdef (1.1kb)
@@ -328,6 +330,7 @@ Scripts
 |   |   |   SolidSpace.Profiling.asmdef (621b)
 
 Summary:
-	Directory count: 125
-	File count: 203
-	Files size total: 246.2kb
+	UtcNow: 5/15/2021 2:09:20 PM
+	Directory count: 126
+	File count: 204
+	Files size total: 246.0kb

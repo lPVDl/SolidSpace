@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 
 namespace SolidSpace.Automation.ProjectStructureTool
@@ -30,6 +31,7 @@ namespace SolidSpace.Automation.ProjectStructureTool
             
             console.WriteLine(string.Empty);
             console.WriteLine("Summary:");
+            console.WriteLine($"\tUtcNow: {DateTime.UtcNow}");
             console.WriteLine($"\tDirectory count: {directoryCount}");
             console.WriteLine($"\tFile count: {fileCount}");
             console.WriteLine($"\tFiles size total: {FormatBytes(filesSizeTotal)}");
