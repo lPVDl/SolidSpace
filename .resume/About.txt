@@ -1,14 +1,32 @@
 Description (WIP):
-	2D massive space battle simulator with pixel graphics, pixel physics with features of per pixel ship design, forming fleet and confronting other players' fleets
+	Top down 2D massive space battle simulator with pixel graphics, pixel physics, ship design editor. Form a fleet and confront other players!
 	
 Tech stack:
 	Current:
-		Unity3D, C#
-		ECS, Jobs, Burst
-		Zenject
+		Unity 2020.3.8f1
+			Unity.Jobs
+			Unity.Burst
+			Unity.Entities
+			Unity.Mathematics
+			ScriptableObjects
+			ShaderLab (CGPROGRAM)
+			UnityEngine.Profiling
+			EditorWindow, EditorGUILayout
+			
+		Unity C# (.NET 4.x Equivalent)
+			System.Collections, System.Collections.Generic
+			System.Text.RegularExpressions
+			System.Diagnostics
+			System.Reflection
+			System.Linq
+			System.IO
+			
+		OdinInspector
+		OdinValidator
+		Extenject
 		NUnit
 		Git
-		OdinInspector, OdinValidator
+	
 	Planning:
 		Roslyn
 		I2Loc
