@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using SolidSpace.JobUtilities;
 using Unity.Collections;
 using Unity.Jobs;
+using Unity.Mathematics;
 
 namespace SolidSpace.Profiling
 {
