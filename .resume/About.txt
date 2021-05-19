@@ -1,7 +1,7 @@
 Description (WIP):
 	Top down 2D massive space battle simulator with pixel graphics, pixel physics, ship design editor. Form a fleet and confront other players!
 	
-Tech stack:
+Technologies:
 	Current:
 		Unity 2020.3.8f1
 			Unity.Jobs
@@ -25,15 +25,20 @@ Tech stack:
 		OdinValidator
 		Extenject
 		NUnit
-		Git
+		
+		Workflow
+			GSuite
+			Jira
+			Git
 	
 	Planning:
-		Roslyn
+		Roslyn extensions
 		I2Loc
 		UIElements
 		UniRx
 		Rewired
-		Jira, Confluence
+		Slack
+		Confluence
 		NSubstitute
 		CI / CD
 		Bug tracking
