@@ -18,27 +18,27 @@ MonoBehaviour:
     - enabled: 1
       regex: \/(?i)Scripts$
     - enabled: 1
-      regex: \/(?i)Controllers$
-    - enabled: 1
-      regex: \/(?i)Enums$
-    - enabled: 1
-      regex: \/(?i)Interfaces$
-    - enabled: 1
-      regex: \/(?i)Data$
-    - enabled: 1
-      regex: \/(?i)Validators$
-    - enabled: 1
-      regex: \/(?i)Jobs$
-    - enabled: 1
-      regex: \/(?i)Installers$
-    - enabled: 1
-      regex: \/(?i)Utils$
-    - enabled: 1
-      regex: \/(?i)Runtime$
-    - enabled: 1
-      regex: \/(?i)Source$
-    - enabled: 1
       regex: \/(?i)Plugins$
+    - enabled: 1
+      regex: \/(?i)SolidSpace\/.*\/Controllers$
+    - enabled: 1
+      regex: \/(?i)SolidSpace\/.*\/Enums$
+    - enabled: 1
+      regex: \/(?i)SolidSpace\/.*\/Interfaces$
+    - enabled: 1
+      regex: \/(?i)SolidSpace\/.*\/Data$
+    - enabled: 1
+      regex: \/(?i)SolidSpace\/.*\/Validators$
+    - enabled: 1
+      regex: \/(?i)SolidSpace\/.*\/Jobs$
+    - enabled: 1
+      regex: \/(?i)SolidSpace\/.*\/Installers$
+    - enabled: 1
+      regex: \/(?i)SolidSpace\/.*\/Utils$
+    - enabled: 1
+      regex: \/(?i)SolidSpace\/.*\/Runtime$
+    - enabled: 1
+      regex: \/(?i)SolidSpace\/.*\/Source$
     - enabled: 1
       regex: \/(?i)Plugins\/Zenject\/.*
     - enabled: 1
@@ -60,5 +60,3 @@ MonoBehaviour:
       regex: ^Sirenix
     - enabled: 1
       regex: ^Zenject
-    - enabled: 1
-      regex: SolidSpace.Automation.NamespaceTool
