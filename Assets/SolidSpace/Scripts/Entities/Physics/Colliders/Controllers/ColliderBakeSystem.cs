@@ -48,9 +48,9 @@ namespace SolidSpace.Entities.Physics.Colliders
                 typeof(PositionComponent),
                 typeof(ColliderComponent)
             });
-            _colliderBounds = NativeArrayUtil.CreatePersistentArray<FloatBounds>(ColliderBufferChunkSize);
-            _worldColliders = NativeArrayUtil.CreatePersistentArray<ushort>(ColliderBufferChunkSize * 4);
-            _worldChunks = NativeArrayUtil.CreatePersistentArray<ColliderListPointer>(ChunkBufferChunkSize);
+            _colliderBounds = NativeMemoryUtil.CreatePersistentArray<FloatBounds>(ColliderBufferChunkSize);
+            _worldColliders = NativeMemoryUtil.CreatePersistentArray<ushort>(ColliderBufferChunkSize * 4);
+            _worldChunks = NativeMemoryUtil.CreatePersistentArray<ColliderListPointer>(ChunkBufferChunkSize);
         }
 
         public void UpdateController()
@@ -61,7 +61,7 @@ namespace SolidSpace.Entities.Physics.Colliders
 
             _profiler.BeginSample("Collider Offsets");
             var colliderChunkCount = colliderChunks.Length;
-            var colliderOffsets = NativeArrayUtil.CreateTempJobArray<int>(colliderChunkCount);
+            var colliderOffsets = NativeMemoryUtil.CreateTempJobArray<int>(colliderChunkCount);
             var colliderCount = 0;
             for (var i = 0; i < colliderChunkCount; i++)
             {
@@ -71,7 +71,7 @@ namespace SolidSpace.Entities.Physics.Colliders
             _profiler.EndSample("Collider Offsets");
             
             _profiler.BeginSample("Colliders Bounds");
-            NativeArrayUtil.MaintainPersistentArrayLength(ref _colliderBounds, colliderCount, ColliderBufferChunkSize);
+            NativeMemoryUtil.MaintainPersistentArrayLength(ref _colliderBounds, colliderCount, ColliderBufferChunkSize);
             var computeBoundsJob = new ComputeBoundsJob
             {
                 colliderChunks = colliderChunks,
@@ -91,7 +91,7 @@ namespace SolidSpace.Entities.Physics.Colliders
             _profiler.BeginSample("Reset Chunks");
             var worldChunkTotal = worldGrid.size.x * worldGrid.size.y;
             
-            NativeArrayUtil.MaintainPersistentArrayLength(ref _worldChunks, worldChunkTotal, ChunkBufferChunkSize);
+            NativeMemoryUtil.MaintainPersistentArrayLength(ref _worldChunks, worldChunkTotal, ChunkBufferChunkSize);
             
             var resetChunksJob = new FillNativeArrayJob<ColliderListPointer>
             {
@@ -107,8 +107,8 @@ namespace SolidSpace.Entities.Physics.Colliders
 
             _profiler.BeginSample("Chunk Colliders");
             jobCount = (int) math.ceil(colliderCount / 128f);
-            var chunkedColliders = NativeArrayUtil.CreateTempJobArray<ChunkedCollider>(colliderCount * 4);
-            var chunkedColliderCounts = NativeArrayUtil.CreateTempJobArray<int>(jobCount);
+            var chunkedColliders = NativeMemoryUtil.CreateTempJobArray<ChunkedCollider>(colliderCount * 4);
+            var chunkedColliderCounts = NativeMemoryUtil.CreateTempJobArray<int>(jobCount);
             
             var chunkingJob = new ChunkCollidersJob
             {
@@ -146,7 +146,7 @@ namespace SolidSpace.Entities.Physics.Colliders
             _profiler.EndSample("Lists Offsets");
             
             _profiler.BeginSample("Lists Fill");
-            NativeArrayUtil.MaintainPersistentArrayLength(ref _worldColliders, colliderCount * 4, ChunkBufferChunkSize * 4);
+            NativeMemoryUtil.MaintainPersistentArrayLength(ref _worldColliders, colliderCount * 4, ChunkBufferChunkSize * 4);
             var listFillJob = new WorldChunkListsFillJob
             {
                 inColliders = chunkedColliders,
