@@ -29,9 +29,9 @@ namespace SolidSpace.Profiling
                 inSiblings = _tree.siblings,
                 inTimes = _tree.times,
                 inReadRange = new int2(offset, offset + count - 1),
-                outNodeCount = NativeArrayUtil.CreateTempJobArray<int>(1),
-                outTotalNodeCount = NativeArrayUtil.CreateTempJobArray<int>(1),
-                outNodes = NativeArrayUtil.CreateTempJobArray<NativeNode>(count)
+                outNodeCount = NativeMemoryUtil.CreateTempJobArray<int>(1),
+                outTotalNodeCount = NativeMemoryUtil.CreateTempJobArray<int>(1),
+                outNodes = NativeMemoryUtil.CreateTempJobArray<NativeNode>(count)
             };
             job.Schedule().Complete();
             

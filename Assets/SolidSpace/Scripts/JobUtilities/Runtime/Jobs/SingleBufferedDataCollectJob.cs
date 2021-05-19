@@ -12,7 +12,7 @@ namespace SolidSpace.JobUtilities
         [ReadOnly] public NativeArray<int> inOffsets;
         [ReadOnly] public NativeArray<int> inCounts;
 
-        [WriteOnly] public NativeArray<int> outCount;
+        [WriteOnly] public NativeReference<int> outCount;
         
         public void Execute()
         {
@@ -34,7 +34,7 @@ namespace SolidSpace.JobUtilities
                 }
             }
 
-            outCount[0] = resultCount;
+            outCount.Value = resultCount;
         }
     }
 }

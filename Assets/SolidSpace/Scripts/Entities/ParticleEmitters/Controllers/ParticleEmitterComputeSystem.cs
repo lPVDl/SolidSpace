@@ -16,7 +16,7 @@ namespace SolidSpace.Entities.ParticleEmitters
         public EControllerType ControllerType => EControllerType.EntityCompute;
 
         public NativeArray<ParticleEmitterData> Particles => _particles;
-        public int ParticleCount => _particleCount[0];
+        public int ParticleCount => _particleCount.Value;
         
         private readonly IEntityWorldManager _entityManager;
         private readonly IEntityWorldTime _time;
@@ -24,7 +24,7 @@ namespace SolidSpace.Entities.ParticleEmitters
 
         private EntityQuery _query;
         private NativeArray<ParticleEmitterData> _particles;
-        private NativeArray<int> _particleCount;
+        private NativeReference<int> _particleCount;
         private ProfilingHandle _profiler;
 
         public ParticleEmitterComputeSystem(IEntityWorldManager entityManager, IEntityWorldTime time, IProfilingManager profilingManager)
@@ -44,9 +44,8 @@ namespace SolidSpace.Entities.ParticleEmitters
                 typeof(RandomValueComponent),
                 typeof(RepeatTimerComponent)
             });
-            _particles = NativeArrayUtil.CreatePersistentArray<ParticleEmitterData>(BufferChunkSize);
-            _particleCount = NativeArrayUtil.CreatePersistentArray<int>(1);
-            _particleCount[0] = 0;
+            _particles = NativeMemoryUtil.CreatePersistentArray<ParticleEmitterData>(BufferChunkSize);
+            _particleCount = NativeMemoryUtil.CreatePersistentReference(0);
         }
 
         public void UpdateController()
@@ -57,8 +56,8 @@ namespace SolidSpace.Entities.ParticleEmitters
 
             _profiler.BeginSample("Entity Offsets");
             var chunkCount = chunks.Length;
-            var offsets = NativeArrayUtil.CreateTempJobArray<int>(chunkCount);
-            var counts = NativeArrayUtil.CreateTempJobArray<int>(chunkCount);
+            var offsets = NativeMemoryUtil.CreateTempJobArray<int>(chunkCount);
+            var counts = NativeMemoryUtil.CreateTempJobArray<int>(chunkCount);
             var maxEntityCount = 0;
             for (var i = 0; i < chunkCount; i++)
             {
@@ -67,7 +66,7 @@ namespace SolidSpace.Entities.ParticleEmitters
             }
             _profiler.EndSample("Entity Offsets");
             
-            NativeArrayUtil.MaintainPersistentArrayLength(ref _particles, maxEntityCount, BufferChunkSize);
+            NativeMemoryUtil.MaintainPersistentArrayLength(ref _particles, maxEntityCount, BufferChunkSize);
 
             _profiler.BeginSample("Compute & Collect");
             var computeJob = new ParticleEmitterComputeJob
