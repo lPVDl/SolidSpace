@@ -13,6 +13,7 @@ namespace SolidSpace.Editor.Automation.AssetNameTool
                 return string.Empty;
             }
 
+            // TODO [T-12]: Add ValidationUtil, separate common methods.
             try
             {
                 Regex.IsMatch("", data.scannerRegex);

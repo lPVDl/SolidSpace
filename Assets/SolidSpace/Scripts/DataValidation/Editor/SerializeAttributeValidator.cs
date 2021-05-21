@@ -26,6 +26,7 @@ namespace SolidSpace.DataValidation.Editor
             _brokenValidators.Clear();
         }
 
+        // TODO [T-8]: Validation should give which validator reported the error.
         protected override void Validate(ValidationResult result)
         {
             if (Property.BaseValueEntry.ValueState == PropertyValueState.NullReference)

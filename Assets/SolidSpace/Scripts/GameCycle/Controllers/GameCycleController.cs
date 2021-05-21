@@ -51,6 +51,7 @@ namespace SolidSpace.GameCycle
                 }
             }
 
+            // TODO [T-18]: Separate initialization and execution order in GameCycle.
             _controllers = _controllers.OrderBy(i => order[i.ControllerType]).ToList();
             _names = _controllers.Select(i => i.GetType().Name).ToList();
 

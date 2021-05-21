@@ -16,6 +16,7 @@ namespace SolidSpace.Editor.Automation.NamespaceTool
             _filters = config.FolderFilters;
             _rootLength = projectRoot.Length + 1;
             
+            // TODO [T-11]: Add PathUtil, separate common methods.
             ScanRecursive(Path.Combine(projectRoot + "/" + config.ScriptsRoot));
 
             return _outFolders;

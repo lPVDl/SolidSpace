@@ -17,6 +17,7 @@ namespace SolidSpace.Editor.Automation.NamespaceTool
             ConsoleUtil.ClearLog();
             
             var folderScanner = new FolderScanner();
+            // TODO [T-11]: Add PathUtil, separate common methods.
             var projectRoot = Application.dataPath.Substring(0, Application.dataPath.Length - 7);
             var folders = folderScanner.Scan(projectRoot, _config);
 

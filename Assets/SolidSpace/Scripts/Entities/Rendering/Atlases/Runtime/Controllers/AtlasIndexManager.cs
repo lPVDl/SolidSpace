@@ -12,8 +12,10 @@ namespace SolidSpace.Entities.Rendering.Atlases
 
         public NativeList<AtlasChunk> Chunks => _chunks;
 
+        // TODO [T-20]: Remove NativeList in AtlasIndexManager.
         private NativeList<AtlasChunk> _chunks;
         private readonly AtlasSquareManager _squareManager;
+        // TODO [T-19]: Chunk occupation, use int to store values instead on stack.
         private readonly Stack<AtlasIndex>[] _emptySprites;
         private readonly int _maxSpritePower;
         private readonly int _minSpritePower;

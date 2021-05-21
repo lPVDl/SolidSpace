@@ -13,6 +13,7 @@ namespace SolidSpace.Entities.Rendering.Atlases
                 return $"'{nameof(data.spriteSize)}' must be equal or more than {minSpriteSize}";
             }
 
+            // TODO [T-21]: BinaryMath for binary operations.
             if (!IsPowerOfTwo(data.spriteSize))
             {
                 return $"'{nameof(data.spriteSize)}' must be power of 2";

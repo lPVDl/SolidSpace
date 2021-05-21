@@ -98,6 +98,7 @@ namespace SolidSpace.DataValidation.Editor
 
         public static bool TryGetValidatorFor(Type type, out ValidationMethod validator)
         {
+            // TODO [T-7]: Validation ignores class inheritance.
             return Validators.TryGetValue(type, out validator);
         }
     }
