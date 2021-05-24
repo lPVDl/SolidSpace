@@ -81,11 +81,12 @@ namespace SolidSpace.Entities.Physics.Colliders
             NativeMemoryUtil.MaintainPersistentArrayLength(ref _colliderBounds, colliderCount, ColliderBufferChunkSize);
             var computeBoundsJob = new ComputeBoundsJob
             {
-                colliderChunks = colliderChunks,
-                boundsWriteOffsets = colliderOffsets,
-                outputBounds = _colliderBounds,
+                inChunks = colliderChunks,
+                inWriteOffsets = colliderOffsets,
+                outBounds = _colliderBounds,
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
-                sizeHandle = _entityManager.GetComponentTypeHandle<SizeComponent>(true)
+                sizeHandle = _entityManager.GetComponentTypeHandle<SizeComponent>(true),
+                rotationHandle = _entityManager.GetComponentTypeHandle<RotationComponent>(true)
             };
             var computeBoundsJobHandle = computeBoundsJob.Schedule(colliderChunkCount, 8);
             computeBoundsJobHandle.Complete();

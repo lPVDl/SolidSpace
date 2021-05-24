@@ -3,6 +3,7 @@ using SolidSpace.Entities.Components;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
 using SolidSpace.Gizmos;
+using SolidSpace.Mathematics;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -15,8 +16,9 @@ namespace SolidSpace.Playground
     {
         private struct ColliderInfo
         {
-            public Vector3 position;
-            public Vector2 size;
+            public float2 position;
+            public float rotation;
+            public float2 size;
             public Entity entity;
         }
 
@@ -43,6 +45,7 @@ namespace SolidSpace.Playground
             {
                 typeof(PositionComponent),
                 typeof(ColliderComponent),
+                typeof(RotationComponent),
                 typeof(SizeComponent)
             };
         }
@@ -80,11 +83,11 @@ namespace SolidSpace.Playground
             var color = _config.GizmosColor;
             foreach (var info in _spawnedColliders)
             {
-                _gizmos.DrawWireRect(info.position, info.size, color);
+                _gizmos.DrawWireRect(info.position, info.size, info.rotation, color);
             }
         }
 
-        private void DestroyNearest(Vector3 position)
+        private void DestroyNearest(float2 position)
         {
             if (_spawnedColliders.Count == 0)
             {
@@ -95,7 +98,7 @@ namespace SolidSpace.Playground
             var minValue = float.MaxValue;
             for (var i = 0; i < _spawnedColliders.Count; i++)
             {
-                var distance = (_spawnedColliders[i].position - position).magnitude;
+                var distance = FloatMath.Distance(_spawnedColliders[i].position, position);
                 if (distance < minValue)
                 {
                     minValue = distance;
@@ -108,15 +111,17 @@ namespace SolidSpace.Playground
             _entityManager.DestroyEntity(entity);
         }
 
-        private void SpawnCollider(Vector3 position)
+        private void SpawnCollider(float2 position)
         {
             var width = (half) Random.Range(_config.ColliderWidth.x, _config.ColliderWidth.y);
             var height = (half) Random.Range(_config.ColliderHeight.x, _config.ColliderHeight.y);
+            var rotation = Random.value;
             var info = new ColliderInfo
             {
                 position = position,
+                rotation = FloatMath.TwoPI * rotation,
                 entity = _entityManager.CreateEntity(_colliderArchetype),
-                size = new Vector2(width, height)
+                size = new float2(width, height)
             };
             _spawnedColliders.Add(info);
             
@@ -128,11 +133,15 @@ namespace SolidSpace.Playground
             {
                 value = new half2(width, height)
             });
+            _entityManager.SetComponentData(info.entity, new RotationComponent
+            {
+                value = (half) rotation
+            });
         }
 
-        private bool GetClickPosition(out Vector3 clickPosition)
+        private bool GetClickPosition(out float2 clickPosition)
         {
-            clickPosition = Vector3.zero;
+            clickPosition = float2.zero;
 
             var ray = _camera.ScreenPointToRay(Input.mousePosition);
             var plane = new Plane(-Vector3.forward, Vector3.zero);
@@ -141,7 +150,12 @@ namespace SolidSpace.Playground
                 return false;
             }
             
-            clickPosition = ray.origin + ray.direction * distance;
+            var hitPos = ray.origin + ray.direction * distance;
+            clickPosition = new float2
+            {
+                x = hitPos.x,
+                y = hitPos.y
+            };
             
             return true;
         }

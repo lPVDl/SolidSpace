@@ -43,8 +43,8 @@ namespace SolidSpace.Entities.Physics.Raycast
                 var pos1 = pos0 + velocity * deltaTime;
                 
                 FloatBounds ray;
-                MinMax(pos0.x, pos1.x, out ray.xMin, out ray.xMax);
-                MinMax(pos0.y, pos1.y, out ray.yMin, out ray.yMax);
+                FloatMath.MinMax(pos0.x, pos1.x, out ray.xMin, out ray.xMax);
+                FloatMath.MinMax(pos0.y, pos1.y, out ray.yMin, out ray.yMax);
 
                 var x0 = ((int) ray.xMin >> worldPower) - worldAnchor.x;
                 var y0 = ((int) ray.yMin >> worldPower) - worldAnchor.y;
@@ -126,21 +126,6 @@ namespace SolidSpace.Entities.Physics.Raycast
             }
 
             return false;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void MinMax(float a, float b, out float min, out float max)
-        {
-            if (a > b)
-            {
-                min = b;
-                max = a;
-            }
-            else
-            {
-                min = a;
-                max = b;
-            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

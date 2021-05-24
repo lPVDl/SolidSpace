@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Rendering.Atlases;
+using SolidSpace.Mathematics;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
@@ -21,8 +22,6 @@ namespace SolidSpace.Entities.Rendering.Sprites
             public half2 uvMin;
             public half2 uvMax;
         }
-        
-        private const float TwoPI = 2 * math.PI;
         
         [ReadOnly, NativeDisableContainerSafetyRestriction] public NativeArray<ArchetypeChunk> inChunks;
         [ReadOnly] public int inFirstChunkIndex;
@@ -88,21 +87,21 @@ namespace SolidSpace.Entities.Rendering.Sprites
             var halfSize = square.size * 0.5f;
             var uvMin = square.uvMin;
             var uvMax = square.uvMax;
-            math.sincos(square.rotation * TwoPI, out var sin, out var cos);
+            FloatMath.SinCos(square.rotation * FloatMath.TwoPI, out var sin, out var cos);
 
-            vertex.position = center + Rotate(-halfSize.x, -halfSize.y, sin, cos);
+            vertex.position = center + FloatMath.Rotate(-halfSize.x, -halfSize.y, sin, cos);
             vertex.uv = uvMin;
             outVertices[vertexOffset + 0] = vertex;
 
-            vertex.position = center + Rotate(-halfSize.x, +halfSize.y, sin, cos);
+            vertex.position = center + FloatMath.Rotate(-halfSize.x, +halfSize.y, sin, cos);
             vertex.uv.y = uvMax.y;
             outVertices[vertexOffset + 1] = vertex;
                 
-            vertex.position = center + Rotate(+halfSize.x, +halfSize.y, sin, cos);
+            vertex.position = center + FloatMath.Rotate(+halfSize.x, +halfSize.y, sin, cos);
             vertex.uv.x = uvMax.x;
             outVertices[vertexOffset + 2] = vertex;
 
-            vertex.position = center + Rotate(+halfSize.x, -halfSize.y, sin, cos);
+            vertex.position = center + FloatMath.Rotate(+halfSize.x, -halfSize.y, sin, cos);
             vertex.uv.y = uvMin.y;
             outVertices[vertexOffset + 3] = vertex;
 
@@ -115,16 +114,6 @@ namespace SolidSpace.Entities.Rendering.Sprites
             
             vertexOffset += 4;
             indexOffset += 6;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private float2 Rotate(float x, float y, float sin, float cos)
-        {
-            return new float2
-            {
-                x = x * cos - y * sin,
-                y = x * sin + y * cos
-            };
         }
     }
 }
