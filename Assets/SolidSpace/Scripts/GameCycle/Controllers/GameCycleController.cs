@@ -16,7 +16,7 @@ namespace SolidSpace.GameCycle
         private List<IController> _controllers;
         private List<string> _names;
 
-        private UpdatingBehaviour _updatingBehaviour;
+        private UpdatingBehaviour _behaviour;
         private ProfilingHandle _profilingHandle;
 
         public GameCycleController(List<IController> controllers, Config config,
@@ -60,35 +60,26 @@ namespace SolidSpace.GameCycle
                 controller.InitializeController();
             }
 
-            var gameObject = new GameObject("GameCycleController");
-            _updatingBehaviour = gameObject.AddComponent<UpdatingBehaviour>();
-            _updatingBehaviour.OnUpdate += OnUpdating;
+            var gameObject = new GameObject(nameof(GameCycleController));
+            _behaviour = gameObject.AddComponent<UpdatingBehaviour>();
+            _behaviour.OnUpdate += OnUpdate;
         }
 
-        private void OnUpdating()
+        private void OnUpdate()
         {
-            try
+            for (var i = 0; i < _controllers.Count; i++)
             {
-                for (var i = 0; i < _controllers.Count; i++)
-                {
-                    _profilingHandle.BeginSample(_names[i]);
-                    _controllers[i].UpdateController();
-                    _profilingHandle.EndSample(_names[i]);
-                }
-                
-                _profilingProcessor.Update();
+                _profilingHandle.BeginSample(_names[i]);
+                _controllers[i].UpdateController();
+                _profilingHandle.EndSample(_names[i]);
             }
-            catch
-            {
-                _updatingBehaviour.OnUpdate -= OnUpdating;
-                
-                throw;
-            }
+
+            _profilingProcessor.Update();
         }
 
         public void Dispose()
         {
-            _updatingBehaviour.OnUpdate -= OnUpdating;
+            _behaviour.OnUpdate -= OnUpdate;
 
             foreach (var controller in _controllers)
             {

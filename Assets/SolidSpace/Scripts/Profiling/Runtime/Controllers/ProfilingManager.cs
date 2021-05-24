@@ -8,6 +8,7 @@ using UnityEngine.Profiling;
 
 namespace SolidSpace.Profiling
 {
+    // TODO [T-27]: Move debug related classes to one folder, create facade.
     public partial class ProfilingManager : IProfilingProcessor, IProfilingManager
     {
         public ProfilingTreeReader Reader => new ProfilingTreeReader(_profilingTree);

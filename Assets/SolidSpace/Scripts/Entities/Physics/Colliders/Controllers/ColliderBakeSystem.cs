@@ -2,6 +2,7 @@ using SolidSpace.Debugging;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
+using SolidSpace.Gizmos;
 using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
 using SolidSpace.Profiling;
@@ -9,6 +10,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
+using UnityEngine;
 
 namespace SolidSpace.Entities.Physics.Colliders
 {
@@ -24,24 +26,30 @@ namespace SolidSpace.Entities.Physics.Colliders
 
         private readonly IEntityWorldManager _entityManager;
         private readonly IProfilingManager _profilingManager;
+        private readonly IGizmosManager _gizmosManager;
+        private readonly ColliderBakeSystemConfig _config;
 
         private EntityQuery _query;
         private GridUtil _gridUtil;
-        private DebugUtil _debugUtil;
         private NativeArray<FloatBounds> _colliderBounds;
         private NativeArray<ushort> _worldColliders;
         private NativeArray<ColliderListPointer> _worldChunks;
         private ProfilingHandle _profiler;
+        private GizmosHandle _gizmos;
 
-        public ColliderBakeSystem(IEntityWorldManager entityManager, IProfilingManager profilingManager)
+        public ColliderBakeSystem(IEntityWorldManager entityManager, IProfilingManager profilingManager,
+            IGizmosManager gizmosManager, ColliderBakeSystemConfig config)
         {
             _entityManager = entityManager;
             _profilingManager = profilingManager;
+            _gizmosManager = gizmosManager;
+            _config = config;
         }
         
         public void InitializeController()
         {
             _profiler = _profilingManager.GetHandle(this);
+            _gizmos = _gizmosManager.GetHandle(this);
             _query = _entityManager.CreateEntityQuery(new ComponentType[]
             {
                 typeof(PositionComponent),
@@ -174,9 +182,44 @@ namespace SolidSpace.Entities.Physics.Colliders
                 worldCells = new NativeSlice<ColliderListPointer>(_worldChunks, 0, _worldChunks.Length),
                 worldGrid = worldGrid
             };
-
+            
             SpaceDebug.LogState("ColliderCount", colliderCount);
-            _debugUtil.LogWorld(worldGrid);
+            
+            LogWorld(worldGrid);
+        }
+        
+        private void LogWorld(ColliderWorldGrid worldGrid)
+        {
+            var cellSize = 1 << worldGrid.power;
+            var cellCountX = worldGrid.size.x;
+            var cellCountY = worldGrid.size.y;
+            var worldMin = worldGrid.anchor * cellSize;
+            var worldMax = (worldGrid.anchor + worldGrid.size) * cellSize;
+            
+            SpaceDebug.LogState("ColliderCellCountX", cellCountX);
+            SpaceDebug.LogState("ColliderCellCountY", cellCountY);
+            SpaceDebug.LogState("ColliderCellSize", cellSize);
+
+            var gridColor = _config.GridColor;
+            
+            _gizmos.DrawLine(worldMin.x, worldMin.y, worldMin.x, worldMax.y, gridColor);
+            _gizmos.DrawLine(worldMin.x, worldMax.y, worldMax.x, worldMax.y, gridColor);
+            _gizmos.DrawLine(worldMax.x, worldMax.y, worldMax.x, worldMin.y, gridColor);
+            _gizmos.DrawLine(worldMax.x, worldMin.y, worldMin.x, worldMin.y, gridColor);
+
+            for (var i = 1; i < cellCountX; i++)
+            {
+                var p0 = new Vector2(worldMin.x + cellSize * i, worldMax.y);
+                var p1 = new Vector2(worldMin.x + cellSize * i, worldMin.y);
+                _gizmos.DrawLine(p0, p1, gridColor);
+            }
+            
+            for (var i = 1; i < cellCountY; i++)
+            {
+                var p2 = new Vector2(worldMin.x, worldMin.y + i * cellSize);
+                var p3 = new Vector2(worldMax.x, worldMin.y + i * cellSize);
+                _gizmos.DrawLine(p2, p3, gridColor);
+            }
         }
 
         public void FinalizeController()

@@ -1,29 +1,29 @@
 using System;
 using UnityEngine;
 
-namespace SolidSpace.GameCycle
+namespace SolidSpace.Gizmos
 {
-    internal class UpdatingBehaviour : MonoBehaviour
+    internal class GizmosBehaviour : MonoBehaviour
     {
-        public event Action OnUpdate;
+        public event Action DrawGizmos;
 
         private bool _isBroken;
 
-        private void Update()
+        private void OnDrawGizmos()
         {
             if (_isBroken)
             {
                 return;
             }
-            
+
             try
             {
-                OnUpdate?.Invoke();
+                DrawGizmos?.Invoke();
             }
             catch
             {
                 _isBroken = true;
-                
+
                 throw;
             }
         }

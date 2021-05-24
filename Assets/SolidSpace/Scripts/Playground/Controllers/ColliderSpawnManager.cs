@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
+using SolidSpace.Gizmos;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -24,14 +25,19 @@ namespace SolidSpace.Playground
         private readonly IEntityWorldManager _entityManager;
         private readonly ColliderSpawnManagerConfig _config;
         private readonly Camera _camera;
+        private readonly IGizmosManager _gizmosManager;
         private readonly List<ColliderInfo> _spawnedColliders;
         private readonly ComponentType[] _colliderArchetype;
 
-        public ColliderSpawnManager(IEntityWorldManager entityManager, ColliderSpawnManagerConfig config, Camera camera)
+        private GizmosHandle _gizmos;
+
+        public ColliderSpawnManager(IEntityWorldManager entityManager, ColliderSpawnManagerConfig config, Camera camera,
+            IGizmosManager gizmosManager)
         {
             _entityManager = entityManager;
             _config = config;
             _camera = camera;
+            _gizmosManager = gizmosManager;
             _spawnedColliders = new List<ColliderInfo>();
             _colliderArchetype = new ComponentType[]
             {
@@ -43,6 +49,8 @@ namespace SolidSpace.Playground
         
         public void InitializeController()
         {
+            _gizmos = _gizmosManager.GetHandle(this);
+            
             for (var i = 0; i < _config.OnStartSpawnCount; i++)
             {
                 var x = Random.Range(_config.SpawnRangeX.x, _config.SpawnRangeX.y);
@@ -67,6 +75,12 @@ namespace SolidSpace.Playground
             if (Input.GetMouseButtonDown(1) && GetClickPosition(out clickPosition))
             {
                 DestroyNearest(clickPosition);
+            }
+
+            var color = _config.GizmosColor;
+            foreach (var info in _spawnedColliders)
+            {
+                _gizmos.DrawWireRect(info.position, info.size, color);
             }
         }
 
@@ -130,19 +144,6 @@ namespace SolidSpace.Playground
             clickPosition = ray.origin + ray.direction * distance;
             
             return true;
-        }
-
-        private void OnDrawGizmos()
-        {
-            if (!_config.DrawGizmos)
-            {
-                return;
-            }
-            
-            foreach (var info in _spawnedColliders)
-            {
-                Gizmos.DrawWireCube(info.position, info.size);
-            }
         }
 
         public void FinalizeController()

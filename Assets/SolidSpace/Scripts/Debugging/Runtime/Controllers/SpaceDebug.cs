@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace SolidSpace.Debugging
 {
+    // TODO [T-27]: Move debug related classes to one folder, create facade.
     public static class SpaceDebug
     {
         public static IReadOnlyDictionary<string, SpaceDebugValue<int>> IntStates => _intStates;

@@ -12,7 +12,7 @@ namespace SolidSpace.Playground
               public float SpawnExtraRadius => _spawnExtraRadius;
               public Vector2 SpawnRangeX => _spawnRangeX;
               public Vector2 SpawnRangeY => _spawnRangeY;
-              public bool DrawGizmos => _drawGizmos;
+              public Color GizmosColor => _gizmosColor;
 
               [SerializeField] private Vector2 _colliderWidth;
               [SerializeField] private Vector2 _colliderHeight;
@@ -21,6 +21,6 @@ namespace SolidSpace.Playground
               [SerializeField] private float _spawnExtraRadius;
               [SerializeField] private Vector2 _spawnRangeX;
               [SerializeField] private Vector2 _spawnRangeY;
-              [SerializeField] private bool _drawGizmos;
+              [SerializeField] private Color _gizmosColor;
        }
 }

@@ -10,7 +10,7 @@ namespace FuchaTools
         
         private string _outputPath;
 
-        [MenuItem("Assets/Create asset...", priority = -1)]
+        [MenuItem("Assets/Create/Any...", priority = -1)]
         private static void InvokeWindow()
         {
             WindowUtil.OpenToolWindow<AssetFactoryWindow>();
