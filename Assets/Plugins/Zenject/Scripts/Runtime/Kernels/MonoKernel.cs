@@ -3,7 +3,6 @@
 #pragma warning disable 649
 
 using UnityEngine;
-using UnityEngine.Analytics;
 
 namespace Zenject
 {

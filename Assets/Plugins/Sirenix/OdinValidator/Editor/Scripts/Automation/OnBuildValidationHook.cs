@@ -9,8 +9,6 @@ namespace Sirenix.OdinValidator.Editor
     using System;
     using System.Collections.Generic;
     using UnityEditor;
-    using UnityEngine;
-
 #if UNITY_EDITOR && UNITY_5_6_OR_NEWER
     using UnityEditor.Build;
 

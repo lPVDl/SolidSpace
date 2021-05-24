@@ -1,15 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using Zenject.Internal;
 using System.Linq;
-using TypeExtensions = Zenject.TypeExtensions;
-
 #if !NOT_UNITY3D
 using UnityEngine;
 
 #if UNITY_EDITOR
-using UnityEditor;
+
 #endif
 
 #endif

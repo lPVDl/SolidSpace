@@ -6,7 +6,6 @@
 namespace Sirenix.OdinValidator.Editor
 {
     using Sirenix.OdinInspector;
-    using Sirenix.Utilities;
     using System;
     using System.Collections.Generic;
 

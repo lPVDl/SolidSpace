@@ -7,9 +7,7 @@
 namespace Sirenix.OdinValidator.Editor
 {
     using Sirenix.OdinInspector;
-    using Sirenix.OdinInspector.Editor.Validation;
     using System.Collections.Generic;
-    using UnityEditor;
     using UnityEngine;
 
     public abstract class ValidationProfileAsset : ScriptableObject, IValidationProfile

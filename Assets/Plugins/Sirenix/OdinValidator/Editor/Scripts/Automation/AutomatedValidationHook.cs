@@ -8,7 +8,6 @@ namespace Sirenix.OdinValidator.Editor
     using Sirenix.OdinInspector;
     using Sirenix.OdinInspector.Editor.Validation;
     using Sirenix.Utilities.Editor;
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using UnityEditor;

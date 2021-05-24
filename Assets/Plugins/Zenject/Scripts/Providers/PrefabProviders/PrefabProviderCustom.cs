@@ -1,6 +1,5 @@
 #if !NOT_UNITY3D
 
-using UnityEngine;
 using System;
 
 namespace Zenject

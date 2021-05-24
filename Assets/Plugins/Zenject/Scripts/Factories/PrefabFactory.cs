@@ -1,7 +1,5 @@
 ﻿#if !NOT_UNITY3D
 
-using UnityEngine;
-
 namespace Zenject
 {
     // This factory type can be useful if you want to control where the prefab comes from at runtime
