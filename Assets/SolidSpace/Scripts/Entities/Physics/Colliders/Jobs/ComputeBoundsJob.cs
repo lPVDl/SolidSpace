@@ -14,7 +14,7 @@ namespace SolidSpace.Entities.Physics.Colliders
         [ReadOnly] public NativeArray<ArchetypeChunk> colliderChunks;
         [ReadOnly] public NativeArray<int> boundsWriteOffsets;
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
-        [ReadOnly] public ComponentTypeHandle<ColliderComponent> colliderHandle;
+        [ReadOnly] public ComponentTypeHandle<SizeComponent> sizeHandle;
         
         [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<FloatBounds> outputBounds;
         
@@ -23,18 +23,18 @@ namespace SolidSpace.Entities.Physics.Colliders
             var chunk = colliderChunks[chunkIndex];
             var writeOffset = boundsWriteOffsets[chunkIndex];
             var positions = chunk.GetNativeArray(positionHandle);
-            var colliders = chunk.GetNativeArray(colliderHandle);
+            var sizes = chunk.GetNativeArray(sizeHandle);
             var entityCount = chunk.Count;
 
             for (var i = 0; i < entityCount; i++)
             {
-                var radius = colliders[i].radius;
+                var size = sizes[i].value;
                 var position = positions[i].value;
                 FloatBounds boundsData;
-                boundsData.xMin = position.x - radius;
-                boundsData.xMax = position.x + radius;
-                boundsData.yMin = position.y - radius;
-                boundsData.yMax = position.y + radius;
+                boundsData.xMin = position.x - size.x / 2f;
+                boundsData.xMax = position.x + size.x / 2f;
+                boundsData.yMin = position.y - size.y / 2f;
+                boundsData.yMax = position.y + size.y / 2f;
                 
                 outputBounds[writeOffset] = boundsData;
 

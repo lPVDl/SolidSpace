@@ -20,7 +20,6 @@ namespace SolidSpace.Entities.Physics.Colliders
         
         private const int ColliderBufferChunkSize = 512;
         private const int ChunkBufferChunkSize = 256;
-        private const int MappingJobCount = 8;
         private const int MaxCellCount = 65536;
 
         private readonly IEntityWorldManager _entityManager;
@@ -77,8 +76,8 @@ namespace SolidSpace.Entities.Physics.Colliders
                 colliderChunks = colliderChunks,
                 boundsWriteOffsets = colliderOffsets,
                 outputBounds = _colliderBounds,
-                colliderHandle = _entityManager.GetComponentTypeHandle<ColliderComponent>(true),
-                positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true)
+                positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
+                sizeHandle = _entityManager.GetComponentTypeHandle<SizeComponent>(true)
             };
             var computeBoundsJobHandle = computeBoundsJob.Schedule(colliderChunkCount, 8);
             computeBoundsJobHandle.Complete();
@@ -147,6 +146,8 @@ namespace SolidSpace.Entities.Physics.Colliders
             
             _profiler.BeginSample("Lists Fill");
             NativeMemoryUtil.MaintainPersistentArrayLength(ref _worldColliders, colliderCount * 4, ChunkBufferChunkSize * 4);
+            
+            // TODO [T-24]: Collider fill list job should be parallel.
             var listFillJob = new WorldChunkListsFillJob
             {
                 inColliders = chunkedColliders,

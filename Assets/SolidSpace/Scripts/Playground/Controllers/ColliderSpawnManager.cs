@@ -15,6 +15,7 @@ namespace SolidSpace.Playground
         private struct ColliderInfo
         {
             public Vector3 position;
+            public Vector2 size;
             public Entity entity;
         }
 
@@ -35,7 +36,8 @@ namespace SolidSpace.Playground
             _colliderArchetype = new ComponentType[]
             {
                 typeof(PositionComponent),
-                typeof(ColliderComponent)
+                typeof(ColliderComponent),
+                typeof(SizeComponent)
             };
         }
         
@@ -94,10 +96,13 @@ namespace SolidSpace.Playground
 
         private void SpawnCollider(Vector3 position)
         {
+            var width = (half) Random.Range(_config.ColliderWidth.x, _config.ColliderWidth.y);
+            var height = (half) Random.Range(_config.ColliderHeight.x, _config.ColliderHeight.y);
             var info = new ColliderInfo
             {
                 position = position,
-                entity = _entityManager.CreateEntity(_colliderArchetype)
+                entity = _entityManager.CreateEntity(_colliderArchetype),
+                size = new Vector2(width, height)
             };
             _spawnedColliders.Add(info);
             
@@ -105,10 +110,9 @@ namespace SolidSpace.Playground
             {
                 value = new float2(position.x, position.y)
             });
-            
-            _entityManager.SetComponentData(info.entity, new ColliderComponent
+            _entityManager.SetComponentData(info.entity, new SizeComponent
             {
-                radius = _config.ColliderRadius
+                value = new half2(width, height)
             });
         }
 
@@ -135,9 +139,9 @@ namespace SolidSpace.Playground
                 return;
             }
             
-            foreach (var colliderInfo in _spawnedColliders)
+            foreach (var info in _spawnedColliders)
             {
-                Gizmos.DrawWireSphere(colliderInfo.position, _config.ColliderRadius);
+                Gizmos.DrawWireCube(info.position, info.size);
             }
         }
 

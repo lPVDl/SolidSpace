@@ -5,7 +5,8 @@ namespace SolidSpace.Playground
        [System.Serializable]
        public class ColliderSpawnManagerConfig
        {
-              public float ColliderRadius => _colliderRadius;
+              public Vector2 ColliderWidth => _colliderWidth;
+              public Vector2 ColliderHeight => _colliderHeight;
               public float OnStartSpawnCount => _onStartSpawnCount;
               public int SpawnPerSpawn => _spawnPerSpawn;
               public float SpawnExtraRadius => _spawnExtraRadius;
@@ -13,7 +14,8 @@ namespace SolidSpace.Playground
               public Vector2 SpawnRangeY => _spawnRangeY;
               public bool DrawGizmos => _drawGizmos;
 
-              [SerializeField] private float _colliderRadius;
+              [SerializeField] private Vector2 _colliderWidth;
+              [SerializeField] private Vector2 _colliderHeight;
               [SerializeField] private float _onStartSpawnCount;
               [SerializeField] private int _spawnPerSpawn;
               [SerializeField] private float _spawnExtraRadius;
