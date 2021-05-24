@@ -15,14 +15,14 @@ MonoBehaviour:
   _colliderSpawnManagerConfig:
     _colliderWidth: {x: 16, y: 24}
     _colliderHeight: {x: 16, y: 24}
-    _onStartSpawnCount: 0
+    _onStartSpawnCount: 150
     _spawnPerSpawn: 1
     _spawnExtraRadius: 5
     _spawnRangeX: {x: -300, y: 300}
     _spawnRangeY: {x: -250, y: 250}
     _gizmosColor: {r: 0, g: 0.6320754, b: 0.14782411, a: 1}
   _emitterSpawnManagerConfig:
-    _entityCount: 1000
+    _entityCount: 1500
     _spawnRate: 60
     _spawnRangeX: {x: -300, y: 300}
     _spawnRangeY: {x: -250, y: 250}
