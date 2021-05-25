@@ -32,6 +32,7 @@ namespace SolidSpace.Entities.Physics.Colliders
         private EntityQuery _query;
         private GridUtil _gridUtil;
         private NativeArray<FloatBounds> _colliderBounds;
+        private NativeArray<ColliderShape> _colliderShapes;
         private NativeArray<ushort> _worldColliders;
         private NativeArray<ColliderListPointer> _worldChunks;
         private ProfilingHandle _profiler;
@@ -56,6 +57,7 @@ namespace SolidSpace.Entities.Physics.Colliders
                 typeof(ColliderComponent)
             });
             _colliderBounds = NativeMemoryUtil.CreatePersistentArray<FloatBounds>(ColliderBufferChunkSize);
+            _colliderShapes = NativeMemoryUtil.CreatePersistentArray<ColliderShape>(ColliderBufferChunkSize);
             _worldColliders = NativeMemoryUtil.CreatePersistentArray<ushort>(ColliderBufferChunkSize * 4);
             _worldChunks = NativeMemoryUtil.CreatePersistentArray<ColliderListPointer>(ChunkBufferChunkSize);
         }
@@ -79,11 +81,13 @@ namespace SolidSpace.Entities.Physics.Colliders
             
             _profiler.BeginSample("Colliders Bounds");
             NativeMemoryUtil.MaintainPersistentArrayLength(ref _colliderBounds, colliderCount, ColliderBufferChunkSize);
+            NativeMemoryUtil.MaintainPersistentArrayLength(ref _colliderShapes, colliderCount, ColliderBufferChunkSize);
             var computeBoundsJob = new ComputeBoundsJob
             {
                 inChunks = colliderChunks,
                 inWriteOffsets = colliderOffsets,
                 outBounds = _colliderBounds,
+                outShapes = _colliderShapes,
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
                 sizeHandle = _entityManager.GetComponentTypeHandle<SizeComponent>(true),
                 rotationHandle = _entityManager.GetComponentTypeHandle<RotationComponent>(true)
@@ -178,7 +182,8 @@ namespace SolidSpace.Entities.Physics.Colliders
 
             ColliderWorld = new ColliderWorld
             {
-                colliders = new NativeSlice<FloatBounds>(_colliderBounds, 0, colliderCount),
+                colliderBounds = new NativeSlice<FloatBounds>(_colliderBounds, 0, colliderCount),
+                colliderShapes = new NativeSlice<ColliderShape>(_colliderShapes, 0, colliderCount),
                 colliderStream = new NativeSlice<ushort>(_worldColliders, 0, _worldColliders.Length),
                 worldCells = new NativeSlice<ColliderListPointer>(_worldChunks, 0, _worldChunks.Length),
                 worldGrid = worldGrid
@@ -226,6 +231,7 @@ namespace SolidSpace.Entities.Physics.Colliders
         public void FinalizeController()
         {
             _colliderBounds.Dispose();
+            _colliderShapes.Dispose();
             _worldColliders.Dispose();
             _worldChunks.Dispose();
         }

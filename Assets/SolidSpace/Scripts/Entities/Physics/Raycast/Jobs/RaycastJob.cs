@@ -6,6 +6,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
+using Unity.Mathematics;
 
 namespace SolidSpace.Entities.Physics.Raycast
 {
@@ -13,23 +14,24 @@ namespace SolidSpace.Entities.Physics.Raycast
     internal struct RaycastJob : IJobParallelFor
     {
         [ReadOnly] public ColliderWorld inColliderWorld;
-        [ReadOnly] public NativeArray<ArchetypeChunk> raycasterChunks;
-        [ReadOnly] public NativeArray<int> resultWriteOffsets;
+        [ReadOnly] public NativeArray<ArchetypeChunk> inRaycasterChunks;
+        [ReadOnly] public NativeArray<int> inResultWriteOffsets;
+        [ReadOnly] public float inDeltaTime;
+
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
         [ReadOnly] public ComponentTypeHandle<VelocityComponent> velocityHandle;
         [ReadOnly] public EntityTypeHandle entityHandle;
-        [ReadOnly] public float deltaTime;
-
+        
         [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<Entity> resultEntities;
         [WriteOnly] public NativeArray<int> resultCounts;
         public void Execute(int chunkIndex)
         {
-            var chunk = raycasterChunks[chunkIndex];
+            var chunk = inRaycasterChunks[chunkIndex];
             var rayCount = chunk.Count;
             var positions = chunk.GetNativeArray(positionHandle);
             var velocities = chunk.GetNativeArray(velocityHandle);
             var entities = chunk.GetNativeArray(entityHandle);
-            var writeOffset = resultWriteOffsets[chunkIndex];
+            var writeOffset = inResultWriteOffsets[chunkIndex];
             var hitCount = 0;
             var worldPower = inColliderWorld.worldGrid.power;
             var worldAnchor = inColliderWorld.worldGrid.anchor;
@@ -40,7 +42,7 @@ namespace SolidSpace.Entities.Physics.Raycast
             {
                 var velocity = velocities[i].value;
                 var pos0 = positions[i].value;
-                var pos1 = pos0 + velocity * deltaTime;
+                var pos1 = pos0 + velocity * inDeltaTime;
                 
                 FloatBounds ray;
                 FloatMath.MinMax(pos0.x, pos1.x, out ray.xMin, out ray.xMax);
@@ -110,14 +112,36 @@ namespace SolidSpace.Entities.Physics.Raycast
             for (var i = 0; i < cellData.count; i++)
             {
                 var colliderIndex = world.colliderStream[cellData.offset + i];
-                var collider = world.colliders[colliderIndex];
+                var colliderBounds = world.colliderBounds[colliderIndex];
 
-                if (!BoundsOverlap(ray.xMin, ray.xMax, collider.xMin, collider.xMax))
+                if (!BoundsOverlap(ray.xMin, ray.xMax, colliderBounds.xMin, colliderBounds.xMax))
                 {
                     continue;
                 }
 
-                if (!BoundsOverlap(ray.yMin, ray.yMax, collider.yMin, collider.yMax))
+                if (!BoundsOverlap(ray.yMin, ray.yMax, colliderBounds.yMin, colliderBounds.yMax))
+                {
+                    continue;
+                }
+
+                var centerX = (colliderBounds.xMax + colliderBounds.xMin) / 2f;
+                var centerY = (colliderBounds.yMax + colliderBounds.yMin) / 2f;
+                var p0 = new float2(ray.xMin - centerX, ray.yMin - centerY);
+                var p1 = new float2(ray.xMax - centerX, ray.yMax - centerY);
+                var colliderShape = world.colliderShapes[colliderIndex];
+                FloatMath.SinCos(-colliderShape.rotation * FloatMath.TwoPI, out var sin, out var cos);
+                p0 = FloatMath.Rotate(p0.x, p0.y, sin, cos);
+                p1 = FloatMath.Rotate(p1.x, p1.y, sin, cos);
+                FloatMath.MinMax(p0.x, p1.x, out var xMin, out var xMax);
+                FloatMath.MinMax(p0.y, p1.y, out var yMin, out var yMax);
+                var halfSize = new float2(colliderShape.size.x / 2f, colliderShape.size.y / 2f);
+
+                if (!BoundsOverlap(xMin, xMax, -halfSize.x, +halfSize.x))
+                {
+                    continue;
+                }
+
+                if (!BoundsOverlap(yMin, yMax, -halfSize.y, +halfSize.y))
                 {
                     continue;
                 }

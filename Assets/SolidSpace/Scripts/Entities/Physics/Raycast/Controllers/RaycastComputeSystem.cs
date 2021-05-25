@@ -73,13 +73,13 @@ namespace SolidSpace.Entities.Physics.Raycast
             NativeMemoryUtil.MaintainPersistentArrayLength(ref _entityBuffer, raycasterCount, EntityBufferChunkSize);
             var raycastJob = new RaycastJob
             {
-                raycasterChunks = raycasterChunks,
-                resultWriteOffsets = raycasterOffsets,
+                inRaycasterChunks = raycasterChunks,
+                inResultWriteOffsets = raycasterOffsets,
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
                 velocityHandle = _entityManager.GetComponentTypeHandle<VelocityComponent>(true),
                 entityHandle = _entityManager.GetEntityTypeHandle(),
                 inColliderWorld = _colliderSystem.ColliderWorld,
-                deltaTime = _time.DeltaTime,
+                inDeltaTime = _time.DeltaTime,
                 resultCounts = raycastResultCounts,
                 resultEntities = _entityBuffer
             };
