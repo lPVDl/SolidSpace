@@ -12,5 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 210891f27b1545ed970c11a323c777f1, type: 3}
   m_Name: Entities.Physics.CollidersInstaller
   m_EditorClassIdentifier: 
-  _config:
-    _gridColor: {r: 0, g: 0.07890225, b: 0.21698111, a: 1}
+  _gizmoConfig:
+    _colliderColor: {r: 0, g: 0.6313726, b: 0.14901961, a: 1}
+    _gridColor: {r: 0, g: 0.078431375, b: 0.21568628, a: 1}
+    _drawCollider: 1
+    _drawGrid: 1

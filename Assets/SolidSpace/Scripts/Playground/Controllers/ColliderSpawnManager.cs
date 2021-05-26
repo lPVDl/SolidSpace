@@ -17,8 +17,6 @@ namespace SolidSpace.Playground
         private struct ColliderInfo
         {
             public float2 position;
-            public float rotation;
-            public float2 size;
             public Entity entity;
         }
 
@@ -27,19 +25,14 @@ namespace SolidSpace.Playground
         private readonly IEntityWorldManager _entityManager;
         private readonly ColliderSpawnManagerConfig _config;
         private readonly Camera _camera;
-        private readonly IGizmosManager _gizmosManager;
         private readonly List<ColliderInfo> _spawnedColliders;
         private readonly ComponentType[] _colliderArchetype;
-
-        private GizmosHandle _gizmos;
-
-        public ColliderSpawnManager(IEntityWorldManager entityManager, ColliderSpawnManagerConfig config, Camera camera,
-            IGizmosManager gizmosManager)
+        
+        public ColliderSpawnManager(IEntityWorldManager entityManager, ColliderSpawnManagerConfig config, Camera camera)
         {
             _entityManager = entityManager;
             _config = config;
             _camera = camera;
-            _gizmosManager = gizmosManager;
             _spawnedColliders = new List<ColliderInfo>();
             _colliderArchetype = new ComponentType[]
             {
@@ -52,8 +45,6 @@ namespace SolidSpace.Playground
         
         public void InitializeController()
         {
-            _gizmos = _gizmosManager.GetHandle(this);
-            
             for (var i = 0; i < _config.OnStartSpawnCount; i++)
             {
                 var x = Random.Range(_config.SpawnRangeX.x, _config.SpawnRangeX.y);
@@ -78,12 +69,6 @@ namespace SolidSpace.Playground
             if (Input.GetMouseButtonDown(1) && GetClickPosition(out clickPosition))
             {
                 DestroyNearest(clickPosition);
-            }
-
-            var color = _config.GizmosColor;
-            foreach (var info in _spawnedColliders)
-            {
-                _gizmos.DrawWireRect(info.position, info.size, info.rotation, color);
             }
         }
 
@@ -119,9 +104,7 @@ namespace SolidSpace.Playground
             var info = new ColliderInfo
             {
                 position = position,
-                rotation = FloatMath.TwoPI * rotation,
                 entity = _entityManager.CreateEntity(_colliderArchetype),
-                size = new float2(width, height)
             };
             _spawnedColliders.Add(info);
             

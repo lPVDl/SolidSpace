@@ -5,11 +5,12 @@ namespace SolidSpace.Entities.Physics.Colliders
 {
     internal class CollidersInstaller : ScriptableObjectInstaller
     {
-        [SerializeField] private ColliderBakeSystemConfig _config;
+        [SerializeField] private ColliderGizmoSystemConfig _gizmoConfig;
         
         public override void InstallBindings(IDependencyContainer container)
         {
-            container.Bind<ColliderBakeSystem>(_config);
+            container.Bind<ColliderBakeSystem>();
+            container.Bind<ColliderGizmoSystem>(_gizmoConfig);
         }
     }
 }
