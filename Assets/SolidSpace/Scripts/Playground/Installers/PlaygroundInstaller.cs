@@ -9,6 +9,7 @@ namespace SolidSpace.Playground
         [SerializeField] private EmitterSpawnManagerConfig _emitterSpawnManagerConfig;
         [SerializeField] private SpriteSpawnManagerConfig _spriteSpawnManagerConfig;
         [SerializeField] private ParticleSpawnManagerConfig _particleSpawnManagerConfig;
+        [SerializeField] private ShipSpawnManagerConfig _shipSpawnManagerConfig;
         
         public override void InstallBindings(IDependencyContainer container)
         {
@@ -17,6 +18,7 @@ namespace SolidSpace.Playground
             container.Bind<EmitterSpawnManager>(_emitterSpawnManagerConfig);
             container.Bind<SpriteSpawnManager>(_spriteSpawnManagerConfig);
             container.Bind<ParticleSpawnManager>(_particleSpawnManagerConfig);
+            container.Bind<ShipSpawnManager>(_shipSpawnManagerConfig);
         }
     }
 }

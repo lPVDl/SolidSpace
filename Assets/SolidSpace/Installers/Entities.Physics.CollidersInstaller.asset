@@ -16,4 +16,4 @@ MonoBehaviour:
     _colliderColor: {r: 0, g: 0.6313726, b: 0.14901961, a: 1}
     _gridColor: {r: 0, g: 0.078431375, b: 0.21568628, a: 1}
     _drawCollider: 1
-    _drawGrid: 1
+    _drawGrid: 0

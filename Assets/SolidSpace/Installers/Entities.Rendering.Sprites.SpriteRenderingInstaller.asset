@@ -17,7 +17,7 @@ MonoBehaviour:
     _atlasFormat: 3
     _chunks:
     - itemSize: 4
-      itemCount: 64
+      itemCount: 16
     - itemSize: 8
       itemCount: 16
     - itemSize: 16

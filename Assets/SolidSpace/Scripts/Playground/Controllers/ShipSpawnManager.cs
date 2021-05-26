@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using SolidSpace.Entities.Components;
+using SolidSpace.Entities.Rendering.Sprites;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
-using SolidSpace.Gizmos;
 using SolidSpace.Mathematics;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -12,51 +12,47 @@ using Random = UnityEngine.Random;
 
 namespace SolidSpace.Playground
 {
-    public class ColliderSpawnManager : IController
+    public class ShipSpawnManager : IController
     {
-        private struct ColliderInfo
+        private struct ShipInfo
         {
             public float2 position;
             public Entity entity;
+            public AtlasIndex colorIndex;
+            public AtlasIndex healthIndex;
         }
-
+        
         public EControllerType ControllerType => EControllerType.Playground;
 
-        private readonly IEntityWorldManager _entityManager;
-        private readonly ColliderSpawnManagerConfig _config;
         private readonly Camera _camera;
-        private readonly List<ColliderInfo> _spawnedEntities;
+        private readonly ShipSpawnManagerConfig _config;
+        private readonly IEntityWorldManager _entityManager;
+        private readonly ISpriteColorSystem _colorSystem;
         private readonly ComponentType[] _archetype;
-        
-        public ColliderSpawnManager(IEntityWorldManager entityManager, ColliderSpawnManagerConfig config, Camera camera)
+        private readonly List<ShipInfo> _spawnedEntities;
+
+        public ShipSpawnManager(Camera camera, ShipSpawnManagerConfig config, IEntityWorldManager entityManager, 
+            ISpriteColorSystem colorSystem)
         {
-            _entityManager = entityManager;
-            _config = config;
             _camera = camera;
-            _spawnedEntities = new List<ColliderInfo>();
+            _config = config;
+            _entityManager = entityManager;
+            _colorSystem = colorSystem;
+            _spawnedEntities = new List<ShipInfo>();
             _archetype = new ComponentType[]
             {
                 typeof(PositionComponent),
-                typeof(ColliderComponent),
                 typeof(RotationComponent),
-                typeof(SizeComponent)
+                typeof(SizeComponent),
+                typeof(ColliderComponent),
+                typeof(SpriteRenderComponent),
+                typeof(HealthComponent)
             };
         }
         
         public void InitializeController()
         {
-            for (var i = 0; i < _config.OnStartSpawnCount; i++)
-            {
-                var x = Random.Range(_config.SpawnRangeX.x, _config.SpawnRangeX.y);
-                var y = Random.Range(_config.SpawnRangeY.x, _config.SpawnRangeY.y);
-                var samplePosition = new Vector2(x, y);
-                
-                for (var j = 0; j < _config.SpawnPerSpawn; j++)
-                {
-                    var finalPosition = samplePosition + Random.insideUnitCircle * _config.SpawnExtraRadius;
-                    Spawn(finalPosition);
-                }
-            }
+            
         }
 
         public void UpdateController()
@@ -76,15 +72,16 @@ namespace SolidSpace.Playground
                 Destroy(clickPosition);
             }
         }
-        
+
         private void Spawn(float2 position)
         {
-            var width = (half) Random.Range(_config.ColliderWidth.x, _config.ColliderWidth.y);
-            var height = (half) Random.Range(_config.ColliderHeight.x, _config.ColliderHeight.y);
-            var info = new ColliderInfo
+            var texture = _config.ShipTexture;
+            var size = new int2(texture.width, texture.height);
+            var info = new ShipInfo
             {
                 position = position,
                 entity = _entityManager.CreateEntity(_archetype),
+                colorIndex = _colorSystem.Allocate(size.x, size.y)
             };
             _spawnedEntities.Add(info);
             
@@ -94,12 +91,18 @@ namespace SolidSpace.Playground
             });
             _entityManager.SetComponentData(info.entity, new SizeComponent
             {
-                value = new half2(width, height)
+                value = new half2((half)size.x, (half)size.y)
             });
             _entityManager.SetComponentData(info.entity, new RotationComponent
             {
                 value = (half) Random.value
             });
+            _entityManager.SetComponentData(info.entity, new SpriteRenderComponent
+            {
+                index = info.colorIndex
+            });
+            
+            _colorSystem.ScheduleCopy(texture, info.colorIndex);
         }
 
         private void Destroy(float2 position)
@@ -108,7 +111,7 @@ namespace SolidSpace.Playground
             {
                 return;
             }
-            
+
             var minIndex = -1;
             var minValue = float.MaxValue;
             for (var i = 0; i < _spawnedEntities.Count; i++)
@@ -122,10 +125,11 @@ namespace SolidSpace.Playground
             }
 
             var info = _spawnedEntities[minIndex];
+            _colorSystem.Release(info.colorIndex);
             _spawnedEntities.RemoveAt(minIndex);
             _entityManager.DestroyEntity(info.entity);
         }
-
+        
         private bool GetClickPosition(out float2 clickPosition)
         {
             clickPosition = float2.zero;

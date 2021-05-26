@@ -5,6 +5,7 @@ namespace SolidSpace.Playground
        [System.Serializable]
        public class ColliderSpawnManagerConfig
        {
+              public bool MouseControl => _mouseControl;
               public Vector2 ColliderWidth => _colliderWidth;
               public Vector2 ColliderHeight => _colliderHeight;
               public float OnStartSpawnCount => _onStartSpawnCount;
@@ -13,6 +14,7 @@ namespace SolidSpace.Playground
               public Vector2 SpawnRangeX => _spawnRangeX;
               public Vector2 SpawnRangeY => _spawnRangeY;
 
+              [SerializeField] private bool _mouseControl;
               [SerializeField] private Vector2 _colliderWidth;
               [SerializeField] private Vector2 _colliderHeight;
               [SerializeField] private float _onStartSpawnCount;

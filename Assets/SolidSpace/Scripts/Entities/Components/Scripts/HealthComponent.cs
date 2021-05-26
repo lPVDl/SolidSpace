@@ -1,7 +1,10 @@
+using SolidSpace.Mathematics;
+using Unity.Entities;
+
 namespace SolidSpace.Entities.Components
 {
-    public struct HealthComponent
+    public struct HealthComponent : IComponentData
     {
-        
+        public AtlasIndex index;
     }
 }
