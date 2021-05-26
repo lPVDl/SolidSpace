@@ -1,3 +1,4 @@
+using SolidSpace.Entities.Atlases;
 using SolidSpace.Entities.Rendering.Atlases;
 using SolidSpace.GameCycle;
 using SolidSpace.Mathematics;
@@ -10,14 +11,14 @@ namespace SolidSpace.Entities.Rendering.Sprites
     {
         public EControllerType ControllerType => EControllerType.EntityCommand;
         public Texture2D Texture { get; private set; }
-        public NativeList<AtlasChunk> Chunks => _indexManager.Chunks;
+        public NativeSlice<AtlasChunk2D> Chunks => _indexManager.Chunks;
         
-        private readonly AtlasConfig _config;
+        private readonly TextureAtlasConfig _config;
         
-        private AtlasIndexManager _indexManager;
-        private AtlasCommandManager _commandManager;
+        private AtlasIndexManager2D _indexManager;
+        private TextureAtlasCommandManager _commandManager;
 
-        public SpriteColorSystem(AtlasConfig config)
+        public SpriteColorSystem(TextureAtlasConfig config)
         {
             _config = config;
         }
@@ -28,10 +29,10 @@ namespace SolidSpace.Entities.Rendering.Sprites
             Texture.name = nameof(SpriteColorSystem);
             Texture.filterMode = FilterMode.Point;
             
-            var squareManager = new AtlasSquareManager(_config.AtlasSize);
-            _indexManager = new AtlasIndexManager(squareManager, _config.Chunks);
+            var squareManager = new AtlasSectorManager2D(_config.AtlasSize);
+            _indexManager = new AtlasIndexManager2D(squareManager, _config.Chunks);
 
-            _commandManager = new AtlasCommandManager(this);
+            _commandManager = new TextureAtlasCommandManager(this);
         }
         
         public void UpdateController()
@@ -39,17 +40,17 @@ namespace SolidSpace.Entities.Rendering.Sprites
             _commandManager.ProcessCommands();
         }
         
-        public AtlasIndex AllocateSpace(int sizeX, int sizeY)
+        public AtlasIndex Allocate(int width, int height)
         {
-            return _indexManager.AllocateSpace(sizeX, sizeY);
+            return _indexManager.Allocate(width, height);
         }
 
-        public void ReleaseSpace(AtlasIndex atlasIndex)
+        public void Release(AtlasIndex atlasIndex)
         {
-            _indexManager.ReleaseSpace(atlasIndex);
+            _indexManager.Release(atlasIndex);
         }
 
-        public void ScheduleTextureCopy(Texture2D source, AtlasIndex target)
+        public void ScheduleCopy(Texture2D source, AtlasIndex target)
         {
             _commandManager.ScheduleTextureCopy(source, target);
         }

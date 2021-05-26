@@ -16,17 +16,17 @@ MonoBehaviour:
     _atlasSize: 512
     _atlasFormat: 3
     _chunks:
-    - spriteSize: 4
+    - itemSize: 4
       itemCount: 64
-    - spriteSize: 8
+    - itemSize: 8
       itemCount: 16
-    - spriteSize: 16
+    - itemSize: 16
       itemCount: 16
-    - spriteSize: 32
+    - itemSize: 32
       itemCount: 4
-    - spriteSize: 64
+    - itemSize: 64
       itemCount: 4
-    - spriteSize: 128
+    - itemSize: 128
       itemCount: 1
   _meshSystemConfig:
     _shader: {fileID: 4800000, guid: 092dd92608ae482a98a5180c88fe0a45, type: 3}

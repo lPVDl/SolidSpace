@@ -6,7 +6,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
 {
     internal class SpriteRenderingInstaller : ScriptableObjectInstaller
     {
-        [SerializeField] private AtlasConfig _colorAtlasConfig;
+        [SerializeField] private TextureAtlasConfig _colorAtlasConfig;
         [SerializeField] private SpriteMeshSystemConfig _meshSystemConfig;
         
         public override void InstallBindings(IDependencyContainer container)

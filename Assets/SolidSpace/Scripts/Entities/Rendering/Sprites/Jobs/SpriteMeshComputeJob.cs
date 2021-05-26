@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using SolidSpace.Entities.Atlases;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Rendering.Atlases;
 using SolidSpace.Mathematics;
@@ -29,7 +30,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
         [ReadOnly] public ComponentTypeHandle<SpriteRenderComponent> spriteHandle;
         [ReadOnly] public ComponentTypeHandle<RotationComponent> rotationHandle;
-        [ReadOnly] public NativeArray<AtlasChunk> inAtlasChunks;
+        [ReadOnly] public NativeSlice<AtlasChunk2D> inAtlasChunks;
         [ReadOnly] public ComponentTypeHandle<SizeComponent> sizeHandle;
         [ReadOnly] public int2 inAtlasSize;
 

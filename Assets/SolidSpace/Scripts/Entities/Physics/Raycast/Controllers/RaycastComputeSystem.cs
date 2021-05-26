@@ -12,7 +12,7 @@ namespace SolidSpace.Entities.Physics.Raycast
 {
     internal class RaycastComputeSystem : IController, IRaycastComputeSystem
     {
-        private const int EntityBufferChunkSize = 4096;
+        private const int EntityPerAllocation = 4096;
 
         public EControllerType ControllerType => EControllerType.EntityCompute;
         
@@ -46,8 +46,8 @@ namespace SolidSpace.Entities.Physics.Raycast
                 typeof(VelocityComponent),
                 typeof(RaycastComponent)
             });
-            _entityBuffer = NativeMemoryUtil.CreatePersistentArray<Entity>(EntityBufferChunkSize);
-            _entityCount = NativeMemoryUtil.CreatePersistentReference(0);
+            _entityBuffer = NativeMemory.CreatePersistentArray<Entity>(EntityPerAllocation);
+            _entityCount = NativeMemory.CreatePersistentReference(0);
             _profiler = _profilingManager.GetHandle(this);
         }
 
@@ -59,7 +59,7 @@ namespace SolidSpace.Entities.Physics.Raycast
 
             _profiler.BeginSample("Compute Offsets");
             var raycasterChunkCount = raycasterChunks.Length;
-            var raycasterOffsets = NativeMemoryUtil.CreateTempJobArray<int>(raycasterChunkCount);
+            var raycasterOffsets = NativeMemory.CreateTempJobArray<int>(raycasterChunkCount);
             var raycasterCount = 0;
             for (var i = 0; i < raycasterChunkCount; i++)
             {
@@ -69,8 +69,14 @@ namespace SolidSpace.Entities.Physics.Raycast
             _profiler.EndSample("Compute Offsets");
 
             _profiler.BeginSample("Raycast");
-            var raycastResultCounts = NativeMemoryUtil.CreateTempJobArray<int>(raycasterChunkCount);
-            NativeMemoryUtil.MaintainPersistentArrayLength(ref _entityBuffer, raycasterCount, EntityBufferChunkSize);
+            var raycastResultCounts = NativeMemory.CreateTempJobArray<int>(raycasterChunkCount);
+            NativeMemory.MaintainPersistentArrayLength(ref _entityBuffer, new ArrayMaintenanceData
+            {
+                requiredCapacity = raycasterCount,
+                itemPerAllocation = EntityPerAllocation,
+                copyOnResize = false
+            });
+
             var raycastJob = new RaycastJob
             {
                 inRaycasterChunks = raycasterChunks,
