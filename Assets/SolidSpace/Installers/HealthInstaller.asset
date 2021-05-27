@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd1da822ea1a472dac04eafec898b203, type: 3}
+  m_Name: HealthInstaller
+  m_EditorClassIdentifier: 
+  _healthAtlasConfig:
+    _atlasSize: 262144
+    _chunks:
+    - itemSize: 16
+      itemCount: 16
+    - itemSize: 32
+      itemCount: 16
+    - itemSize: 64
+      itemCount: 16
+    - itemSize: 128
+      itemCount: 16
+    - itemSize: 256
+      itemCount: 16
+    - itemSize: 512
+      itemCount: 8
+    - itemSize: 1024
+      itemCount: 4
+    - itemSize: 2048
+      itemCount: 2
+    - itemSize: 4096
+      itemCount: 1
+    - itemSize: 8192
+      itemCount: 1
+    - itemSize: 16384
+      itemCount: 1

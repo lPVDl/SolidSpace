@@ -71,7 +71,7 @@ namespace SolidSpace.Entities.Atlases.Editor
             _stringBuilder.Append(chunkSize);
             _stringBuilder.Append("x");
             _stringBuilder.Append(chunkSize);
-            _stringBuilder.Append(" chunk");
+            _stringBuilder.Append(" chunk size");
 
             return _stringBuilder.ToString();
         }

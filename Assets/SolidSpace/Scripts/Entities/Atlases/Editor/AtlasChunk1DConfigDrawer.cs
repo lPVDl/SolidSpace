@@ -63,7 +63,7 @@ namespace SolidSpace.Entities.Atlases.Editor
 
             var chunkSize = data.itemCount * data.itemSize;
             _stringBuilder.Append(chunkSize);
-            _stringBuilder.Append(" chunk");
+            _stringBuilder.Append(" chunk length");
 
             return _stringBuilder.ToString();
         }
