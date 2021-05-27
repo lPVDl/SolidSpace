@@ -16,8 +16,7 @@ namespace SolidSpace.Entities.Physics.Raycast
 
         public EControllerType ControllerType => EControllerType.EntityCompute;
         
-        public NativeArray<Entity> HitEntities => _entityBuffer;
-        public int HitCount => _entityCount.Value;
+        public RaycastWorldData RaycastWorld { get; private set; }
 
         private readonly IEntityWorldManager _entityManager;
         private readonly IColliderBakeSystem _colliderSystem;
@@ -25,8 +24,9 @@ namespace SolidSpace.Entities.Physics.Raycast
         private readonly IProfilingManager _profilingManager;
 
         private EntityQuery _raycasterQuery;
-        private NativeArray<Entity> _entityBuffer;
-        private NativeReference<int> _entityCount;
+        private NativeArray<RaycastHit> _hitsBuffer;
+        private NativeReference<int> _hitCount;
+        private NativeArray<EntityArchetype> _archetypes;
         private ProfilingHandle _profiler;
 
         public RaycastComputeSystem(IEntityWorldManager entityManager, IColliderBakeSystem colliderSystem,
@@ -46,8 +46,9 @@ namespace SolidSpace.Entities.Physics.Raycast
                 typeof(VelocityComponent),
                 typeof(RaycastComponent)
             });
-            _entityBuffer = NativeMemory.CreatePersistentArray<Entity>(EntityPerAllocation);
-            _entityCount = NativeMemory.CreatePersistentReference(0);
+            _hitsBuffer = NativeMemory.CreatePersistentArray<RaycastHit>(EntityPerAllocation);
+            _hitCount = NativeMemory.CreatePersistentReference(0);
+            _archetypes = NativeMemory.CreatePersistentArray<EntityArchetype>(256);
             _profiler = _profilingManager.GetHandle(this);
         }
 
@@ -57,20 +58,40 @@ namespace SolidSpace.Entities.Physics.Raycast
             var raycasterChunks = _raycasterQuery.CreateArchetypeChunkArray(Allocator.TempJob);
             _profiler.EndSample("Query Chunks");
 
-            _profiler.BeginSample("Compute Offsets");
+            _profiler.BeginSample("Compute Offsets & Archetypes");
             var raycasterChunkCount = raycasterChunks.Length;
             var raycasterOffsets = NativeMemory.CreateTempJobArray<int>(raycasterChunkCount);
+            var chunkArchetypeIndices = NativeMemory.CreateTempJobArray<byte>(raycasterChunkCount);
+            var archetypeCount = 0;
             var raycasterCount = 0;
             for (var i = 0; i < raycasterChunkCount; i++)
             {
+                var chunk = raycasterChunks[i];
+                var archetype = chunk.Archetype;
+                var archetypeFound = false;
+                for (var j = 0; j < archetypeCount; j++)
+                {
+                    if (archetype == _archetypes[j])
+                    {
+                        chunkArchetypeIndices[i] = (byte) j;
+                        archetypeFound = true;
+                        break;
+                    }
+                }
+                if (!archetypeFound)
+                {
+                    _archetypes[archetypeCount] = archetype;
+                    chunkArchetypeIndices[i] = (byte) archetypeCount++;
+                }
+                
                 raycasterOffsets[i] = raycasterCount;
-                raycasterCount += raycasterChunks[i].Count;
+                raycasterCount += chunk.Count;
             }
-            _profiler.EndSample("Compute Offsets");
+            _profiler.EndSample("Compute Offsets & Archetypes");
 
             _profiler.BeginSample("Raycast");
             var raycastResultCounts = NativeMemory.CreateTempJobArray<int>(raycasterChunkCount);
-            NativeMemory.MaintainPersistentArrayLength(ref _entityBuffer, new ArrayMaintenanceData
+            NativeMemory.MaintainPersistentArrayLength(ref _hitsBuffer, new ArrayMaintenanceData
             {
                 requiredCapacity = raycasterCount,
                 itemPerAllocation = EntityPerAllocation,
@@ -81,25 +102,26 @@ namespace SolidSpace.Entities.Physics.Raycast
             {
                 inRaycasterChunks = raycasterChunks,
                 inResultWriteOffsets = raycasterOffsets,
+                inRaycasterArchetypes = chunkArchetypeIndices,
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
                 velocityHandle = _entityManager.GetComponentTypeHandle<VelocityComponent>(true),
                 entityHandle = _entityManager.GetEntityTypeHandle(),
                 inColliderWorld = _colliderSystem.ColliderWorld,
                 inDeltaTime = _time.DeltaTime,
-                resultCounts = raycastResultCounts,
-                resultEntities = _entityBuffer
+                outCounts = raycastResultCounts,
+                outHits = _hitsBuffer
             };
             var raycastHandle = raycastJob.Schedule(raycasterChunkCount, 1);
             raycastHandle.Complete();
             _profiler.EndSample("Raycast");
             
             _profiler.BeginSample("Collect Results");
-            var collectJob = new SingleBufferedDataCollectJob<Entity>
+            var collectJob = new SingleBufferedDataCollectJob<RaycastHit>
             {
-                inOutData = _entityBuffer,
+                inOutData = _hitsBuffer,
                 inOffsets = raycasterOffsets, 
                 inCounts = raycastResultCounts,
-                outCount = _entityCount,
+                outCount = _hitCount,
             };
             var collectHandle = collectJob.Schedule(raycastHandle);
             collectHandle.Complete();
@@ -109,13 +131,20 @@ namespace SolidSpace.Entities.Physics.Raycast
             raycasterChunks.Dispose();
             raycasterOffsets.Dispose();
             raycastResultCounts.Dispose();
+            chunkArchetypeIndices.Dispose();
             _profiler.EndSample("Dispose arrays");
+
+            RaycastWorld = new RaycastWorldData
+            {
+                archetypes = new NativeSlice<EntityArchetype>(_archetypes, 0, archetypeCount),
+                hits = new NativeSlice<RaycastHit>(_hitsBuffer, 0, _hitCount.Value)
+            };
         }
 
         public void FinalizeController()
         {
-            _entityBuffer.Dispose();
-            _entityCount.Dispose();
+            _hitsBuffer.Dispose();
+            _hitCount.Dispose();
         }
     }
 }

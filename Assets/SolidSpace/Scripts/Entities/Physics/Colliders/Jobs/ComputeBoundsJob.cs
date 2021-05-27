@@ -13,17 +13,20 @@ namespace SolidSpace.Entities.Physics.Colliders
     {
         [ReadOnly] public NativeArray<ArchetypeChunk> inChunks;
         [ReadOnly] public NativeArray<int> inWriteOffsets;
+        [ReadOnly] public NativeArray<byte> inArchetypeIndices;
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
         [ReadOnly] public ComponentTypeHandle<SizeComponent> sizeHandle;
         [ReadOnly] public ComponentTypeHandle<RotationComponent> rotationHandle;
         
         [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<FloatBounds> outBounds;
         [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<ColliderShape> outShapes;
+        [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<byte> outArchetypeIndices;
 
         public void Execute(int chunkIndex)
         {
             var chunk = inChunks[chunkIndex];
             var writeOffset = inWriteOffsets[chunkIndex];
+            var archetypeIndex = inArchetypeIndices[chunkIndex];
             var positions = chunk.GetNativeArray(positionHandle);
             var sizes = chunk.GetNativeArray(sizeHandle);
             var entityCount = chunk.Count;
@@ -52,13 +55,14 @@ namespace SolidSpace.Entities.Physics.Colliders
                         size = size,
                         rotation = angle
                     };
-                    outBounds[writeOffset++] = new FloatBounds
+                    outBounds[writeOffset] = new FloatBounds
                     {
                         xMin = center.x + xMin,
                         xMax = center.x + xMax,
                         yMin = center.y + yMin,
                         yMax = center.y + yMax
                     };
+                    outArchetypeIndices[writeOffset++] = archetypeIndex;
                 }
                 
                 return;

@@ -2,7 +2,6 @@ using SolidSpace.Debugging;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
-using SolidSpace.Gizmos;
 using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
 using SolidSpace.Profiling;
@@ -10,7 +9,6 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
-using UnityEngine;
 
 namespace SolidSpace.Entities.Physics.Colliders
 {
@@ -19,7 +17,7 @@ namespace SolidSpace.Entities.Physics.Colliders
         public EControllerType ControllerType => EControllerType.EntityCompute;
         
         public ColliderWorld ColliderWorld { get; private set; }
-        
+
         private const int ColliderPerAllocation = 512;
         private const int ChunkPerAllocation = 256;
         private const int MaxCellCount = 65536;
@@ -31,10 +29,11 @@ namespace SolidSpace.Entities.Physics.Colliders
         private GridUtil _gridUtil;
         private NativeArray<FloatBounds> _colliderBounds;
         private NativeArray<ColliderShape> _colliderShapes;
+        private NativeArray<EntityArchetype> _colliderArchetypes;
+        private NativeArray<byte> _colliderArchetypeIndices;
         private NativeArray<ushort> _worldColliders;
         private NativeArray<ColliderListPointer> _worldChunks;
         private ProfilingHandle _profiler;
-        private GizmosHandle _gizmos;
 
         public ColliderBakeSystem(IEntityWorldManager entityManager, IProfilingManager profilingManager)
         {
@@ -54,6 +53,8 @@ namespace SolidSpace.Entities.Physics.Colliders
             _colliderShapes = NativeMemory.CreatePersistentArray<ColliderShape>(ColliderPerAllocation);
             _worldColliders = NativeMemory.CreatePersistentArray<ushort>(ColliderPerAllocation * 4);
             _worldChunks = NativeMemory.CreatePersistentArray<ColliderListPointer>(ChunkPerAllocation);
+            _colliderArchetypes = NativeMemory.CreatePersistentArray<EntityArchetype>(256);
+            _colliderArchetypeIndices = NativeMemory.CreatePersistentArray<byte>(ColliderPerAllocation);
         }
 
         public void UpdateController()
@@ -61,17 +62,38 @@ namespace SolidSpace.Entities.Physics.Colliders
             _profiler.BeginSample("Query Chunks");
             var colliderChunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
             _profiler.EndSample("Query Chunks");
-
-            _profiler.BeginSample("Collider Offsets");
+            
+            _profiler.BeginSample("Collider Offsets & Archetypes");
             var colliderChunkCount = colliderChunks.Length;
             var colliderOffsets = NativeMemory.CreateTempJobArray<int>(colliderChunkCount);
+            var chunkArchetypeIndices = NativeMemory.CreateTempJobArray<byte>(colliderChunkCount);
+            var archetypeCount = 0;
             var colliderCount = 0;
             for (var i = 0; i < colliderChunkCount; i++)
             {
+                var chunk = colliderChunks[i];
+                var archetype = chunk.Archetype;
+                var archetypeFound = false;
+                for (var j = 0; j < archetypeCount; j++)
+                {
+                    if (archetype == _colliderArchetypes[j])
+                    {
+                        chunkArchetypeIndices[i] = (byte) j;
+                        archetypeFound = true;
+                        break;
+                    }
+                }
+
+                if (!archetypeFound)
+                {
+                    _colliderArchetypes[archetypeCount] = archetype;
+                    chunkArchetypeIndices[i] = (byte) archetypeCount++;
+                }
+                
                 colliderOffsets[i] = colliderCount;
-                colliderCount += colliderChunks[i].Count;
+                colliderCount += chunk.Count;
             }
-            _profiler.EndSample("Collider Offsets");
+            _profiler.EndSample("Collider Offsets & Archetypes");
             
             _profiler.BeginSample("Colliders Bounds");
             var arrayMaintenance = new ArrayMaintenanceData
@@ -82,12 +104,15 @@ namespace SolidSpace.Entities.Physics.Colliders
             };
             NativeMemory.MaintainPersistentArrayLength(ref _colliderBounds, arrayMaintenance);
             NativeMemory.MaintainPersistentArrayLength(ref _colliderShapes, arrayMaintenance);
+            NativeMemory.MaintainPersistentArrayLength(ref _colliderArchetypeIndices, arrayMaintenance);
             var computeBoundsJob = new ComputeBoundsJob
             {
                 inChunks = colliderChunks,
                 inWriteOffsets = colliderOffsets,
+                inArchetypeIndices = chunkArchetypeIndices,
                 outBounds = _colliderBounds,
                 outShapes = _colliderShapes,
+                outArchetypeIndices = _colliderArchetypeIndices,
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
                 sizeHandle = _entityManager.GetComponentTypeHandle<SizeComponent>(true),
                 rotationHandle = _entityManager.GetComponentTypeHandle<RotationComponent>(true)
@@ -188,10 +213,13 @@ namespace SolidSpace.Entities.Physics.Colliders
             colliderOffsets.Dispose();
             chunkedColliderCounts.Dispose();
             chunkedColliders.Dispose();
+            chunkArchetypeIndices.Dispose();
             _profiler.EndSample("Dispose Arrays");
 
             ColliderWorld = new ColliderWorld
             {
+                archetypes = new NativeSlice<EntityArchetype>(_colliderArchetypes, 0, archetypeCount),
+                colliderArchetypes = new NativeSlice<byte>(_colliderArchetypeIndices, 0, colliderCount),
                 colliderBounds = new NativeSlice<FloatBounds>(_colliderBounds, 0, colliderCount),
                 colliderShapes = new NativeSlice<ColliderShape>(_colliderShapes, 0, colliderCount),
                 colliderStream = new NativeSlice<ushort>(_worldColliders, 0, _worldColliders.Length),
@@ -211,6 +239,8 @@ namespace SolidSpace.Entities.Physics.Colliders
             _colliderShapes.Dispose();
             _worldColliders.Dispose();
             _worldChunks.Dispose();
+            _colliderArchetypes.Dispose();
+            _colliderArchetypeIndices.Dispose();
         }
     }
 }

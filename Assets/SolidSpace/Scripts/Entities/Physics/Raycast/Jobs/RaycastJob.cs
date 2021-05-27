@@ -16,18 +16,20 @@ namespace SolidSpace.Entities.Physics.Raycast
         [ReadOnly] public ColliderWorld inColliderWorld;
         [ReadOnly] public NativeArray<ArchetypeChunk> inRaycasterChunks;
         [ReadOnly] public NativeArray<int> inResultWriteOffsets;
+        [ReadOnly] public NativeArray<byte> inRaycasterArchetypes;
         [ReadOnly] public float inDeltaTime;
 
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
         [ReadOnly] public ComponentTypeHandle<VelocityComponent> velocityHandle;
         [ReadOnly] public EntityTypeHandle entityHandle;
         
-        [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<Entity> resultEntities;
-        [WriteOnly] public NativeArray<int> resultCounts;
+        [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<RaycastHit> outHits;
+        [WriteOnly] public NativeArray<int> outCounts;
         public void Execute(int chunkIndex)
         {
             var chunk = inRaycasterChunks[chunkIndex];
             var rayCount = chunk.Count;
+            var rayArchetype = inRaycasterArchetypes[chunkIndex];
             var positions = chunk.GetNativeArray(positionHandle);
             var velocities = chunk.GetNativeArray(velocityHandle);
             var entities = chunk.GetNativeArray(entityHandle);
@@ -66,9 +68,14 @@ namespace SolidSpace.Entities.Physics.Raycast
                 if ((x0 == x1) && (y0 == y1))
                 {
                     var index = y0 * worldSize.x + x0;
-                    if (Raycast(inColliderWorld, index, ray))
+                    if (Raycast(inColliderWorld, index, ray, out var colliderIndex))
                     {
-                        resultEntities[writeOffset + hitCount++] = entities[i];
+                        outHits[writeOffset + hitCount++] = new RaycastHit
+                        {
+                            raycasterArchetype = rayArchetype,
+                            raycasterEntity = entities[i],
+                            colliderIndex = colliderIndex
+                        };
                     }
                     
                     continue;
@@ -85,24 +92,32 @@ namespace SolidSpace.Entities.Physics.Raycast
                             continue;
                         }
                         
-                        if (!Raycast(inColliderWorld, index, ray))
+                        if (!Raycast(inColliderWorld, index, ray, out var colliderIndex))
                         {
                             continue;
                         }
                         
-                        resultEntities[writeOffset + hitCount++] = entities[i];
+                        outHits[writeOffset + hitCount++] = new RaycastHit
+                        {
+                            raycasterArchetype = rayArchetype,
+                            raycasterEntity = entities[i],
+                            colliderIndex = colliderIndex
+                        };
+                        
                         isHit = true;
                         break;
                     }
                 }
             }
 
-            resultCounts[chunkIndex] = hitCount;
+            outCounts[chunkIndex] = hitCount;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool Raycast(ColliderWorld world, int cellIndex, FloatBounds ray)
+        private static bool Raycast(ColliderWorld world, int cellIndex, FloatBounds ray, out ushort colliderIndex)
         {
+            colliderIndex = 0;
+            
             var cellData = world.worldCells[cellIndex];
             if (cellData.count == 0)
             {
@@ -111,7 +126,7 @@ namespace SolidSpace.Entities.Physics.Raycast
 
             for (var i = 0; i < cellData.count; i++)
             {
-                var colliderIndex = world.colliderStream[cellData.offset + i];
+                colliderIndex = world.colliderStream[cellData.offset + i];
                 var colliderBounds = world.colliderBounds[colliderIndex];
 
                 if (!BoundsOverlap(ray.xMin, ray.xMax, colliderBounds.xMin, colliderBounds.xMax))

@@ -26,11 +26,13 @@ namespace SolidSpace.Entities.Physics.Raycast
 
         public void UpdateController()
         {
-            var hitCount = _computeSystem.HitCount;
-            var slice = new NativeSlice<Entity>(_computeSystem.HitEntities, 0, hitCount);
-            _entityManager.DestroyEntity(slice);
-
-            SpaceDebug.LogState("RayHit", hitCount);
+            var hits = _computeSystem.RaycastWorld.hits;
+            for (var i = 0; i < hits.Length; i++)
+            {
+                _entityManager.DestroyEntity(hits[i].raycasterEntity);
+            }
+            
+            SpaceDebug.LogState("RayHit", hits.Length);
         }
 
         public void FinalizeController()
