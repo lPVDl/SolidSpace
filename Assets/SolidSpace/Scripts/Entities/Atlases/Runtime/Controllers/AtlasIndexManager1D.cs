@@ -21,12 +21,12 @@ namespace SolidSpace.Entities.Atlases
         private NativeArray<AtlasChunk1D> _chunks;
         private int _chunkCount;
 
-        public AtlasIndexManager1D(AtlasSectorManager1D sectorManager, IReadOnlyList<AtlasChunk1DConfig> chunkConfig)
+        public AtlasIndexManager1D(int atlasSize, IReadOnlyList<AtlasChunk1DConfig> chunkConfig)
         {
-            _sectorManager = sectorManager;
+            _sectorManager = new AtlasSectorManager1D(atlasSize);
             _minEntityPower = (int) CeilLog2(chunkConfig[0].itemSize);
             _maxEntityPower = (int) CeilLog2(chunkConfig[chunkConfig.Count - 1].itemSize);
-            _chunkIndexPowers = new int[_minEntityPower + 1];
+            _chunkIndexPowers = new int[_maxEntityPower + 1];
             _freeIndices = new Stack<AtlasIndex>[_maxEntityPower + 1];
             for (int i = _minEntityPower, j = 0; i <= _maxEntityPower; i++, j++)
             {
@@ -56,11 +56,11 @@ namespace SolidSpace.Entities.Atlases
             return indexStack.Pop();
         }
 
-        public void Release(AtlasIndex atlasIndex)
+        public void Release(AtlasIndex index)
         {
-            var chunk = _chunks[atlasIndex.chunkId];
+            var chunk = _chunks[index.chunkId];
             chunk.GetPower(out _, out var itemPower);
-            _freeIndices[itemPower].Push(atlasIndex);
+            _freeIndices[itemPower].Push(index);
         }
 
         private void CreateChunk(int itemPower)

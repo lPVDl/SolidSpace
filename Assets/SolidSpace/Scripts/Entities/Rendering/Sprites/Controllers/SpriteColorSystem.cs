@@ -1,9 +1,11 @@
+using System;
 using SolidSpace.Entities.Atlases;
 using SolidSpace.Entities.Rendering.Atlases;
 using SolidSpace.GameCycle;
 using SolidSpace.Mathematics;
 using Unity.Collections;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace SolidSpace.Entities.Rendering.Sprites
 {
@@ -16,7 +18,6 @@ namespace SolidSpace.Entities.Rendering.Sprites
         private readonly TextureAtlasConfig _config;
         
         private AtlasIndexManager2D _indexManager;
-        private TextureAtlasCommandManager _commandManager;
 
         public SpriteColorSystem(TextureAtlasConfig config)
         {
@@ -29,15 +30,12 @@ namespace SolidSpace.Entities.Rendering.Sprites
             Texture.name = nameof(SpriteColorSystem);
             Texture.filterMode = FilterMode.Point;
             
-            var squareManager = new AtlasSectorManager2D(_config.AtlasSize);
-            _indexManager = new AtlasIndexManager2D(squareManager, _config.Chunks);
-
-            _commandManager = new TextureAtlasCommandManager(this);
+            _indexManager = new AtlasIndexManager2D(_config.AtlasSize, _config.Chunks);
         }
         
         public void UpdateController()
         {
-            _commandManager.ProcessCommands();
+            
         }
         
         public AtlasIndex Allocate(int width, int height)
@@ -45,14 +43,33 @@ namespace SolidSpace.Entities.Rendering.Sprites
             return _indexManager.Allocate(width, height);
         }
 
-        public void Release(AtlasIndex atlasIndex)
+        public void Release(AtlasIndex index)
         {
-            _indexManager.Release(atlasIndex);
+            _indexManager.Release(index);
         }
 
-        public void ScheduleCopy(Texture2D source, AtlasIndex target)
+        public void Copy(Texture2D source, AtlasIndex target)
         {
-            _commandManager.ScheduleTextureCopy(source, target);
+            var atlasFormat = _config.AtlasFormat;
+            
+            if (source.format != atlasFormat)
+            {
+                var message = $"Expected texture with format {atlasFormat} but got {source.format}";
+                throw new InvalidOperationException(message);
+            }
+
+            var chunk = _indexManager.Chunks[target.chunkId];
+            chunk.GetPower(out var indexPower, out var itemPower);
+            var itemMaxSize = 1 << itemPower;
+            if (source.width > itemMaxSize || source.height > itemMaxSize)
+            {
+                var message = $"Expected texture with size less that {itemMaxSize}x{itemMaxSize}, but got {source.width}x{source.height}";
+                throw new InvalidOperationException(message);
+            }
+            
+            var offset = AtlasMath.ComputeOffset(chunk, target);
+            Graphics.CopyTexture(source, 0, 0, 0, 0, source.width, source.height, 
+                Texture, 0, 0, offset.x, offset.y);
         }
 
         public void FinalizeController()

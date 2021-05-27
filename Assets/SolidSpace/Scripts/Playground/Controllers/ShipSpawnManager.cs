@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using SolidSpace.Entities.Components;
+using SolidSpace.Entities.Health;
 using SolidSpace.Entities.Rendering.Sprites;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
@@ -28,16 +29,18 @@ namespace SolidSpace.Playground
         private readonly ShipSpawnManagerConfig _config;
         private readonly IEntityWorldManager _entityManager;
         private readonly ISpriteColorSystem _colorSystem;
+        private readonly IHealthAtlasSystem _healthSystem;
         private readonly ComponentType[] _archetype;
         private readonly List<ShipInfo> _spawnedEntities;
 
         public ShipSpawnManager(Camera camera, ShipSpawnManagerConfig config, IEntityWorldManager entityManager, 
-            ISpriteColorSystem colorSystem)
+            ISpriteColorSystem colorSystem, IHealthAtlasSystem healthSystem)
         {
             _camera = camera;
             _config = config;
             _entityManager = entityManager;
             _colorSystem = colorSystem;
+            _healthSystem = healthSystem;
             _spawnedEntities = new List<ShipInfo>();
             _archetype = new ComponentType[]
             {
@@ -81,7 +84,8 @@ namespace SolidSpace.Playground
             {
                 position = position,
                 entity = _entityManager.CreateEntity(_archetype),
-                colorIndex = _colorSystem.Allocate(size.x, size.y)
+                colorIndex = _colorSystem.Allocate(size.x, size.y),
+                healthIndex = _healthSystem.Allocate(size.x * size.y)
             };
             _spawnedEntities.Add(info);
             
@@ -101,8 +105,13 @@ namespace SolidSpace.Playground
             {
                 index = info.colorIndex
             });
+            _entityManager.SetComponentData(info.entity, new HealthComponent
+            {
+                index = info.healthIndex
+            });
             
-            _colorSystem.ScheduleCopy(texture, info.colorIndex);
+            _colorSystem.Copy(texture, info.colorIndex);
+            _healthSystem.Copy(texture, info.healthIndex);
         }
 
         private void Destroy(float2 position)
@@ -126,6 +135,7 @@ namespace SolidSpace.Playground
 
             var info = _spawnedEntities[minIndex];
             _colorSystem.Release(info.colorIndex);
+            _healthSystem.Release(info.healthIndex);
             _spawnedEntities.RemoveAt(minIndex);
             _entityManager.DestroyEntity(info.entity);
         }

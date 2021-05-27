@@ -39,7 +39,7 @@ namespace SolidSpace.Playground
             
             var spriteTexture = _config.SpriteTexture;
             var spriteIndex = _colorSystem.Allocate(spriteTexture.width, spriteTexture.height);
-            _colorSystem.ScheduleCopy(spriteTexture, spriteIndex);
+            _colorSystem.Copy(spriteTexture, spriteIndex);
             _flushedAtlas = false;
 
             var typeList = new List<ComponentType>

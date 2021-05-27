@@ -21,9 +21,9 @@ namespace SolidSpace.Entities.Atlases
         private NativeArray<AtlasChunk2D> _chunks;
         private int _chunkCount;
 
-        public AtlasIndexManager2D(AtlasSectorManager2D sectorManager, IReadOnlyList<AtlasChunk2DConfig> chunkConfig)
+        public AtlasIndexManager2D(int atlasSize, IReadOnlyList<AtlasChunk2DConfig> chunkConfig)
         {
-            _sectorManager = sectorManager;
+            _sectorManager = new AtlasSectorManager2D(atlasSize);
             _minEntityPower = (int) CeilLog2(chunkConfig[0].itemSize);
             _maxEntityPower = (int) CeilLog2(chunkConfig[chunkConfig.Count - 1].itemSize);
             _chunkIndexPowers = new int[_maxEntityPower + 1];

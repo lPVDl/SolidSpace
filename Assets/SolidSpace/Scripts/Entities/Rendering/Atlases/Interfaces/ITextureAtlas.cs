@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace SolidSpace.Entities.Rendering.Atlases
 {
-    public interface ITextureAtlasSystem
+    public interface ITextureAtlas
     {
         public Texture2D Texture { get; }
         
@@ -13,8 +13,6 @@ namespace SolidSpace.Entities.Rendering.Atlases
 
         public AtlasIndex Allocate(int width, int height);
 
-        public void ScheduleCopy(Texture2D source, AtlasIndex target);
-
-        public void Release(AtlasIndex atlasIndex);
+        public void Release(AtlasIndex index);
     }
 }

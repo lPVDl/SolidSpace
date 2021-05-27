@@ -13,7 +13,7 @@ namespace SolidSpace.Entities.Atlases
             _atlasPower = (byte) Math.Ceiling(Math.Log(atlasSize, 2));
             _emptySectors = new Stack<ushort>[_atlasPower + 1];
             
-            for (var i = 0; i < _atlasPower; i++)
+            for (var i = 0; i <= _atlasPower; i++)
             {
                 _emptySectors[i] = new Stack<ushort>();
             }

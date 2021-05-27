@@ -4,13 +4,13 @@ using UnityEngine;
 
 namespace SolidSpace.Entities.Health
 {
-    public class HealthInstaller : ScriptableObjectInstaller
+    internal class HealthInstaller : ScriptableObjectInstaller
     {
         [SerializeField] private LinearAtlasConfig _healthAtlasConfig;
         
         public override void InstallBindings(IDependencyContainer container)
         {
-            
+            container.Bind<HealthAtlasSystem>(_healthAtlasConfig);
         }
     }
 }
