@@ -33,7 +33,3 @@ MonoBehaviour:
       itemCount: 2
     - itemSize: 4096
       itemCount: 1
-    - itemSize: 8192
-      itemCount: 1
-    - itemSize: 16384
-      itemCount: 1
