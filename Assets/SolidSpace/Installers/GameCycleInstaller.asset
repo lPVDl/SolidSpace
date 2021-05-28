@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: GameCycleInstaller
   m_EditorClassIdentifier: 
   _config:
-    _invocationOrder: 030000000400000005000000010000000600000002000000
+    _invocationOrder: 030000000500000004000000010000000600000002000000

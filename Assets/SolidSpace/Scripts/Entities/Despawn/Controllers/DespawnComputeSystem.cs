@@ -92,7 +92,7 @@ namespace SolidSpace.Entities.Despawn
             };
             var computeJobHandle = computeJob.Schedule(computeChunkCount, 32);
 
-            var collectJob = new SingleBufferedDataCollectJob<Entity>
+            var collectJob = new DataCollectJobWithOffsets<Entity>
             {
                 inCounts = countsBuffer,
                 inOffsets = computeOffsets,

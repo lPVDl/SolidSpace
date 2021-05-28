@@ -30,6 +30,7 @@ namespace SolidSpace.Entities.ParticleEmitters
                 typeof(VelocityComponent),
                 typeof(DespawnComponent),
                 typeof(RaycastComponent),
+                typeof(BulletComponent),
                 typeof(PixelRenderComponent)
             });
         }

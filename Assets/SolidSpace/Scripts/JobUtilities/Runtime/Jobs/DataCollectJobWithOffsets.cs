@@ -5,7 +5,7 @@ using Unity.Jobs;
 namespace SolidSpace.JobUtilities
 {
     [BurstCompile]
-    public struct SingleBufferedDataCollectJob<T> : IJob where T : struct
+    public struct DataCollectJobWithOffsets<T> : IJob where T : struct
     {
         public NativeArray<T> inOutData;
         
@@ -39,7 +39,7 @@ namespace SolidSpace.JobUtilities
     }
 
     [BurstCompile]
-    public struct SingleBufferedDataCollectJob<T0, T1> : IJob where T0 : struct where T1 : struct
+    public struct DataCollectJobWithOffsets<T0, T1> : IJob where T0 : struct where T1 : struct
     {
         public NativeArray<T0> inOutData0;
         public NativeArray<T1> inOutData1;
@@ -75,7 +75,7 @@ namespace SolidSpace.JobUtilities
     }
 
     [BurstCompile]
-    public struct SingleBufferedDataCollectJob<T0, T1, T2> : IJob where T0 : struct where T1 : struct where T2 : struct
+    public struct DataCollectJobWithOffsets<T0, T1, T2> : IJob where T0 : struct where T1 : struct where T2 : struct
     {
         public NativeArray<T0> inOutData0;
         public NativeArray<T1> inOutData1;

@@ -17,6 +17,11 @@ namespace SolidSpace.Entities.World
             _world.EntityManager.DestroyEntity(entities);
         }
 
+        public void DestroyEntity(NativeArray<Entity> entities)
+        {
+            _world.EntityManager.DestroyEntity(entities);
+        }
+
         public void DestroyEntity(Entity entity)
         {
             _world.EntityManager.DestroyEntity(entity);
@@ -55,6 +60,11 @@ namespace SolidSpace.Entities.World
         public void SetComponentData<T>(Entity entity, T componentData) where T : struct, IComponentData
         {
             _world.EntityManager.SetComponentData(entity, componentData);
+        }
+
+        public T GetComponentData<T>(Entity entity) where T : struct, IComponentData
+        {
+            return _world.EntityManager.GetComponentData<T>(entity);
         }
     }
 }

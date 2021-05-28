@@ -124,7 +124,7 @@ namespace SolidSpace.Entities.Physics.Raycast
             _profiler.EndSample("Raycast");
             
             _profiler.BeginSample("Collect Results");
-            new SingleBufferedDataCollectJob<Entity, byte, ushort>
+            new DataCollectJobWithOffsets<Entity, byte, ushort>
             {
                 inOutData0 = _hitEntities,
                 inOutData1 = _hitEntityArchetypeIndices,
@@ -153,6 +153,7 @@ namespace SolidSpace.Entities.Physics.Raycast
 
         public void FinalizeController()
         {
+            _hitEntityArchetypeIndices.Dispose();
             _hitEntityArchetypes.Dispose();
             _hitColliderIndices.Dispose();
             _hitEntities.Dispose();

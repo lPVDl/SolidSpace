@@ -88,7 +88,7 @@ namespace SolidSpace.Entities.ParticleEmitters
             };
             var computeHandle = computeJob.Schedule(chunks.Length, 32);
 
-            var collectJob = new SingleBufferedDataCollectJob<ParticleEmitterData>
+            var collectJob = new DataCollectJobWithOffsets<ParticleEmitterData>
             {
                 inCounts = counts,
                 inOffsets = offsets,

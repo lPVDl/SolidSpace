@@ -219,7 +219,7 @@ namespace SolidSpace.Entities.Physics.Colliders
             World = new ColliderWorld
             {
                 archetypes = new NativeSlice<EntityArchetype>(_colliderArchetypes, 0, archetypeCount),
-                colliderArchetypes = new NativeSlice<byte>(_colliderArchetypeIndices, 0, colliderCount),
+                colliderArchetypeIndices = new NativeSlice<byte>(_colliderArchetypeIndices, 0, colliderCount),
                 colliderBounds = new NativeSlice<FloatBounds>(_colliderBounds, 0, colliderCount),
                 colliderShapes = new NativeSlice<ColliderShape>(_colliderShapes, 0, colliderCount),
                 colliderStream = new NativeSlice<ushort>(_worldColliders, 0, _worldColliders.Length),
