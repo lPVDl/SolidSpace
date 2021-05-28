@@ -41,7 +41,7 @@ namespace SolidSpace.Entities.ParticleEmitters
             {
                 typeof(ParticleEmitterComponent),
                 typeof(PositionComponent),
-                typeof(RandomValueComponent),
+                typeof(RandomComponent),
                 typeof(RepeatTimerComponent)
             });
             _particles = NativeMemory.CreatePersistentArray<ParticleEmitterData>(BufferChunkSize);
@@ -79,7 +79,7 @@ namespace SolidSpace.Entities.ParticleEmitters
                 inChunks = chunks,
                 timerHandle = _entityManager.GetComponentTypeHandle<RepeatTimerComponent>(false),
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
-                randomHandle = _entityManager.GetComponentTypeHandle<RandomValueComponent>(true),
+                randomHandle = _entityManager.GetComponentTypeHandle<RandomComponent>(true),
                 emitterHandle = _entityManager.GetComponentTypeHandle<ParticleEmitterComponent>(true),
                 inTime = (float) _time.ElapsedTime,
                 outParticles = _particles, 

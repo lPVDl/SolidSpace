@@ -13,23 +13,32 @@ namespace SolidSpace.Entities.Physics.Raycast
     [BurstCompile]
     internal struct RaycastJob : IJobParallelFor
     {
+        private struct RaycastHit
+        {
+            public Entity raycasterEntity;
+            public ushort colliderIndex;
+            public byte raycasterArchetypeIndex;
+        }
+        
         [ReadOnly] public ColliderWorld inColliderWorld;
         [ReadOnly] public NativeArray<ArchetypeChunk> inRaycasterChunks;
         [ReadOnly] public NativeArray<int> inResultWriteOffsets;
-        [ReadOnly] public NativeArray<byte> inRaycasterArchetypes;
+        [ReadOnly] public NativeArray<byte> inRaycasterArchetypeIndices;
         [ReadOnly] public float inDeltaTime;
 
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
         [ReadOnly] public ComponentTypeHandle<VelocityComponent> velocityHandle;
         [ReadOnly] public EntityTypeHandle entityHandle;
         
-        [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<RaycastHit> outHits;
+        [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<Entity> outRaycasterEntities;
+        [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<ushort> outColliderIndices;
+        [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<byte> outRaycasterArchetypeIndices;
         [WriteOnly] public NativeArray<int> outCounts;
         public void Execute(int chunkIndex)
         {
             var chunk = inRaycasterChunks[chunkIndex];
             var rayCount = chunk.Count;
-            var rayArchetype = inRaycasterArchetypes[chunkIndex];
+            var rayArchetype = inRaycasterArchetypeIndices[chunkIndex];
             var positions = chunk.GetNativeArray(positionHandle);
             var velocities = chunk.GetNativeArray(velocityHandle);
             var entities = chunk.GetNativeArray(entityHandle);
@@ -70,12 +79,12 @@ namespace SolidSpace.Entities.Physics.Raycast
                     var index = y0 * worldSize.x + x0;
                     if (Raycast(inColliderWorld, index, ray, out var colliderIndex))
                     {
-                        outHits[writeOffset + hitCount++] = new RaycastHit
+                        WriteResult(writeOffset + hitCount++, new RaycastHit
                         {
-                            raycasterArchetype = rayArchetype,
                             raycasterEntity = entities[i],
+                            raycasterArchetypeIndex = rayArchetype,
                             colliderIndex = colliderIndex
-                        };
+                        });
                     }
                     
                     continue;
@@ -97,13 +106,13 @@ namespace SolidSpace.Entities.Physics.Raycast
                             continue;
                         }
                         
-                        outHits[writeOffset + hitCount++] = new RaycastHit
+                        WriteResult(writeOffset + hitCount++, new RaycastHit
                         {
-                            raycasterArchetype = rayArchetype,
                             raycasterEntity = entities[i],
+                            raycasterArchetypeIndex = rayArchetype,
                             colliderIndex = colliderIndex
-                        };
-                        
+                        });
+
                         isHit = true;
                         break;
                     }
@@ -129,12 +138,12 @@ namespace SolidSpace.Entities.Physics.Raycast
                 colliderIndex = world.colliderStream[cellData.offset + i];
                 var colliderBounds = world.colliderBounds[colliderIndex];
 
-                if (!BoundsOverlap(ray.xMin, ray.xMax, colliderBounds.xMin, colliderBounds.xMax))
+                if (!FloatMath.BoundsOverlap(ray.xMin, ray.xMax, colliderBounds.xMin, colliderBounds.xMax))
                 {
                     continue;
                 }
 
-                if (!BoundsOverlap(ray.yMin, ray.yMax, colliderBounds.yMin, colliderBounds.yMax))
+                if (!FloatMath.BoundsOverlap(ray.yMin, ray.yMax, colliderBounds.yMin, colliderBounds.yMax))
                 {
                     continue;
                 }
@@ -151,12 +160,12 @@ namespace SolidSpace.Entities.Physics.Raycast
                 FloatMath.MinMax(p0.y, p1.y, out var yMin, out var yMax);
                 var halfSize = new float2(colliderShape.size.x / 2f, colliderShape.size.y / 2f);
 
-                if (!BoundsOverlap(xMin, xMax, -halfSize.x, +halfSize.x))
+                if (!FloatMath.BoundsOverlap(xMin, xMax, -halfSize.x, +halfSize.x))
                 {
                     continue;
                 }
 
-                if (!BoundsOverlap(yMin, yMax, -halfSize.y, +halfSize.y))
+                if (!FloatMath.BoundsOverlap(yMin, yMax, -halfSize.y, +halfSize.y))
                 {
                     continue;
                 }
@@ -168,9 +177,11 @@ namespace SolidSpace.Entities.Physics.Raycast
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool BoundsOverlap(float min0, float max0, float min1, float max1)
+        private void WriteResult(int offset, RaycastHit hit)
         {
-            return (max1 >= min0) && (max0 >= min1);
+            outRaycasterEntities[offset] = hit.raycasterEntity;
+            outColliderIndices[offset] = hit.colliderIndex;
+            outRaycasterArchetypeIndices[offset] = hit.raycasterArchetypeIndex;
         }
     }
 }

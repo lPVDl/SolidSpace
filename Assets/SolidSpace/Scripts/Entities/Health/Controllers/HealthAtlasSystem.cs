@@ -75,6 +75,7 @@ namespace SolidSpace.Entities.Health
 
         public void FinalizeController()
         {
+            _indexManager.Dispose();
             Data.Dispose();
         }
     }

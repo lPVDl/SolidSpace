@@ -33,7 +33,7 @@ namespace SolidSpace.Entities.Randomization
             {
                 _buffer[i] = Random.value;
             }
-            _query = _entityManager.CreateEntityQuery(typeof(RandomValueComponent));
+            _query = _entityManager.CreateEntityQuery(typeof(RandomComponent));
         }
 
         public void UpdateController()
@@ -62,7 +62,7 @@ namespace SolidSpace.Entities.Randomization
             var job = new RandomValueJob
             {
                 chunks = chunks,
-                randomHandle = _entityManager.GetComponentTypeHandle<RandomValueComponent>(false),
+                randomHandle = _entityManager.GetComponentTypeHandle<RandomComponent>(false),
                 randomIndex = _index,
                 randomValues = _buffer
             };

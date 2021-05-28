@@ -54,5 +54,11 @@ namespace SolidSpace.Mathematics
         {
             return math.distance(pos0, pos1);
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool BoundsOverlap(float min0, float max0, float min1, float max1)
+        {
+            return (max1 >= min0) && (max0 >= min1);
+        }
     }
 }

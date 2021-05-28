@@ -27,6 +27,12 @@ namespace SolidSpace.JobUtilities
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static NativeReference<T> CreateTempJobReference<T>() where T : unmanaged
+        {
+            return new NativeReference<T>(Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void MaintainPersistentArrayLength<T>(ref NativeArray<T> array, ArrayMaintenanceData rule) 
             where T : struct
         {

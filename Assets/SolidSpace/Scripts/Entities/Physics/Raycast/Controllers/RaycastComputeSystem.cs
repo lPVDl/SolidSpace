@@ -10,26 +10,29 @@ using Unity.Jobs;
 
 namespace SolidSpace.Entities.Physics.Raycast
 {
-    internal class RaycastComputeSystem : IController, IRaycastComputeSystem
+    internal class RaycastComputeSystem : IController, IRaycastSystem
     {
         private const int EntityPerAllocation = 4096;
 
         public EControllerType ControllerType => EControllerType.EntityCompute;
         
-        public RaycastWorldData RaycastWorld { get; private set; }
+        public RaycastWorld World { get; private set; }
 
         private readonly IEntityWorldManager _entityManager;
-        private readonly IColliderBakeSystem _colliderSystem;
+        private readonly IColliderSystem _colliderSystem;
         private readonly IEntityWorldTime _time;
         private readonly IProfilingManager _profilingManager;
 
         private EntityQuery _raycasterQuery;
-        private NativeArray<RaycastHit> _hitsBuffer;
-        private NativeReference<int> _hitCount;
-        private NativeArray<EntityArchetype> _archetypes;
         private ProfilingHandle _profiler;
+        
+        private NativeArray<Entity> _hitEntities;
+        private NativeArray<ushort> _hitColliderIndices;
+        private NativeArray<byte> _hitEntityArchetypeIndices;
+        private NativeArray<EntityArchetype> _hitEntityArchetypes;
+        private NativeReference<int> _hitCount;
 
-        public RaycastComputeSystem(IEntityWorldManager entityManager, IColliderBakeSystem colliderSystem,
+        public RaycastComputeSystem(IEntityWorldManager entityManager, IColliderSystem colliderSystem,
             IEntityWorldTime time, IProfilingManager profilingManager)
         {
             _time = time;
@@ -46,9 +49,11 @@ namespace SolidSpace.Entities.Physics.Raycast
                 typeof(VelocityComponent),
                 typeof(RaycastComponent)
             });
-            _hitsBuffer = NativeMemory.CreatePersistentArray<RaycastHit>(EntityPerAllocation);
+            _hitEntities = NativeMemory.CreatePersistentArray<Entity>(EntityPerAllocation);
+            _hitColliderIndices = NativeMemory.CreatePersistentArray<ushort>(EntityPerAllocation);
+            _hitEntityArchetypeIndices = NativeMemory.CreatePersistentArray<byte>(EntityPerAllocation);
             _hitCount = NativeMemory.CreatePersistentReference(0);
-            _archetypes = NativeMemory.CreatePersistentArray<EntityArchetype>(256);
+            _hitEntityArchetypes = NativeMemory.CreatePersistentArray<EntityArchetype>(256);
             _profiler = _profilingManager.GetHandle(this);
         }
 
@@ -71,7 +76,7 @@ namespace SolidSpace.Entities.Physics.Raycast
                 var archetypeFound = false;
                 for (var j = 0; j < archetypeCount; j++)
                 {
-                    if (archetype == _archetypes[j])
+                    if (archetype == _hitEntityArchetypes[j])
                     {
                         chunkArchetypeIndices[i] = (byte) j;
                         archetypeFound = true;
@@ -80,7 +85,7 @@ namespace SolidSpace.Entities.Physics.Raycast
                 }
                 if (!archetypeFound)
                 {
-                    _archetypes[archetypeCount] = archetype;
+                    _hitEntityArchetypes[archetypeCount] = archetype;
                     chunkArchetypeIndices[i] = (byte) archetypeCount++;
                 }
                 
@@ -91,59 +96,66 @@ namespace SolidSpace.Entities.Physics.Raycast
 
             _profiler.BeginSample("Raycast");
             var raycastResultCounts = NativeMemory.CreateTempJobArray<int>(raycasterChunkCount);
-            NativeMemory.MaintainPersistentArrayLength(ref _hitsBuffer, new ArrayMaintenanceData
+            var maintenanceRule = new ArrayMaintenanceData
             {
                 requiredCapacity = raycasterCount,
                 itemPerAllocation = EntityPerAllocation,
                 copyOnResize = false
-            });
+            };
+            NativeMemory.MaintainPersistentArrayLength(ref _hitEntities, maintenanceRule);
+            NativeMemory.MaintainPersistentArrayLength(ref _hitColliderIndices, maintenanceRule);
+            NativeMemory.MaintainPersistentArrayLength(ref _hitEntityArchetypes, maintenanceRule);
 
-            var raycastJob = new RaycastJob
+            new RaycastJob
             {
                 inRaycasterChunks = raycasterChunks,
                 inResultWriteOffsets = raycasterOffsets,
-                inRaycasterArchetypes = chunkArchetypeIndices,
+                inRaycasterArchetypeIndices = chunkArchetypeIndices,
+                inColliderWorld = _colliderSystem.World,
+                inDeltaTime = _time.DeltaTime,
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
                 velocityHandle = _entityManager.GetComponentTypeHandle<VelocityComponent>(true),
                 entityHandle = _entityManager.GetEntityTypeHandle(),
-                inColliderWorld = _colliderSystem.ColliderWorld,
-                inDeltaTime = _time.DeltaTime,
                 outCounts = raycastResultCounts,
-                outHits = _hitsBuffer
-            };
-            var raycastHandle = raycastJob.Schedule(raycasterChunkCount, 1);
-            raycastHandle.Complete();
+                outRaycasterEntities = _hitEntities,
+                outColliderIndices = _hitColliderIndices,
+                outRaycasterArchetypeIndices = _hitEntityArchetypeIndices
+            }.Schedule(raycasterChunkCount, 1).Complete();
             _profiler.EndSample("Raycast");
             
             _profiler.BeginSample("Collect Results");
-            var collectJob = new SingleBufferedDataCollectJob<RaycastHit>
+            new SingleBufferedDataCollectJob<Entity, byte, ushort>
             {
-                inOutData = _hitsBuffer,
+                inOutData0 = _hitEntities,
+                inOutData1 = _hitEntityArchetypeIndices,
+                inOutData2 = _hitColliderIndices,
                 inOffsets = raycasterOffsets, 
                 inCounts = raycastResultCounts,
                 outCount = _hitCount,
-            };
-            var collectHandle = collectJob.Schedule(raycastHandle);
-            collectHandle.Complete();
+            }.Schedule().Complete();
             _profiler.EndSample("Collect Results");
             
-            _profiler.BeginSample("Dispose arrays");
-            raycasterChunks.Dispose();
+            _profiler.BeginSample("Dispose Arrays");
             raycasterOffsets.Dispose();
             raycastResultCounts.Dispose();
             chunkArchetypeIndices.Dispose();
-            _profiler.EndSample("Dispose arrays");
+            raycasterChunks.Dispose();
+            _profiler.EndSample("Dispose Arrays");
 
-            RaycastWorld = new RaycastWorldData
+            World = new RaycastWorld
             {
-                archetypes = new NativeSlice<EntityArchetype>(_archetypes, 0, archetypeCount),
-                hits = new NativeSlice<RaycastHit>(_hitsBuffer, 0, _hitCount.Value)
+                raycastArchetypes = new NativeSlice<EntityArchetype>(_hitEntityArchetypes, 0, archetypeCount),
+                raycastEntities = new NativeSlice<Entity>(_hitEntities, 0, _hitCount.Value),
+                raycastArchetypeIndices = new NativeSlice<byte>(_hitEntityArchetypeIndices, 0, _hitCount.Value),
+                colliderIndices = new NativeSlice<ushort>(_hitColliderIndices, 0, _hitCount.Value)
             };
         }
 
         public void FinalizeController()
         {
-            _hitsBuffer.Dispose();
+            _hitEntityArchetypes.Dispose();
+            _hitColliderIndices.Dispose();
+            _hitEntities.Dispose();
             _hitCount.Dispose();
         }
     }

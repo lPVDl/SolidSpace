@@ -12,11 +12,11 @@ using Unity.Mathematics;
 
 namespace SolidSpace.Entities.Physics.Colliders
 {
-    internal partial class ColliderBakeSystem : IController, IColliderBakeSystem
+    internal partial class ColliderBakeSystem : IController, IColliderSystem
     {
         public EControllerType ControllerType => EControllerType.EntityCompute;
         
-        public ColliderWorld ColliderWorld { get; private set; }
+        public ColliderWorld World { get; private set; }
 
         private const int ColliderPerAllocation = 512;
         private const int ChunkPerAllocation = 256;
@@ -216,7 +216,7 @@ namespace SolidSpace.Entities.Physics.Colliders
             chunkArchetypeIndices.Dispose();
             _profiler.EndSample("Dispose Arrays");
 
-            ColliderWorld = new ColliderWorld
+            World = new ColliderWorld
             {
                 archetypes = new NativeSlice<EntityArchetype>(_colliderArchetypes, 0, archetypeCount),
                 colliderArchetypes = new NativeSlice<byte>(_colliderArchetypeIndices, 0, colliderCount),

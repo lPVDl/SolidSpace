@@ -15,7 +15,7 @@ namespace SolidSpace.Entities.ParticleEmitters
         [ReadOnly] public NativeArray<ArchetypeChunk> inChunks;
         [ReadOnly] public NativeArray<int> inWriteOffsets;
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
-        [ReadOnly] public ComponentTypeHandle<RandomValueComponent> randomHandle;
+        [ReadOnly] public ComponentTypeHandle<RandomComponent> randomHandle;
         [ReadOnly] public ComponentTypeHandle<ParticleEmitterComponent> emitterHandle;
         [ReadOnly] public float inTime;
 

@@ -9,13 +9,13 @@ namespace SolidSpace.Entities.Physics.Colliders
     {
         public EControllerType ControllerType => EControllerType.EntityRender;
         
-        private readonly IColliderBakeSystem _bakeSystem;
+        private readonly IColliderSystem _bakeSystem;
         private readonly IGizmosManager _gizmosManager;
         private readonly ColliderGizmoSystemConfig _config;
 
         private GizmosHandle _gizmos;
 
-        public ColliderGizmoSystem(IColliderBakeSystem bakeSystem, IGizmosManager gizmosManager,
+        public ColliderGizmoSystem(IColliderSystem bakeSystem, IGizmosManager gizmosManager,
             ColliderGizmoSystemConfig config)
         {
             _bakeSystem = bakeSystem;
@@ -32,12 +32,12 @@ namespace SolidSpace.Entities.Physics.Colliders
         {
             if (_config.DrawGrid)
             {
-                DrawGrid(_bakeSystem.ColliderWorld.worldGrid);
+                DrawGrid(_bakeSystem.World.worldGrid);
             }
 
             if (_config.DrawCollider)
             {
-                DrawColliders(_bakeSystem.ColliderWorld);
+                DrawColliders(_bakeSystem.World);
             }
         }
 

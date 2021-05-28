@@ -7,7 +7,6 @@ namespace SolidSpace.Entities.Physics.Raycast
         public override void InstallBindings(IDependencyContainer container)
         {
             container.Bind<RaycastComputeSystem>();
-            container.Bind<RaycastCommandSystem>();
         }
     }
 }

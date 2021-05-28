@@ -28,7 +28,7 @@ namespace SolidSpace.Playground
             {
                 typeof(PositionComponent),
                 typeof(ParticleEmitterComponent),
-                typeof(RandomValueComponent),
+                typeof(RandomComponent),
                 typeof(RepeatTimerComponent),
             });
             
