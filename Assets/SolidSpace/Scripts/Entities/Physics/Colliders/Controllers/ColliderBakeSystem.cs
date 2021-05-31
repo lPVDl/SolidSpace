@@ -27,6 +27,7 @@ namespace SolidSpace.Entities.Physics.Colliders
 
         private EntityQuery _query;
         private GridUtil _gridUtil;
+        private NativeArray<Entity> _colliderEntities;
         private NativeArray<FloatBounds> _colliderBounds;
         private NativeArray<ColliderShape> _colliderShapes;
         private NativeArray<EntityArchetype> _colliderArchetypes;
@@ -51,6 +52,7 @@ namespace SolidSpace.Entities.Physics.Colliders
             });
             _colliderBounds = NativeMemory.CreatePersistentArray<FloatBounds>(ColliderPerAllocation);
             _colliderShapes = NativeMemory.CreatePersistentArray<ColliderShape>(ColliderPerAllocation);
+            _colliderEntities = NativeMemory.CreatePersistentArray<Entity>(ColliderPerAllocation);
             _worldColliders = NativeMemory.CreatePersistentArray<ushort>(ColliderPerAllocation * 4);
             _worldChunks = NativeMemory.CreatePersistentArray<ColliderListPointer>(ChunkPerAllocation);
             _colliderArchetypes = NativeMemory.CreatePersistentArray<EntityArchetype>(256);
@@ -104,6 +106,7 @@ namespace SolidSpace.Entities.Physics.Colliders
             };
             NativeMemory.MaintainPersistentArrayLength(ref _colliderBounds, arrayMaintenance);
             NativeMemory.MaintainPersistentArrayLength(ref _colliderShapes, arrayMaintenance);
+            NativeMemory.MaintainPersistentArrayLength(ref _colliderEntities, arrayMaintenance);
             NativeMemory.MaintainPersistentArrayLength(ref _colliderArchetypeIndices, arrayMaintenance);
             var computeBoundsJob = new ComputeBoundsJob
             {
@@ -113,9 +116,11 @@ namespace SolidSpace.Entities.Physics.Colliders
                 outBounds = _colliderBounds,
                 outShapes = _colliderShapes,
                 outArchetypeIndices = _colliderArchetypeIndices,
+                outEntities = _colliderEntities,
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
                 sizeHandle = _entityManager.GetComponentTypeHandle<SizeComponent>(true),
-                rotationHandle = _entityManager.GetComponentTypeHandle<RotationComponent>(true)
+                rotationHandle = _entityManager.GetComponentTypeHandle<RotationComponent>(true),
+                entityHandle = _entityManager.GetEntityTypeHandle()
             };
             var computeBoundsJobHandle = computeBoundsJob.Schedule(colliderChunkCount, 8);
             computeBoundsJobHandle.Complete();
@@ -222,6 +227,7 @@ namespace SolidSpace.Entities.Physics.Colliders
                 colliderArchetypeIndices = new NativeSlice<byte>(_colliderArchetypeIndices, 0, colliderCount),
                 colliderBounds = new NativeSlice<FloatBounds>(_colliderBounds, 0, colliderCount),
                 colliderShapes = new NativeSlice<ColliderShape>(_colliderShapes, 0, colliderCount),
+                colliderEntities = new NativeSlice<Entity>(_colliderEntities, 0, colliderCount),
                 colliderStream = new NativeSlice<ushort>(_worldColliders, 0, _worldColliders.Length),
                 worldCells = new NativeSlice<ColliderListPointer>(_worldChunks, 0, _worldChunks.Length),
                 worldGrid = worldGrid
@@ -235,6 +241,7 @@ namespace SolidSpace.Entities.Physics.Colliders
 
         public void FinalizeController()
         {
+            _colliderEntities.Dispose();
             _colliderBounds.Dispose();
             _colliderShapes.Dispose();
             _worldColliders.Dispose();

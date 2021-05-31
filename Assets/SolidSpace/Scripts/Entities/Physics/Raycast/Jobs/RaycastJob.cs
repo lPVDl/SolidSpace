@@ -18,6 +18,7 @@ namespace SolidSpace.Entities.Physics.Raycast
             public Entity raycasterEntity;
             public ushort colliderIndex;
             public byte raycasterArchetypeIndex;
+            public FloatRay raycastOrigin;
         }
         
         [ReadOnly] public ColliderWorld inColliderWorld;
@@ -33,6 +34,7 @@ namespace SolidSpace.Entities.Physics.Raycast
         [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<Entity> outRaycasterEntities;
         [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<ushort> outColliderIndices;
         [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<byte> outRaycasterArchetypeIndices;
+        [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<FloatRay> outRaycastOrigins;
         [WriteOnly] public NativeArray<int> outCounts;
         public void Execute(int chunkIndex)
         {
@@ -83,7 +85,8 @@ namespace SolidSpace.Entities.Physics.Raycast
                         {
                             raycasterEntity = entities[i],
                             raycasterArchetypeIndex = rayArchetype,
-                            colliderIndex = colliderIndex
+                            colliderIndex = colliderIndex,
+                            raycastOrigin = new FloatRay(pos0, pos1)
                         });
                     }
                     
@@ -110,7 +113,8 @@ namespace SolidSpace.Entities.Physics.Raycast
                         {
                             raycasterEntity = entities[i],
                             raycasterArchetypeIndex = rayArchetype,
-                            colliderIndex = colliderIndex
+                            colliderIndex = colliderIndex,
+                            raycastOrigin = new FloatRay(pos0, pos1)
                         });
 
                         isHit = true;
@@ -148,14 +152,13 @@ namespace SolidSpace.Entities.Physics.Raycast
                     continue;
                 }
 
-                var centerX = (colliderBounds.xMax + colliderBounds.xMin) / 2f;
-                var centerY = (colliderBounds.yMax + colliderBounds.yMin) / 2f;
-                var p0 = new float2(ray.xMin - centerX, ray.yMin - centerY);
-                var p1 = new float2(ray.xMax - centerX, ray.yMax - centerY);
+                var center = FloatMath.GetBoundsCenter(colliderBounds);
+                var p0 = new float2(ray.xMin, ray.yMin) - center;
+                var p1 = new float2(ray.xMax, ray.yMax) - center;
                 var colliderShape = world.colliderShapes[colliderIndex];
                 FloatMath.SinCos(-colliderShape.rotation * FloatMath.TwoPI, out var sin, out var cos);
-                p0 = FloatMath.Rotate(p0.x, p0.y, sin, cos);
-                p1 = FloatMath.Rotate(p1.x, p1.y, sin, cos);
+                p0 = FloatMath.Rotate(p0, sin, cos);
+                p1 = FloatMath.Rotate(p1, sin, cos);
                 FloatMath.MinMax(p0.x, p1.x, out var xMin, out var xMax);
                 FloatMath.MinMax(p0.y, p1.y, out var yMin, out var yMax);
                 var halfSize = new float2(colliderShape.size.x / 2f, colliderShape.size.y / 2f);
@@ -182,6 +185,7 @@ namespace SolidSpace.Entities.Physics.Raycast
             outRaycasterEntities[offset] = hit.raycasterEntity;
             outColliderIndices[offset] = hit.colliderIndex;
             outRaycasterArchetypeIndices[offset] = hit.raycasterArchetypeIndex;
+            outRaycastOrigins[offset] = hit.raycastOrigin;
         }
     }
 }

@@ -23,7 +23,7 @@ MonoBehaviour:
     _spawnRangeY: {x: -250, y: 250}
   _emitterSpawnManagerConfig:
     _entityCount: 1
-    _spawnRate: 5
+    _spawnRate: 10
     _spawnRangeX: {x: -300, y: 300}
     _spawnRangeY: {x: -250, y: 250}
     _particleVelocity: 5

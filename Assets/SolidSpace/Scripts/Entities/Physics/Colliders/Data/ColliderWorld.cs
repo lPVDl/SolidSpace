@@ -10,6 +10,7 @@ namespace SolidSpace.Entities.Physics.Colliders
         public NativeSlice<byte> colliderArchetypeIndices;
         public NativeSlice<FloatBounds> colliderBounds;
         public NativeSlice<ColliderShape> colliderShapes;
+        public NativeSlice<Entity> colliderEntities;
         public NativeSlice<ushort> colliderStream;
         public NativeSlice<ColliderListPointer> worldCells;
         public ColliderWorldGrid worldGrid;

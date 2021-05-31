@@ -70,7 +70,7 @@ namespace SolidSpace.Entities.Bullets
             _profiler.BeginSample("Execute Filter");
             var hitCount = raycastWorld.raycastEntities.Length;
             var jobCount = (int) Math.Ceiling(hitCount / 128f);
-            var filterCounts = NativeMemory.CreateTempJobArray<int>(jobCount);
+            var countsArray = NativeMemory.CreateTempJobArray<int>(jobCount);
             var filterIndices = NativeMemory.CreateTempJobArray<int>(hitCount);
             new RaycastWorldFilterJob
             {
@@ -81,44 +81,80 @@ namespace SolidSpace.Entities.Bullets
                 inColliderArchetypesFilter = colliderFilter,
                 inRaycasterArchetypeFilter = raycasterFilter,
                 inRaycasterArchetypeIndices = raycastWorld.raycastArchetypeIndices,
-                outCounts = filterCounts,
+                outCounts = countsArray,
                 outIndices = filterIndices
             }.Schedule(jobCount, 4).Complete();
             _profiler.EndSample("Execute Filter");
 
             _profiler.BeginSample("Collect Filter");
-            var filterCount = NativeMemory.CreateTempJobReference<int>();
+            var arrayCount = NativeMemory.CreateTempJobReference<int>();
             new DataCollectJob<int>
             {
-                inCounts = filterCounts,
+                inCounts = countsArray,
                 inOutData = filterIndices,
                 inOffset = 128,
-                outCount = filterCount
+                outCount = arrayCount
             }.Schedule().Complete();
             _profiler.EndSample("Collect Filter");
             
-            _profiler.BeginSample("Raycaster Entity Array");
-            var raycasterEntities = NativeMemory.CreateTempJobArray<Entity>(filterCount.Value);
-            new PickItemsByIndexJob<Entity>
+            _profiler.BeginSample("Query Collider Health & Entities");
+            var estimatedHitCount = arrayCount.Value;
+            var colliderHealth = NativeMemory.CreateTempJobArray<HealthComponent>(estimatedHitCount);
+            var colliderEntities = NativeMemory.CreateTempJobArray<Entity>(estimatedHitCount);
+            for (var i = 0; i < estimatedHitCount; i++)
             {
-                inItems = raycastWorld.raycastEntities,
-                inItemIndices = filterIndices,
-                inItemIndexCount = filterCount.Value,
-                outItems = raycasterEntities
+                var colliderIndex = raycastWorld.colliderIndices[filterIndices[i]];
+                var colliderEntity = colliderWorld.colliderEntities[colliderIndex];
+                colliderHealth[i] = _entityManager.GetComponentData<HealthComponent>(colliderEntity);
+                colliderEntities[i] = colliderEntity;
+            }
+            _profiler.EndSample("Query Collider Health & Entities");
+            
+            _profiler.BeginSample("Raycast Compute");
+            jobCount = (int) Math.Ceiling(estimatedHitCount / 16f);
+            var raycastResult = NativeMemory.CreateTempJobArray<BulletHit>(estimatedHitCount);
+            new BulletCastJob
+            {
+                inItemPerJob = 16,
+                inItemTotal = estimatedHitCount,
+                inHealthAtlas = _healthSystem.Data,
+                inHealthChunks = _healthSystem.Chunks,
+                inColliderWorld = colliderWorld,
+                inRaycastWorld = raycastWorld,
+                inHealthComponents = colliderHealth,
+                inFilteredIndices = filterIndices,
+                outCounts = countsArray,
+                outHits = raycastResult,
+            }.Schedule(jobCount, 1).Complete();
+            _profiler.EndSample("Raycast Compute");
+            
+            _profiler.BeginSample("Raycast Collect");
+            new DataCollectJob<BulletHit>
+            {
+                inCounts = countsArray,
+                inOffset = 16,
+                inOutData = raycastResult,
+                outCount = arrayCount
             }.Schedule().Complete();
-            _profiler.EndSample("Raycaster Entity Array");
+            _profiler.EndSample("Raycast Collect");
             
-            _profiler.BeginSample("Destroy Entities");
-            _entityManager.DestroyEntity(raycasterEntities);
-            _profiler.EndSample("Destroy Entities");
-            
+            _profiler.BeginSample("Destroy Bullets");
+            var bulletCount = arrayCount.Value;
+            for (var i = 0; i < bulletCount; i++)
+            {
+                _entityManager.DestroyEntity(raycastResult[i].bulletEntity);
+            }
+            _profiler.EndSample("Destroy Bullets");
+
             _profiler.BeginSample("Dispose Arrays");
             colliderFilter.Dispose();
             raycasterFilter.Dispose();
-            filterCounts.Dispose();
+            countsArray.Dispose();
             filterIndices.Dispose();
-            filterCount.Dispose();
-            raycasterEntities.Dispose();
+            arrayCount.Dispose();
+            colliderHealth.Dispose();
+            colliderEntities.Dispose();
+            raycastResult.Dispose();
             _profiler.EndSample("Dispose Arrays");
         }
 

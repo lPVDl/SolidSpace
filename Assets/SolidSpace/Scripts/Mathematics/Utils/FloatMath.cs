@@ -19,6 +19,12 @@ namespace SolidSpace.Mathematics
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float2 Rotate(float2 vector, float sin, float cos)
+        {
+            return Rotate(vector.x, vector.y, sin, cos);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SinCos(float angleRad, out float sin, out float cos)
         {
             sin = (float) Math.Sin(angleRad);
@@ -59,6 +65,16 @@ namespace SolidSpace.Mathematics
         public static bool BoundsOverlap(float min0, float max0, float min1, float max1)
         {
             return (max1 >= min0) && (max0 >= min1);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float2 GetBoundsCenter(FloatBounds bounds)
+        {
+            return new float2
+            {
+                x = (bounds.xMin + bounds.xMax) / 2f,
+                y = (bounds.yMin + bounds.yMax) / 2f
+            };
         }
     }
 }

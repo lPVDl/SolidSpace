@@ -3,6 +3,7 @@ using SolidSpace.Entities.Physics.Colliders;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
 using SolidSpace.JobUtilities;
+using SolidSpace.Mathematics;
 using SolidSpace.Profiling;
 using Unity.Collections;
 using Unity.Entities;
@@ -29,6 +30,7 @@ namespace SolidSpace.Entities.Physics.Raycast
         private NativeArray<Entity> _hitEntities;
         private NativeArray<ushort> _hitColliderIndices;
         private NativeArray<byte> _hitEntityArchetypeIndices;
+        private NativeArray<FloatRay> _hitRayOrigins;
         private NativeArray<EntityArchetype> _hitEntityArchetypes;
         private NativeReference<int> _hitCount;
 
@@ -52,6 +54,7 @@ namespace SolidSpace.Entities.Physics.Raycast
             _hitEntities = NativeMemory.CreatePersistentArray<Entity>(EntityPerAllocation);
             _hitColliderIndices = NativeMemory.CreatePersistentArray<ushort>(EntityPerAllocation);
             _hitEntityArchetypeIndices = NativeMemory.CreatePersistentArray<byte>(EntityPerAllocation);
+            _hitRayOrigins = NativeMemory.CreatePersistentArray<FloatRay>(EntityPerAllocation);
             _hitCount = NativeMemory.CreatePersistentReference(0);
             _hitEntityArchetypes = NativeMemory.CreatePersistentArray<EntityArchetype>(256);
             _profiler = _profilingManager.GetHandle(this);
@@ -105,6 +108,7 @@ namespace SolidSpace.Entities.Physics.Raycast
             NativeMemory.MaintainPersistentArrayLength(ref _hitEntities, maintenanceRule);
             NativeMemory.MaintainPersistentArrayLength(ref _hitColliderIndices, maintenanceRule);
             NativeMemory.MaintainPersistentArrayLength(ref _hitEntityArchetypes, maintenanceRule);
+            NativeMemory.MaintainPersistentArrayLength(ref _hitRayOrigins, maintenanceRule);
 
             new RaycastJob
             {
@@ -119,16 +123,18 @@ namespace SolidSpace.Entities.Physics.Raycast
                 outCounts = raycastResultCounts,
                 outRaycasterEntities = _hitEntities,
                 outColliderIndices = _hitColliderIndices,
-                outRaycasterArchetypeIndices = _hitEntityArchetypeIndices
+                outRaycasterArchetypeIndices = _hitEntityArchetypeIndices,
+                outRaycastOrigins = _hitRayOrigins
             }.Schedule(raycasterChunkCount, 1).Complete();
             _profiler.EndSample("Raycast");
             
             _profiler.BeginSample("Collect Results");
-            new DataCollectJobWithOffsets<Entity, byte, ushort>
+            new DataCollectJobWithOffsets<Entity, byte, ushort, FloatRay>
             {
                 inOutData0 = _hitEntities,
                 inOutData1 = _hitEntityArchetypeIndices,
                 inOutData2 = _hitColliderIndices,
+                inOutData3 = _hitRayOrigins,
                 inOffsets = raycasterOffsets, 
                 inCounts = raycastResultCounts,
                 outCount = _hitCount,
@@ -147,12 +153,14 @@ namespace SolidSpace.Entities.Physics.Raycast
                 raycastArchetypes = new NativeSlice<EntityArchetype>(_hitEntityArchetypes, 0, archetypeCount),
                 raycastEntities = new NativeSlice<Entity>(_hitEntities, 0, _hitCount.Value),
                 raycastArchetypeIndices = new NativeSlice<byte>(_hitEntityArchetypeIndices, 0, _hitCount.Value),
+                raycastOrigins = new NativeSlice<FloatRay>(_hitRayOrigins, 0, _hitCount.Value),
                 colliderIndices = new NativeSlice<ushort>(_hitColliderIndices, 0, _hitCount.Value)
             };
         }
 
         public void FinalizeController()
         {
+            _hitRayOrigins.Dispose();
             _hitEntityArchetypeIndices.Dispose();
             _hitEntityArchetypes.Dispose();
             _hitColliderIndices.Dispose();
