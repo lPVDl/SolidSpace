@@ -99,21 +99,27 @@ namespace SolidSpace.Entities.Bullets
             _profiler.EndSample("Collect Filter");
             
             _profiler.BeginSample("Query Collider Data");
-            var estimatedHitCount = arrayCount.Value;
-            var colliderHealth = NativeMemory.CreateTempJobArray<HealthComponent>(estimatedHitCount);
-            var colliderEntities = NativeMemory.CreateTempJobArray<Entity>(estimatedHitCount);
-            var colliderSprites = NativeMemory.CreateTempJobArray<SpriteRenderComponent>(estimatedHitCount);
-            for (var i = 0; i < estimatedHitCount; i++)
+            var colliderEntities = colliderWorld.colliderEntities;
+            var colliderArchetypeIndices = colliderWorld.colliderArchetypeIndices;
+            var colliderCount = colliderEntities.Length;
+            var colliderHealth = NativeMemory.CreateTempJobArray<HealthComponent>(colliderCount);
+            var colliderSprites = NativeMemory.CreateTempJobArray<SpriteRenderComponent>(colliderCount);
+            for (var i = 0; i < colliderCount; i++)
             {
-                var colliderIndex = raycastWorld.colliderIndices[filterIndices[i]];
-                var colliderEntity = colliderWorld.colliderEntities[colliderIndex];
+                var colliderEntity = colliderEntities[i];
+                var colliderArchetype = colliderArchetypeIndices[i];
+                if (!colliderFilter.Contains(colliderArchetype))
+                {
+                    continue;
+                }
+                
                 colliderHealth[i] = _entityManager.GetComponentData<HealthComponent>(colliderEntity);
                 colliderSprites[i] = _entityManager.GetComponentData<SpriteRenderComponent>(colliderEntity);
-                colliderEntities[i] = colliderEntity;
             }
             _profiler.EndSample("Query Collider Data");
             
             _profiler.BeginSample("Raycast Compute");
+            var estimatedHitCount = arrayCount.Value;
             jobCount = (int) Math.Ceiling(estimatedHitCount / 16f);
             var bulletCastCounts = NativeMemory.CreateTempJobArray<int>(jobCount);
             var raycastResult = NativeMemory.CreateTempJobArray<BulletHit>(estimatedHitCount);
@@ -167,7 +173,6 @@ namespace SolidSpace.Entities.Bullets
             bulletCastCounts.Dispose();
             arrayCount.Dispose();
             colliderHealth.Dispose();
-            colliderEntities.Dispose();
             colliderSprites.Dispose();
             raycastResult.Dispose();
             _profiler.EndSample("Dispose Arrays");

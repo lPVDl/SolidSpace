@@ -51,7 +51,7 @@ namespace SolidSpace.Entities.Bullets
                 p1 = FloatMath.Rotate(p1, sin, cos) + halfSize;
                 
                 var spriteSize = new int2((int) colliderShape.size.x, (int) colliderShape.size.y);
-                var healthIndex = inHealthComponents[filterIndex].index;
+                var healthIndex = inHealthComponents[colliderIndex].index;
                 var healthOffset = AtlasMath.ComputeOffset(inHealthChunks[healthIndex.chunkId], healthIndex);
 
                 var p0Int = new int2((int) p0.x, (int) p0.y);
@@ -69,7 +69,7 @@ namespace SolidSpace.Entities.Bullets
                         continue;
                     }
                 
-                    var spriteIndex = inSpriteComponents[i].index;
+                    var spriteIndex = inSpriteComponents[colliderIndex].index;
                     var spriteOffset = AtlasMath.ComputeOffset(inSpriteChunks[spriteIndex.chunkId], spriteIndex);
                     spriteOffset += p0Int;
                     
@@ -99,7 +99,7 @@ namespace SolidSpace.Entities.Bullets
                         continue;
                     }
 
-                    var spriteIndex = inSpriteComponents[i].index;
+                    var spriteIndex = inSpriteComponents[colliderIndex].index;
                     var spriteOffset = AtlasMath.ComputeOffset(inSpriteChunks[spriteIndex.chunkId], spriteIndex);
                     spriteOffset += point;
                     
