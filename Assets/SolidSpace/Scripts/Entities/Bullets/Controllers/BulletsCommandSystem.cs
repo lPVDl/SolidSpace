@@ -11,6 +11,7 @@ using SolidSpace.Profiling;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
+using UnityEngine;
 
 namespace SolidSpace.Entities.Bullets
 {
@@ -97,18 +98,20 @@ namespace SolidSpace.Entities.Bullets
             }.Schedule().Complete();
             _profiler.EndSample("Collect Filter");
             
-            _profiler.BeginSample("Query Collider Health & Entities");
+            _profiler.BeginSample("Query Collider Data");
             var estimatedHitCount = arrayCount.Value;
             var colliderHealth = NativeMemory.CreateTempJobArray<HealthComponent>(estimatedHitCount);
             var colliderEntities = NativeMemory.CreateTempJobArray<Entity>(estimatedHitCount);
+            var colliderSprites = NativeMemory.CreateTempJobArray<SpriteRenderComponent>(estimatedHitCount);
             for (var i = 0; i < estimatedHitCount; i++)
             {
                 var colliderIndex = raycastWorld.colliderIndices[filterIndices[i]];
                 var colliderEntity = colliderWorld.colliderEntities[colliderIndex];
                 colliderHealth[i] = _entityManager.GetComponentData<HealthComponent>(colliderEntity);
+                colliderSprites[i] = _entityManager.GetComponentData<SpriteRenderComponent>(colliderEntity);
                 colliderEntities[i] = colliderEntity;
             }
-            _profiler.EndSample("Query Collider Health & Entities");
+            _profiler.EndSample("Query Collider Data");
             
             _profiler.BeginSample("Raycast Compute");
             jobCount = (int) Math.Ceiling(estimatedHitCount / 16f);
@@ -120,6 +123,8 @@ namespace SolidSpace.Entities.Bullets
                 inItemTotal = estimatedHitCount,
                 inHealthAtlas = _healthSystem.Data,
                 inHealthChunks = _healthSystem.Chunks,
+                inSpriteChunks = _colorSystem.Chunks,
+                inSpriteComponents = colliderSprites,
                 inColliderWorld = colliderWorld,
                 inRaycastWorld = raycastWorld,
                 inHealthComponents = colliderHealth,
@@ -139,13 +144,20 @@ namespace SolidSpace.Entities.Bullets
             }.Schedule().Complete();
             _profiler.EndSample("Raycast Collect");
             
-            _profiler.BeginSample("Destroy Bullets");
+            _profiler.BeginSample("Apply Damage");
             var bulletCount = arrayCount.Value;
+            var healthAtlas = _healthSystem.Data;
+            var spriteTexture = _colorSystem.Texture;
             for (var i = 0; i < bulletCount; i++)
             {
-                _entityManager.DestroyEntity(raycastResult[i].bulletEntity);
+                var rayHit = raycastResult[i];
+                _entityManager.DestroyEntity(rayHit.bulletEntity);
+                healthAtlas[rayHit.healthOffset] = 0;
+                spriteTexture.SetPixel(rayHit.spriteOffset.x, rayHit.spriteOffset.y, Color.black);
             }
-            _profiler.EndSample("Destroy Bullets");
+            
+            spriteTexture.Apply();
+            _profiler.EndSample("Apply Damage");
 
             _profiler.BeginSample("Dispose Arrays");
             colliderFilter.Dispose();
@@ -156,6 +168,7 @@ namespace SolidSpace.Entities.Bullets
             arrayCount.Dispose();
             colliderHealth.Dispose();
             colliderEntities.Dispose();
+            colliderSprites.Dispose();
             raycastResult.Dispose();
             _profiler.EndSample("Dispose Arrays");
         }
