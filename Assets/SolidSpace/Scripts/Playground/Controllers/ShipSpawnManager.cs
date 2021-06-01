@@ -55,7 +55,12 @@ namespace SolidSpace.Playground
         
         public void InitializeController()
         {
-            
+            for (var i = 0; i < _config.SpawnCount; i++)
+            {
+                var x = Random.Range(_config.SpawnRangeX.x, _config.SpawnRangeX.y);
+                var y = Random.Range(_config.SpawnRangeY.x, _config.SpawnRangeY.y);
+                Spawn(new float2(x, y));
+            }
         }
 
         public void UpdateController()
