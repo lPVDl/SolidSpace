@@ -70,7 +70,7 @@ namespace SolidSpace.Entities.Bullets
             _profiler.BeginSample("Execute Filter");
             var hitCount = raycastWorld.raycastEntities.Length;
             var jobCount = (int) Math.Ceiling(hitCount / 128f);
-            var countsArray = NativeMemory.CreateTempJobArray<int>(jobCount);
+            var filterCounts = NativeMemory.CreateTempJobArray<int>(jobCount);
             var filterIndices = NativeMemory.CreateTempJobArray<int>(hitCount);
             new RaycastWorldFilterJob
             {
@@ -81,7 +81,7 @@ namespace SolidSpace.Entities.Bullets
                 inColliderArchetypesFilter = colliderFilter,
                 inRaycasterArchetypeFilter = raycasterFilter,
                 inRaycasterArchetypeIndices = raycastWorld.raycastArchetypeIndices,
-                outCounts = countsArray,
+                outCounts = filterCounts,
                 outIndices = filterIndices
             }.Schedule(jobCount, 4).Complete();
             _profiler.EndSample("Execute Filter");
@@ -90,7 +90,7 @@ namespace SolidSpace.Entities.Bullets
             var arrayCount = NativeMemory.CreateTempJobReference<int>();
             new DataCollectJob<int>
             {
-                inCounts = countsArray,
+                inCounts = filterCounts,
                 inOutData = filterIndices,
                 inOffset = 128,
                 outCount = arrayCount
@@ -112,6 +112,7 @@ namespace SolidSpace.Entities.Bullets
             
             _profiler.BeginSample("Raycast Compute");
             jobCount = (int) Math.Ceiling(estimatedHitCount / 16f);
+            var bulletCastCounts = NativeMemory.CreateTempJobArray<int>(jobCount);
             var raycastResult = NativeMemory.CreateTempJobArray<BulletHit>(estimatedHitCount);
             new BulletCastJob
             {
@@ -123,7 +124,7 @@ namespace SolidSpace.Entities.Bullets
                 inRaycastWorld = raycastWorld,
                 inHealthComponents = colliderHealth,
                 inFilteredIndices = filterIndices,
-                outCounts = countsArray,
+                outCounts = bulletCastCounts,
                 outHits = raycastResult,
             }.Schedule(jobCount, 1).Complete();
             _profiler.EndSample("Raycast Compute");
@@ -131,7 +132,7 @@ namespace SolidSpace.Entities.Bullets
             _profiler.BeginSample("Raycast Collect");
             new DataCollectJob<BulletHit>
             {
-                inCounts = countsArray,
+                inCounts = bulletCastCounts,
                 inOffset = 16,
                 inOutData = raycastResult,
                 outCount = arrayCount
@@ -149,8 +150,9 @@ namespace SolidSpace.Entities.Bullets
             _profiler.BeginSample("Dispose Arrays");
             colliderFilter.Dispose();
             raycasterFilter.Dispose();
-            countsArray.Dispose();
+            filterCounts.Dispose();
             filterIndices.Dispose();
+            bulletCastCounts.Dispose();
             arrayCount.Dispose();
             colliderHealth.Dispose();
             colliderEntities.Dispose();

@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using SolidSpace.Entities.Atlases;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Physics.Colliders;
@@ -102,6 +103,7 @@ namespace SolidSpace.Entities.Bullets
             outCounts[jobIndex] = hitCount;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool CheckIndexBounds(int x, int y, int2 spriteSize)
         {
             if (x < 0 || y < 0 || x >= spriteSize.x || y >= spriteSize.y)
