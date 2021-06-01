@@ -107,7 +107,6 @@ namespace SolidSpace.Entities.Physics.Raycast
             };
             NativeMemory.MaintainPersistentArrayLength(ref _hitEntities, maintenanceRule);
             NativeMemory.MaintainPersistentArrayLength(ref _hitColliderIndices, maintenanceRule);
-            NativeMemory.MaintainPersistentArrayLength(ref _hitEntityArchetypes, maintenanceRule);
             NativeMemory.MaintainPersistentArrayLength(ref _hitRayOrigins, maintenanceRule);
 
             new RaycastJob
