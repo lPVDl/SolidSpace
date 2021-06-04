@@ -31,7 +31,7 @@ namespace SolidSpace.Editor.Automation.ProjectStructureTool
             
             console.WriteLine(string.Empty);
             console.WriteLine("Summary:");
-            console.WriteLine($"\tUtcNow: {DateTime.UtcNow}");
+            console.WriteLine($"\tTime UTC+0: {DateTime.UtcNow:yy-MMM-dd HH:mm:ss}");
             console.WriteLine($"\tDirectory count: {directoryCount}");
             console.WriteLine($"\tFile count: {fileCount}");
             console.WriteLine($"\tFiles size total: {FormatBytes(filesSizeTotal)}");
