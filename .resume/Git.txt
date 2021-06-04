@@ -1,3 +1,45 @@
+f1d2a0d 2021-06-01: [T-13] Optimize colliders data query in BulletsCommandSystem
+9bc6a3a 2021-06-01: [T-13] Fix raycasters archetype indices array size maintenance
+dbfb371 2021-06-01: [T-13] Add auto spawn to ShipSpawnManager
+a6b4a89 2021-06-01: [T-13] Fix AtlasMath provides invalid offsets
+36e4699 2021-06-01: [T-13] Make bullets destroy sprite pixels
+c8f7042 2021-06-01: [T-13] Fix invalid counts array passed to BulletCastJob
+e2e85e0 2021-06-01: [T-13] Fix raycaster archetype array was resized causing reset
+1941a84 2021-05-31: [T-13] Add bullet raycast to sprite pixels
+f342672 2021-05-31: [T-13] Make sprite shader use black pixels for transparency
+1abc6d7 2021-05-28: [T-13] Implement bullet system physics filtering
+59453d9 2021-05-28: [T-13] Reduce atlas items max size
+c10ee51 2021-05-28: [T-13] Add base for bullet system
+c18a69c 2021-05-27: [T-13] Add archetypes to collider & raycast systems
+acc1cd2 2021-05-27: [T-13] Add HealthAtlasSystem
+3b6ab1d 2021-05-27: [T-13] Add linear atlas config
+1512e40 2021-05-26: [T-13] Add manager to spawn ships in playground
+ea4f1ce 2021-05-26: [T-13] Move collider gizmo drawing to separate system
+fe554c8 2021-05-26: [T-13, T-20, T-26] Create single dimension atlases. Refactor.
+536d01f 2021-05-25: [T-13] Integrate collider rotation to raycast system
+1471d46 2021-05-24: Tweak playground installer for collider spawn
+7cb0f12 2021-05-24: [T-13] Integrate rotation into collider bounds compute job.
+b9584d7 2021-05-24: [T-13] Add class for gizmo drawing
+e047429 2021-05-24: Remove unused directives in solution
+4bebe3b 2021-05-24: [T-13] Integrate size component into collider bake system
+ced041b 2021-05-21: [T-23] Create code annotations for existing tasks
+50f3202 2021-05-20: Merge remote-tracking branch 'origin/main' into main
+ae7851a 2021-05-20: [T-22] Remove assemblies due to the maintenance cost
+8e35063 2021-05-20: [T-17] Replace NativeArray[0] with NativeReference
+20da1d3 2021-05-20: [T-24] Return to assembly split method, automate process
+b3794ee 2021-05-19: [C-17] Replace NativeArray[0] with NativeReference
+568acc2 2021-05-19: Remove int2 from Profiling, link Unity.Mathematics
+913f9c7 2021-05-19: Update dotSettings
+a7b853b 2021-05-19: Rename Zenject/Source -> Zenject/Scripts
+0e1c14e 2021-05-19: Rename FuchaTools/Source -> FuchaTools/Scripts
+185f15e 2021-05-19: Move validators folders to data folders
+69581de 2021-05-19: Update about
+abe3f79 2021-05-16: Update project tech stack & description
+70bfadb 2021-05-15: Replace 2021-05-15.zip with 2021-05-15.7z
+8c8475a 2021-05-15: Move resume to root. Add build.
+67cda3d 2021-05-15: Add utc time to project structure output. Update scripts structure in resume.
+fa61f9d 2021-05-15: Add project resume
+155a6bd 2021-05-15: Rename tools -> automation
 46a8c53 2021-05-15: Move ProjectStructureTool to separate library
 4d53c73 2021-05-15: Move console util to separate library
 50333f2 2021-05-15: Make AtlasMath be static

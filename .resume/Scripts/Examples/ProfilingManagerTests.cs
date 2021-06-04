@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Threading;
 using NUnit.Framework;
 
-namespace SolidSpace.Profiling.Tests
+namespace SolidSpace.Profiling.Editor.Tests
 {
     internal class ProfilingManagerTests
     {

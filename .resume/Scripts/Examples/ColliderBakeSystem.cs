@@ -12,15 +12,14 @@ using Unity.Mathematics;
 
 namespace SolidSpace.Entities.Physics.Colliders
 {
-    internal partial class ColliderBakeSystem : IController, IColliderBakeSystem
+    internal partial class ColliderBakeSystem : IController, IColliderSystem
     {
         public EControllerType ControllerType => EControllerType.EntityCompute;
         
-        public ColliderWorld ColliderWorld { get; private set; }
-        
-        private const int ColliderBufferChunkSize = 512;
-        private const int ChunkBufferChunkSize = 256;
-        private const int MappingJobCount = 8;
+        public ColliderWorld World { get; private set; }
+
+        private const int ColliderPerAllocation = 512;
+        private const int ChunkPerAllocation = 256;
         private const int MaxCellCount = 65536;
 
         private readonly IEntityWorldManager _entityManager;
@@ -28,8 +27,11 @@ namespace SolidSpace.Entities.Physics.Colliders
 
         private EntityQuery _query;
         private GridUtil _gridUtil;
-        private DebugUtil _debugUtil;
+        private NativeArray<Entity> _colliderEntities;
         private NativeArray<FloatBounds> _colliderBounds;
+        private NativeArray<ColliderShape> _colliderShapes;
+        private NativeArray<EntityArchetype> _colliderArchetypes;
+        private NativeArray<byte> _colliderArchetypeIndices;
         private NativeArray<ushort> _worldColliders;
         private NativeArray<ColliderListPointer> _worldChunks;
         private ProfilingHandle _profiler;
@@ -48,9 +50,13 @@ namespace SolidSpace.Entities.Physics.Colliders
                 typeof(PositionComponent),
                 typeof(ColliderComponent)
             });
-            _colliderBounds = NativeArrayUtil.CreatePersistentArray<FloatBounds>(ColliderBufferChunkSize);
-            _worldColliders = NativeArrayUtil.CreatePersistentArray<ushort>(ColliderBufferChunkSize * 4);
-            _worldChunks = NativeArrayUtil.CreatePersistentArray<ColliderListPointer>(ChunkBufferChunkSize);
+            _colliderBounds = NativeMemory.CreatePersistentArray<FloatBounds>(ColliderPerAllocation);
+            _colliderShapes = NativeMemory.CreatePersistentArray<ColliderShape>(ColliderPerAllocation);
+            _colliderEntities = NativeMemory.CreatePersistentArray<Entity>(ColliderPerAllocation);
+            _worldColliders = NativeMemory.CreatePersistentArray<ushort>(ColliderPerAllocation * 4);
+            _worldChunks = NativeMemory.CreatePersistentArray<ColliderListPointer>(ChunkPerAllocation);
+            _colliderArchetypes = NativeMemory.CreatePersistentArray<EntityArchetype>(256);
+            _colliderArchetypeIndices = NativeMemory.CreatePersistentArray<byte>(ColliderPerAllocation);
         }
 
         public void UpdateController()
@@ -58,27 +64,63 @@ namespace SolidSpace.Entities.Physics.Colliders
             _profiler.BeginSample("Query Chunks");
             var colliderChunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
             _profiler.EndSample("Query Chunks");
-
-            _profiler.BeginSample("Collider Offsets");
+            
+            _profiler.BeginSample("Collider Offsets & Archetypes");
             var colliderChunkCount = colliderChunks.Length;
-            var colliderOffsets = NativeArrayUtil.CreateTempJobArray<int>(colliderChunkCount);
+            var colliderOffsets = NativeMemory.CreateTempJobArray<int>(colliderChunkCount);
+            var chunkArchetypeIndices = NativeMemory.CreateTempJobArray<byte>(colliderChunkCount);
+            var archetypeCount = 0;
             var colliderCount = 0;
             for (var i = 0; i < colliderChunkCount; i++)
             {
+                var chunk = colliderChunks[i];
+                var archetype = chunk.Archetype;
+                var archetypeFound = false;
+                for (var j = 0; j < archetypeCount; j++)
+                {
+                    if (archetype == _colliderArchetypes[j])
+                    {
+                        chunkArchetypeIndices[i] = (byte) j;
+                        archetypeFound = true;
+                        break;
+                    }
+                }
+
+                if (!archetypeFound)
+                {
+                    _colliderArchetypes[archetypeCount] = archetype;
+                    chunkArchetypeIndices[i] = (byte) archetypeCount++;
+                }
+                
                 colliderOffsets[i] = colliderCount;
-                colliderCount += colliderChunks[i].Count;
+                colliderCount += chunk.Count;
             }
-            _profiler.EndSample("Collider Offsets");
+            _profiler.EndSample("Collider Offsets & Archetypes");
             
             _profiler.BeginSample("Colliders Bounds");
-            NativeArrayUtil.MaintainPersistentArrayLength(ref _colliderBounds, colliderCount, ColliderBufferChunkSize);
+            var arrayMaintenance = new ArrayMaintenanceData
+            {
+                requiredCapacity = colliderCount,
+                itemPerAllocation = ColliderPerAllocation,
+                copyOnResize = false
+            };
+            NativeMemory.MaintainPersistentArrayLength(ref _colliderBounds, arrayMaintenance);
+            NativeMemory.MaintainPersistentArrayLength(ref _colliderShapes, arrayMaintenance);
+            NativeMemory.MaintainPersistentArrayLength(ref _colliderEntities, arrayMaintenance);
+            NativeMemory.MaintainPersistentArrayLength(ref _colliderArchetypeIndices, arrayMaintenance);
             var computeBoundsJob = new ComputeBoundsJob
             {
-                colliderChunks = colliderChunks,
-                boundsWriteOffsets = colliderOffsets,
-                outputBounds = _colliderBounds,
-                colliderHandle = _entityManager.GetComponentTypeHandle<ColliderComponent>(true),
-                positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true)
+                inChunks = colliderChunks,
+                inWriteOffsets = colliderOffsets,
+                inArchetypeIndices = chunkArchetypeIndices,
+                outBounds = _colliderBounds,
+                outShapes = _colliderShapes,
+                outArchetypeIndices = _colliderArchetypeIndices,
+                outEntities = _colliderEntities,
+                positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
+                sizeHandle = _entityManager.GetComponentTypeHandle<SizeComponent>(true),
+                rotationHandle = _entityManager.GetComponentTypeHandle<RotationComponent>(true),
+                entityHandle = _entityManager.GetEntityTypeHandle()
             };
             var computeBoundsJobHandle = computeBoundsJob.Schedule(colliderChunkCount, 8);
             computeBoundsJobHandle.Complete();
@@ -91,7 +133,12 @@ namespace SolidSpace.Entities.Physics.Colliders
             _profiler.BeginSample("Reset Chunks");
             var worldChunkTotal = worldGrid.size.x * worldGrid.size.y;
             
-            NativeArrayUtil.MaintainPersistentArrayLength(ref _worldChunks, worldChunkTotal, ChunkBufferChunkSize);
+            NativeMemory.MaintainPersistentArrayLength(ref _worldChunks, new ArrayMaintenanceData
+            {
+                requiredCapacity = worldChunkTotal,
+                itemPerAllocation = ChunkPerAllocation,
+                copyOnResize = false
+            });
             
             var resetChunksJob = new FillNativeArrayJob<ColliderListPointer>
             {
@@ -107,9 +154,9 @@ namespace SolidSpace.Entities.Physics.Colliders
 
             _profiler.BeginSample("Chunk Colliders");
             jobCount = (int) math.ceil(colliderCount / 128f);
-            var chunkedColliders = NativeArrayUtil.CreateTempJobArray<ChunkedCollider>(colliderCount * 4);
-            var chunkedColliderCounts = NativeArrayUtil.CreateTempJobArray<int>(jobCount);
-            
+            var chunkedColliders = NativeMemory.CreateTempJobArray<ChunkedCollider>(colliderCount * 4);
+            var chunkedColliderCounts = NativeMemory.CreateTempJobArray<int>(jobCount);
+
             var chunkingJob = new ChunkCollidersJob
             {
                 inColliderBounds = _colliderBounds,
@@ -146,7 +193,14 @@ namespace SolidSpace.Entities.Physics.Colliders
             _profiler.EndSample("Lists Offsets");
             
             _profiler.BeginSample("Lists Fill");
-            NativeArrayUtil.MaintainPersistentArrayLength(ref _worldColliders, colliderCount * 4, ChunkBufferChunkSize * 4);
+            NativeMemory.MaintainPersistentArrayLength(ref _worldColliders, new ArrayMaintenanceData
+            {
+                requiredCapacity = colliderCount * 4,
+                itemPerAllocation = ChunkPerAllocation * 4,
+                copyOnResize = false
+            });
+            
+            // TODO [T-24]: Collider fill list job should be parallel.
             var listFillJob = new WorldChunkListsFillJob
             {
                 inColliders = chunkedColliders,
@@ -164,25 +218,36 @@ namespace SolidSpace.Entities.Physics.Colliders
             colliderOffsets.Dispose();
             chunkedColliderCounts.Dispose();
             chunkedColliders.Dispose();
+            chunkArchetypeIndices.Dispose();
             _profiler.EndSample("Dispose Arrays");
 
-            ColliderWorld = new ColliderWorld
+            World = new ColliderWorld
             {
-                colliders = new NativeSlice<FloatBounds>(_colliderBounds, 0, colliderCount),
+                archetypes = new NativeSlice<EntityArchetype>(_colliderArchetypes, 0, archetypeCount),
+                colliderArchetypeIndices = new NativeSlice<byte>(_colliderArchetypeIndices, 0, colliderCount),
+                colliderBounds = new NativeSlice<FloatBounds>(_colliderBounds, 0, colliderCount),
+                colliderShapes = new NativeSlice<ColliderShape>(_colliderShapes, 0, colliderCount),
+                colliderEntities = new NativeSlice<Entity>(_colliderEntities, 0, colliderCount),
                 colliderStream = new NativeSlice<ushort>(_worldColliders, 0, _worldColliders.Length),
                 worldCells = new NativeSlice<ColliderListPointer>(_worldChunks, 0, _worldChunks.Length),
                 worldGrid = worldGrid
             };
-
+            
             SpaceDebug.LogState("ColliderCount", colliderCount);
-            _debugUtil.LogWorld(worldGrid);
+            SpaceDebug.LogState("ColliderCellCountX", worldGrid.size.x);
+            SpaceDebug.LogState("ColliderCellCountY", worldGrid.size.y);
+            SpaceDebug.LogState("ColliderCellSize", 1 << worldGrid.power);
         }
 
         public void FinalizeController()
         {
+            _colliderEntities.Dispose();
             _colliderBounds.Dispose();
+            _colliderShapes.Dispose();
             _worldColliders.Dispose();
             _worldChunks.Dispose();
+            _colliderArchetypes.Dispose();
+            _colliderArchetypeIndices.Dispose();
         }
     }
 }

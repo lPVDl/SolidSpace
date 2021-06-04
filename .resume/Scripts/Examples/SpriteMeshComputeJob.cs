@@ -1,7 +1,8 @@
 using System.Runtime.CompilerServices;
+using SolidSpace.Entities.Atlases;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Rendering.Atlases;
-using SolidSpace.Entities.World;
+using SolidSpace.Mathematics;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
@@ -23,22 +24,18 @@ namespace SolidSpace.Entities.Rendering.Sprites
             public half2 uvMax;
         }
         
-        private const float TwoPI = 2 * math.PI;
-        
         [ReadOnly, NativeDisableContainerSafetyRestriction] public NativeArray<ArchetypeChunk> inChunks;
         [ReadOnly] public int inFirstChunkIndex;
         [ReadOnly] public int inChunkCount;
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
         [ReadOnly] public ComponentTypeHandle<SpriteRenderComponent> spriteHandle;
         [ReadOnly] public ComponentTypeHandle<RotationComponent> rotationHandle;
-        [ReadOnly] public NativeArray<AtlasChunk> inAtlasChunks;
+        [ReadOnly] public NativeSlice<AtlasChunk2D> inAtlasChunks;
         [ReadOnly] public ComponentTypeHandle<SizeComponent> sizeHandle;
         [ReadOnly] public int2 inAtlasSize;
 
         [WriteOnly, NativeDisableContainerSafetyRestriction] public NativeArray<SpriteVertexData> outVertices;
         [WriteOnly, NativeDisableContainerSafetyRestriction] public NativeArray<ushort> outIndices;
-
-        private AtlasMath _atlasMath;
         
         public void Execute()
         {
@@ -69,7 +66,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
                     var renderIndex = renders[i].index;
                     var renderChunk = inAtlasChunks[renderIndex.chunkId];
                     var size = sizes[i].value;
-                    var uvPixelOffset = (float2) _atlasMath.ComputeOffset(renderChunk, renderIndex);
+                    var uvPixelOffset = (float2) AtlasMath.ComputeOffset(renderChunk, renderIndex);
                     
                     FlushSquare(ref indexOffset, ref vertexOffset, new Square
                     {
@@ -91,21 +88,21 @@ namespace SolidSpace.Entities.Rendering.Sprites
             var halfSize = square.size * 0.5f;
             var uvMin = square.uvMin;
             var uvMax = square.uvMax;
-            math.sincos(square.rotation * TwoPI, out var sin, out var cos);
+            FloatMath.SinCos(square.rotation * FloatMath.TwoPI, out var sin, out var cos);
 
-            vertex.position = center + Rotate(-halfSize.x, -halfSize.y, sin, cos);
+            vertex.position = center + FloatMath.Rotate(-halfSize.x, -halfSize.y, sin, cos);
             vertex.uv = uvMin;
             outVertices[vertexOffset + 0] = vertex;
 
-            vertex.position = center + Rotate(-halfSize.x, +halfSize.y, sin, cos);
+            vertex.position = center + FloatMath.Rotate(-halfSize.x, +halfSize.y, sin, cos);
             vertex.uv.y = uvMax.y;
             outVertices[vertexOffset + 1] = vertex;
                 
-            vertex.position = center + Rotate(+halfSize.x, +halfSize.y, sin, cos);
+            vertex.position = center + FloatMath.Rotate(+halfSize.x, +halfSize.y, sin, cos);
             vertex.uv.x = uvMax.x;
             outVertices[vertexOffset + 2] = vertex;
 
-            vertex.position = center + Rotate(+halfSize.x, -halfSize.y, sin, cos);
+            vertex.position = center + FloatMath.Rotate(+halfSize.x, -halfSize.y, sin, cos);
             vertex.uv.y = uvMin.y;
             outVertices[vertexOffset + 3] = vertex;
 
@@ -118,16 +115,6 @@ namespace SolidSpace.Entities.Rendering.Sprites
             
             vertexOffset += 4;
             indexOffset += 6;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private float2 Rotate(float x, float y, float sin, float cos)
-        {
-            return new float2
-            {
-                x = x * cos - y * sin,
-                y = x * sin + y * cos
-            };
         }
     }
 }
