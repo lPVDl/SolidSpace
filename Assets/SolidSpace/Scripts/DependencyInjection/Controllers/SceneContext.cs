@@ -12,8 +12,7 @@ namespace SolidSpace.DependencyInjection
         public GameObject GameObject => gameObject;
 
         public Transform Transform => gameObject.transform;
-
-        [InlineEditor(InlineEditorObjectFieldModes.Foldout)]
+        
         [SerializeField] private List<ScriptableObjectInstaller> _installers;
 
         private DiContainer _container;
