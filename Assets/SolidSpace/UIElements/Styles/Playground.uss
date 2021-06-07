@@ -1,0 +1,40 @@
+.window {
+    background-color: rgb(72, 126, 176);
+    border-radius: 2px;
+    border-width: 2px;
+}
+
+.window-header {
+    height: 30px;
+    border-bottom-width: 2px;
+    border-color: rgb(64, 115, 158);
+}
+
+.window-header-text {
+    font-size: 16px;
+    color: rgb(245, 246, 250);
+    -unity-text-align: middle-center;
+    padding: 0;
+    flex-grow: 1;
+}
+
+.window-body {
+    background-color: rgb(245, 246, 250);
+    border-radius: 2px;
+    justify-content: center;
+    flex-direction: row;
+}
+
+.window-body-icon {
+    width: 48px;
+    height: 48px;
+    border-color: rgb(220, 221, 225);
+    border-width: 1px;
+    border-radius: 2px;
+    margin: 1px;
+}
+
+.window-body-icon-selected {
+    border-color: rgb(64, 115, 158);
+    border-bottom-width: 3px;
+}
