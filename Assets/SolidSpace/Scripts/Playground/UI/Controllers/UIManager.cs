@@ -11,17 +11,34 @@ namespace SolidSpace.Playground.UI
         public EControllerType ControllerType => EControllerType.UI;
         
         private readonly UIConfig _config;
-        
+        private readonly List<IUIFactory> _factories;
+
+        private Dictionary<Type, IUIFactory> _factoryStorage;
         private Dictionary<string, VisualElement> _rootContainers;
         private VisualElement _rootElement;
 
-        public UIManager(UIConfig config)
+        public UIManager(UIConfig config, List<IUIFactory> factories)
         {
             _config = config;
+            _factories = factories;
         }
         
         public void InitializeController()
         {
+            _factoryStorage = new Dictionary<Type, IUIFactory>();
+            foreach (var factory in _factories)
+            {
+                var elementType = factory.OutputElementType;
+                if (_factoryStorage.TryGetValue(elementType, out var existingFactory))
+                {
+                    var message = $"More than one factory is defined for '{elementType}'. ";
+                    message += $"'{factory.GetType()}' conflicts with '{existingFactory.GetType()}'";
+                    throw new InvalidOperationException(message);
+                }
+
+                _factoryStorage[elementType] = factory;
+            }
+            
             var rootObject = new GameObject(nameof(UIManager));
             var document = rootObject.AddComponent<UIDocument>();
             document.panelSettings = _config.PanelSettings;
@@ -41,32 +58,37 @@ namespace SolidSpace.Playground.UI
         {
             
         }
-        
-        public UIElementHandle CreateElement(UIPrefab prefab)
+
+        public T Instantiate<T>(UIPrefab<T> prefab) where T : IUIElement
         {
             if (prefab is null) throw new ArgumentNullException(nameof(prefab));
-            if (prefab.Asset is null) throw new InvalidOperationException($"{nameof(prefab)}.{nameof(prefab.Asset)} is null");
+            if (prefab.Asset is null) throw new ArgumentNullException($"{nameof(prefab)}.{nameof(prefab.Asset)} is null");
+            
+            if (!_factoryStorage.TryGetValue(typeof(T), out var factory))
+            {
+                throw new InvalidOperationException($"{nameof(IUIFactory)} for type {typeof(T)} was not found");
+            }
 
-            return new UIElementHandle
+            var handle = new UIElementHandle
             {
                 element = prefab.Asset.CloneTree(),
                 isValid = true
             };
+
+            return (T) factory.CreateElement(handle);
         }
 
-        public void AttachElementToRoot(UIElementHandle element, string rootContainerName)
+        public void AttachToRoot(IUIElement view, string rootContainerName)
         {
-            if (!element.isValid) throw new ArgumentException(nameof(element));
-            if (string.IsNullOrEmpty(rootContainerName)) throw new ArgumentException(nameof(rootContainerName));
+            if (view is null) throw new ArgumentNullException(nameof(view));
             
             if (!_rootContainers.TryGetValue(rootContainerName, out var rootContainer))
             {
                 throw new InvalidOperationException($"Container with name '{rootContainerName}' was not found");
             }
-            
-            rootContainer.Add(element.element);
-        }
 
+            rootContainer.Add(view.Handle.element);
+        }
 
         public void FinalizeController()
         {

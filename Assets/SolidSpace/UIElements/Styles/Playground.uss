@@ -34,7 +34,7 @@
     margin: 1px;
 }
 
-.window-body-icon-selected {
+.window-body-icon:enabled {
     border-color: rgb(64, 115, 158);
     border-bottom-width: 3px;
 }
