@@ -28,16 +28,18 @@
     flex-direction: row;
 }
 
-.window-body-icon {
+.window-body-tool {
     width: 48px;
     height: 48px;
-    border-color: rgb(220, 221, 225);
+    /* border-color: rgb(220, 221, 225); */
     border-width: 1px;
     border-radius: 2px;
     margin: 1px;
+    -unity-background-image-tint-color: rgb(128, 128, 128);
 }
 
-.window-body-icon.selected {
+.window-body-tool.selected {
     border-color: rgb(64, 115, 158);
     border-bottom-width: 3px;
+    -unity-background-image-tint-color: rgb(255, 255, 255);
 }

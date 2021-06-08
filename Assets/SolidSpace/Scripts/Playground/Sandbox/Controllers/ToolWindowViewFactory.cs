@@ -3,7 +3,7 @@ using UnityEngine.UIElements;
 
 namespace SolidSpace.Playground.Sandbox
 {
-    public class ToolWindowViewFactory : AUIFactory<IToolWindowView>, IUIPrefabValidator<IToolWindowView>
+    internal class ToolWindowViewFactory : AUIFactory<IToolWindowView>, IUIPrefabValidator<IToolWindowView>
     {
         private const string AttachPoint = "AttachPoint";
 

@@ -3,7 +3,7 @@ using UnityEngine.UIElements;
 
 namespace SolidSpace.Playground.Sandbox
 {
-    public class ToolButtonViewFactory : AUIFactory<IToolButtonView>, IUIPrefabValidator<IToolButtonView>
+    internal class ToolButtonViewFactory : AUIFactory<IToolButtonView>, IUIPrefabValidator<IToolButtonView>
     {
         protected override IToolButtonView Create(VisualElement source)
         {

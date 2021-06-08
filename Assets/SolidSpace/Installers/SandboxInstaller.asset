@@ -17,3 +17,10 @@ MonoBehaviour:
       _asset: {fileID: 9197481963319205126, guid: 68facf6977bc080458447472366a37c4, type: 3}
     _toolWindowPrefab:
       _asset: {fileID: 9197481963319205126, guid: fddea021b1e04ea49846124ef31a7203, type: 3}
+    _toolIcons:
+    - tool: 1
+      icon: {fileID: 21300000, guid: dffef66376be4fa480fb02b19edbe903, type: 3}
+    - tool: 2
+      icon: {fileID: 21300002, guid: dffef66376be4fa480fb02b19edbe903, type: 3}
+    - tool: 3
+      icon: {fileID: 21300004, guid: dffef66376be4fa480fb02b19edbe903, type: 3}

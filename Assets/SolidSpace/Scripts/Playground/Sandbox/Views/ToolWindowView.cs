@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 
 namespace SolidSpace.Playground.Sandbox
 {
-    public class ToolWindowView : IToolWindowView
+    internal class ToolWindowView : IToolWindowView
     {
         public VisualElement Source { get; set; }
         

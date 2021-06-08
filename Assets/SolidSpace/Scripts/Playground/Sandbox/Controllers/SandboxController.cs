@@ -1,7 +1,7 @@
 using System;
+using System.Linq;
 using SolidSpace.GameCycle;
 using SolidSpace.Playground.UI;
-using UnityEngine;
 
 namespace SolidSpace.Playground.Sandbox
 {
@@ -30,6 +30,8 @@ namespace SolidSpace.Playground.Sandbox
             var toolTypes = (EPlaygroundTool[]) Enum.GetValues(typeof(EPlaygroundTool));
             _toolViews = new IToolButtonView[toolTypes.Length];
             _selectedTool = -1;
+
+            var toolIcons = _config.ToolIcons.ToDictionary(i => i.tool, i => i.icon);
             
             for (var i = 0; i < toolTypes.Length; i++)
             {
@@ -39,6 +41,8 @@ namespace SolidSpace.Playground.Sandbox
                 var toolIndex = i;
                 toolView.OnClick += () => OnToolViewClicked(toolIndex);
                 toolView.SetSelected(false);
+                var toolType = toolTypes[i];
+                toolView.SetIcon(toolIcons[toolType]);
             }
         }
         

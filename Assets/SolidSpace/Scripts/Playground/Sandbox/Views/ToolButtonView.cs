@@ -1,9 +1,10 @@
 using UnityEngine.UIElements;
 using System;
+using UnityEngine;
 
 namespace SolidSpace.Playground.Sandbox
 {
-    public class ToolButtonView : IToolButtonView
+    internal class ToolButtonView : IToolButtonView
     {
         public event Action OnClick;
         public VisualElement Source { get; set; }
@@ -33,6 +34,11 @@ namespace SolidSpace.Playground.Sandbox
             {
                 Button.RemoveFromClassList("selected");
             }
+        }
+
+        public void SetIcon(Sprite icon)
+        {
+            Button.style.backgroundImage = new StyleBackground(icon);
         }
     }
 }

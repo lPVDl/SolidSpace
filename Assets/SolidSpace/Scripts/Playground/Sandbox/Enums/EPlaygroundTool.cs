@@ -1,6 +1,6 @@
 namespace SolidSpace.Playground.Sandbox
 {
-    public enum EPlaygroundTool
+    internal enum EPlaygroundTool
     {
         ShipSpawnTool = 1,
         EmitterSpawnTool = 2,
