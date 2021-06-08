@@ -6,14 +6,7 @@ namespace SolidSpace.Playground.Sandbox
     public class ToolWindowViewFactory : AUIFactory<IToolWindowView>, IUIPrefabValidator<IToolWindowView>
     {
         private const string AttachPoint = "AttachPoint";
-        
-        private readonly VisualElement _cloneTarget;
 
-        public ToolWindowViewFactory()
-        {
-            _cloneTarget = new VisualElement();
-        }
-        
         protected override IToolWindowView Create(VisualElement source)
         {
             return new ToolWindowView
@@ -29,13 +22,10 @@ namespace SolidSpace.Playground.Sandbox
             {
                 return $"'{nameof(data.Asset)} is null'";
             }
-
-            data.Asset.CloneTree(_cloneTarget);
-
-            var query = _cloneTarget.Query<VisualElement>(AttachPoint).First();
-            if (query is null)
+            
+            if (!UIAssetValidator.TreeHasChildElement<VisualElement>(data.Asset, AttachPoint, out var message))
             {
-                return $"Asset '{data.Asset.name}' does not have child element with name '{AttachPoint}'";
+                return message;
             }
 
             return string.Empty;

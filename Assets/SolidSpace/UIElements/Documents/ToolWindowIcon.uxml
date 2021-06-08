@@ -8,5 +8,6 @@
     
     <Style src="/Assets/SolidSpace/UIElements/Styles/Playground.uss" />
     
-    <VisualElement class="window-body-icon" />
+    <VisualElement name="Button" class="window-body-icon" />
+    
 </UXML>

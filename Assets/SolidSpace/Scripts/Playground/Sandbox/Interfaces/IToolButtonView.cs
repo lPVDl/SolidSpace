@@ -7,6 +7,6 @@ namespace SolidSpace.Playground.Sandbox
     {
         public event Action OnClick;
 
-        void SetChecked(bool isActive);
+        void SetChecked(bool isChecked);
     }
 }

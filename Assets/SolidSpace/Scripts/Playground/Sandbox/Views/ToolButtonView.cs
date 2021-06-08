@@ -1,5 +1,5 @@
-using System;
 using UnityEngine.UIElements;
+using System;
 
 namespace SolidSpace.Playground.Sandbox
 {
@@ -7,15 +7,34 @@ namespace SolidSpace.Playground.Sandbox
     {
         public event Action OnClick;
         public VisualElement Source { get; set; }
+        public VisualElement Button { get; set; }
 
+        private bool _isChecked;
+        
         public void OnMouseDownEvent(MouseDownEvent evt)
         {
             OnClick?.Invoke();
+
+            SetChecked(!_isChecked);
         }
 
-        public void SetChecked(bool isActive)
+        public void SetChecked(bool isChecked)
         {
-            Source.SetEnabled(isActive);   
+            if (isChecked == _isChecked)
+            {
+                return;
+            }
+
+            _isChecked = isChecked;
+            
+            if (_isChecked)
+            {
+                Button.AddToClassList("selected");
+            }
+            else
+            {
+                Button.RemoveFromClassList("selected");
+            }
         }
     }
 }
