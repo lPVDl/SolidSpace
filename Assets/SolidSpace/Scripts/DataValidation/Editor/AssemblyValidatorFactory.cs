@@ -48,8 +48,6 @@ namespace SolidSpace.DataValidation.Editor
 
                     if (!type.IsClass || type.IsAbstract)
                     {
-                        var message = $"'{type.FullName}' can not be used for validation. Validator must be non-abstract class.";
-                        Debug.LogError(message);
                         continue;
                     }
 

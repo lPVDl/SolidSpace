@@ -1,5 +1,4 @@
 using SolidSpace.DependencyInjection;
-using SolidSpace.Playground.Sandbox.Data;
 using UnityEngine;
 
 namespace SolidSpace.Playground.Sandbox
@@ -11,7 +10,7 @@ namespace SolidSpace.Playground.Sandbox
         public override void InstallBindings(IDependencyContainer container)
         {
             container.Bind<SandboxController>(_config);
-            container.Bind<CheckedButtonFactory>();
+            container.Bind<CheckedButtonViewFactory>();
         }
     }
 }

@@ -28,7 +28,7 @@ namespace SolidSpace.Playground.UI
             _factoryStorage = new Dictionary<Type, IUIFactory>();
             foreach (var factory in _factories)
             {
-                var elementType = factory.OutputElementType;
+                var elementType = factory.ViewType;
                 if (_factoryStorage.TryGetValue(elementType, out var existingFactory))
                 {
                     var message = $"More than one factory is defined for '{elementType}'. ";
@@ -69,13 +69,7 @@ namespace SolidSpace.Playground.UI
                 throw new InvalidOperationException($"{nameof(IUIFactory)} for type {typeof(T)} was not found");
             }
 
-            var handle = new UIElementHandle
-            {
-                element = prefab.Asset.CloneTree(),
-                isValid = true
-            };
-
-            return (T) factory.CreateElement(handle);
+            return (T) factory.Create(prefab.Asset.CloneTree());
         }
 
         public void AttachToRoot(IUIElement view, string rootContainerName)
@@ -87,7 +81,7 @@ namespace SolidSpace.Playground.UI
                 throw new InvalidOperationException($"Container with name '{rootContainerName}' was not found");
             }
 
-            rootContainer.Add(view.Handle.element);
+            rootContainer.Add(view.Source);
         }
 
         public void FinalizeController()

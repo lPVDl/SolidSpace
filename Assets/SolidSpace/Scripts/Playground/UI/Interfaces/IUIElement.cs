@@ -1,7 +1,9 @@
+using UnityEngine.UIElements;
+
 namespace SolidSpace.Playground.UI
 {
     public interface IUIElement
     {
-        public UIElementHandle Handle { get; }
+        public VisualElement Source { get; }
     }
 }
