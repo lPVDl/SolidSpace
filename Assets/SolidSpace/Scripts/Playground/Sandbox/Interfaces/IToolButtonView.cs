@@ -3,7 +3,7 @@ using SolidSpace.Playground.UI;
 
 namespace SolidSpace.Playground.Sandbox
 {
-    public interface ICheckedButtonView : IUIElement
+    public interface IToolButtonView : IUIElement
     {
         public event Action OnClick;
 

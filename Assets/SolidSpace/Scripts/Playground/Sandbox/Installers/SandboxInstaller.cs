@@ -10,7 +10,9 @@ namespace SolidSpace.Playground.Sandbox
         public override void InstallBindings(IDependencyContainer container)
         {
             container.Bind<SandboxController>(_config);
-            container.Bind<CheckedButtonViewFactory>();
+            
+            container.Bind<ToolButtonViewFactory>();
+            container.Bind<ToolWindowViewFactory>();
         }
     }
 }

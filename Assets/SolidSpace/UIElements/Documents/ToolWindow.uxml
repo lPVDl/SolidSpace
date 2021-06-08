@@ -4,10 +4,6 @@
         <ui:VisualElement class="window-header">
             <ui:Label text="TOOLS&#10;" class="window-header-text" />
         </ui:VisualElement>
-        <ui:VisualElement class="window-body">
-            <ui:VisualElement name="FirstButton" class="window-body-icon" />
-            <ui:VisualElement class="window-body-icon" />
-            <ui:VisualElement class="window-body-icon" />
-        </ui:VisualElement>
+        <ui:VisualElement name="AttachPoint" class="window-body" />
     </ui:VisualElement>
 </ui:UXML>

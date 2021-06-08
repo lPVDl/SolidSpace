@@ -3,11 +3,11 @@ using UnityEngine.UIElements;
 
 namespace SolidSpace.Playground.Sandbox
 {
-    public class CheckedButtonViewFactory : AUIFactory<ICheckedButtonView>
+    public class ToolButtonViewFactory : AUIFactory<IToolButtonView>
     {
-        protected override ICheckedButtonView Create(VisualElement source)
+        protected override IToolButtonView Create(VisualElement source)
         {
-            var view = new CheckedButtonView
+            var view = new ToolButtonView
             {
                 Source = source
             };

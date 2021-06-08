@@ -7,8 +7,10 @@ namespace SolidSpace.Playground.Sandbox
     [Serializable]
     internal class SandboxConfig
     {
-        public UIPrefab<ICheckedButtonView> CheckedButtonPrefab => _checkedButtonPrefab;
-
-        [SerializeField] private UIPrefab<ICheckedButtonView> _checkedButtonPrefab;
+        public UIPrefab<IToolButtonView> CheckedButtonPrefab => _checkedButtonPrefab;
+        public UIPrefab<IToolWindowView> ToolWindowPrefab => _toolWindowPrefab;
+        
+        [SerializeField] private UIPrefab<IToolButtonView> _checkedButtonPrefab;
+        [SerializeField] private UIPrefab<IToolWindowView> _toolWindowPrefab;
     }
 }

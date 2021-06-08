@@ -3,7 +3,7 @@ using UnityEngine.UIElements;
 
 namespace SolidSpace.Playground.Sandbox
 {
-    public class CheckedButtonView : ICheckedButtonView
+    public class ToolButtonView : IToolButtonView
     {
         public event Action OnClick;
         public VisualElement Source { get; set; }

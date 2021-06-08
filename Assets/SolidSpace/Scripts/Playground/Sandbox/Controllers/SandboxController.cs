@@ -9,9 +9,8 @@ namespace SolidSpace.Playground.Sandbox
         
         private readonly SandboxConfig _config;
         private readonly IUIManager _uiManager;
-
-        private bool _isActive;
-        private ICheckedButtonView _button;
+        
+        private IToolWindowView _windowView;
 
         public SandboxController(SandboxConfig config, IUIManager uiManager)
         {
@@ -21,19 +20,14 @@ namespace SolidSpace.Playground.Sandbox
         
         public void InitializeController()
         {
-            _button = _uiManager.Instantiate(_config.CheckedButtonPrefab);
-            _uiManager.AttachToRoot(_button, "RootLeft");
+            _windowView = _uiManager.Instantiate(_config.ToolWindowPrefab);
+            _uiManager.AttachToRoot(_windowView, "RootLeft");
 
-            _isActive = false;
-            _button.SetChecked(true);
-
-            _button.OnClick += OnButtonClicked;
-        }
-
-        private void OnButtonClicked()
-        {
-            _isActive = !_isActive;
-            _button.SetChecked(_isActive);
+            for (var i = 0; i < 3; i++)
+            {
+                var buttonView = _uiManager.Instantiate(_config.CheckedButtonPrefab);
+                _windowView.AttachChild(buttonView);
+            }
         }
 
         public void UpdateController()
