@@ -9,25 +9,23 @@ namespace SolidSpace.Playground.Sandbox
         public VisualElement Source { get; set; }
         public VisualElement Button { get; set; }
 
-        private bool _isChecked;
+        private bool _isSelected;
         
         public void OnMouseDownEvent(MouseDownEvent evt)
         {
             OnClick?.Invoke();
-
-            SetChecked(!_isChecked);
         }
 
-        public void SetChecked(bool isChecked)
+        public void SetSelected(bool isSelected)
         {
-            if (isChecked == _isChecked)
+            if (isSelected == _isSelected)
             {
                 return;
             }
 
-            _isChecked = isChecked;
+            _isSelected = isSelected;
             
-            if (_isChecked)
+            if (_isSelected)
             {
                 Button.AddToClassList("selected");
             }
