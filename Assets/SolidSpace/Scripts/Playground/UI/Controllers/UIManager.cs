@@ -9,6 +9,8 @@ namespace SolidSpace.Playground.UI
     internal class UIManager : IUIManager, IController
     {
         public EControllerType ControllerType => EControllerType.UI;
+
+        public bool IsMouseOver => _hoveredElements > 0;
         
         private readonly UIConfig _config;
         private readonly List<IUIFactory> _factories;
@@ -16,6 +18,7 @@ namespace SolidSpace.Playground.UI
         private Dictionary<Type, IUIFactory> _factoryStorage;
         private Dictionary<string, VisualElement> _rootContainers;
         private VisualElement _rootElement;
+        private int _hoveredElements;
 
         public UIManager(UIConfig config, List<IUIFactory> factories)
         {
@@ -45,7 +48,7 @@ namespace SolidSpace.Playground.UI
             
             _rootElement = _config.RootAsset.CloneTree();
             document.rootVisualElement.Add(_rootElement);
-            
+
             _rootContainers = new Dictionary<string, VisualElement>();
             foreach (var containerName in _config.ContainerNames)
             {
@@ -53,10 +56,20 @@ namespace SolidSpace.Playground.UI
                 _rootContainers.Add(containerName, containerElement);
             }
         }
-        
+
         public void UpdateController()
         {
             
+        }
+        
+        private void OnMouseEnter(MouseEnterEvent e)
+        {
+            _hoveredElements++;
+        }
+
+        private void OnMouseLeave(MouseLeaveEvent e)
+        {
+            _hoveredElements--;
         }
 
         public T Instantiate<T>(UIPrefab<T> prefab) where T : IUIElement
@@ -80,6 +93,9 @@ namespace SolidSpace.Playground.UI
             {
                 throw new InvalidOperationException($"Container with name '{rootContainerName}' was not found");
             }
+            
+            view.Source.RegisterCallback<MouseEnterEvent>(OnMouseEnter);
+            view.Source.RegisterCallback<MouseLeaveEvent>(OnMouseLeave);
 
             rootContainer.Add(view.Source);
         }
