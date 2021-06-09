@@ -10,5 +10,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 84ce4ca1f15343fd83c538f5966eda5b, type: 3}
-  m_Name: Entities.Bullets
+  m_Name: Entities.Bullets.BulletsInstaller
   m_EditorClassIdentifier: 

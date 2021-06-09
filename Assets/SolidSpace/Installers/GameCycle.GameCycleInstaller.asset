@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 906ec737e14544a38ea4a507fa6a558b, type: 3}
-  m_Name: GameCycle
+  m_Name: GameCycle.GameCycleInstaller
   m_EditorClassIdentifier: 
   _config:
     _invocationOrder: 07000000030000000500000004000000010000000600000002000000

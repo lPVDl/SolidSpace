@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 92c6612813a749608f65b9fb499a2219, type: 3}
-  m_Name: Playground.Tools.EmitterSpawn
+  m_Name: Playground.Tools.EmitterSpawn.EmitterSpawnToolInstaller
   m_EditorClassIdentifier: 
   _config:
     _icon: {fileID: 21300000, guid: 2b5c95fd47560854399097f6cbbfcacd, type: 3}

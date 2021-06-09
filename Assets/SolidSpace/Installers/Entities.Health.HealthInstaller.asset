@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd1da822ea1a472dac04eafec898b203, type: 3}
-  m_Name: Entities.Health
+  m_Name: Entities.Health.HealthInstaller
   m_EditorClassIdentifier: 
   _healthAtlasConfig:
     _atlasSize: 262144

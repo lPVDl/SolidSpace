@@ -10,5 +10,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 81bc27d8476b43feb5e19c30420d6b90, type: 3}
-  m_Name: Entities.Physics.Velocity
+  m_Name: Entities.Physics.Velocity.VelocityInstaller
   m_EditorClassIdentifier: 

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b4bfeab0ce174357ba638a7cdb65f68b, type: 3}
-  m_Name: Playground.Tools.ShipSpawn
+  m_Name: Playground.Tools.ShipSpawn.ShipSpawnToolInstaller
   m_EditorClassIdentifier: 
   _config:
     _toolConfig:
