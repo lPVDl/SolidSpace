@@ -53,6 +53,7 @@ Technologies:
 		Rewired
 		Slack
 		Confluence
+		DSPGraph
 		NSubstitute
 		CI / CD
 		Bug tracking
