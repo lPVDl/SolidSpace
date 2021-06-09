@@ -21,7 +21,7 @@ namespace SolidSpace.Playground.Sandbox.ShipSpawn
         private readonly ISpriteColorSystem _spriteSystem;
         private readonly IHealthAtlasSystem _healthSystem;
         private readonly IPointerTracker _pointer;
-        private ComponentType[] _shipArchetype;
+        private EntityArchetype _shipArchetype;
 
         public ShipSpawnTool(ShipSpawnToolConfig config, IEntityWorldManager entityManager, IUIManager uiManager,
             ISpriteColorSystem spriteSystem, IHealthAtlasSystem healthSystem, IPointerTracker pointer)
@@ -38,7 +38,7 @@ namespace SolidSpace.Playground.Sandbox.ShipSpawn
         {
             Config = _config.ToolConfig;
             
-            _shipArchetype = new ComponentType[]
+            _shipArchetype = _entityManager.CreateArchetype(new ComponentType[]
             {
                 typeof(PositionComponent),
                 typeof(RotationComponent),
@@ -46,7 +46,7 @@ namespace SolidSpace.Playground.Sandbox.ShipSpawn
                 typeof(ColliderComponent),
                 typeof(SpriteRenderComponent),
                 typeof(HealthComponent)
-            };
+            });
         }
         
         public void OnToolActivation()

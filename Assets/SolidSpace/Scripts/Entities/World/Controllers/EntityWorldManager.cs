@@ -63,6 +63,11 @@ namespace SolidSpace.Entities.World
             return _world.EntityManager.CreateEntity(types);
         }
 
+        public Entity CreateEntity(EntityArchetype archetype)
+        {
+            return _world.EntityManager.CreateEntity(archetype);
+        }
+
         public void SetComponentData<T>(Entity entity, T componentData) where T : struct, IComponentData
         {
             _world.EntityManager.SetComponentData(entity, componentData);
