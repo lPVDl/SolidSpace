@@ -8,7 +8,7 @@ namespace SolidSpace.Playground.Sandbox.Core
         Sprite Icon { get; }
         
         void Initialize();
-        void OnMouseClick(float2 worldPosition);
+        void OnMouseClick(float2 clickPosition);
         void OnToolSelected();
         void OnToolDeselected();
 

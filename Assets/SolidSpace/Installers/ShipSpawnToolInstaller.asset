@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: ShipSpawnToolInstaller
   m_EditorClassIdentifier: 
   _config:
-    _icon: {fileID: 21300000, guid: 99753ba94dba9144e819c7b6bfba62ce, type: 3}
+    _toolIcon: {fileID: 21300000, guid: 99753ba94dba9144e819c7b6bfba62ce, type: 3}
+    _shipTexture: {fileID: 2800000, guid: c7dc818a243fcca41b5ce4e55ce9e7ca, type: 3}
