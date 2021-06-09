@@ -9,8 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92c6612813a749608f65b9fb499a2219, type: 3}
-  m_Name: EmitterSpawnToolInstaller
+  m_Script: {fileID: 11500000, guid: 16f8279eec0d410d9868fbbcd655eba9, type: 3}
+  m_Name: Playground.Tools.Eraser
   m_EditorClassIdentifier: 
   _config:
-    _icon: {fileID: 21300000, guid: 2b5c95fd47560854399097f6cbbfcacd, type: 3}
+    _toolConfig:
+      _icon: {fileID: 21300000, guid: f91071efb15cf2f4da7a630279eb8527, type: 3}
+    _gizmosColor: {r: 1, g: 0, b: 0, a: 1}
