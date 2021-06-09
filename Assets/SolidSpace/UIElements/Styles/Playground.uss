@@ -1,8 +1,7 @@
 :root {
-    --black-1: rgb(72, 126, 176);
-    --black-2: rgb(64, 115, 158);
-    --white-1: rgb(245, 246, 250);
-    --white-2: rgb(220, 221, 225);
+    --header-color: rgb(72, 126, 176);
+    --body-color: rgb(245, 246, 250);
+    --light-color: rgb(251, 197, 49);
 }
 
 .unity-label {
@@ -10,26 +9,26 @@
 }
 
 .window {
-    background-color: var(--black-1);
+    background-color: var(--header-color);
     border-radius: 2px;
 }
 
 .window-header {
     height: 30px;
-    border-color: rgb(64, 115, 158);
 }
 
 .window-header-text {
     font-size: 16px;
-    color: var(--white-1);
+    color: var(--body-color);
     -unity-text-align: middle-center;
     flex-grow: 1;
     padding: 4px;
 }
 
 .window-body {
-    background-color: var(--white-1);
-    border-radius: 1px;
+    background-color: var(--body-color);
+    border-bottom-right-radius: 2px;
+    border-bottom-left-radius: 2px;
     justify-content: center;
     flex-direction: row;
 }
@@ -37,13 +36,12 @@
 .window-body-tool {
     width: 48px;
     height: 48px;
-    border-color: var(--white-2);
-    border-top-width: 2px;
     -unity-background-image-tint-color: rgb(128, 128, 128);
+    border-bottom-width: 2px;
 }
 
 .window-body-tool.selected {
-    border-color: var(--black-2);
+    border-color: var(--light-color);
 }
 
 .window-body-tool-icon {
