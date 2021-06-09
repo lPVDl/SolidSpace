@@ -10,7 +10,8 @@ namespace SolidSpace.Playground.Sandbox
             var view = new ToolButtonView
             {
                 Source = source,
-                Button = source.Query<VisualElement>("Button").First()
+                Button = source.Query<VisualElement>("Button").First(),
+                Image = source.Query<VisualElement>("Image").First()
             };
             
             source.RegisterCallback<MouseDownEvent>(view.OnMouseDownEvent);

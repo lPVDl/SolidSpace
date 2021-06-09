@@ -9,6 +9,7 @@ namespace SolidSpace.Playground.Sandbox
         public event Action OnClick;
         public VisualElement Source { get; set; }
         public VisualElement Button { get; set; }
+        public VisualElement Image { get; set; }
 
         private bool _isSelected;
         
@@ -29,16 +30,18 @@ namespace SolidSpace.Playground.Sandbox
             if (_isSelected)
             {
                 Button.AddToClassList("selected");
+                Image.AddToClassList("selected");
             }
             else
             {
                 Button.RemoveFromClassList("selected");
+                Image.RemoveFromClassList("selected");
             }
         }
 
         public void SetIcon(Sprite icon)
         {
-            Button.style.backgroundImage = new StyleBackground(icon);
+            Image.style.backgroundImage = new StyleBackground(icon);
         }
     }
 }
