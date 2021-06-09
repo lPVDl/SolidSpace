@@ -16,5 +16,6 @@ namespace SolidSpace.Entities.World
         void DestroyEntity(Entity entity);
         void DestroyEntity(NativeSlice<Entity> entities);
         void DestroyEntity(NativeArray<Entity> entities);
+        NativeArray<Entity> GetAllEntities(Allocator allocator);
     }
 }

@@ -1,15 +1,15 @@
 using System;
 using UnityEngine;
 
-namespace SolidSpace.Playground.Sandbox.ShipSpawn
+namespace SolidSpace.Playground.Sandbox.Eraser
 {
     [Serializable]
-    public class ShipSpawnToolConfig
+    public class EraserToolConfig
     {
         public PlaygroundToolConfig ToolConfig => _toolConfig;
-        public Texture2D ShipTexture => _shipTexture;
+        public Color GizmosColor => _gizmosColor;
         
         [SerializeField] private PlaygroundToolConfig _toolConfig;
-        [SerializeField] private Texture2D _shipTexture;
+        [SerializeField] private Color _gizmosColor;
     }
 }

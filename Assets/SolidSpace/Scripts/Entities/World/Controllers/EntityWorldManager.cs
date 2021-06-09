@@ -1,3 +1,4 @@
+using System.Threading;
 using Unity.Collections;
 using Unity.Entities;
 
@@ -25,6 +26,11 @@ namespace SolidSpace.Entities.World
         public void DestroyEntity(Entity entity)
         {
             _world.EntityManager.DestroyEntity(entity);
+        }
+
+        public NativeArray<Entity> GetAllEntities(Allocator allocator)
+        {
+            return _world.EntityManager.GetAllEntities(allocator);
         }
 
         public EntityQuery CreateEntityQuery(params ComponentType[] requiredComponents)

@@ -1,37 +1,39 @@
+using SolidSpace.GameCycle;
+using SolidSpace.Playground.Sandbox.Core;
 using SolidSpace.Playground.UI;
 using Unity.Mathematics;
 using UnityEngine;
 
 namespace SolidSpace.Playground.Sandbox
 {
-    internal class MouseClickTool
+    internal class MouseTracker : IPointerTracker, IController
     {
-        private readonly IUIManager _uiManager;
+        public EControllerType ControllerType => EControllerType.UI;
+        
+        public bool ClickedThisFrame =>  Input.GetMouseButtonDown(0);
+        
+        public float2 Position { get; private set; }
+        
         private readonly Camera _camera;
 
-        public MouseClickTool(IUIManager uiManager, Camera camera)
+        public MouseTracker(Camera camera)
         {
-            _uiManager = uiManager;
             _camera = camera;
         }
-
-        public bool CheckMouseClick(out float2 position)
+        
+        public void InitializeController()
         {
-            position = float2.zero;
-
-            if (!Input.GetMouseButtonDown(0))
-            {
-                return false;
-            }
             
-            if (_uiManager.IsMouseOver)
-            {
-                return false;
-            }
-
-            return GetClickPosition(out position);
         }
         
+        public void UpdateController()
+        {
+            if (GetClickPosition(out var position))
+            {
+                Position = position;
+            }
+        }
+
         private bool GetClickPosition(out float2 clickPosition)
         {
             clickPosition = float2.zero;
@@ -51,6 +53,11 @@ namespace SolidSpace.Playground.Sandbox
             };
             
             return true;
+        }
+
+        public void FinalizeController()
+        {
+            
         }
     }
 }

@@ -3,9 +3,9 @@ using SolidSpace.Entities.Health;
 using SolidSpace.Entities.Rendering.Sprites;
 using SolidSpace.Entities.World;
 using SolidSpace.Playground.Sandbox.Core;
+using SolidSpace.Playground.UI;
 using Unity.Entities;
 using Unity.Mathematics;
-using UnityEngine;
 
 using Random = UnityEngine.Random;
 
@@ -13,25 +13,31 @@ namespace SolidSpace.Playground.Sandbox.ShipSpawn
 {
     internal class ShipSpawnTool : IPlaygroundTool
     {
-        public Sprite Icon => _config.ToolIcon;
+        public PlaygroundToolConfig Config { get; private set; }
         
         private readonly ShipSpawnToolConfig _config;
         private readonly IEntityWorldManager _entityManager;
+        private readonly IUIManager _uiManager;
         private readonly ISpriteColorSystem _spriteSystem;
         private readonly IHealthAtlasSystem _healthSystem;
+        private readonly IPointerTracker _pointer;
         private ComponentType[] _shipArchetype;
 
-        public ShipSpawnTool(ShipSpawnToolConfig config, IEntityWorldManager entityManager,
-            ISpriteColorSystem spriteSystem, IHealthAtlasSystem healthSystem)
+        public ShipSpawnTool(ShipSpawnToolConfig config, IEntityWorldManager entityManager, IUIManager uiManager,
+            ISpriteColorSystem spriteSystem, IHealthAtlasSystem healthSystem, IPointerTracker pointer)
         {
             _config = config;
             _entityManager = entityManager;
+            _uiManager = uiManager;
             _spriteSystem = spriteSystem;
             _healthSystem = healthSystem;
+            _pointer = pointer;
         }
-        
-        public void Initialize()
+
+        public void InitializeTool()
         {
+            Config = _config.ToolConfig;
+            
             _shipArchetype = new ComponentType[]
             {
                 typeof(PositionComponent),
@@ -43,8 +49,18 @@ namespace SolidSpace.Playground.Sandbox.ShipSpawn
             };
         }
         
-        public void OnMouseClick(float2 clickPosition)
+        public void OnToolActivation()
         {
+            
+        }
+        
+        public void Update()
+        {
+            if (_uiManager.IsMouseOver || !_pointer.ClickedThisFrame)
+            {
+                return;
+            }
+            
             var texture = _config.ShipTexture;
             var size = new int2(texture.width, texture.height);
             var colorIndex = _spriteSystem.Allocate(size.x, size.y);
@@ -53,7 +69,7 @@ namespace SolidSpace.Playground.Sandbox.ShipSpawn
             var entity = _entityManager.CreateEntity(_shipArchetype);
             _entityManager.SetComponentData(entity, new PositionComponent
             {
-                value = clickPosition
+                value = _pointer.Position
             });
             _entityManager.SetComponentData(entity, new SizeComponent
             {
@@ -75,13 +91,8 @@ namespace SolidSpace.Playground.Sandbox.ShipSpawn
             _spriteSystem.Copy(texture, colorIndex);
             _healthSystem.Copy(texture, healthIndex);
         }
-        
-        public void OnToolSelected()
-        {
-            
-        }
 
-        public void OnToolDeselected()
+        public void OnToolDeactivation()
         {
             
         }
