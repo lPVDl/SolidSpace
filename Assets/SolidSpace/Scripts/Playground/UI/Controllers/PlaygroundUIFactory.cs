@@ -23,7 +23,7 @@ namespace SolidSpace.Playground.UI
             return _uiManager.Instantiate(_prefabs.ToolButton);
         }
 
-        public ITagLabel CreateFilterLabel()
+        public ITagLabel CreateTagLabel()
         {
             return _uiManager.Instantiate(_prefabs.TagLabel);
         }

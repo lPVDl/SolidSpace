@@ -1,8 +1,9 @@
 using System;
+using SolidSpace.UI;
 
 namespace SolidSpace.Playground.UI
 {
-    public interface ITagLabel
+    public interface ITagLabel : IUIElement
     {
         event Action Clicked;
 

@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 
 namespace SolidSpace.Playground.UI
 {
-    internal class TagLabel : ITagLabel, IUIElement
+    internal class TagLabel : ITagLabel
     {
         public event Action Clicked;
         

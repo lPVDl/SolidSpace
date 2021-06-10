@@ -5,9 +5,8 @@
     editor="UnityEditor.UIElements" 
     noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     
-    <VisualElement style="flex-grow: 1; flex-direction: row;">
-        <VisualElement name="ContainerA"/>
-        <VisualElement name="ContainerB" style="flex-grow: 1;"/>
+    <VisualElement style="flex-direction: row;">
+        <VisualElement name="ContainerA" style="width: 200px"/>
     </VisualElement>
     
 </UXML>
