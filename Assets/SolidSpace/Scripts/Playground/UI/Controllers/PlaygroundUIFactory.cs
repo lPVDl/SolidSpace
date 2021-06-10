@@ -27,5 +27,10 @@ namespace SolidSpace.Playground.UI
         {
             return _uiManager.Instantiate(_prefabs.TagLabel);
         }
+
+        public ILayoutGrid CreateLayoutGrid()
+        {
+            return _uiManager.Instantiate(_prefabs.LayoutGrid);
+        }
     }
 }

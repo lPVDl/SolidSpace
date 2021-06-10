@@ -5,5 +5,6 @@ namespace SolidSpace.Playground.UI
         IToolWindow CreateToolWindow();
         IToolButton CreateToolButton();
         ITagLabel CreateFilterLabel();
+        ILayoutGrid CreateLayoutGrid();
     }
 }
