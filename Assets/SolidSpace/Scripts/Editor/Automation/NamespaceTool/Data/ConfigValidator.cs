@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace SolidSpace.Editor.Automation.NamespaceTool
 {
+    [InspectorDataValidator]
     internal class ConfigValidator : IDataValidator<Config>
     {
         private readonly string _projectRoot;

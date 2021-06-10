@@ -4,6 +4,7 @@ using SolidSpace.DataValidation;
 
 namespace SolidSpace.Editor.Automation.ProjectStructureTool
 {
+    [InspectorDataValidator]
     internal class FileInfoValidator : IDataValidator<FilterInfo>
     {
         public string Validate(FilterInfo data)

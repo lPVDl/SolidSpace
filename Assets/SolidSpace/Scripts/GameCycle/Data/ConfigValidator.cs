@@ -3,6 +3,7 @@ using SolidSpace.DataValidation;
 
 namespace SolidSpace.GameCycle
 {
+    [InspectorDataValidator]
     internal class ConfigValidator : IDataValidator<Config>
     {
         private readonly HashSet<EControllerType> _itemHash;

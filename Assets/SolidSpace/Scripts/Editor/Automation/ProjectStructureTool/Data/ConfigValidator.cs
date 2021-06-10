@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace SolidSpace.Editor.Automation.ProjectStructureTool
 {
+    [InspectorDataValidator]
     internal class ConfigValidator : IDataValidator<Config>
     {
         public string Validate(Config data)

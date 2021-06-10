@@ -4,6 +4,7 @@ using SolidSpace.DataValidation;
 
 namespace SolidSpace.Editor.Automation.NamespaceTool
 {
+    [InspectorDataValidator]
     internal class FilterInfoValidator : IDataValidator<FilterInfo>
     {
         public string Validate(FilterInfo data)

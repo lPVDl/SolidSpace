@@ -28,8 +28,6 @@ MonoBehaviour:
     - enabled: 1
       regex: \/(?i)SolidSpace\/.*\/Data$
     - enabled: 1
-      regex: \/(?i)SolidSpace\/.*\/Validators$
-    - enabled: 1
       regex: \/(?i)SolidSpace\/.*\/Jobs$
     - enabled: 1
       regex: \/(?i)SolidSpace\/.*\/Views$

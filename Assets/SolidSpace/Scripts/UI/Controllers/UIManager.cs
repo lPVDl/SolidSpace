@@ -72,7 +72,7 @@ namespace SolidSpace.UI
             _hoveredElements--;
         }
 
-        public T Instantiate<T>(UIPrefab<T> prefab) where T : IUIElement
+        public T Instantiate<T>(UIPrefab<T> prefab) where T : class, IUIElement
         {
             if (prefab is null) throw new ArgumentNullException(nameof(prefab));
             if (prefab.Asset is null) throw new ArgumentNullException($"{nameof(prefab)}.{nameof(prefab.Asset)} is null");

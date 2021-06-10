@@ -4,7 +4,7 @@ namespace SolidSpace.UI
     {
         public bool IsMouseOver { get; }
         
-        T Instantiate<T>(UIPrefab<T> prefab) where T : IUIElement;
+        T Instantiate<T>(UIPrefab<T> prefab) where T : class, IUIElement;
         void AttachToRoot(IUIElement view, string rootContainerName);
     }
 }

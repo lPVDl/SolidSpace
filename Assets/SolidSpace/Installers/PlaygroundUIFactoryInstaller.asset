@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _config:
     _toolButtonPrefab:
-      _asset: {fileID: 9197481963319205126, guid: fddea021b1e04ea49846124ef31a7203, type: 3}
-    _toolWindowPrefab:
       _asset: {fileID: 9197481963319205126, guid: 68facf6977bc080458447472366a37c4, type: 3}
+    _toolWindowPrefab:
+      _asset: {fileID: 9197481963319205126, guid: fddea021b1e04ea49846124ef31a7203, type: 3}

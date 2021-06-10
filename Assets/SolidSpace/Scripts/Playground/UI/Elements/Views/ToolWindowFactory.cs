@@ -1,16 +1,25 @@
+using SolidSpace.DataValidation;
 using SolidSpace.UI;
 using UnityEngine.UIElements;
 
 namespace SolidSpace.Playground.UI.Elements
 {
-    internal class ToolWindowFactory : AUIFactory<IToolWindow>, IUIPrefabValidator<ToolWindow>
+    [InspectorDataValidator]
+    internal class ToolWindowFactory : AUIFactory<ToolWindow>, IDataValidator<UIPrefab<ToolWindow>>
     {
-        protected override IToolWindow Create(VisualElement source)
+        private readonly UITreeAssetValidator _treeValidator;
+        
+        public ToolWindowFactory()
+        {
+            _treeValidator = new UITreeAssetValidator();
+        }
+        
+        protected override ToolWindow Create(VisualElement source)
         {
             return new ToolWindow
             {
                 Source = source,
-                AttachPoint = source.Query<VisualElement>("AttachPoint").First()
+                AttachPoint = UIQuery.Child<VisualElement>(source, "AttachPoint")
             };
         }
 
@@ -21,7 +30,9 @@ namespace SolidSpace.Playground.UI.Elements
                 return $"'{nameof(data.Asset)}' is null'";
             }
             
-            if (!UIAssetValidator.TreeHasChildElement<VisualElement>(data.Asset, "AttachPoint", out var message))
+            _treeValidator.SetAsset(data.Asset);
+            
+            if (!_treeValidator.TreeHasChild<VisualElement>("AttachPoint", out var message))
             {
                 return message;
             }

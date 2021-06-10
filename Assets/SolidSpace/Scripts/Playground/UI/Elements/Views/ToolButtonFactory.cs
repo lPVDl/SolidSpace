@@ -4,15 +4,23 @@ using UnityEngine.UIElements;
 
 namespace SolidSpace.Playground.UI.Elements
 {
-    internal class ToolButtonFactory : AUIFactory<IToolButton>, IUIPrefabValidator<ToolButton>
+    [InspectorDataValidator]
+    internal class ToolButtonFactory : AUIFactory<ToolButton>, IDataValidator<UIPrefab<ToolButton>>
     {
-        protected override IToolButton Create(VisualElement source)
+        private readonly UITreeAssetValidator _treeValidator;
+        
+        public ToolButtonFactory()
+        {
+            _treeValidator = new UITreeAssetValidator();
+        }
+        
+        protected override ToolButton Create(VisualElement source)
         {
             var view = new ToolButton
             {
                 Source = source,
-                Button = source.Query<VisualElement>("Button").First(),
-                Image = source.Query<VisualElement>("Image").First()
+                Button = UIQuery.Child<VisualElement>(source, "Button"),
+                Image = UIQuery.Child<VisualElement>(source, "Image"),
             };
             
             source.RegisterCallback<MouseDownEvent>(view.OnMouseDownEvent);
@@ -26,8 +34,15 @@ namespace SolidSpace.Playground.UI.Elements
             {
                 return $"'{nameof(data.Asset)}' is null";
             }
+            
+            _treeValidator.SetAsset(data.Asset);
 
-            if (!UIAssetValidator.TreeHasChildElement<VisualElement>(data.Asset, "Button", out var message))
+            if (!_treeValidator.TreeHasChild<VisualElement>("Button", out var message))
+            {
+                return message;
+            }
+
+            if (!_treeValidator.TreeHasChild<VisualElement>("Image", out message))
             {
                 return message;
             }

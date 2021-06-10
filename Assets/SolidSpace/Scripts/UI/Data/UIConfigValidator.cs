@@ -3,6 +3,7 @@ using UnityEngine.UIElements;
 
 namespace SolidSpace.UI
 {
+    [InspectorDataValidator]
     internal class UIConfigValidator : IDataValidator<UIConfig>
     {
         private readonly VisualElement _rootAssetClone;

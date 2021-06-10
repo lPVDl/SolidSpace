@@ -7,6 +7,7 @@ using SolidSpace.Mathematics;
 
 namespace SolidSpace.Entities.Rendering.Atlases
 {
+    [InspectorDataValidator]
     internal class TextureAtlasConfigValidator : IDataValidator<TextureAtlasConfig>
     {
         private readonly HashSet<int> _spriteSizeCash;
