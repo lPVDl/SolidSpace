@@ -10,11 +10,18 @@ namespace SolidSpace.Playground.UI.Elements
         
         public VisualElement AttachPoint { get; set; }
         
+        public Label Label { get; set; }
+        
         public void AttachChild(IUIElement view)
         {
             if (view is null) throw new ArgumentNullException(nameof(view));
             
             AttachPoint.Add(view.Source);
+        }
+
+        public void SetTitle(string text)
+        {
+            Label.text = text;
         }
     }
 }

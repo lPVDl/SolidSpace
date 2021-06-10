@@ -8,21 +8,21 @@ namespace SolidSpace.Playground.Core
 {
     internal class PlaygroundCoreController : IController
     {
+        private const string NoToolTitle = "";
+        
         public EControllerType ControllerType => EControllerType.Playground;
         
-        private readonly PlaygroundCoreConfig _config;
         private readonly IUIManager _uiManager;
         private readonly List<IPlaygroundTool> _tools;
         private readonly IPlaygroundUIFactory _uiFactory;
 
         private IToolWindow _window;
         private IToolButton[] _buttons;
+        private PlaygroundToolConfig[] _toolConfigs;
         private int _toolIndex;
 
-        public PlaygroundCoreController(PlaygroundCoreConfig config, IUIManager uiManager, List<IPlaygroundTool> tools,
-            IPlaygroundUIFactory uiFactory)
+        public PlaygroundCoreController(IUIManager uiManager, List<IPlaygroundTool> tools, IPlaygroundUIFactory uiFactory)
         {
-            _config = config;
             _uiManager = uiManager;
             _tools = tools;
             _uiFactory = uiFactory;
@@ -32,9 +32,11 @@ namespace SolidSpace.Playground.Core
         {
             _window = _uiFactory.CreateToolWindow();
             _uiManager.AttachToRoot(_window, "RootLeft");
+            _window.SetTitle(NoToolTitle);
 
             _toolIndex = -1;
             _buttons = new IToolButton[_tools.Count];
+            _toolConfigs = new PlaygroundToolConfig[_tools.Count];
 
             for (var i = 0; i < _tools.Count; i++)
             {
@@ -46,7 +48,9 @@ namespace SolidSpace.Playground.Core
                 toolView.SetSelected(false);
                 var tool = _tools[i];
                 tool.InitializeTool();
-                toolView.SetIcon(tool.Config.Icon);
+                var config = tool.Config;
+                _toolConfigs[i] = config;
+                toolView.SetIcon(config.Icon);
             }
         }
         
@@ -65,6 +69,7 @@ namespace SolidSpace.Playground.Core
                 _buttons[_toolIndex].SetSelected(false);
                 _tools[_toolIndex].OnToolDeactivation();
                 _toolIndex = -1;
+                _window.SetTitle(NoToolTitle);
                 return;
             }
 
@@ -77,6 +82,7 @@ namespace SolidSpace.Playground.Core
             _toolIndex = newIndex;
             _buttons[_toolIndex].SetSelected(true);
             _tools[_toolIndex].OnToolActivation();
+            _window.SetTitle(_toolConfigs[_toolIndex].Name);
         }
 
         public void FinalizeController()

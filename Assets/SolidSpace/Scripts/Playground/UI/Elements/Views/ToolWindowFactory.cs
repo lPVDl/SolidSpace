@@ -19,7 +19,8 @@ namespace SolidSpace.Playground.UI.Elements
             return new ToolWindow
             {
                 Source = source,
-                AttachPoint = UIQuery.Child<VisualElement>(source, "AttachPoint")
+                AttachPoint = UIQuery.Child<VisualElement>(source, "AttachPoint"),
+                Label = UIQuery.Child<Label>(source, "Label")
             };
         }
 
@@ -33,6 +34,11 @@ namespace SolidSpace.Playground.UI.Elements
             _treeValidator.SetAsset(data.Asset);
             
             if (!_treeValidator.TreeHasChild<VisualElement>("AttachPoint", out var message))
+            {
+                return message;
+            }
+
+            if (!_treeValidator.TreeHasChild<Label>("Label", out message))
             {
                 return message;
             }

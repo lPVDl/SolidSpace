@@ -7,7 +7,9 @@ namespace SolidSpace.Playground.Core
     public class PlaygroundToolConfig
     {
         public Sprite Icon => _icon;
+        public string Name => _name;
 
+        [SerializeField] private string _name;
         [SerializeField] private Sprite _icon;
     }
 }

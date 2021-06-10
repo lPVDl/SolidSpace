@@ -9,7 +9,7 @@
     
     <VisualElement class="window">
         <VisualElement class="window-header">
-            <Label name="Label" text="TOOLS" class="window-header-text" />
+            <Label name="Label" class="window-header-text" />
         </VisualElement>
         <VisualElement name="AttachPoint" class="window-body" />
     </VisualElement>
