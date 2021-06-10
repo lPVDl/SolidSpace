@@ -2,7 +2,7 @@ using System;
 using System.Text.RegularExpressions;
 using SolidSpace.DataValidation;
 
-namespace SolidSpace.Editor.Automation.AssetNameTool
+namespace SolidSpace.Editor.Automation.AssetNameTool.Validators
 {
     [InspectorDataValidator]
     internal class FilterInfoValidator : IDataValidator<FilterInfo>

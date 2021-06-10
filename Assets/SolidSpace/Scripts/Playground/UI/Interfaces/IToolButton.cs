@@ -2,11 +2,11 @@ using System;
 using SolidSpace.UI;
 using UnityEngine;
 
-namespace SolidSpace.Playground.UI.Elements
+namespace SolidSpace.Playground.UI
 {
     public interface IToolButton : IUIElement
     {
-        public event Action OnClick;
+        public event Action Clicked;
 
         void SetSelected(bool isSelected);
         void SetIcon(Sprite icon);

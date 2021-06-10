@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using SolidSpace.GameCycle;
-using SolidSpace.Playground.UI.Elements;
-using SolidSpace.Playground.UI.Factory;
+using SolidSpace.Playground.UI;
 using SolidSpace.UI;
 
 namespace SolidSpace.Playground.Core
@@ -31,7 +30,7 @@ namespace SolidSpace.Playground.Core
         public void InitializeController()
         {
             _window = _uiFactory.CreateToolWindow();
-            _uiManager.AttachToRoot(_window, "RootLeft");
+            _uiManager.AttachToRoot(_window, "ContainerA");
             _window.SetTitle(NoToolTitle);
 
             _toolIndex = -1;
@@ -44,7 +43,7 @@ namespace SolidSpace.Playground.Core
                 _window.AttachChild(toolView);
                 _buttons[i] = toolView;
                 var toolIndex = i;
-                toolView.OnClick += () => OnToolViewClicked(toolIndex);
+                toolView.Clicked += () => OnToolViewClicked(toolIndex);
                 toolView.SetSelected(false);
                 var tool = _tools[i];
                 tool.InitializeTool();

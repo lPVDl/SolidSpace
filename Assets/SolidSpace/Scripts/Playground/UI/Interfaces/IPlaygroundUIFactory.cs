@@ -1,11 +1,9 @@
-using SolidSpace.Playground.UI.Elements;
-
-namespace SolidSpace.Playground.UI.Factory
+namespace SolidSpace.Playground.UI
 {
     public interface IPlaygroundUIFactory
     {
         IToolWindow CreateToolWindow();
-
         IToolButton CreateToolButton();
+        ITagLabel CreateFilterLabel();
     }
 }

@@ -1,7 +1,10 @@
 :root {
-    --header-color: rgb(72, 126, 176);
-    --body-color: rgb(245, 246, 250);
-    --light-color: rgb(251, 197, 49);
+    --header-color: #487EB0;
+    --body-color: #F5F6FA;
+    --selection-color: #FBC531;
+    --neutral-color: #718093;
+    --positive-color: #44BD32;
+    --negative-color: #C23616;
 }
 
 .unity-label {
@@ -11,6 +14,7 @@
 .window {
     background-color: var(--header-color);
     border-radius: 2px;
+    margin: 4px;
 }
 
 .window-header {
@@ -41,7 +45,7 @@
 }
 
 .window-body-tool.selected {
-    border-color: var(--light-color);
+    border-color: var(--selection-color);
 }
 
 .window-body-tool-icon {
@@ -52,4 +56,22 @@
 
 .window-body-tool-icon.selected {
     opacity: 1;
+}
+
+.filter-label {
+    border-width: 1px;
+    padding: 2px;
+    margin: 2px;
+    border-color: var(--neutral-color);
+    color: var(--neutral-color);
+}
+
+.filter-label.positive {
+    border-color: var(--positive-color);
+    color: var(--positive-color)
+}
+
+.filter-label.negative {
+    border-color: var(--negative-color);
+    color: var(--negative-color)
 }

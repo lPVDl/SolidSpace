@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _config:
     _containerNames:
-    - RootLeft
+    - ContainerA
     _rootAsset: {fileID: 9197481963319205126, guid: 17ad6ea4bff494d4683d1cdd6559d293, type: 3}
     _panelSettings: {fileID: 11400000, guid: 5dd0272d3fe5a0547a5f669c0d3c577e, type: 2}

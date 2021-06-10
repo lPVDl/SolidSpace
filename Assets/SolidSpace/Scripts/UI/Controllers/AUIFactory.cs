@@ -7,11 +7,11 @@ namespace SolidSpace.UI
     {
         public Type ViewType => typeof(T);
 
-        object IUIFactory.Create(VisualElement source)
+        object IUIFactory.Create(VisualElement root)
         {
-            return Create(source);
+            return Create(root);
         }
 
-        protected abstract T Create(VisualElement source);
+        protected abstract T Create(VisualElement root);
     }
 }

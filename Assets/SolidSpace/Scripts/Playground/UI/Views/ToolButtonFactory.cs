@@ -2,7 +2,7 @@ using SolidSpace.DataValidation;
 using SolidSpace.UI;
 using UnityEngine.UIElements;
 
-namespace SolidSpace.Playground.UI.Elements
+namespace SolidSpace.Playground.UI
 {
     [InspectorDataValidator]
     internal class ToolButtonFactory : AUIFactory<ToolButton>, IDataValidator<UIPrefab<ToolButton>>
@@ -14,16 +14,16 @@ namespace SolidSpace.Playground.UI.Elements
             _treeValidator = new UITreeAssetValidator();
         }
         
-        protected override ToolButton Create(VisualElement source)
+        protected override ToolButton Create(VisualElement root)
         {
             var view = new ToolButton
             {
-                Source = source,
-                Button = UIQuery.Child<VisualElement>(source, "Button"),
-                Image = UIQuery.Child<VisualElement>(source, "Image"),
+                Root = root,
+                Button = UIQuery.Child<VisualElement>(root, "Button"),
+                Image = UIQuery.Child<VisualElement>(root, "Image"),
             };
             
-            source.RegisterCallback<MouseDownEvent>(view.OnMouseDownEvent);
+            root.RegisterCallback<MouseDownEvent>(view.OnMouseDownEvent);
 
             return view;
         }

@@ -2,20 +2,22 @@ using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace SolidSpace.Playground.UI.Elements
+namespace SolidSpace.Playground.UI
 {
     internal class ToolButton : IToolButton
     {
-        public event Action OnClick;
-        public VisualElement Source { get; set; }
+        public event Action Clicked;
+        public VisualElement Root { get; set; }
         public VisualElement Button { get; set; }
         public VisualElement Image { get; set; }
 
         private bool _isSelected;
         
-        public void OnMouseDownEvent(MouseDownEvent evt)
+        public void OnMouseDownEvent(MouseDownEvent e)
         {
-            OnClick?.Invoke();
+            e.StopPropagation();
+            
+            Clicked?.Invoke();
         }
 
         public void SetSelected(bool isSelected)

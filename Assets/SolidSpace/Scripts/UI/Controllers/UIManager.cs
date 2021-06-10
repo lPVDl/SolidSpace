@@ -94,10 +94,10 @@ namespace SolidSpace.UI
                 throw new InvalidOperationException($"Container with name '{rootContainerName}' was not found");
             }
             
-            view.Source.RegisterCallback<MouseEnterEvent>(OnMouseEnter);
-            view.Source.RegisterCallback<MouseLeaveEvent>(OnMouseLeave);
+            view.Root.RegisterCallback<MouseEnterEvent>(OnMouseEnter);
+            view.Root.RegisterCallback<MouseLeaveEvent>(OnMouseLeave);
 
-            rootContainer.Add(view.Source);
+            rootContainer.Add(view.Root);
         }
 
         public void FinalizeController()

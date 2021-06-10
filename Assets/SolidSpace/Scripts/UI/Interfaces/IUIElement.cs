@@ -4,6 +4,6 @@ namespace SolidSpace.UI
 {
     public interface IUIElement
     {
-        public VisualElement Source { get; }
+        public VisualElement Root { get; }
     }
 }

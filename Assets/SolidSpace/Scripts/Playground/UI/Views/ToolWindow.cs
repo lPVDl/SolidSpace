@@ -2,11 +2,11 @@ using System;
 using SolidSpace.UI;
 using UnityEngine.UIElements;
 
-namespace SolidSpace.Playground.UI.Elements
+namespace SolidSpace.Playground.UI
 {
     internal class ToolWindow : IToolWindow
     {
-        public VisualElement Source { get; set; }
+        public VisualElement Root { get; set; }
         
         public VisualElement AttachPoint { get; set; }
         
@@ -16,12 +16,17 @@ namespace SolidSpace.Playground.UI.Elements
         {
             if (view is null) throw new ArgumentNullException(nameof(view));
             
-            AttachPoint.Add(view.Source);
+            AttachPoint.Add(view.Root);
         }
 
         public void SetTitle(string text)
         {
             Label.text = text;
+        }
+
+        public void SetVisible(bool isVisible)
+        {
+            Root.visible = isVisible;
         }
     }
 }

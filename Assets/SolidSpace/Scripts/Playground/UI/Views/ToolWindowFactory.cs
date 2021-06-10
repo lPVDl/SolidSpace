@@ -2,7 +2,7 @@ using SolidSpace.DataValidation;
 using SolidSpace.UI;
 using UnityEngine.UIElements;
 
-namespace SolidSpace.Playground.UI.Elements
+namespace SolidSpace.Playground.UI
 {
     [InspectorDataValidator]
     internal class ToolWindowFactory : AUIFactory<ToolWindow>, IDataValidator<UIPrefab<ToolWindow>>
@@ -14,13 +14,13 @@ namespace SolidSpace.Playground.UI.Elements
             _treeValidator = new UITreeAssetValidator();
         }
         
-        protected override ToolWindow Create(VisualElement source)
+        protected override ToolWindow Create(VisualElement root)
         {
             return new ToolWindow
             {
-                Source = source,
-                AttachPoint = UIQuery.Child<VisualElement>(source, "AttachPoint"),
-                Label = UIQuery.Child<Label>(source, "Label")
+                Root = root,
+                AttachPoint = UIQuery.Child<VisualElement>(root, "AttachPoint"),
+                Label = UIQuery.Child<Label>(root, "Label")
             };
         }
 
