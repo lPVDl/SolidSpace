@@ -27,7 +27,7 @@ namespace SolidSpace.Playground.UI
             Root.style.alignItems = align;
         }
 
-        public void SetJustify(Justify justify)
+        public void SetJustifyContent(Justify justify)
         {
             Root.style.justifyContent = justify;
         }

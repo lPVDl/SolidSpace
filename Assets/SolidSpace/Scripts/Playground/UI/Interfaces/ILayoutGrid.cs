@@ -9,6 +9,6 @@ namespace SolidSpace.Playground.UI
         void SetFlexWrap(Wrap wrap);
         void SetFlexDirection(FlexDirection direction);
         void SetAlignItems(Align align);
-        void SetJustify(Justify justify);
+        void SetJustifyContent(Justify justify);
     }
 }

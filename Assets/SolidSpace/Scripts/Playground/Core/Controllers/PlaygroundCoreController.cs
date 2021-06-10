@@ -2,12 +2,13 @@ using System.Collections.Generic;
 using SolidSpace.GameCycle;
 using SolidSpace.Playground.UI;
 using SolidSpace.UI;
+using UnityEngine.UIElements;
 
 namespace SolidSpace.Playground.Core
 {
     internal class PlaygroundCoreController : IController
     {
-        private const string NoToolTitle = "";
+        private const string NoToolTitle = "Tools";
         
         public EControllerType ControllerType => EControllerType.Playground;
         
@@ -17,8 +18,8 @@ namespace SolidSpace.Playground.Core
 
         private IToolWindow _window;
         private IToolButton[] _buttons;
-        private PlaygroundToolConfig[] _toolConfigs;
         private int _toolIndex;
+        private PlaygroundToolConfig[] _configs;
 
         public PlaygroundCoreController(IUIManager uiManager, List<IPlaygroundTool> tools, IPlaygroundUIFactory uiFactory)
         {
@@ -33,23 +34,30 @@ namespace SolidSpace.Playground.Core
             _uiManager.AttachToRoot(_window, "ContainerA");
             _window.SetTitle(NoToolTitle);
 
+            var grid = _uiFactory.CreateLayoutGrid();
+            grid.SetJustifyContent(Justify.Center);
+            grid.SetFlexDirection(FlexDirection.Row);
+            _window.AttachChild(grid);
+
             _toolIndex = -1;
             _buttons = new IToolButton[_tools.Count];
-            _toolConfigs = new PlaygroundToolConfig[_tools.Count];
+            _configs = new PlaygroundToolConfig[_tools.Count];
 
             for (var i = 0; i < _tools.Count; i++)
             {
-                var toolView = _uiFactory.CreateToolButton();
-                _window.AttachChild(toolView);
-                _buttons[i] = toolView;
-                var toolIndex = i;
-                toolView.Clicked += () => OnToolViewClicked(toolIndex);
-                toolView.SetSelected(false);
                 var tool = _tools[i];
                 tool.InitializeTool();
+                
                 var config = tool.Config;
-                _toolConfigs[i] = config;
-                toolView.SetIcon(config.Icon);
+                var button = _uiFactory.CreateToolButton();
+                grid.AttachChild(button);
+                var toolIndex = i;
+                button.Clicked += () => OnToolViewClicked(toolIndex);
+                button.SetSelected(false);
+                button.SetIcon(config.Icon);
+                
+                _buttons[i] = button;
+                _configs[i] = config;
             }
         }
         
@@ -81,7 +89,7 @@ namespace SolidSpace.Playground.Core
             _toolIndex = newIndex;
             _buttons[_toolIndex].SetSelected(true);
             _tools[_toolIndex].OnToolActivation();
-            _window.SetTitle(_toolConfigs[_toolIndex].Name);
+            _window.SetTitle(_configs[_toolIndex].Name);
         }
 
         public void FinalizeController()

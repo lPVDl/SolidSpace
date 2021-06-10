@@ -33,8 +33,6 @@
     background-color: var(--body-color);
     border-bottom-right-radius: 2px;
     border-bottom-left-radius: 2px;
-    justify-content: center;
-    flex-direction: row;
 }
 
 .window-body-tool {
