@@ -2,9 +2,9 @@ using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace SolidSpace.Playground.Core.Views
+namespace SolidSpace.Playground.UI.Elements
 {
-    internal class ToolButtonView : IToolButtonView
+    internal class ToolButton : IToolButton
     {
         public event Action OnClick;
         public VisualElement Source { get; set; }

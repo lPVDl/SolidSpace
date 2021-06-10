@@ -2,9 +2,9 @@ using System;
 using SolidSpace.UI;
 using UnityEngine.UIElements;
 
-namespace SolidSpace.Playground.Core.Views
+namespace SolidSpace.Playground.UI.Elements
 {
-    internal class ToolWindowView : IToolWindowView
+    internal class ToolWindow : IToolWindow
     {
         public VisualElement Source { get; set; }
         

@@ -1,14 +1,14 @@
-using SolidSpace.Playground.Core.Views;
+using SolidSpace.DataValidation;
 using SolidSpace.UI;
 using UnityEngine.UIElements;
 
-namespace SolidSpace.Playground.Core
+namespace SolidSpace.Playground.UI.Elements
 {
-    internal class ToolButtonViewFactory : AUIFactory<IToolButtonView>, IUIPrefabValidator<IToolButtonView>
+    internal class ToolButtonFactory : AUIFactory<IToolButton>, IUIPrefabValidator<ToolButton>
     {
-        protected override IToolButtonView Create(VisualElement source)
+        protected override IToolButton Create(VisualElement source)
         {
-            var view = new ToolButtonView
+            var view = new ToolButton
             {
                 Source = source,
                 Button = source.Query<VisualElement>("Button").First(),
@@ -20,7 +20,7 @@ namespace SolidSpace.Playground.Core
             return view;
         }
 
-        public string Validate(UIPrefab<IToolButtonView> data)
+        public string Validate(UIPrefab<ToolButton> data)
         {
             if (data.Asset is null)
             {

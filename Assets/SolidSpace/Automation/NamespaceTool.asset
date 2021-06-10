@@ -32,13 +32,13 @@ MonoBehaviour:
     - enabled: 1
       regex: \/(?i)SolidSpace\/.*\/Jobs$
     - enabled: 1
+      regex: \/(?i)SolidSpace\/.*\/Views$
+    - enabled: 1
       regex: \/(?i)SolidSpace\/.*\/Installers$
     - enabled: 1
       regex: \/(?i)SolidSpace\/.*\/Utils$
     - enabled: 1
       regex: \/(?i)SolidSpace\/.*\/Runtime$
-    - enabled: 1
-      regex: \/(?i)SolidSpace\/.*\/Source$
     - enabled: 1
       regex: \/(?i)Plugins\/Zenject\/.*
     - enabled: 1

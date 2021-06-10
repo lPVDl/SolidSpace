@@ -2,9 +2,9 @@ using System;
 using SolidSpace.UI;
 using UnityEngine;
 
-namespace SolidSpace.Playground.Core
+namespace SolidSpace.Playground.UI.Elements
 {
-    internal interface IToolButtonView : IUIElement
+    public interface IToolButton : IUIElement
     {
         public event Action OnClick;
 
