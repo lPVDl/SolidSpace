@@ -37,7 +37,7 @@ namespace SolidSpace.Playground.Tools.Eraser
         {
             Config = _config.ToolConfig;
 
-            _window = new EraserToolWindow(_uiFactory, _uiManager);
+            _window = new EraserToolWindow(_uiFactory, _uiManager, _config);
             _window.SetVisible(false);
             _gizmos = _gizmosManager.GetHandle(this);
         }

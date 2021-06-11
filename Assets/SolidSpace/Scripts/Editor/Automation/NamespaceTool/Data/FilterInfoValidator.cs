@@ -11,16 +11,12 @@ namespace SolidSpace.Editor.Automation.NamespaceTool
         {
             if (data.regex is null)
             {
-                return string.Empty;
+                return $"{nameof(data.regex)} is null";
             }
 
-            try
+            if (!ValidationUtil.RegexIsValid(nameof(data.regex), data.regex, out var message))
             {
-                Regex.IsMatch("", data.regex);
-            }
-            catch (Exception e)
-            {
-                return $"'{nameof(data.regex)}' is invalid: {e.Message}";
+                return message;
             }
 
             return string.Empty;

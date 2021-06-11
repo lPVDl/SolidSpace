@@ -9,28 +9,29 @@ namespace SolidSpace.Editor.Automation.AssetNameTool.Validators
     {
         public string Validate(FilterInfo data)
         {
-            if (data.scannerRegex is null || data.nameRegex is null || data.nameSubstitution is null)
+            if (data.scannerRegex is null)
             {
-                return string.Empty;
+                return $"{nameof(data.scannerRegex)} is null";
             }
 
-            // TODO [T-12]: Add ValidationUtil, separate common methods.
-            try
+            if (data.nameRegex is null)
             {
-                Regex.IsMatch("", data.scannerRegex);
+                return $"{nameof(data.nameRegex)} is null";
             }
-            catch (Exception e)
+
+            if (data.nameSubstitution is null)
             {
-                return $"'{nameof(data.scannerRegex)}' is invalid: {e.Message}";
+                return $"{nameof(data.nameSubstitution)} is null";
             }
-            
-            try
+
+            if (!ValidationUtil.RegexIsValid(nameof(data.scannerRegex), data.scannerRegex, out var message))
             {
-                Regex.IsMatch("", data.nameRegex);
+                return message;
             }
-            catch (Exception e)
+
+            if (!ValidationUtil.RegexIsValid(nameof(data.nameRegex), data.nameRegex, out message))
             {
-                return $"'{nameof(data.nameRegex)}' is invalid: {e.Message}";
+                return message;
             }
 
             return string.Empty;
