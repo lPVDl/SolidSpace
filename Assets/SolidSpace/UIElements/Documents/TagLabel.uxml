@@ -9,8 +9,8 @@
     <Style src="TagLabel.uss" />
     
     <VisualElement name="Button" class="tag-label">
-        <Label name="Label" class="tag-label-text" text="Hello, world!"/>
         <VisualElement name="Lock" class="tag-label-lock"/>
+        <Label name="Label" class="tag-label-text" text="Hello, world!"/>
     </VisualElement>
     
     

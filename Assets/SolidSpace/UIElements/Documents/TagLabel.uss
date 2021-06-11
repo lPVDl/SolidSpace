@@ -13,10 +13,11 @@
     align-items: center;
 }
 
-.tag-label-lock {
+.tag-label-lock.locked {
     background-image: url('../Icons/Lock.png');
     width: 12px;
     height: 12px;
+    margin-bottom: 2px;
 }
 
 .tag-label-text {

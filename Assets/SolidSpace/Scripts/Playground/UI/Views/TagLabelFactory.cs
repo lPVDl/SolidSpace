@@ -22,10 +22,12 @@ namespace SolidSpace.Playground.UI
                 Button = UIQuery.Child<VisualElement>(root, "Button"),
                 Label = UIQuery.Child<Label>(root, "Label"),
                 Lock = UIQuery.Child<VisualElement>(root, "Lock"),
-                State = ETagLabelState.Neutral
+                State = ETagLabelState.Neutral,
+                IsLocked = false
             };
             
             view.AddToClassList(TagLabel.StateToName(ETagLabelState.Neutral));
+            view.AddToClassList("unlocked");
             view.Button.RegisterCallback<MouseDownEvent>(view.OnMouseDownEvent);
 
             return view;

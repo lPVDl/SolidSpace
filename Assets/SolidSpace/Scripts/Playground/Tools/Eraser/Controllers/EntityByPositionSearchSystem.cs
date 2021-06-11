@@ -34,22 +34,23 @@ namespace SolidSpace.Playground.Tools.Eraser
         public void InitializeController()
         {
             _profiler = _profilingManager.GetHandle(this);
-            _query = _entityManager.CreateEntityQuery(new ComponentType[]
-            {
-                typeof(PositionComponent)
-            });
         }
         
         public void SetSearchPosition(float2 position)
         {
             _searchPosition = position;
         }
-
+        
+        public void SetQuery(EntityQueryDesc queryDesc)
+        {
+            _query = _entityManager.CreateEntityQuery(queryDesc);
+        }
+        
         public void SetEnabled(bool enabled)
         {
             _enabled = enabled;
         }
-
+        
         public void UpdateController()
         {
             Result = new EntityPosition
@@ -61,7 +62,7 @@ namespace SolidSpace.Playground.Tools.Eraser
             {
                 return;
             }
-            
+
             var archetypeChunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
             if (archetypeChunks.Length == 0)
             {

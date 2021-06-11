@@ -10,5 +10,7 @@ namespace SolidSpace.Playground.UI
         void SetState(ETagLabelState newState);
 
         void SetLabel(string label);
+
+        void SetLocked(bool locked);
     }
 }

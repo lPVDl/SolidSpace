@@ -1,6 +1,5 @@
-using System;
-using SolidSpace.UI;
 using UnityEngine.UIElements;
+using System;
 
 namespace SolidSpace.Playground.UI
 {
@@ -13,6 +12,7 @@ namespace SolidSpace.Playground.UI
         public Label Label { get; set; }
         public VisualElement Lock { get; set; }
         public ETagLabelState State { get; set; }
+        public bool IsLocked { get; set; }
 
         public void SetState(ETagLabelState newState)
         {
@@ -58,7 +58,21 @@ namespace SolidSpace.Playground.UI
         {
             Label.text = label;
         }
-        
+
+        public void SetLocked(bool locked)
+        {
+            if (IsLocked == locked)
+            {
+                return;
+            }
+
+            RemoveFromClassList(IsLocked ? "locked" : "unlocked");
+
+            IsLocked = locked;
+            
+            AddToClassList(IsLocked ? "locked" : "unlocked");
+        }
+
         public void OnMouseDownEvent(MouseDownEvent e)
         {
             e.StopPropagation();

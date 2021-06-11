@@ -38,6 +38,11 @@ namespace SolidSpace.Entities.World
             return _world.EntityManager.CreateEntityQuery(requiredComponents);
         }
 
+        public EntityQuery CreateEntityQuery(params EntityQueryDesc[] queryDesc)
+        {
+            return _world.EntityManager.CreateEntityQuery(queryDesc);
+        }
+
         public ComponentTypeHandle<T> GetComponentTypeHandle<T>(bool isReadOnly)
         {
             return _world.EntityManager.GetComponentTypeHandle<T>(isReadOnly);

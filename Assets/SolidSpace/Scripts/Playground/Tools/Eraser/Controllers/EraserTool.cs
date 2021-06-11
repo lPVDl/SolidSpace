@@ -37,16 +37,16 @@ namespace SolidSpace.Playground.Tools.Eraser
         public void InitializeTool()
         {
             Config = _config.ToolConfig;
-
-            _window = new EraserToolWindow(_uiFactory, _uiManager, _config);
-            _window.SetVisible(false);
+            _window = new EraserToolWindow(_uiFactory, _uiManager, _config, _searchSystem);
             _gizmos = _gizmosManager.GetHandle(this);
+            
+            _window.SetVisible(false);
         }
         
         public void OnToolActivation()
         {
-            _searchSystem.SetEnabled(true);
             _window.SetVisible(true);
+            _searchSystem.SetEnabled(true);
         }
 
         public void Update()
@@ -74,8 +74,8 @@ namespace SolidSpace.Playground.Tools.Eraser
 
         public void OnToolDeactivation()
         {
-            _searchSystem.SetEnabled(false);
             _window.SetVisible(false);
+            _searchSystem.SetEnabled(false);
         }
 
         public void FinalizeTool()

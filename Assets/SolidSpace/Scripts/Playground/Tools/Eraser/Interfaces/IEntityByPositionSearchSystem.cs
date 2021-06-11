@@ -1,3 +1,4 @@
+using Unity.Entities;
 using Unity.Mathematics;
 
 namespace SolidSpace.Playground.Tools.Eraser
@@ -9,5 +10,7 @@ namespace SolidSpace.Playground.Tools.Eraser
         void SetSearchPosition(float2 position);
         
         void SetEnabled(bool enabled);
+
+        void SetQuery(EntityQueryDesc queryDesc);
     }
 }
