@@ -22,7 +22,8 @@ namespace SolidSpace.Playground.Tools.Eraser
         private EraserToolWindow _window;
 
         public EraserTool(EraserToolConfig config, IEntityWorldManager entityManager, IGizmosManager gizmosManager,
-            IEntityByPositionSearchSystem searchSystem, IPointerTracker pointer, IUIManager uiManager, IPlaygroundUIFactory uiFactory)
+            IEntityByPositionSearchSystem searchSystem, IPointerTracker pointer, IUIManager uiManager, 
+            IPlaygroundUIFactory uiFactory)
         {
             _entityManager = entityManager;
             _searchSystem = searchSystem;

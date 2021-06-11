@@ -9,40 +9,49 @@ namespace SolidSpace.Playground.UI
         public event Action Clicked;
         
         public VisualElement Root { get; set; }
+        public VisualElement Button { get; set; }
         public Label Label { get; set; }
+        public VisualElement Lock { get; set; }
+        public ETagLabelState State { get; set; }
 
-        private ETagLabelState _state;
-        
-        public void SetState(ETagLabelState state)
+        public void SetState(ETagLabelState newState)
         {
-            if (_state == state)
+            if (State == newState)
             {
                 return;
             }
 
-            switch (_state)
-            {
-                case ETagLabelState.Positive:
-                    Label.RemoveFromClassList("positive");
-                    break;
-                
-                case ETagLabelState.Negative:
-                    Label.RemoveFromClassList("negative");
-                    break;
-            }
+            RemoveFromClassList(StateToName(State));
 
-            _state = state;
+            State = newState;
 
-            switch (_state)
+            AddToClassList(StateToName(State));
+        }
+
+        public static string StateToName(ETagLabelState state)
+        {
+            switch (state)
             {
-                case ETagLabelState.Positive:
-                    Label.AddToClassList("positive");
-                    break;
-                
-                case ETagLabelState.Negative:
-                    Label.AddToClassList("negative");
-                    break;
+                case ETagLabelState.Positive: return "positive";
+                case ETagLabelState.Negative: return "negative";
+                case ETagLabelState.Neutral: return "neutral";
+
+                default: throw new ArgumentOutOfRangeException(nameof(state), state, null);
             }
+        }
+
+        public void RemoveFromClassList(string className)
+        {
+            Button.RemoveFromClassList(className);
+            Label.RemoveFromClassList(className);
+            Lock.RemoveFromClassList(className);
+        }
+
+        public void AddToClassList(string className)
+        {
+            Button.AddToClassList(className);
+            Label.AddToClassList(className);
+            Lock.AddToClassList(className);
         }
 
         public void SetLabel(string label)

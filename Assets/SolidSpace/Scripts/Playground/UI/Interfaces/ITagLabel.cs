@@ -7,7 +7,7 @@ namespace SolidSpace.Playground.UI
     {
         event Action Clicked;
 
-        void SetState(ETagLabelState state);
+        void SetState(ETagLabelState newState);
 
         void SetLabel(string label);
     }

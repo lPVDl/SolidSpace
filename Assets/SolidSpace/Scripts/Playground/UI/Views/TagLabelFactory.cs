@@ -19,10 +19,14 @@ namespace SolidSpace.Playground.UI
             var view = new TagLabel
             {
                 Root = root,
-                Label = UIQuery.Child<Label>(root, "Label")
+                Button = UIQuery.Child<VisualElement>(root, "Button"),
+                Label = UIQuery.Child<Label>(root, "Label"),
+                Lock = UIQuery.Child<VisualElement>(root, "Lock"),
+                State = ETagLabelState.Neutral
             };
             
-            root.RegisterCallback<MouseDownEvent>(view.OnMouseDownEvent);
+            view.AddToClassList(TagLabel.StateToName(ETagLabelState.Neutral));
+            view.Button.RegisterCallback<MouseDownEvent>(view.OnMouseDownEvent);
 
             return view;
         }
@@ -36,7 +40,17 @@ namespace SolidSpace.Playground.UI
             
             _treeValidator.SetAsset(data.Asset);
 
-            if (!_treeValidator.TreeHasChild<Label>("Label", out var message))
+            if (!_treeValidator.TreeHasChild<VisualElement>("Button", out var message))
+            {
+                return message;
+            }
+            
+            if (!_treeValidator.TreeHasChild<Label>("Label", out message))
+            {
+                return message;
+            }
+            
+            if (!_treeValidator.TreeHasChild<VisualElement>("Lock", out message))
             {
                 return message;
             }

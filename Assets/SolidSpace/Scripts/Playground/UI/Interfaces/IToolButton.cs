@@ -9,6 +9,7 @@ namespace SolidSpace.Playground.UI
         public event Action Clicked;
 
         void SetSelected(bool isSelected);
+        
         void SetIcon(Sprite icon);
     }
 }
