@@ -31,7 +31,7 @@ namespace SolidSpace.Playground.Core
         public void InitializeController()
         {
             _window = _uiFactory.CreateToolWindow();
-            _uiManager.AttachToRoot(_window, "ContainerA");
+            _uiManager.AddToRoot(_window, "ContainerA");
             _window.SetTitle(NoToolTitle);
 
             var grid = _uiFactory.CreateLayoutGrid();

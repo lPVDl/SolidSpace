@@ -23,10 +23,5 @@ namespace SolidSpace.Playground.UI
         {
             Label.text = text;
         }
-
-        public void SetVisible(bool isVisible)
-        {
-            Root.visible = isVisible;
-        }
     }
 }

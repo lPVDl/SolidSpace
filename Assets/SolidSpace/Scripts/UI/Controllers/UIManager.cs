@@ -85,19 +85,36 @@ namespace SolidSpace.UI
             return (T) factory.Create(prefab.Asset.CloneTree());
         }
 
-        public void AttachToRoot(IUIElement view, string rootContainerName)
+        public void AddToRoot(IUIElement view, string rootContainerName)
+        {
+            if (view is null) throw new ArgumentNullException(nameof(view));
+
+            view.Root.RegisterCallback<MouseEnterEvent>(OnMouseEnter);
+            view.Root.RegisterCallback<MouseLeaveEvent>(OnMouseLeave);
+            
+            var container = GetRootContainer(rootContainerName);
+            container.Add(view.Root);
+        }
+
+        public void RemoveFromRoot(IUIElement view, string rootContainerName)
         {
             if (view is null) throw new ArgumentNullException(nameof(view));
             
-            if (!_rootContainers.TryGetValue(rootContainerName, out var rootContainer))
-            {
-                throw new InvalidOperationException($"Container with name '{rootContainerName}' was not found");
-            }
+            view.Root.UnregisterCallback<MouseEnterEvent>(OnMouseEnter);
+            view.Root.UnregisterCallback<MouseLeaveEvent>(OnMouseLeave);
             
-            view.Root.RegisterCallback<MouseEnterEvent>(OnMouseEnter);
-            view.Root.RegisterCallback<MouseLeaveEvent>(OnMouseLeave);
+            var container = GetRootContainer(rootContainerName);
+            container.Remove(view.Root);
+        }
 
-            rootContainer.Add(view.Root);
+        private VisualElement GetRootContainer(string name)
+        {
+            if (!_rootContainers.TryGetValue(name, out var container))
+            {
+                throw new InvalidOperationException($"Container with name '{name}' was not found");
+            }
+
+            return container;
         }
 
         public void FinalizeController()

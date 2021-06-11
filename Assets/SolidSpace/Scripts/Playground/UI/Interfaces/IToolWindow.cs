@@ -7,7 +7,5 @@ namespace SolidSpace.Playground.UI
         void AttachChild(IUIElement view);
         
         void SetTitle(string text);
-
-        void SetVisible(bool isVisible);
     }
 }
