@@ -6,7 +6,7 @@
     noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" 
     editor-extension-mode="False">
     
-    <Style src="/Assets/SolidSpace/UIElements/Styles/Playground.uss" />
+    <Style src="ToolButton.uss" />
     
     <VisualElement name="Button" class="window-body-tool">
         <VisualElement name="Image" class="window-body-tool-icon" />

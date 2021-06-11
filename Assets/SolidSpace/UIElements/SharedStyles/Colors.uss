@@ -1,0 +1,8 @@
+:root {
+    --header-color: #487EB0;
+    --body-color: #F5F6FA;
+    --selection-color: #FBC531;
+    --neutral-color: #718093;
+    --positive-color: #44BD32;
+    --negative-color: #C23616;
+}

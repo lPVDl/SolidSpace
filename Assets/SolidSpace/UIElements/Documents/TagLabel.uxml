@@ -6,7 +6,7 @@
     noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" 
     editor-extension-mode="False">
     
-    <Style src="/Assets/SolidSpace/UIElements/Styles/Playground.uss" />
+    <Style src="TagLabel.uss" />
     
     <VisualElement name="Button" class="tag-label">
         <Label name="Label" class="tag-label-text" text="Hello, world!"/>
