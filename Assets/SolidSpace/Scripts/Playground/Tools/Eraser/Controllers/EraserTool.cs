@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System.Linq;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.World;
 using SolidSpace.Gizmos;
@@ -18,26 +18,25 @@ namespace SolidSpace.Playground.Tools.Eraser
         private readonly IEntityByPositionSearchSystem _searchSystem;
         private readonly IPointerTracker _pointer;
         private readonly IUIManager _uiManager;
-        private readonly IComponentFilterTool _filterTool;
-        private readonly IComponentFilterMaster _filterMaster;
+        private readonly IComponentFilterFactory _filterFactory;
+        private readonly IPlaygroundUIFactory _uiFactory;
         private readonly IGizmosManager _gizmosManager;
         private readonly EraserToolConfig _config;
-
-        private FilterState[] _filter;
+        
         private GizmosHandle _gizmos;
-        private List<ComponentType> _whitelist;
-        private List<ComponentType> _blacklist;
+        private IToolWindow _window;
+        private IComponentFilter _filter;
 
         public EraserTool(EraserToolConfig config, IEntityWorldManager entityManager, IGizmosManager gizmosManager,
             IEntityByPositionSearchSystem searchSystem, IPointerTracker pointer, IUIManager uiManager, 
-            IComponentFilterTool filterTool, IComponentFilterMaster filterMaster)
+            IComponentFilterFactory filterFactory, IPlaygroundUIFactory uiFactory)
         {
             _entityManager = entityManager;
             _searchSystem = searchSystem;
             _pointer = pointer;
             _uiManager = uiManager;
-            _filterTool = filterTool;
-            _filterMaster = filterMaster;
+            _filterFactory = filterFactory;
+            _uiFactory = uiFactory;
             _gizmosManager = gizmosManager;
             _config = config;
         }
@@ -46,23 +45,25 @@ namespace SolidSpace.Playground.Tools.Eraser
         {
             Config = _config.ToolConfig;
             _gizmos = _gizmosManager.GetHandle(this);
-            _filter = _filterMaster.CreateFilter();
-            _filterMaster.ModifyFilter(_filter, typeof(PositionComponent), new FilterState
+
+            _window = _uiFactory.CreateToolWindow();
+            _window.SetTitle("Component Filter");
+
+            _filter = _filterFactory.Create();
+            _filter.SetState(typeof(PositionComponent), new FilterState
             {
                 isLocked = true,
                 state = ETagLabelState.Positive
             });
-            _whitelist = new List<ComponentType>(_filterMaster.AllComponents.Count);
-            _blacklist = new List<ComponentType>(_filterMaster.AllComponents.Count);
+            _filter.FilterModified += UpdateSearchSystemQuery;
+            _window.AttachChild(_filter);
         }
         
         public void OnToolActivation()
         {
-            _searchSystem.SetQuery(BuildQuery(_filter));
+            UpdateSearchSystemQuery();
             _searchSystem.SetEnabled(true);
-            _filterTool.SetFilter(_filter);
-            _filterTool.SetEnabled(true);
-            _filterTool.FilterModified += OnFilterModified;
+            _uiManager.AddToRoot(_window, "ContainerA");
         }
 
         public void Update()
@@ -88,30 +89,19 @@ namespace SolidSpace.Playground.Tools.Eraser
             }
         }
 
-        private void OnFilterModified()
+        private void UpdateSearchSystemQuery()
         {
-            _filterTool.GetFilter(_filter);
-            var query = BuildQuery(_filter);
-            _searchSystem.SetQuery(query);
+            _searchSystem.SetQuery(new EntityQueryDesc
+            {
+                All = _filter.GetTagsWithState(ETagLabelState.Positive).ToArray(),
+                None = _filter.GetTagsWithState(ETagLabelState.Negative).ToArray()
+            });
         }
 
         public void OnToolDeactivation()
         {
             _searchSystem.SetEnabled(false);
-            _filterTool.GetFilter(_filter);
-            _filterTool.SetEnabled(false);
-            _filterTool.FilterModified -= OnFilterModified;
-        }
-        
-        private EntityQueryDesc BuildQuery(FilterState[] filter)
-        {
-            _filterMaster.SplitFilter(filter, _whitelist, _blacklist);
-            
-            return new EntityQueryDesc
-            {
-                All = _whitelist.ToArray(),
-                None = _blacklist.ToArray()
-            };
+            _uiManager.RemoveFromRoot(_window, "ContainerA");
         }
 
         public void FinalizeTool()

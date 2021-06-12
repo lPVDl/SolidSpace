@@ -17,3 +17,7 @@ MonoBehaviour:
   _windowConfig:
     _componentNameRegex: (Component$)|([A-Z][a-z0-9]+)
     _componentNameSubstitution: $2
+  _factoryConfig:
+    _filterRegex: (?i)SolidSpace\..*Component
+    _nameRegex: (Component$)|([A-Z][a-z0-9]+)
+    _nameSubstitution: $2
