@@ -18,6 +18,7 @@ Reference games:
 Technologies:
 	Current:
 		Unity 2020.3.8f1
+			UIElements
 			Unity.Jobs
 			Unity.Burst
 			Unity.Entities
@@ -43,16 +44,14 @@ Technologies:
 		Workflow
 			GSuite
 			Git
+			Jira
 	
 	Planning:
 		Roslyn extensions
 		I2Loc
-		UIElements
-		Jira
 		UniRx
 		Rewired
-		Slack
-		Confluence
+		Slack / Discord
 		DSPGraph
 		NSubstitute
 		CI / CD
