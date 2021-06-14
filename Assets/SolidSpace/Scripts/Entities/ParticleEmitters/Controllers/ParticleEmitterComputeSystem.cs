@@ -9,11 +9,9 @@ using Unity.Jobs;
 
 namespace SolidSpace.Entities.ParticleEmitters
 {
-    internal class ParticleEmitterComputeSystem : IController, IParticleEmitterComputeSystem
+    internal class ParticleEmitterComputeSystem : IInitializable, IUpdatable, IParticleEmitterComputeSystem
     {
         private const int BufferChunkSize = 128;
-
-        public EControllerType ControllerType => EControllerType.EntityCompute;
 
         public NativeArray<ParticleEmitterData> Particles => _particles;
         public int ParticleCount => _particleCount.Value;
@@ -34,7 +32,7 @@ namespace SolidSpace.Entities.ParticleEmitters
             _profilingManager = profilingManager;
         }
 
-        public void InitializeController()
+        public void Initialize()
         {
             _profiler = _profilingManager.GetHandle(this);
             _query = _entityManager.CreateEntityQuery(new ComponentType[]
@@ -48,7 +46,7 @@ namespace SolidSpace.Entities.ParticleEmitters
             _particleCount = NativeMemory.CreatePersistentReference(0);
         }
 
-        public void UpdateController()
+        public void Update()
         {
             _profiler.BeginSample("Query Chunks");
             var chunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
@@ -104,7 +102,7 @@ namespace SolidSpace.Entities.ParticleEmitters
             counts.Dispose();
         }
 
-        public void FinalizeController()
+        public void Finalize()
         {
             _particles.Dispose();
             _particleCount.Dispose();

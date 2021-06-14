@@ -9,20 +9,24 @@ namespace SolidSpace.GameCycle
 {
     internal class GameCycleController : IApplicationBootstrapper, IDisposable
     {
-        private readonly Config _config;
+        private readonly GameCycleConfig _config;
         private readonly IProfilingManager _profilingManager;
         private readonly IProfilingProcessor _profilingProcessor;
 
-        private List<IController> _controllers;
-        private List<string> _names;
-
-        private UpdatingBehaviour _behaviour;
+        private readonly List<IInitializable> _initializables;
+        private readonly List<IUpdatable> _updatables;
+        
+        private string[] _gameCycleNames;
+        private IUpdatable[] _gameCycle;
+        private IInitializable[] _initializationSequence;
+        private UpdatingBehaviour _updateBehaviour;
         private ProfilingHandle _profilingHandle;
 
-        public GameCycleController(List<IController> controllers, Config config,
+        public GameCycleController(List<IInitializable> initializables, List<IUpdatable> updatables, GameCycleConfig config,
             IProfilingManager profilingManager, IProfilingProcessor profilingProcessor)
         {
-            _controllers = controllers;
+            _initializables = initializables;
+            _updatables = updatables;
             _config = config;
             _profilingManager = profilingManager;
             _profilingProcessor = profilingProcessor;
@@ -31,47 +35,59 @@ namespace SolidSpace.GameCycle
         public void Run()
         {
             _profilingProcessor.Initialize();
-            
             _profilingHandle = _profilingManager.GetHandle(this);
+            _gameCycle = PrepareSequence(_updatables, _config.UpdateOrder.Groups, "update");
+            _initializationSequence = PrepareSequence(_initializables, _config.InitializationOrder.Groups, "initialization");
+
+            foreach (var item in _initializationSequence)
+            {
+                item.Initialize();
+            }
+
+            _gameCycleNames = _gameCycle.Select(i => i.GetType().Name).ToArray();
             
-            var order = new Dictionary<EControllerType, int>();
-            for (var i = 0; i < _config.InvocationOrder.Count; i++)
-            {
-                order[_config.InvocationOrder[i]] = i;
-            }
-
-            var unordered = _controllers.Where(i => !order.ContainsKey(i.ControllerType)).ToList();
-            
-            if (unordered.Any())
-            {
-                foreach (var controller in unordered)
-                {
-                    var message = $"{controller.GetType()} ({controller.ControllerType}) is missing in the execution order list.";
-                    throw new InvalidOperationException(message);
-                }
-            }
-
-            // TODO [T-18]: Separate initialization and execution order in GameCycle.
-            _controllers = _controllers.OrderBy(i => order[i.ControllerType]).ToList();
-            _names = _controllers.Select(i => i.GetType().Name).ToList();
-
-            foreach (var controller in _controllers)
-            {
-                controller.InitializeController();
-            }
-
             var gameObject = new GameObject(nameof(GameCycleController));
-            _behaviour = gameObject.AddComponent<UpdatingBehaviour>();
-            _behaviour.OnUpdate += OnUpdate;
+            _updateBehaviour = gameObject.AddComponent<UpdatingBehaviour>();
+            _updateBehaviour.OnUpdate += OnUpdate;
+        }
+
+        private T[] PrepareSequence<T>(ICollection<T> instances, IReadOnlyCollection<ControllerGroup> order, string orderName)
+        {
+            var intOrder = new Dictionary<Type, int>(); 
+            var j = 0;
+            foreach (var typeName in order.SelectMany(g => g.Controllers))
+            {
+                var type = Type.GetType(typeName);
+                if (type is null)
+                {
+                    throw new InvalidOperationException($"Can not resolve type for '{typeName}'");
+                }
+                
+                intOrder.Add(type, j++);
+            }
+            
+            var sequence = new T[instances.Count];
+            foreach (var instance in instances)
+            {
+                var type = instance.GetType();
+                if (!intOrder.TryGetValue(type, out var index))
+                {
+                    throw new InvalidOperationException($"Type '{type.FullName}' is not defined in {orderName} order");
+                }
+
+                sequence[index] = instance;
+            }
+
+            return sequence;
         }
 
         private void OnUpdate()
         {
-            for (var i = 0; i < _controllers.Count; i++)
+            for (var i = 0; i < _gameCycle.Length; i++)
             {
-                _profilingHandle.BeginSample(_names[i]);
-                _controllers[i].UpdateController();
-                _profilingHandle.EndSample(_names[i]);
+                _profilingHandle.BeginSample(_gameCycleNames[i]);
+                _gameCycle[i].Update();
+                _profilingHandle.EndSample(_gameCycleNames[i]);
             }
 
             _profilingProcessor.Update();
@@ -79,11 +95,11 @@ namespace SolidSpace.GameCycle
 
         public void Dispose()
         {
-            _behaviour.OnUpdate -= OnUpdate;
+            _updateBehaviour.OnUpdate -= OnUpdate;
 
-            foreach (var controller in _controllers)
+            foreach (var controller in _initializables)
             {
-                controller.FinalizeController();
+                controller.Finalize();
             }
             
             _profilingProcessor.FinalizeObject();

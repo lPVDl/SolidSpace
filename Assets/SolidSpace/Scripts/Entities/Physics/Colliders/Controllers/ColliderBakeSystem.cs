@@ -12,10 +12,8 @@ using Unity.Mathematics;
 
 namespace SolidSpace.Entities.Physics.Colliders
 {
-    internal partial class ColliderBakeSystem : IController, IColliderSystem
+    internal partial class ColliderBakeSystem : IInitializable, IUpdatable, IColliderSystem
     {
-        public EControllerType ControllerType => EControllerType.EntityCompute;
-        
         public ColliderWorld World { get; private set; }
 
         private const int ColliderPerAllocation = 512;
@@ -42,7 +40,7 @@ namespace SolidSpace.Entities.Physics.Colliders
             _profilingManager = profilingManager;
         }
         
-        public void InitializeController()
+        public void Initialize()
         {
             _profiler = _profilingManager.GetHandle(this);
             _query = _entityManager.CreateEntityQuery(new ComponentType[]
@@ -59,7 +57,7 @@ namespace SolidSpace.Entities.Physics.Colliders
             _colliderArchetypeIndices = NativeMemory.CreatePersistentArray<byte>(ColliderPerAllocation);
         }
 
-        public void UpdateController()
+        public void Update()
         {
             _profiler.BeginSample("Query Chunks");
             var colliderChunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
@@ -239,7 +237,7 @@ namespace SolidSpace.Entities.Physics.Colliders
             SpaceDebug.LogState("ColliderCellSize", 1 << worldGrid.power);
         }
 
-        public void FinalizeController()
+        public void Finalize()
         {
             _colliderEntities.Dispose();
             _colliderBounds.Dispose();

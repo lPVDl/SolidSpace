@@ -4,10 +4,8 @@ using UnityEngine;
 
 namespace SolidSpace.Playground.Core
 {
-    internal class MouseTracker : IPointerTracker, IController
+    internal class MouseTracker : IPointerTracker, IUpdatable
     {
-        public EControllerType ControllerType => EControllerType.UI;
-        
         public bool ClickedThisFrame =>  Input.GetMouseButtonDown(0);
         
         public float2 Position { get; private set; }
@@ -18,13 +16,8 @@ namespace SolidSpace.Playground.Core
         {
             _camera = camera;
         }
-        
-        public void InitializeController()
-        {
-            
-        }
-        
-        public void UpdateController()
+
+        public void Update()
         {
             if (GetClickPosition(out var position))
             {
@@ -51,11 +44,6 @@ namespace SolidSpace.Playground.Core
             };
             
             return true;
-        }
-
-        public void FinalizeController()
-        {
-            
         }
     }
 }

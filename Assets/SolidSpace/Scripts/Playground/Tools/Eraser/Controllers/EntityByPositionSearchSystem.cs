@@ -11,10 +11,8 @@ using Unity.Mathematics;
 
 namespace SolidSpace.Playground.Tools.Eraser
 {
-    internal class EntityByPositionSearchSystem : IController, IEntityByPositionSearchSystem
+    internal class EntityByPositionSearchSystem : IInitializable, IUpdatable, IEntityByPositionSearchSystem
     {
-        public EControllerType ControllerType => EControllerType.EntityCommand;
-        
         public EntityPosition Result { get; private set; }
         
         private readonly IEntityWorldManager _entityManager;
@@ -31,7 +29,7 @@ namespace SolidSpace.Playground.Tools.Eraser
             _profilingManager = profilingManager;
         }
         
-        public void InitializeController()
+        public void Initialize()
         {
             _profiler = _profilingManager.GetHandle(this);
         }
@@ -51,7 +49,7 @@ namespace SolidSpace.Playground.Tools.Eraser
             _enabled = enabled;
         }
         
-        public void UpdateController()
+        public void Update()
         {
             Result = new EntityPosition
             {
@@ -113,7 +111,7 @@ namespace SolidSpace.Playground.Tools.Eraser
             };
         }
 
-        public void FinalizeController()
+        public void Finalize()
         {
             
         }

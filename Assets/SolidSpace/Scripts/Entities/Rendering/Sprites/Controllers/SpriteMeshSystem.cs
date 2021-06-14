@@ -15,12 +15,10 @@ using UnityEngine.Rendering;
 
 namespace SolidSpace.Entities.Rendering.Sprites
 {
-    internal class SpriteMeshSystem : IController
+    internal class SpriteMeshSystem : IInitializable, IUpdatable
     {
         private static readonly int MainTexturePropertyId = Shader.PropertyToID("_MainTex");
-        
-        public EControllerType ControllerType => EControllerType.EntityRender;
-        
+
         private readonly IEntityWorldManager _entityManager;
         private readonly SpriteMeshSystemConfig _config;
         private readonly ISpriteColorSystem _colorSystem;
@@ -45,7 +43,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             _profilingManager = profilingManager;
         }
         
-        public void InitializeController()
+        public void Initialize()
         {
             _profiler = _profilingManager.GetHandle(this);
             _material = new Material(_config.Shader);
@@ -66,7 +64,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             });
         }
 
-        public void UpdateController()
+        public void Update()
         {
             _profiler.BeginSample("Query chunks");
             var chunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
@@ -175,7 +173,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             SpaceDebug.LogState("SpriteMeshCount", meshCount);
         }
 
-        public void FinalizeController()
+        public void Finalize()
         {
             for (var i = 0; i < _meshes.Count; i++)
             {

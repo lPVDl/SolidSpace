@@ -5,10 +5,8 @@ using Unity.Mathematics;
 
 namespace SolidSpace.Entities.Physics.Colliders
 {
-    public class ColliderGizmoSystem : IController
+    public class ColliderGizmoSystem : IInitializable, IUpdatable
     {
-        public EControllerType ControllerType => EControllerType.EntityRender;
-        
         private readonly IColliderSystem _bakeSystem;
         private readonly IGizmosManager _gizmosManager;
         private readonly ColliderGizmoSystemConfig _config;
@@ -23,12 +21,12 @@ namespace SolidSpace.Entities.Physics.Colliders
             _config = config;
         }
         
-        public void InitializeController()
+        public void Initialize()
         {
             _gizmos = _gizmosManager.GetHandle(this);
         }
 
-        public void UpdateController()
+        public void Update()
         {
             if (_config.DrawGrid)
             {
@@ -86,7 +84,7 @@ namespace SolidSpace.Entities.Physics.Colliders
             }
         }
 
-        public void FinalizeController()
+        public void Finalize()
         {
             
         }

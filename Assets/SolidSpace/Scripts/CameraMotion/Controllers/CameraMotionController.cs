@@ -4,10 +4,8 @@ using UnityEngine;
 
 namespace SolidSpace.CameraMotion
 {
-    public class CameraMotionController : IController
+    public class CameraMotionController : IInitializable, IUpdatable
     {
-        public EControllerType ControllerType => EControllerType.Common;
-        
         private readonly Camera _camera;
         private readonly IUIManager _uiManager;
         private readonly Transform _cameraTransform;
@@ -24,13 +22,13 @@ namespace SolidSpace.CameraMotion
             _cameraTransform = camera.transform;
         }
         
-        public void InitializeController()
+        public void Initialize()
         {
             SetCameraPosition(Vector2.zero);
             _camera.orthographicSize = GetScreenSize().y / 2;
         }
         
-        public void UpdateController()
+        public void Update()
         {
             var mousePosition = GetMousePosition();
             var screenSize = GetScreenSize();
@@ -91,7 +89,7 @@ namespace SolidSpace.CameraMotion
             return new Vector2(Screen.width, Screen.height);
         }
 
-        public void FinalizeController()
+        public void Finalize()
         {
             
         }

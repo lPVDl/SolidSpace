@@ -7,10 +7,8 @@ using Unity.Entities;
 
 namespace SolidSpace.Entities.ParticleEmitters
 {
-    internal class ParticleEmitterCommandSystem : IController
+    internal class ParticleEmitterCommandSystem : IInitializable, IUpdatable
     {
-        public EControllerType ControllerType => EControllerType.EntityCommand;
-        
         private readonly IEntityWorldManager _entityManager;
         private readonly IParticleEmitterComputeSystem _computeSystem;
         
@@ -22,7 +20,7 @@ namespace SolidSpace.Entities.ParticleEmitters
             _computeSystem = computeSystem;
         }
 
-        public void InitializeController()
+        public void Initialize()
         {
             _particleArchetype = _entityManager.CreateArchetype(new ComponentType[]
             {
@@ -35,7 +33,7 @@ namespace SolidSpace.Entities.ParticleEmitters
             });
         }
 
-        public void UpdateController()
+        public void Update()
         {
             var entityCount = _computeSystem.ParticleCount;
             var particles = _computeSystem.Particles;
@@ -62,7 +60,7 @@ namespace SolidSpace.Entities.ParticleEmitters
             SpaceDebug.LogState("EmittedCount", entityCount);
         }
 
-        public void FinalizeController()
+        public void Finalize()
         {
             
         }

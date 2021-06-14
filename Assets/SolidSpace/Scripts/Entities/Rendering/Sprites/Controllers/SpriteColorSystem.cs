@@ -9,9 +9,8 @@ using Object = UnityEngine.Object;
 
 namespace SolidSpace.Entities.Rendering.Sprites
 {
-    internal class SpriteColorSystem : ISpriteColorSystem, IController
+    internal class SpriteColorSystem : ISpriteColorSystem, IInitializable
     {
-        public EControllerType ControllerType => EControllerType.EntityCommand;
         public Texture2D Texture { get; private set; }
         public NativeSlice<AtlasChunk2D> Chunks => _indexManager.Chunks;
         
@@ -24,7 +23,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             _config = config;
         }
         
-        public void InitializeController()
+        public void Initialize()
         {
             Texture = new Texture2D(_config.AtlasSize, _config.AtlasSize, _config.AtlasFormat, false, true);
             Texture.name = nameof(SpriteColorSystem);
@@ -32,12 +31,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             
             _indexManager = new AtlasIndexManager2D(_config.AtlasSize, _config.Chunks);
         }
-        
-        public void UpdateController()
-        {
-            
-        }
-        
+
         public AtlasIndex Allocate(int width, int height)
         {
             return _indexManager.Allocate(width, height);
@@ -72,7 +66,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
                 Texture, 0, 0, offset.x, offset.y);
         }
 
-        public void FinalizeController()
+        public void Finalize()
         {
             _indexManager.Dispose();
             Object.Destroy(Texture);

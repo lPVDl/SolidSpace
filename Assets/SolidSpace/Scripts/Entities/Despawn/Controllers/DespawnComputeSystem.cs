@@ -10,12 +10,9 @@ using UnityEngine;
 
 namespace SolidSpace.Entities.Despawn
 {
-    public class DespawnComputeSystem : IController, IDespawnComputeSystem
+    public class DespawnComputeSystem : IInitializable, IUpdatable, IDespawnComputeSystem
     {
         private const int IterationCycle = 8;
-
-        public EControllerType ControllerType => EControllerType.EntityCompute;
-
         public NativeArray<Entity> ResultBuffer => _entities;
         public int ResultCount => _entityCount.Value;
         
@@ -36,7 +33,7 @@ namespace SolidSpace.Entities.Despawn
             _profilingManager = profilingManager;
         }
         
-        public void InitializeController()
+        public void Initialize()
         {
             _profiler = _profilingManager.GetHandle(this);
             _query = _entityManager.CreateEntityQuery(typeof(DespawnComponent));
@@ -45,7 +42,7 @@ namespace SolidSpace.Entities.Despawn
             _entityCount = NativeMemory.CreatePersistentReference(0);
         }
 
-        public void UpdateController()
+        public void Update()
         {
             _profiler.BeginSample("Compute Chunk Count");
             var chunkCount = _query.CalculateChunkCount();
@@ -109,7 +106,7 @@ namespace SolidSpace.Entities.Despawn
             computeOffsets.Dispose();
         }
 
-        public void FinalizeController()
+        public void Finalize()
         {
             _entities.Dispose();
             _entityCount.Dispose();

@@ -5,11 +5,11 @@ namespace SolidSpace.GameCycle
 {
     internal class GameCycleInstaller : ScriptableObjectInstaller
     {
-        [SerializeField] private Config _config;
+        [SerializeField] private GameCycleConfig _gameCycleConfig;
 
         public override void InstallBindings(IDependencyContainer container)
         {
-            container.Bind<GameCycleController>(_config);
+            container.Bind<GameCycleController>(_gameCycleConfig);
         }
     }
 }

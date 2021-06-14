@@ -6,11 +6,9 @@ using UnityEngine.UIElements;
 
 namespace SolidSpace.Playground.Core
 {
-    internal class PlaygroundCoreController : IController
+    internal class PlaygroundCoreController : IInitializable, IUpdatable
     {
         private const string NoToolTitle = "Tools";
-        
-        public EControllerType ControllerType => EControllerType.Playground;
         
         private readonly IUIManager _uiManager;
         private readonly List<IPlaygroundTool> _tools;
@@ -28,7 +26,7 @@ namespace SolidSpace.Playground.Core
             _uiFactory = uiFactory;
         }
         
-        public void InitializeController()
+        public void Initialize()
         {
             _window = _uiFactory.CreateToolWindow();
             _uiManager.AddToRoot(_window, "ContainerA");
@@ -60,7 +58,7 @@ namespace SolidSpace.Playground.Core
             }
         }
         
-        public void UpdateController()
+        public void Update()
         {
             if (_toolIndex != -1)
             {
@@ -91,7 +89,7 @@ namespace SolidSpace.Playground.Core
             _window.SetTitle(_configs[_toolIndex].Name);
         }
 
-        public void FinalizeController()
+        public void Finalize()
         {
             foreach (var tool in _tools)
             {

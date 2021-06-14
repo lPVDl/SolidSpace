@@ -11,11 +11,9 @@ using Unity.Jobs;
 
 namespace SolidSpace.Entities.Physics.Raycast
 {
-    internal class RaycastComputeSystem : IController, IRaycastSystem
+    internal class RaycastComputeSystem : IInitializable, IUpdatable, IRaycastSystem
     {
         private const int EntityPerAllocation = 4096;
-
-        public EControllerType ControllerType => EControllerType.EntityCompute;
         
         public RaycastWorld World { get; private set; }
 
@@ -43,7 +41,7 @@ namespace SolidSpace.Entities.Physics.Raycast
             _profilingManager = profilingManager;
         }
         
-        public void InitializeController()
+        public void Initialize()
         {
             _raycasterQuery = _entityManager.CreateEntityQuery(new ComponentType[]
             {
@@ -60,7 +58,7 @@ namespace SolidSpace.Entities.Physics.Raycast
             _profiler = _profilingManager.GetHandle(this);
         }
 
-        public void UpdateController()
+        public void Update()
         {
             _profiler.BeginSample("Query Chunks");
             var raycasterChunks = _raycasterQuery.CreateArchetypeChunkArray(Allocator.TempJob);
@@ -158,7 +156,7 @@ namespace SolidSpace.Entities.Physics.Raycast
             };
         }
 
-        public void FinalizeController()
+        public void Finalize()
         {
             _hitRayOrigins.Dispose();
             _hitEntityArchetypeIndices.Dispose();

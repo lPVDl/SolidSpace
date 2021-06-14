@@ -8,10 +8,8 @@ using Unity.Jobs;
 
 namespace SolidSpace.Entities.RepeatTimer
 {
-    public class RepeatTimerSystem : IController
+    public class RepeatTimerSystem : IInitializable, IUpdatable
     {
-        public EControllerType ControllerType => EControllerType.EntityCompute;
-
         private readonly IEntityWorldManager _entityManager;
         private readonly IEntityWorldTime _time;
 
@@ -23,12 +21,12 @@ namespace SolidSpace.Entities.RepeatTimer
             _time = time;
         }
         
-        public void InitializeController()
+        public void Initialize()
         {
             _query = _entityManager.CreateEntityQuery(typeof(RepeatTimerComponent));
         }
 
-        public void UpdateController()
+        public void Update()
         {
             var chunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
             var job = new RepeatTimerJob
@@ -46,7 +44,7 @@ namespace SolidSpace.Entities.RepeatTimer
             chunks.Dispose();
         }
 
-        public void FinalizeController()
+        public void Finalize()
         {
             
         }

@@ -9,9 +9,8 @@ using UnityEngine;
 
 namespace SolidSpace.Entities.Health
 {
-    internal class HealthAtlasSystem : IHealthAtlasSystem, IController
+    internal class HealthAtlasSystem : IHealthAtlasSystem, IInitializable
     {
-        public EControllerType ControllerType => EControllerType.EntityCommand;
         public NativeArray<byte> Data => _data;
         public NativeSlice<AtlasChunk1D> Chunks => _indexManager.Chunks;
         
@@ -25,17 +24,12 @@ namespace SolidSpace.Entities.Health
             _config = config;
         }
         
-        public void InitializeController()
+        public void Initialize()
         {
             _data = NativeMemory.CreatePersistentArray<byte>(_config.AtlasSize);
             _indexManager = new AtlasIndexManager1D(_config.AtlasSize, _config.Chunks);
         }
 
-        public void UpdateController()
-        {
-            
-        }
-        
         public void Copy(Texture2D source, AtlasIndex target)
         {
             if (source.format != TextureFormat.RGB24)
@@ -73,7 +67,7 @@ namespace SolidSpace.Entities.Health
             _indexManager.Release(index);
         }
 
-        public void FinalizeController()
+        public void Finalize()
         {
             _indexManager.Dispose();
             Data.Dispose();

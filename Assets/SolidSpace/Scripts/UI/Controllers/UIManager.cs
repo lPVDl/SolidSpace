@@ -6,10 +6,8 @@ using UnityEngine.UIElements;
 
 namespace SolidSpace.UI
 {
-    internal class UIManager : IUIManager, IController
+    internal class UIManager : IUIManager, IInitializable
     {
-        public EControllerType ControllerType => EControllerType.UI;
-
         public bool IsMouseOver => _hoveredElements > 0;
         
         private readonly UIConfig _config;
@@ -26,7 +24,7 @@ namespace SolidSpace.UI
             _factories = factories;
         }
         
-        public void InitializeController()
+        public void Initialize()
         {
             _factoryStorage = new Dictionary<Type, IUIFactory>();
             foreach (var factory in _factories)
@@ -57,11 +55,6 @@ namespace SolidSpace.UI
             }
         }
 
-        public void UpdateController()
-        {
-            
-        }
-        
         private void OnMouseEnter(MouseEnterEvent e)
         {
             _hoveredElements++;
@@ -117,9 +110,6 @@ namespace SolidSpace.UI
             return container;
         }
 
-        public void FinalizeController()
-        {
-            
-        }
+        public void Finalize() { }
     }
 }

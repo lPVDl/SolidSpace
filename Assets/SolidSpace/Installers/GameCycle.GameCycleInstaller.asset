@@ -12,5 +12,56 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 906ec737e14544a38ea4a507fa6a558b, type: 3}
   m_Name: GameCycle.GameCycleInstaller
   m_EditorClassIdentifier: 
-  _config:
-    _invocationOrder: 07000000030000000500000004000000010000000600000002000000
+  _gameCycleConfig:
+    _initializationOrder:
+      _groups:
+      - _name: Entities
+        _controllers:
+        - SolidSpace.Entities.Physics.Velocity.VelocitySystem
+        - SolidSpace.Entities.Physics.Colliders.ColliderBakeSystem
+        - SolidSpace.Entities.Physics.Colliders.ColliderGizmoSystem
+        - SolidSpace.Entities.Despawn.DespawnComputeSystem
+        - SolidSpace.Entities.ParticleEmitters.ParticleEmitterComputeSystem
+        - SolidSpace.Entities.ParticleEmitters.ParticleEmitterCommandSystem
+        - SolidSpace.Entities.Rendering.Pixels.PixelMeshSystem
+        - SolidSpace.Entities.Randomization.RandomValueSystem
+        - SolidSpace.Entities.Physics.Raycast.RaycastComputeSystem
+        - SolidSpace.Entities.RepeatTimer.RepeatTimerSystem
+        - SolidSpace.Entities.Rendering.Sprites.SpriteColorSystem
+        - SolidSpace.Entities.Rendering.Sprites.SpriteMeshSystem
+        - SolidSpace.Entities.Health.HealthAtlasSystem
+        - SolidSpace.Entities.Bullets.BulletsCommandSystem
+        - SolidSpace.Playground.Tools.Eraser.EntityByPositionSearchSystem
+      - _name: Managed
+        _controllers:
+        - SolidSpace.UI.UIManager
+        - SolidSpace.CameraMotion.CameraMotionController
+        - SolidSpace.Playground.Core.PlaygroundCoreController
+    _updateOrder:
+      _groups:
+      - _name: EntityCompute
+        _controllers:
+        - SolidSpace.Entities.World.EntityWorldTime
+        - SolidSpace.Entities.RepeatTimer.RepeatTimerSystem
+        - SolidSpace.Entities.Randomization.RandomValueSystem
+        - SolidSpace.Entities.Physics.Colliders.ColliderBakeSystem
+        - SolidSpace.Entities.Physics.Raycast.RaycastComputeSystem
+        - SolidSpace.Entities.Physics.Velocity.VelocitySystem
+        - SolidSpace.Entities.ParticleEmitters.ParticleEmitterComputeSystem
+        - SolidSpace.Entities.Despawn.DespawnComputeSystem
+        - SolidSpace.Playground.Tools.Eraser.EntityByPositionSearchSystem
+      - _name: EntityCommand
+        _controllers:
+        - SolidSpace.Entities.ParticleEmitters.ParticleEmitterCommandSystem
+        - SolidSpace.Entities.Bullets.BulletsCommandSystem
+        - SolidSpace.Entities.Despawn.DespawnCommandSystem
+      - _name: Managed
+        _controllers:
+        - SolidSpace.CameraMotion.CameraMotionController
+        - SolidSpace.Playground.Core.MouseTracker
+        - SolidSpace.Playground.Core.PlaygroundCoreController
+      - _name: EntityRender
+        _controllers:
+        - SolidSpace.Entities.Rendering.Pixels.PixelMeshSystem
+        - SolidSpace.Entities.Physics.Colliders.ColliderGizmoSystem
+        - SolidSpace.Entities.Rendering.Sprites.SpriteMeshSystem

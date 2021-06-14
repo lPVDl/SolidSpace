@@ -6,10 +6,8 @@ using Unity.Entities;
 
 namespace SolidSpace.Entities.Despawn
 {
-    internal class DespawnCommandSystem : IController
+    internal class DespawnCommandSystem : IUpdatable
     {
-        public EControllerType ControllerType => EControllerType.EntityCommand;
-        
         private readonly IDespawnComputeSystem _computeSystem;
         private readonly IEntityWorldManager _entityManager;
 
@@ -18,24 +16,14 @@ namespace SolidSpace.Entities.Despawn
             _computeSystem = computeSystem;
             _entityManager = entityManager;
         }
-        
-        public void InitializeController()
-        {
-            
-        }
 
-        public void UpdateController()
+        public void Update()
         {
             var slice = new NativeSlice<Entity>(_computeSystem.ResultBuffer, 0, _computeSystem.ResultCount);
             
             _entityManager.DestroyEntity(slice);
             
             SpaceDebug.LogState("DespawnCount", _computeSystem.ResultCount);
-        }
-
-        public void FinalizeController()
-        {
-            
         }
     }
 }

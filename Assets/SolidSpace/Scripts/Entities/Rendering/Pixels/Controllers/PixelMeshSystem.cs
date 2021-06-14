@@ -15,10 +15,8 @@ using UnityEngine.Rendering;
 
 namespace SolidSpace.Entities.Rendering.Pixels
 {
-    internal class PixelMeshSystem : IController
+    internal class PixelMeshSystem : IInitializable, IUpdatable
     {
-        public EControllerType ControllerType => EControllerType.EntityRender;
-
         private readonly IEntityWorldManager _entityManager;
         private readonly PixelMeshSystemConfig _config;
         private readonly IProfilingManager _profilingManager;
@@ -41,7 +39,7 @@ namespace SolidSpace.Entities.Rendering.Pixels
             _profilingManager = profilingManager;
         }
         
-        public void InitializeController()
+        public void Initialize()
         {
             _profiler = _profilingManager.GetHandle(this);
             _material = new Material(_config.Shader);
@@ -67,7 +65,7 @@ namespace SolidSpace.Entities.Rendering.Pixels
             };
         }
 
-        public void UpdateController()
+        public void Update()
         {
             _profiler.BeginSample("Query Chunks");
             var chunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
@@ -166,7 +164,7 @@ namespace SolidSpace.Entities.Rendering.Pixels
             SpaceDebug.LogState("ParticleMeshCount", meshCount);
         }
 
-        public void FinalizeController()
+        public void Finalize()
         {
             for (var i = 0; i < _meshes.Count; i++)
             {

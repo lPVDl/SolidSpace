@@ -15,10 +15,8 @@ using UnityEngine;
 
 namespace SolidSpace.Entities.Bullets
 {
-    internal class BulletsCommandSystem : IController
+    internal class BulletsCommandSystem : IInitializable, IUpdatable
     {
-        public EControllerType ControllerType => EControllerType.EntityCommand;
-        
         private readonly ISpriteColorSystem _colorSystem;
         private readonly IHealthAtlasSystem _healthSystem;
         private readonly IColliderSystem _colliderSystem;
@@ -42,7 +40,7 @@ namespace SolidSpace.Entities.Bullets
             _entityManager = entityManager;
         }
         
-        public void InitializeController()
+        public void Initialize()
         {
             _profiler = _profilingManager.GetHandle(this);
             _shipComponents = new NativeHashSet<ComponentType>(2, Allocator.Persistent)
@@ -58,7 +56,7 @@ namespace SolidSpace.Entities.Bullets
             };
         }
 
-        public void UpdateController()
+        public void Update()
         {
             var raycastWorld = _raycastSystem.World;
             var colliderWorld = _colliderSystem.World;
@@ -205,7 +203,7 @@ namespace SolidSpace.Entities.Bullets
             return outArchetypes;
         }
 
-        public void FinalizeController()
+        public void Finalize()
         {
             _shipComponents.Dispose();
             _bulletComponents.Dispose();

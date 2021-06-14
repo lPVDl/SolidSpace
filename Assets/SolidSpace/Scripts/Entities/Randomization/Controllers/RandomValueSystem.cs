@@ -9,11 +9,9 @@ using UnityEngine;
 
 namespace SolidSpace.Entities.Randomization
 {
-    internal class RandomValueSystem : IController
+    internal class RandomValueSystem : IInitializable, IUpdatable
     {
         private const int BufferChunkSize = 1024;
-
-        public EControllerType ControllerType => EControllerType.EntityCompute;
 
         private readonly IEntityWorldManager _entityManager;
         
@@ -26,7 +24,7 @@ namespace SolidSpace.Entities.Randomization
             _entityManager = entityManager;
         }
 
-        public void InitializeController()
+        public void Initialize()
         {
             _buffer = NativeMemory.CreatePersistentArray<float>(BufferChunkSize);
             for (var i = 0; i < BufferChunkSize; i++)
@@ -36,7 +34,7 @@ namespace SolidSpace.Entities.Randomization
             _query = _entityManager.CreateEntityQuery(typeof(RandomComponent));
         }
 
-        public void UpdateController()
+        public void Update()
         {
             var entityCount = _query.CalculateEntityCount();
             var requiredCapacity = Mathf.CeilToInt(entityCount / (float) BufferChunkSize) * BufferChunkSize;
@@ -73,7 +71,7 @@ namespace SolidSpace.Entities.Randomization
             chunks.Dispose();
         }
 
-        public void FinalizeController()
+        public void Finalize()
         {
             _buffer.Dispose();
         }

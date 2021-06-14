@@ -7,10 +7,8 @@ using Unity.Jobs;
 
 namespace SolidSpace.Entities.Physics.Velocity
 {
-    internal class VelocitySystem : IController
+    internal class VelocitySystem : IInitializable, IUpdatable
     {
-        public EControllerType ControllerType => EControllerType.EntityCompute;
-        
         private readonly IEntityWorldManager _entityManager;
         private readonly IEntityWorldTime _time;
 
@@ -22,7 +20,7 @@ namespace SolidSpace.Entities.Physics.Velocity
             _time = time;
         }
         
-        public void InitializeController()
+        public void Initialize()
         {
             _query = _entityManager.CreateEntityQuery(new ComponentType[]
             {
@@ -31,7 +29,7 @@ namespace SolidSpace.Entities.Physics.Velocity
             });
         }
 
-        public void UpdateController()
+        public void Update()
         {
             var chunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
             var job = new VelocityJob
@@ -45,7 +43,7 @@ namespace SolidSpace.Entities.Physics.Velocity
             job.Schedule(chunks.Length, 32).Complete();
         }
 
-        public void FinalizeController()
+        public void Finalize()
         {
             
         }

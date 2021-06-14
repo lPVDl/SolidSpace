@@ -2,29 +2,17 @@ using SolidSpace.GameCycle;
 
 namespace SolidSpace.Entities.World
 {
-    internal class EntityWorldTime : IEntityWorldTime, IController
+    internal class EntityWorldTime : IEntityWorldTime, IUpdatable
     {
-        public EControllerType ControllerType => EControllerType.EntityTime;
-        
         public double ElapsedTime { get; private set; }
         
         public float DeltaTime { get; private set; }
         
-        public void InitializeController()
-        {
-            
-        }
-
-        public void UpdateController()
+        public void Update()
         {
             var deltaTime = UnityEngine.Time.deltaTime;
             ElapsedTime += deltaTime;
             DeltaTime = deltaTime;
-        }
-
-        public void FinalizeController()
-        {
-            
         }
     }
 }
