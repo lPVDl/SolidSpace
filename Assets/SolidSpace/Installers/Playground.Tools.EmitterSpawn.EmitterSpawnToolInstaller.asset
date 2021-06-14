@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Playground.Tools.EmitterSpawn.EmitterSpawnToolInstaller
   m_EditorClassIdentifier: 
   _config:
-    _name: Emitter Spawner
-    _icon: {fileID: 21300000, guid: 2b5c95fd47560854399097f6cbbfcacd, type: 3}
+    _name: Emitter
+    _icon: {fileID: 21300000, guid: 8ffb8a0b94572ec4e88ba4566dd48859, type: 3}

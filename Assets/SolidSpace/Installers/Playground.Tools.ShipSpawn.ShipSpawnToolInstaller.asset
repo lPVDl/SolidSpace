@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _config:
     _toolConfig:
-      _name: Ship Spawner
-      _icon: {fileID: 21300000, guid: 99753ba94dba9144e819c7b6bfba62ce, type: 3}
+      _name: Ship
+      _icon: {fileID: 21300000, guid: ddf9e0dc988945f4f816f664a29833ce, type: 3}
     _shipTexture: {fileID: 2800000, guid: c7dc818a243fcca41b5ce4e55ce9e7ca, type: 3}

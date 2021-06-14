@@ -47,7 +47,7 @@ namespace SolidSpace.Playground.Tools.Eraser
             _gizmos = _gizmosManager.GetHandle(this);
 
             _window = _uiFactory.CreateToolWindow();
-            _window.SetTitle("Component Filter");
+            _window.SetTitle("Filter");
 
             _filter = _filterFactory.Create();
             _filter.SetState(typeof(PositionComponent), new FilterState

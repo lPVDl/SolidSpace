@@ -5,7 +5,7 @@
 }
 
 .window {
-    background-color: var(--header-color);
+    background-color: var(--neutral-color);
     border-radius: 2px;
     margin: 4px;
 }
@@ -16,14 +16,14 @@
 
 .window-header-text {
     font-size: 16px;
-    color: var(--body-color);
+    color: var(--background-color);
     -unity-text-align: middle-center;
     flex-grow: 1;
     padding: 4px;
 }
 
 .window-body {
-    background-color: var(--body-color);
+    background-color: var(--background-color);
     border-bottom-right-radius: 2px;
     border-bottom-left-radius: 2px;
     padding: 2px;

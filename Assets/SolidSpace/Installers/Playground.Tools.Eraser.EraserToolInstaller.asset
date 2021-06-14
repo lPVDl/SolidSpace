@@ -15,8 +15,5 @@ MonoBehaviour:
   _config:
     _toolConfig:
       _name: Eraser
-      _icon: {fileID: 21300000, guid: f91071efb15cf2f4da7a630279eb8527, type: 3}
+      _icon: {fileID: 21300000, guid: 244d9219630308e4e8678cd99ad1bbfe, type: 3}
     _gizmosColor: {r: 1, g: 0, b: 0, a: 1}
-    _componentFilterRegex: (?i)SolidSpace\..*Component
-    _componentNameRegex: (Component$)|([A-Z][a-z0-9]+)
-    _componentNameSubstitution: $2

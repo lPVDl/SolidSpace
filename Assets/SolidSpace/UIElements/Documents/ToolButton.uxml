@@ -8,8 +8,8 @@
     
     <Style src="ToolButton.uss" />
     
-    <VisualElement name="Button" class="window-body-tool">
-        <VisualElement name="Image" class="window-body-tool-icon" />
+    <VisualElement name="Button" class="tool-button">
+        <VisualElement name="Image" class="tool-button-icon" />
     </VisualElement>
     
 </UXML>

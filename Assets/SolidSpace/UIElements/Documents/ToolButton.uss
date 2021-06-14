@@ -4,48 +4,22 @@
     padding: 0;
 }
 
-.window {
-    background-color: var(--header-color);
-    border-radius: 2px;
-    margin: 4px;
+.tool-button {
+    width: 32px;
+    height: 32px;
+    border-bottom-width: 1px;
 }
 
-.window-header {
-    height: 30px;
+.tool-button.selected {
+    border-color: var(--neutral-color);
 }
 
-.window-header-text {
-    font-size: 16px;
-    color: var(--body-color);
-    -unity-text-align: middle-center;
-    flex-grow: 1;
-    padding: 4px;
-}
-
-.window-body {
-    background-color: var(--body-color);
-    border-bottom-right-radius: 2px;
-    border-bottom-left-radius: 2px;
-    padding: 2px;
-    margin: 1px;
-}
-
-.window-body-tool {
-    width: 48px;
-    height: 48px;
-    border-bottom-width: 2px;
-}
-
-.window-body-tool.selected {
-    border-color: var(--selection-color);
-}
-
-.window-body-tool-icon {
-    margin: 2px;
+.tool-button-icon {
     flex-grow: 1;
     opacity: 0.5;
+    -unity-background-image-tint-color: var(--neutral-color);
 }
 
-.window-body-tool-icon.selected {
+.tool-button-icon.selected {
     opacity: 1;
 }
