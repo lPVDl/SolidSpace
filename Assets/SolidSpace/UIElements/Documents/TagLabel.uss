@@ -28,7 +28,7 @@
 }
 
 .tag-label.neutral {
-    border-color: var(--neutral-color);
+    border-color: var(--disabled-color);
 }
 
 .tag-label-lock.positive {
@@ -36,7 +36,7 @@
 }
 
 .tag-label-lock.neutral {
-    -unity-background-image-tint-color: var(--neutral-color);
+    -unity-background-image-tint-color: var(--disabled-color);
 }
 
 .tag-label-lock.negative {
@@ -48,7 +48,7 @@
 }
 
 .tag-label-text.neutral {
-    color: var(--neutral-color);
+    color: var(--disabled-color);
 }
 
 .tag-label-text.negative {

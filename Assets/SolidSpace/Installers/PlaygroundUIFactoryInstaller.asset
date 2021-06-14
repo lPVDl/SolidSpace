@@ -21,3 +21,5 @@ MonoBehaviour:
       _asset: {fileID: 9197481963319205126, guid: 6b52f4f1a3c8460db59dcf13b7f9319d, type: 3}
     _layoutGrid:
       _asset: {fileID: 9197481963319205126, guid: e4c42ee18d1b1d84a88c5ae89190a056, type: 3}
+    _generalButton:
+      _asset: {fileID: 9197481963319205126, guid: 52a8ffb87f0a4e46beb97cd2de835baf, type: 3}

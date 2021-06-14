@@ -31,11 +31,13 @@ namespace SolidSpace.Playground.UI
             
             if (_isSelected)
             {
+                Root.AddToClassList("selected");
                 Button.AddToClassList("selected");
                 Image.AddToClassList("selected");
             }
             else
             {
+                Root.RemoveFromClassList("selected");
                 Button.RemoveFromClassList("selected");
                 Image.RemoveFromClassList("selected");
             }

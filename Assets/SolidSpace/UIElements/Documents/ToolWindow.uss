@@ -7,7 +7,7 @@
 }
 
 .window {
-    background-color: var(--neutral-color);
+    background-color: var(--enabled-color);
     border-radius: 2px;
     margin: 2px;
 }

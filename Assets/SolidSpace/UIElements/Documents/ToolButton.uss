@@ -7,16 +7,15 @@
 }
 
 .tool-button.selected {
-    border-color: var(--neutral-color);
+    border-color: var(--enabled-color);
 }
 
 .tool-button-icon {
     flex-grow: 1;
-    opacity: 0.5;
-    -unity-background-image-tint-color: var(--neutral-color);
+    -unity-background-image-tint-color: var(--disabled-color);
     margin-bottom: 2px;
 }
 
 .tool-button-icon.selected {
-    opacity: 1;
+    -unity-background-image-tint-color: var(--enabled-color);
 }

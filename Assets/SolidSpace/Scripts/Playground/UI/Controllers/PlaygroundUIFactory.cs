@@ -32,5 +32,10 @@ namespace SolidSpace.Playground.UI
         {
             return _uiManager.Instantiate(_prefabs.LayoutGrid);
         }
+
+        public IGeneralButton CreateGeneralButton()
+        {
+            return _uiManager.Instantiate(_prefabs.GeneralButton);
+        }
     }
 }

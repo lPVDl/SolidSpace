@@ -7,6 +7,7 @@ using SolidSpace.Playground.Tools.ComponentFilter;
 using SolidSpace.Playground.UI;
 using SolidSpace.UI;
 using Unity.Entities;
+using UnityEngine;
 
 namespace SolidSpace.Playground.Tools.Eraser
 {
@@ -57,6 +58,11 @@ namespace SolidSpace.Playground.Tools.Eraser
             });
             _filter.FilterModified += UpdateSearchSystemQuery;
             _window.AttachChild(_filter);
+
+            var button = _uiFactory.CreateGeneralButton();
+            button.SetLabel("Destroy all");
+            button.Clicked += OnDestroyAllClicked;
+            _window.AttachChild(button);
         }
         
         public void OnToolActivation()
@@ -102,6 +108,11 @@ namespace SolidSpace.Playground.Tools.Eraser
         {
             _searchSystem.SetEnabled(false);
             _uiManager.RemoveFromRoot(_window, "ContainerA");
+        }
+
+        private void OnDestroyAllClicked()
+        {
+            Debug.LogError("Not implemented");
         }
 
         public void FinalizeTool()

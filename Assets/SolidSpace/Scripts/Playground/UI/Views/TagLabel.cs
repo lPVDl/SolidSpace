@@ -42,6 +42,7 @@ namespace SolidSpace.Playground.UI
 
         public void RemoveFromClassList(string className)
         {
+            Root.RemoveFromClassList(className);
             Button.RemoveFromClassList(className);
             Label.RemoveFromClassList(className);
             Lock.RemoveFromClassList(className);
@@ -49,6 +50,7 @@ namespace SolidSpace.Playground.UI
 
         public void AddToClassList(string className)
         {
+            Root.AddToClassList(className);
             Button.AddToClassList(className);
             Label.AddToClassList(className);
             Lock.AddToClassList(className);
