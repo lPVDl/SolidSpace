@@ -12,12 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47361ffa42774a6a99e1aea3bda1afe6, type: 3}
   m_Name: ComponentFilterToolInstaller
   m_EditorClassIdentifier: 
-  _masterConfig:
-    _filterRegex: (?i)SolidSpace\..*Component
-  _windowConfig:
-    _componentNameRegex: (Component$)|([A-Z][a-z0-9]+)
-    _componentNameSubstitution: $2
   _factoryConfig:
     _filterRegex: (?i)SolidSpace\..*Component
     _nameRegex: (Component$)|([A-Z][a-z0-9]+)
-    _nameSubstitution: $2
+    _nameSubstitution: '$2 '

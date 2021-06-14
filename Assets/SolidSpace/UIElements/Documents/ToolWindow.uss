@@ -1,21 +1,23 @@
 @import "../SharedStyles/Colors.uss";
 
 .unity-label {
-    padding: 0;
+    -unity-font: url('../Resources/Fonts/LucidaSansRegular.ttf');
+    -unity-text-align: middle-center;
+    font-size: 10px;
 }
 
 .window {
     background-color: var(--neutral-color);
     border-radius: 2px;
-    margin: 4px;
+    margin: 2px;
 }
 
 .window-header {
-    height: 30px;
+    height: 24px;
 }
 
 .window-header-text {
-    font-size: 16px;
+    font-size: 12px;
     color: var(--background-color);
     -unity-text-align: middle-center;
     flex-grow: 1;

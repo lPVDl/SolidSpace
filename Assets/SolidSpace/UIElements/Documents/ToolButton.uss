@@ -1,9 +1,5 @@
 @import "../SharedStyles/Colors.uss";
 
-.unity-label {
-    padding: 0;
-}
-
 .tool-button {
     width: 32px;
     height: 32px;
@@ -18,6 +14,7 @@
     flex-grow: 1;
     opacity: 0.5;
     -unity-background-image-tint-color: var(--neutral-color);
+    margin-bottom: 2px;
 }
 
 .tool-button-icon.selected {
