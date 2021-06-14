@@ -2,7 +2,7 @@ using SolidSpace.Entities.Atlases;
 using SolidSpace.Mathematics;
 using Unity.Collections;
 
-namespace SolidSpace.Entities.Health.Atlases.Interfaces
+namespace SolidSpace.Entities.Health.Atlases
 {
     public interface ILinearAtlas<T> where T : struct
     {

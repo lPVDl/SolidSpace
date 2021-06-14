@@ -6,6 +6,7 @@ using SolidSpace.Mathematics;
 
 namespace SolidSpace.Entities.Health.Atlases
 {
+    [InspectorDataValidator]
     public class LinearAtlasConfigValidator : IDataValidator<LinearAtlasConfig>
     {
         private readonly HashSet<int> _itemSizeCash;

@@ -1,3 +1,4 @@
+using System.Threading;
 using Unity.Collections;
 using Unity.Entities;
 
@@ -27,9 +28,19 @@ namespace SolidSpace.Entities.World
             _world.EntityManager.DestroyEntity(entity);
         }
 
+        public NativeArray<Entity> GetAllEntities(Allocator allocator)
+        {
+            return _world.EntityManager.GetAllEntities(allocator);
+        }
+
         public EntityQuery CreateEntityQuery(params ComponentType[] requiredComponents)
         {
             return _world.EntityManager.CreateEntityQuery(requiredComponents);
+        }
+
+        public EntityQuery CreateEntityQuery(params EntityQueryDesc[] queryDesc)
+        {
+            return _world.EntityManager.CreateEntityQuery(queryDesc);
         }
 
         public ComponentTypeHandle<T> GetComponentTypeHandle<T>(bool isReadOnly)
@@ -55,6 +66,11 @@ namespace SolidSpace.Entities.World
         public Entity CreateEntity(params ComponentType[] types)
         {
             return _world.EntityManager.CreateEntity(types);
+        }
+
+        public Entity CreateEntity(EntityArchetype archetype)
+        {
+            return _world.EntityManager.CreateEntity(archetype);
         }
 
         public void SetComponentData<T>(Entity entity, T componentData) where T : struct, IComponentData

@@ -33,23 +33,26 @@ namespace SolidSpace.DataValidation.Editor
 
             foreach (var type in allTypes)
             {
-                foreach (var inter in type.GetInterfaces())
+                var attribute = type.GetCustomAttribute<InspectorDataValidatorAttribute>();
+                if (attribute is null)
                 {
-                    if (!inter.IsGenericType)
-                    {
-                        continue;
-                    }
+                    continue;
+                }
 
+                if (type.IsAbstract)
+                {
+                    var message = $"'{type.FullName}' can not be used for validation. Validator can not be abstract";
+                    Debug.LogError(message);
+                        
+                    continue;
+                }
+
+                var methodFound = false;
+                foreach (var inter in type.GetInterfaces().Where(i => i.IsGenericType))
+                {
                     var genericDefinition = inter.GetGenericTypeDefinition();
                     if (genericDefinition != typeof(IDataValidator<>))
                     {
-                        continue;
-                    }
-
-                    if (!type.IsClass || type.IsAbstract)
-                    {
-                        var message = $"'{type.FullName}' can not be used for validation. Validator must be non-abstract class.";
-                        Debug.LogError(message);
                         continue;
                     }
 
@@ -60,7 +63,8 @@ namespace SolidSpace.DataValidation.Editor
                                       $"'{validationMethod.validator.GetType().FullName}' will be used. " +
                                       $"'{type.FullName}' will be ignored.";
                         Debug.LogError(message);
-                        continue;
+                        
+                        break;
                     }
                     
                     try
@@ -74,7 +78,8 @@ namespace SolidSpace.DataValidation.Editor
                         if (method.method == null)
                         {
                             Debug.LogError($"Failed to find validation method in '{type.FullName}'");
-                            continue;
+                            
+                            break;
                         }
 
                         Validators[genericArgument0] = method;
@@ -83,6 +88,13 @@ namespace SolidSpace.DataValidation.Editor
                     {
                         Debug.LogException(e);
                     }
+
+                    methodFound = true;
+                }
+
+                if (!methodFound)
+                {
+                    Debug.LogError($"Failed to find any validation method in '{type.FullName}'");
                 }
             }
         }

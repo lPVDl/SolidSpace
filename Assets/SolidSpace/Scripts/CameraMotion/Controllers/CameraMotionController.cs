@@ -1,4 +1,5 @@
 using SolidSpace.GameCycle;
+using SolidSpace.UI;
 using UnityEngine;
 
 namespace SolidSpace.CameraMotion
@@ -8,6 +9,7 @@ namespace SolidSpace.CameraMotion
         public EControllerType ControllerType => EControllerType.Common;
         
         private readonly Camera _camera;
+        private readonly IUIManager _uiManager;
         private readonly Transform _cameraTransform;
 
         private int _zoom;
@@ -15,9 +17,10 @@ namespace SolidSpace.CameraMotion
         private Vector2 _startMousePosition;
         private Vector2 _startCameraPosition;
 
-        public CameraMotionController(Camera camera)
+        public CameraMotionController(Camera camera, IUIManager uiManager)
         {
             _camera = camera;
+            _uiManager = uiManager;
             _cameraTransform = camera.transform;
         }
         
@@ -36,7 +39,7 @@ namespace SolidSpace.CameraMotion
                                        (mousePosition.y > 0) && (mousePosition.y < screenSize.y);
             var newZoom = Mathf.Clamp(_zoom + scrollDelta, 0, 3);
             
-            if (isCursorInsideScreen && newZoom != _zoom)
+            if (isCursorInsideScreen && newZoom != _zoom && !_uiManager.IsMouseOver)
             {
                 var cursor = mousePosition / screenSize - new Vector2(0.5f, 0.5f);
                 var offset = cursor * screenSize * (1f / (1 << _zoom) - 1f / (1 << newZoom));
@@ -60,7 +63,7 @@ namespace SolidSpace.CameraMotion
                 _isMoving = false;
             }
 
-            if (Input.GetMouseButtonDown(1))
+            if (Input.GetMouseButtonDown(1) && !_uiManager.IsMouseOver)
             {
                 _isMoving = true;
                 _startMousePosition = mousePosition / screenSize;

@@ -1,4 +1,4 @@
-using SolidSpace.Entities.Health.Atlases.Interfaces;
+using SolidSpace.Entities.Health.Atlases;
 using SolidSpace.Mathematics;
 using UnityEngine;
 

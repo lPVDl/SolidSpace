@@ -8,5 +8,6 @@ namespace SolidSpace.GameCycle
         EntityCommand = 4,
         EntityCompute = 5,
         EntityRender = 6,
+        UI = 7,
     }
 }

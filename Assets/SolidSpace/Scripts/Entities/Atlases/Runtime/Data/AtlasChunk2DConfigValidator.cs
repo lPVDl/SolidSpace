@@ -3,6 +3,7 @@ using SolidSpace.Mathematics;
 
 namespace SolidSpace.Entities.Atlases
 {
+    [InspectorDataValidator]
     internal class AtlasChunk2DConfigValidator : IDataValidator<AtlasChunk2DConfig>
     {
         public string Validate(AtlasChunk2DConfig data)
