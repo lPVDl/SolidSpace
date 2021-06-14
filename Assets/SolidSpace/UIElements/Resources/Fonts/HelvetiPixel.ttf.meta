@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: cc0df3dda208666488cfd416f44bd47b
+guid: ca6848949fbc9ef40a21543d9c930688
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - Lucida Sans
+  - HelvetiPixel
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

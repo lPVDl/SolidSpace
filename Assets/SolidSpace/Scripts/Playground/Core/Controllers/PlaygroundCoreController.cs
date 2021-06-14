@@ -35,7 +35,6 @@ namespace SolidSpace.Playground.Core
             _window.SetTitle(NoToolTitle);
 
             var grid = _uiFactory.CreateLayoutGrid();
-            grid.SetJustifyContent(Justify.Center);
             grid.SetFlexDirection(FlexDirection.Row);
             _window.AttachChild(grid);
 

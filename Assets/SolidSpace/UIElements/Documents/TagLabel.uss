@@ -2,15 +2,14 @@
 
 .tag-label {
     border-width: 1px;
-    padding: 2px;
     margin: 2px;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    padding-left: 2px;
 }
 
 .tag-label-lock.locked {
-    margin-bottom: 1px;
     background-image: url('../Icons/Lock.png');
     width: 10px;
     height: 10px;
