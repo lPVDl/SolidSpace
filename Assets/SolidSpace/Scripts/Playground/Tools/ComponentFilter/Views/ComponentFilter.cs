@@ -4,7 +4,7 @@ using SolidSpace.Playground.UI;
 using Unity.Entities;
 using UnityEngine.UIElements;
 
-namespace SolidSpace.Playground.Tools.ComponentFilter.Views
+namespace SolidSpace.Playground.Tools.ComponentFilter
 {
     internal class ComponentFilter : IComponentFilter
     {
