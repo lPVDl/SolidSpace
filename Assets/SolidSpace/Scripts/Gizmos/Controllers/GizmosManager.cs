@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using SolidSpace.GameCycle;
 using SolidSpace.JobUtilities;
@@ -7,7 +5,6 @@ using SolidSpace.Mathematics;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace SolidSpace.Gizmos
 {
@@ -81,9 +78,6 @@ namespace SolidSpace.Gizmos
         {
             GL.Vertex3(start.x, start.y, 0);
             GL.Vertex3(end.x, end.y, 0);
-            
-            var p0 = new Vector3(start.x, start.y, 0);
-            var p1 = new Vector3(end.x, end.y, 0);
         }
 
         internal void ScheduleLineDraw(GizmosLine line)
