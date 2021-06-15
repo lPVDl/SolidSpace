@@ -50,11 +50,10 @@ namespace SolidSpace.Playground.Tools.ComponentFilter
             var tags = new ITagLabel[allComponents.Length];
             for (var i = 0; i < allComponents.Length; i++)
             {
-                var type = allComponents[i];
                 var state = filter[i];
                 var tag = _uiFactory.CreateTagLabel();
                 var labelIndex = i;
-                var name = Regex.Replace(type.ToString(), _config.NameRegex, _config.NameSubstitution);
+                var name = Regex.Replace(rawTypes[i].Name, _config.NameRegex, _config.NameSubstitution);
                 tag.SetLabel(name);
                 tag.SetState(state.state);
                 tag.SetLocked(state.isLocked);
