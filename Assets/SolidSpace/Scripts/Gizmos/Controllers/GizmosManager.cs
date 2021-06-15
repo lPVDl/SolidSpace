@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using SolidSpace.GameCycle;
 using SolidSpace.Mathematics;
 using Unity.Mathematics;
 using UnityEngine;
@@ -7,27 +8,22 @@ using UnityEngine;
 namespace SolidSpace.Gizmos
 {
     // TODO [T-27]: Move debug related classes to one folder, create facade.
-    internal class GizmosManager : IGizmosManager, IDisposable
+    internal class GizmosManager : IInitializable, IUpdatable, IGizmosManager
     {
-        private readonly GizmosBehaviour _behaviour;
-        private readonly List<GizmosShape>[] _records;
-        private readonly EGizmosShapeType[] _shapeTypes;
+        private List<GizmosShape>[] _records;
+        private EGizmosShapeType[] _shapeTypes;
         
-        public GizmosManager()
+        public void Initialize()
         {
-            _shapeTypes = Enum.GetValues(typeof(EGizmosShapeType)) as EGizmosShapeType[];
+            _shapeTypes = (EGizmosShapeType[]) Enum.GetValues(typeof(EGizmosShapeType));
             _records = new List<GizmosShape>[_shapeTypes.Length + 1];
             for (var i = 1; i < _records.Length; i++)
             {
                 _records[i] = new List<GizmosShape>();
             }
-
-            var gameObject = new GameObject(nameof(GizmosManager));
-            _behaviour = gameObject.AddComponent<GizmosBehaviour>();
-            _behaviour.DrawGizmos += OnDrawGizmos;
         }
 
-        private void OnDrawGizmos()
+        public void Update()
         {
             var lines = _records[(int) EGizmosShapeType.Line];
             foreach (var line in lines)
@@ -73,9 +69,6 @@ namespace SolidSpace.Gizmos
             return new GizmosHandle(this);
         }
 
-        public void Dispose()
-        {
-            _behaviour.DrawGizmos -= OnDrawGizmos;
-        }
+        public void Finalize() { }
     }
 }
