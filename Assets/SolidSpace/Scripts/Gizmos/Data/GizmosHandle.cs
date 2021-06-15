@@ -12,45 +12,34 @@ namespace SolidSpace.Gizmos
             _manager = manager;
         }
 
-        public void DrawLine(float2 start, float2 end, Color32 color)
+        public void DrawLine(float2 start, float2 end, Color color)
         {
-            _manager.ScheduleDraw(new GizmosShape
+            _manager.ScheduleLineDraw(new GizmosLine
             {
-                type = EGizmosShapeType.Line,
-                float0 = start.x,
-                float1 = start.y,
-                float2 = end.x,
-                float3 = end.y,
-                float4 = 0,
+                start = start,
+                end = end,
                 color = color
             });
         }
 
-        public void DrawLine(float x0, float y0, float x1, float y1, Color32 color)
+        public void DrawLine(float x0, float y0, float x1, float y1, Color color)
         {
-            _manager.ScheduleDraw(new GizmosShape
+            _manager.ScheduleLineDraw(new GizmosLine
             {
-                type = EGizmosShapeType.Line,
-                float0 = x0,
-                float1 = y0,
-                float2 = x1,
-                float3 = y1,
-                float4 = 0,
+                start = new float2(x0, y0),
+                end = new float2(x1, y1),
                 color = color
             });
         }
 
-        public void DrawWireRect(float2 center, float2 size, float angleRad, Color32 color)
+        public void DrawWireRect(float2 center, float2 size, float angleRad, Color color)
         {
-            _manager.ScheduleDraw(new GizmosShape
+            _manager.ScheduleRectDraw(new GizmosRect
             {
-                type = EGizmosShapeType.Rect,
-                float0 = center.x,
-                float1 = center.y,
-                float2 = size.x,
-                float3 = size.y,
-                float4 = angleRad,
-                color = color
+                center = center,
+                size = new half2((half) size.x, (half) size.y),
+                color = color,
+                rotationRad = (half) angleRad
             });
         }
     }

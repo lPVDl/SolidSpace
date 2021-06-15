@@ -12,3 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2a281e1a51e4f93bac7e9a58378e76d, type: 3}
   m_Name: Gizmos.GizmosInstaller
   m_EditorClassIdentifier: 
+  _config:
+    _shader: {fileID: 4800000, guid: 915ba2d50572446cbe22f892c9652771, type: 3}

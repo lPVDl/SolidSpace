@@ -1,67 +1,113 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using SolidSpace.GameCycle;
+using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
+using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace SolidSpace.Gizmos
 {
     // TODO [T-27]: Move debug related classes to one folder, create facade.
-    internal class GizmosManager : IInitializable, IUpdatable, IGizmosManager
+    internal class GizmosManager : IInitializable, IGizmosManager
     {
-        private List<GizmosShape>[] _records;
-        private EGizmosShapeType[] _shapeTypes;
+        private const int BufferSize = 256;
+        
+        private readonly GizmosConfig _config;
+        
+        private Material _material;
+        private NativeArray<GizmosLine> _lines;
+        private NativeArray<GizmosRect> _rects;
+        private int _lineCount;
+        private int _rectCount;
+        
+        public GizmosManager(GizmosConfig config)
+        {
+            _config = config;
+        }
         
         public void Initialize()
         {
-            _shapeTypes = (EGizmosShapeType[]) Enum.GetValues(typeof(EGizmosShapeType));
-            _records = new List<GizmosShape>[_shapeTypes.Length + 1];
-            for (var i = 1; i < _records.Length; i++)
-            {
-                _records[i] = new List<GizmosShape>();
-            }
-        }
+            _lines = NativeMemory.CreatePersistentArray<GizmosLine>(BufferSize);
+            _rects = NativeMemory.CreatePersistentArray<GizmosRect>(BufferSize);
+            _material = new Material(_config.Shader);
 
-        public void Update()
+            Camera.onPostRender += OnRender;
+        }
+        
+        private void OnRender(Camera camera)
         {
-            var lines = _records[(int) EGizmosShapeType.Line];
-            foreach (var line in lines)
-            {
-                var start = new Vector3(line.float0, line.float1, 0);
-                var end = new Vector3(line.float2, line.float3, 0);
-                Debug.DrawLine(start, end, line.color, 0);
-            }
-            lines.Clear();
+            _material.SetPass(0);
             
-            var squares = _records[(int) EGizmosShapeType.Rect];
-            foreach (var square in squares)
+            GL.PushMatrix();
+            GL.MultMatrix(Matrix4x4.identity);
+            GL.Begin(GL.LINES);
+
+            for (var i = 0; i < _lineCount; i++)
             {
-                var center = new float2(square.float0, square.float1);
-                var halfSize = new float2(square.float2 / 2f, square.float3 / 2f);
-                FloatMath.SinCos(square.float4, out var sin, out var cos);
+                var line = _lines[i];
+                GL.Color(line.color);
+                GL_Line(line.start, line.end);
+            }
+            _lineCount = 0;
+
+            for (var i = 0; i < _rectCount; i++)
+            {
+                var rect = _rects[i];
+                GL.Color(rect.color);
+                var center = new float2(rect.center.x, rect.center.y);
+                var halfSize = new float2(rect.size.x / 2f, rect.size.y / 2f);
+                FloatMath.SinCos(rect.rotationRad, out var sin, out var cos);
                 var p0 = center + FloatMath.Rotate(-halfSize.x, -halfSize.y, sin, cos);
                 var p1 = center + FloatMath.Rotate(-halfSize.x, +halfSize.y, sin, cos);
                 var p2 = center + FloatMath.Rotate(+halfSize.x, +halfSize.y, sin, cos);
                 var p3 = center + FloatMath.Rotate(+halfSize.x, -halfSize.y, sin, cos);
-                DrawLine(p0, p1, square.color);
-                DrawLine(p1, p2, square.color);
-                DrawLine(p2, p3, square.color);
-                DrawLine(p3, p0, square.color);
+                GL_Line(p0, p1);
+                GL_Line(p1, p2);
+                GL_Line(p2, p3);
+                GL_Line(p3, p0);
             }
-            squares.Clear();
+            _rectCount = 0;
+            
+            GL.End();
+            GL.PopMatrix();
         }
-
-        private void DrawLine(float2 start, float2 end, Color color)
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void GL_Line(float2 start, float2 end)
         {
+            GL.Vertex3(start.x, start.y, 0);
+            GL.Vertex3(end.x, end.y, 0);
+            
             var p0 = new Vector3(start.x, start.y, 0);
             var p1 = new Vector3(end.x, end.y, 0);
-            Debug.DrawLine(p0, p1, color);
         }
 
-        internal void ScheduleDraw(GizmosShape shape)
+        internal void ScheduleLineDraw(GizmosLine line)
         {
-            _records[(int)shape.type].Add(shape);
+            NativeMemory.MaintainPersistentArrayLength(ref _lines, new ArrayMaintenanceData
+            {
+                itemPerAllocation = BufferSize,
+                copyOnResize = true,
+                requiredCapacity = _lineCount + 1
+            });
+
+            _lines[_lineCount++] = line;
+        }
+
+        internal void ScheduleRectDraw(GizmosRect gizmosRect)
+        {
+            NativeMemory.MaintainPersistentArrayLength(ref _rects, new ArrayMaintenanceData
+            {
+                itemPerAllocation = BufferSize,
+                copyOnResize = true,
+                requiredCapacity = _rectCount + 1
+            });
+
+            _rects[_rectCount++] = gizmosRect;
         }
 
         public GizmosHandle GetHandle(object owner)
@@ -69,6 +115,13 @@ namespace SolidSpace.Gizmos
             return new GizmosHandle(this);
         }
 
-        public void Finalize() { }
+        public void Finalize()
+        {
+            _lines.Dispose();
+            _rects.Dispose();
+            Object.Destroy(_material);
+            
+            Camera.onPostRender -= OnRender;
+        }
     }
 }
