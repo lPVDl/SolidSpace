@@ -60,8 +60,8 @@ namespace SolidSpace.Playground.Tools.Eraser
             _window.AttachChild(_filter);
 
             var button = _uiFactory.CreateGeneralButton();
-            button.SetLabel("Destroy all");
-            button.Clicked += OnDestroyAllClicked;
+            button.SetLabel("Destroy matching");
+            button.Clicked += OnDestroyClicked;
             _window.AttachChild(button);
         }
         
@@ -110,9 +110,15 @@ namespace SolidSpace.Playground.Tools.Eraser
             _uiManager.RemoveFromRoot(_window, "ContainerA");
         }
 
-        private void OnDestroyAllClicked()
+        private void OnDestroyClicked()
         {
-            Debug.LogError("Not implemented");
+            var query = _entityManager.CreateEntityQuery(new EntityQueryDesc
+            {
+                All = _filter.GetTagsWithState(ETagLabelState.Positive).ToArray(),
+                None = _filter.GetTagsWithState(ETagLabelState.Negative).ToArray()
+            });
+            
+            _entityManager.DestroyEntity(query);
         }
 
         public void FinalizeTool()

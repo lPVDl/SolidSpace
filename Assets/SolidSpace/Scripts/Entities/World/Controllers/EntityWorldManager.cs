@@ -23,6 +23,11 @@ namespace SolidSpace.Entities.World
             _world.EntityManager.DestroyEntity(entities);
         }
 
+        public void DestroyEntity(EntityQuery query)
+        {
+            _world.EntityManager.DestroyEntity(query);
+        }
+
         public void DestroyEntity(Entity entity)
         {
             _world.EntityManager.DestroyEntity(entity);

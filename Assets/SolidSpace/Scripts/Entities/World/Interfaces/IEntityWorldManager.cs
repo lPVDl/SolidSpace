@@ -19,5 +19,6 @@ namespace SolidSpace.Entities.World
         NativeArray<Entity> GetAllEntities(Allocator allocator);
         Entity CreateEntity(EntityArchetype archetype);
         EntityQuery CreateEntityQuery(params EntityQueryDesc[] queryDesc);
+        void DestroyEntity(EntityQuery query);
     }
 }
