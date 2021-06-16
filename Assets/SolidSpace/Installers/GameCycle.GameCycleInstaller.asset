@@ -34,6 +34,7 @@ MonoBehaviour:
         - SolidSpace.Playground.Tools.Eraser.EntityByPositionSearchSystem
       - _name: Managed
         _controllers:
+        - SolidSpace.UI.UIEventManager
         - SolidSpace.Gizmos.GizmosManager
         - SolidSpace.UI.UIManager
         - SolidSpace.CameraMotion.CameraMotionController
@@ -61,9 +62,9 @@ MonoBehaviour:
         - SolidSpace.CameraMotion.CameraMotionController
         - SolidSpace.Playground.Core.MouseTracker
         - SolidSpace.Playground.Core.PlaygroundCoreController
+        - SolidSpace.UI.UIEventManager
       - _name: Render
         _controllers:
         - SolidSpace.Entities.Rendering.Pixels.PixelMeshSystem
         - SolidSpace.Entities.Rendering.Sprites.SpriteMeshSystem
         - SolidSpace.Entities.Physics.Colliders.ColliderGizmoSystem
-        - SolidSpace.Gizmos.GizmosManager

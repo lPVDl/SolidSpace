@@ -7,13 +7,19 @@ namespace SolidSpace.Playground.UI
     [InspectorDataValidator]
     internal class ToolButtonFactory : AUIFactory<ToolButton>, IDataValidator<UIPrefab<ToolButton>>
     {
+        private readonly IUIEventManager _events;
         private readonly UITreeAssetValidator _treeValidator;
         
-        public ToolButtonFactory()
+        private ToolButtonFactory()
         {
             _treeValidator = new UITreeAssetValidator();
         }
         
+        public ToolButtonFactory(IUIEventManager events)
+        {
+            _events = events;
+        }
+
         protected override ToolButton Create(VisualElement root)
         {
             var view = new ToolButton
@@ -22,8 +28,8 @@ namespace SolidSpace.Playground.UI
                 Button = UIQuery.Child<VisualElement>(root, "Button"),
                 Image = UIQuery.Child<VisualElement>(root, "Image"),
             };
-            
-            root.RegisterCallback<MouseDownEvent>(view.OnMouseDownEvent);
+
+            _events.Register<MouseDownEvent>(view.Button, view.OnMouseDownEvent);
 
             return view;
         }

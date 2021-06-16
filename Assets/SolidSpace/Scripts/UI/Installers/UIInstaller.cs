@@ -10,6 +10,7 @@ namespace SolidSpace.UI
         public override void InstallBindings(IDependencyContainer container)
         {
             container.Bind<UIManager>(_config);
+            container.Bind<UIEventManager>();
         }
     }
 }

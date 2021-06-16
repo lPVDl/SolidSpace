@@ -12,16 +12,18 @@ namespace SolidSpace.UI
         
         private readonly UIConfig _config;
         private readonly List<IUIFactory> _factories;
+        private readonly IUIEventManager _events;
 
         private Dictionary<Type, IUIFactory> _factoryStorage;
         private Dictionary<string, VisualElement> _rootContainers;
         private VisualElement _rootElement;
         private int _hoveredElements;
 
-        public UIManager(UIConfig config, List<IUIFactory> factories)
+        public UIManager(UIConfig config, List<IUIFactory> factories, IUIEventManager events)
         {
             _config = config;
             _factories = factories;
+            _events = events;
         }
         
         public void Initialize()
@@ -43,7 +45,7 @@ namespace SolidSpace.UI
             var rootObject = new GameObject(nameof(UIManager));
             var document = rootObject.AddComponent<UIDocument>();
             document.panelSettings = _config.PanelSettings;
-            
+
             _rootElement = _config.RootAsset.CloneTree();
             document.rootVisualElement.Add(_rootElement);
 
@@ -82,9 +84,9 @@ namespace SolidSpace.UI
         {
             if (view is null) throw new ArgumentNullException(nameof(view));
 
-            view.Root.RegisterCallback<MouseEnterEvent>(OnMouseEnter);
-            view.Root.RegisterCallback<MouseLeaveEvent>(OnMouseLeave);
-            
+            _events.Register<MouseEnterEvent>(view.Root, OnMouseEnter);
+            _events.Register<MouseLeaveEvent>(view.Root, OnMouseLeave);
+
             var container = GetRootContainer(rootContainerName);
             container.Add(view.Root);
         }
@@ -92,9 +94,9 @@ namespace SolidSpace.UI
         public void RemoveFromRoot(IUIElement view, string rootContainerName)
         {
             if (view is null) throw new ArgumentNullException(nameof(view));
-            
-            view.Root.UnregisterCallback<MouseEnterEvent>(OnMouseEnter);
-            view.Root.UnregisterCallback<MouseLeaveEvent>(OnMouseLeave);
+
+            _events.Unregister<MouseEnterEvent>(view.Root, OnMouseEnter);
+            _events.Unregister<MouseLeaveEvent>(view.Root, OnMouseLeave);
             
             var container = GetRootContainer(rootContainerName);
             container.Remove(view.Root);

@@ -7,13 +7,19 @@ namespace SolidSpace.Playground.UI
     [InspectorDataValidator]
     internal class TagLabelFactory : AUIFactory<TagLabel>, IDataValidator<UIPrefab<TagLabel>>
     {
+        private readonly IUIEventManager _events;
         private readonly UITreeAssetValidator _treeValidator;
 
-        public TagLabelFactory()
+        private TagLabelFactory()
         {
             _treeValidator = new UITreeAssetValidator();
         }
         
+        public TagLabelFactory(IUIEventManager events)
+        {
+            _events = events;
+        }
+
         protected override TagLabel Create(VisualElement root)
         {
             var view = new TagLabel
@@ -28,7 +34,8 @@ namespace SolidSpace.Playground.UI
             
             view.AddToClassList(TagLabel.StateToName(ETagLabelState.Neutral));
             view.AddToClassList("unlocked");
-            view.Button.RegisterCallback<MouseDownEvent>(view.OnMouseDownEvent);
+            
+            _events.Register<MouseDownEvent>(view.Button, view.OnMouseDownEvent);
 
             return view;
         }
