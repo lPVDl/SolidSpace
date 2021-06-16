@@ -3,9 +3,10 @@ using SolidSpace.Entities.Health;
 using SolidSpace.Entities.Rendering.Sprites;
 using SolidSpace.Entities.World;
 using SolidSpace.Playground.Core;
-using SolidSpace.UI;
+using SolidSpace.Playground.Tools.SpawnPoint;
 using Unity.Entities;
 using Unity.Mathematics;
+
 using Random = UnityEngine.Random;
 
 namespace SolidSpace.Playground.Tools.ShipSpawn
@@ -16,21 +17,21 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
         
         private readonly ShipSpawnToolConfig _config;
         private readonly IEntityWorldManager _entityManager;
-        private readonly IUIManager _uiManager;
         private readonly ISpriteColorSystem _spriteSystem;
+        private readonly ISpawnPointToolFactory _pointToolFactory;
         private readonly IHealthAtlasSystem _healthSystem;
-        private readonly IPointerTracker _pointer;
+
+        private ISpawnPointTool _spawnPointTool;
         private EntityArchetype _shipArchetype;
 
-        public ShipSpawnTool(ShipSpawnToolConfig config, IEntityWorldManager entityManager, IUIManager uiManager,
-            ISpriteColorSystem spriteSystem, IHealthAtlasSystem healthSystem, IPointerTracker pointer)
+        public ShipSpawnTool(ShipSpawnToolConfig config, IEntityWorldManager entityManager, IHealthAtlasSystem healthSystem,
+            ISpriteColorSystem spriteSystem, ISpawnPointToolFactory pointToolFactory)
         {
             _config = config;
             _entityManager = entityManager;
-            _uiManager = uiManager;
             _spriteSystem = spriteSystem;
+            _pointToolFactory = pointToolFactory;
             _healthSystem = healthSystem;
-            _pointer = pointer;
         }
 
         public void InitializeTool()
@@ -46,20 +47,25 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
                 typeof(SpriteRenderComponent),
                 typeof(HealthComponent)
             });
+
+            _spawnPointTool = _pointToolFactory.Create();
         }
         
         public void OnToolActivation()
         {
-            
+            _spawnPointTool.SetEnabled(true);
         }
         
         public void Update()
         {
-            if (_uiManager.IsMouseOver || !_pointer.ClickedThisFrame)
+            foreach (var position in _spawnPointTool.Update())
             {
-                return;
+                SpawnShip(position);
             }
-            
+        }
+
+        private void SpawnShip(float2 position)
+        {
             var texture = _config.ShipTexture;
             var size = new int2(texture.width, texture.height);
             var colorIndex = _spriteSystem.Allocate(size.x, size.y);
@@ -68,7 +74,7 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
             var entity = _entityManager.CreateEntity(_shipArchetype);
             _entityManager.SetComponentData(entity, new PositionComponent
             {
-                value = _pointer.Position
+                value = position
             });
             _entityManager.SetComponentData(entity, new SizeComponent
             {
@@ -93,7 +99,7 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
 
         public void OnToolDeactivation()
         {
-            
+            _spawnPointTool.SetEnabled(false);   
         }
 
         public void FinalizeTool()

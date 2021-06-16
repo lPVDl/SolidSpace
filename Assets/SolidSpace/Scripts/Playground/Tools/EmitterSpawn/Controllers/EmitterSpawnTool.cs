@@ -1,8 +1,10 @@
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.World;
 using SolidSpace.Playground.Core;
+using SolidSpace.Playground.Tools.SpawnPoint;
 using SolidSpace.UI;
 using Unity.Entities;
+using Unity.Mathematics;
 
 namespace SolidSpace.Playground.Tools.EmitterSpawn
 {
@@ -11,22 +13,22 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
         public PlaygroundToolConfig Config { get; }
 
         private readonly IEntityWorldManager _entityManager;
-        private readonly IUIManager _uiManager;
-        private readonly IPointerTracker _pointer;
+        private readonly ISpawnPointToolFactory _spawnPointToolFactory;
 
         private EntityArchetype _emitterArchetype;
+        private ISpawnPointTool _spawnPointTool;
 
-        public EmitterSpawnTool(PlaygroundToolConfig config, IEntityWorldManager entityManager, IUIManager uiManager,
-            IPointerTracker pointer)
+        public EmitterSpawnTool(PlaygroundToolConfig config, IEntityWorldManager entityManager,
+            ISpawnPointToolFactory spawnPointToolFactory)
         {
             _entityManager = entityManager;
-            _uiManager = uiManager;
-            _pointer = pointer;
+            _spawnPointToolFactory = spawnPointToolFactory;
             Config = config;
         }
         
         public void InitializeTool()
         {
+            _spawnPointTool = _spawnPointToolFactory.Create();
             _emitterArchetype = _entityManager.CreateArchetype(new ComponentType[]
             {
                 typeof(PositionComponent),
@@ -38,15 +40,18 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
 
         public void Update()
         {
-            if (_uiManager.IsMouseOver || !_pointer.ClickedThisFrame)
+            foreach (var point in _spawnPointTool.Update())
             {
-                return;
+                Spawn(point);
             }
+        }
 
+        private void Spawn(float2 position)
+        {
             var entity = _entityManager.CreateEntity(_emitterArchetype);
             _entityManager.SetComponentData(entity, new PositionComponent
             {
-                value = _pointer.Position
+                value = position
             });
             _entityManager.SetComponentData(entity, new RepeatTimerComponent
             {
@@ -60,12 +65,12 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
 
         public void OnToolActivation()
         {
-            
+            _spawnPointTool.SetEnabled(true);
         }
 
         public void OnToolDeactivation()
         {
-            
+            _spawnPointTool.SetEnabled(false);
         }
 
         public void FinalizeTool()
