@@ -23,3 +23,5 @@ MonoBehaviour:
       _asset: {fileID: 9197481963319205126, guid: e4c42ee18d1b1d84a88c5ae89190a056, type: 3}
     _generalButton:
       _asset: {fileID: 9197481963319205126, guid: 52a8ffb87f0a4e46beb97cd2de835baf, type: 3}
+    _stringField:
+      _asset: {fileID: 9197481963319205126, guid: 2a98d685c19742ca9ab2da0e76d5f1d7, type: 3}

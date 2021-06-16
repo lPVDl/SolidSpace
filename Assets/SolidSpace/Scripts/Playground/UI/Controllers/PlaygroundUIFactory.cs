@@ -18,24 +18,14 @@ namespace SolidSpace.Playground.UI
             return _uiManager.Instantiate(_prefabs.ToolWindow);
         }
 
-        public IToolButton CreateToolButton()
-        {
-            return _uiManager.Instantiate(_prefabs.ToolButton);
-        }
+        public IToolButton CreateToolButton() => _uiManager.Instantiate(_prefabs.ToolButton);
 
-        public ITagLabel CreateTagLabel()
-        {
-            return _uiManager.Instantiate(_prefabs.TagLabel);
-        }
+        public ITagLabel CreateTagLabel() => _uiManager.Instantiate(_prefabs.TagLabel);
 
-        public ILayoutGrid CreateLayoutGrid()
-        {
-            return _uiManager.Instantiate(_prefabs.LayoutGrid);
-        }
+        public ILayoutGrid CreateLayoutGrid() => _uiManager.Instantiate(_prefabs.LayoutGrid);
 
-        public IGeneralButton CreateGeneralButton()
-        {
-            return _uiManager.Instantiate(_prefabs.GeneralButton);
-        }
+        public IGeneralButton CreateGeneralButton() => _uiManager.Instantiate(_prefabs.GeneralButton);
+
+        public IStringField CreateStringField() => _uiManager.Instantiate(_prefabs.StringField);
     }
 }

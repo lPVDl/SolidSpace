@@ -13,6 +13,4 @@
         <Label name="Label" class="tag-label-text" text="Hello, world!"/>
     </VisualElement>
     
-    
-    
 </UXML>

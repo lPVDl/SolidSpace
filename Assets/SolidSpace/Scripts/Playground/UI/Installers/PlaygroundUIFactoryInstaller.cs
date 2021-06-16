@@ -16,6 +16,7 @@ namespace SolidSpace.Playground.UI
             container.Bind<TagLabelFactory>();
             container.Bind<LayoutGridFactory>();
             container.Bind<GeneralButtonFactory>();
+            container.Bind<StringFieldFactory>();
         }
     }
 }
