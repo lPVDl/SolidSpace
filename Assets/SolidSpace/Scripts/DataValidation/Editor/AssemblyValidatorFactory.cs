@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+
 using Debug = UnityEngine.Debug;
 
 namespace SolidSpace.DataValidation.Editor
@@ -9,14 +10,16 @@ namespace SolidSpace.DataValidation.Editor
     internal static class AssemblyValidatorFactory
     {
         private static readonly Dictionary<Type, ValidationMethod> Validators;
-        private static readonly Type[] ArgumentTypes;
+        private static readonly Type[] ValidationArgumentTypes;
+        private static readonly Type[] ConstructorArgumentTypes;
 
         static AssemblyValidatorFactory()
         {
             try
             {
                 Validators = new Dictionary<Type, ValidationMethod>();
-                ArgumentTypes = new[] { typeof(object) };
+                ValidationArgumentTypes = new[] { typeof(object) };
+                ConstructorArgumentTypes = new Type[0];
                 
                 Initialize();
             }
@@ -43,7 +46,17 @@ namespace SolidSpace.DataValidation.Editor
                 {
                     var message = $"'{type.FullName}' can not be used for validation. Validator can not be abstract";
                     Debug.LogError(message);
-                        
+                    
+                    continue;
+                }
+                
+                var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+                var constructor = type.GetConstructor(flags, null, ConstructorArgumentTypes, null);
+                if (constructor is null)
+                {
+                    var message = $"Failed to get parameterless constructor in type '{type.FullName}'";
+                    Debug.LogError(message);
+                    
                     continue;
                 }
 
@@ -66,18 +79,18 @@ namespace SolidSpace.DataValidation.Editor
                         
                         break;
                     }
-                    
+
                     try
                     {
                         var method = new ValidationMethod
                         {
                             method = GetValidationMethod(type, genericArgument0),
-                            validator = Activator.CreateInstance(type)
+                            validator = constructor.Invoke(null)
                         };
 
                         if (method.method == null)
                         {
-                            Debug.LogError($"Failed to find validation method in '{type.FullName}'");
+                            Debug.LogError($"Failed to get validation method in '{type.FullName}'");
                             
                             break;
                         }
@@ -103,9 +116,9 @@ namespace SolidSpace.DataValidation.Editor
         {
             IDataValidator<object> dummy;
 
-            ArgumentTypes[0] = genericArgumentType;
+            ValidationArgumentTypes[0] = genericArgumentType;
 
-            return objectType.GetMethod(nameof(dummy.Validate), ArgumentTypes);
+            return objectType.GetMethod(nameof(dummy.Validate), ValidationArgumentTypes);
         }
 
         public static bool TryGetValidatorFor(Type type, out ValidationMethod validator)
