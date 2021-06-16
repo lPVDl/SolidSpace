@@ -5,22 +5,36 @@ using UnityEngine.UIElements;
 namespace SolidSpace.Playground.UI
 {
     [InspectorDataValidator]
-    public class StringFieldFactory : AUIFactory<StringField>, IDataValidator<UIPrefab<StringField>>
+    public class StringFieldFactory : AUIFactory<StringField>, IDataValidator<UIPrefab<StringField>>, 
+        IStringFieldCorrectionBehaviour
     {
+        private readonly IUIEventManager _events;
         private readonly UITreeAssetValidator _assetValidator;
         
-        public StringFieldFactory()
+        private StringFieldFactory()
         {
             _assetValidator = new UITreeAssetValidator();
+        }
+
+        public StringFieldFactory(IUIEventManager events)
+        {
+            _events = events;
         }
         
         protected override StringField Create(VisualElement root)
         {
-            return new StringField
+            var view = new StringField
             {
                 Root = root,
-                TextField = UIQuery.Child<TextField>(root, "")
+                TextField = UIQuery.Child<TextField>(root, ""),
+                IsValueChanged = false,
+                CorrectionBehaviour = this
             };
+            
+            _events.Register<ChangeEvent<string>>(view.TextField, view.OnValueChanged);
+            _events.Register<FocusOutEvent>(view.TextField, view.OnFocusOut);
+
+            return view;
         }
 
         public string Validate(UIPrefab<StringField> data)
@@ -38,6 +52,13 @@ namespace SolidSpace.Playground.UI
             }
 
             return string.Empty;
+        }
+
+        public string TryFixString(string value, out bool wasFixed)
+        {
+            wasFixed = false;
+            
+            return default;
         }
     }
 }

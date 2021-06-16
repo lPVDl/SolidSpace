@@ -1,3 +1,4 @@
+using SolidSpace.Gizmos;
 using SolidSpace.Playground.Core;
 using SolidSpace.Playground.UI;
 using SolidSpace.UI;
@@ -9,12 +10,15 @@ namespace SolidSpace.Playground.Tools.SpawnPoint
         private readonly IUIManager _uiManager;
         private readonly IPointerTracker _pointer;
         private readonly IPlaygroundUIFactory _uiFactory;
+        private readonly IGizmosManager _gizmosManager;
 
-        public SpawnPointToolFactory(IUIManager uiManager, IPointerTracker pointer, IPlaygroundUIFactory uiFactory)
+        public SpawnPointToolFactory(IUIManager uiManager, IPointerTracker pointer, IPlaygroundUIFactory uiFactory,
+            IGizmosManager gizmosManager)
         {
             _uiManager = uiManager;
             _pointer = pointer;
             _uiFactory = uiFactory;
+            _gizmosManager = gizmosManager;
         }
         
         public ISpawnPointTool Create()
@@ -22,13 +26,34 @@ namespace SolidSpace.Playground.Tools.SpawnPoint
             var window = _uiFactory.CreateToolWindow();
             window.SetTitle("Spawn Config");
 
+            var radiusField = _uiFactory.CreateStringField();
+            radiusField.SetLabel("Radius");
+            radiusField.SetValue("0");
+            radiusField.SetValueCorrectionBehaviour(new MinMaxIntRangeBehaviour(0, 1000));
+            window.AttachChild(radiusField);
+
+            var amountField = _uiFactory.CreateStringField();
+            amountField.SetLabel("Amount");
+            amountField.SetValue("1");
+            amountField.SetValueCorrectionBehaviour(new MinMaxIntRangeBehaviour(1, 100000));
+            window.AttachChild(amountField);
+
             var tool = new SpawnPointTool
             {
                 UIManager = _uiManager,
                 Pointer = _pointer,
-                Window = window
+                Window = window,
+                SpawnRadiusField = radiusField,
+                SpawnAmountField = amountField,
+                SpawnAmount = 1,
+                SpawnRadius = 0
             };
-            
+
+            tool.Gizmos = _gizmosManager.GetHandle(tool);
+
+            radiusField.ValueChanged += () => tool.SpawnRadius = int.Parse(tool.SpawnRadiusField.Value);
+            amountField.ValueChanged += () => tool.SpawnAmount = int.Parse(tool.SpawnAmountField.Value);
+
             return tool;
         }
     }

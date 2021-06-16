@@ -1,7 +1,7 @@
 @import "../SharedStyles/Colors.uss";
 
 Label {
-    min-width: 0;
+    min-width: 100px;
     color: var(--disabled-color);
 }
 
