@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System.IO;
+using UnityEditor;
 using UnityEngine;
 
 namespace FuchaTools
@@ -25,6 +26,11 @@ namespace FuchaTools
         private void OnEnable()
         {
             _outputPath = AssetDatabase.GetAssetPath(Selection.activeObject);
+
+            if (!AssetDatabase.IsValidFolder(_outputPath))
+            {
+                _outputPath = Path.GetDirectoryName(_outputPath);
+            }
         }
 
         private void OnGUI()
