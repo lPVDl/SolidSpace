@@ -2,6 +2,7 @@ using SolidSpace.Entities.Components;
 using SolidSpace.Entities.World;
 using SolidSpace.Playground.Core;
 using SolidSpace.Playground.Tools.SpawnPoint;
+using SolidSpace.Playground.UI;
 using SolidSpace.UI;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -14,15 +15,25 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
 
         private readonly IEntityWorldManager _entityManager;
         private readonly ISpawnPointToolFactory _spawnPointToolFactory;
+        private readonly IUIManager _uiManager;
+        private readonly IPlaygroundUIFactory _uiFactory;
 
         private EntityArchetype _emitterArchetype;
         private ISpawnPointTool _spawnPointTool;
+        private IToolWindow _window;
+        private IStringField _spawnRateField;
+        private IStringField _particleVelocityField;
+
+        private float _spawnRate;
+        private float _particleVelocity;
 
         public EmitterSpawnTool(PlaygroundToolConfig config, IEntityWorldManager entityManager,
-            ISpawnPointToolFactory spawnPointToolFactory)
+            ISpawnPointToolFactory spawnPointToolFactory, IUIManager uiManager, IPlaygroundUIFactory uiFactory)
         {
             _entityManager = entityManager;
             _spawnPointToolFactory = spawnPointToolFactory;
+            _uiManager = uiManager;
+            _uiFactory = uiFactory;
             Config = config;
         }
         
@@ -36,17 +47,36 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
                 typeof(RandomComponent),
                 typeof(RepeatTimerComponent),
             });
+
+            _window = _uiFactory.CreateToolWindow();
+            _window.SetTitle("Emitter Config");
+
+            _spawnRate = 60;
+            _spawnRateField = _uiFactory.CreateStringField();
+            _spawnRateField.SetValue("60");
+            _spawnRateField.SetLabel("Spawn Rate");
+            _spawnRateField.SetValueCorrectionBehaviour(new FloatMinMaxBehaviour(1, 60));
+            _spawnRateField.ValueChanged += () => _spawnRate = float.Parse(_spawnRateField.Value);
+            _window.AttachChild(_spawnRateField);
+
+            _particleVelocity = 10;
+            _particleVelocityField = _uiFactory.CreateStringField();
+            _particleVelocityField.SetValue("10");
+            _particleVelocityField.SetLabel("Particle Velocity");
+            _particleVelocityField.SetValueCorrectionBehaviour(new FloatMinMaxBehaviour(0, 1000));
+            _particleVelocityField.ValueChanged += () => _particleVelocity = float.Parse(_particleVelocityField.Value);
+            _window.AttachChild(_particleVelocityField);
         }
 
         public void Update()
         {
             foreach (var point in _spawnPointTool.Update())
             {
-                Spawn(point);
+                Spawn(point, _spawnRate, _particleVelocity);
             }
         }
 
-        private void Spawn(float2 position)
+        private void Spawn(float2 position, float spawnRate, float particleVelocity)
         {
             var entity = _entityManager.CreateEntity(_emitterArchetype);
             _entityManager.SetComponentData(entity, new PositionComponent
@@ -55,22 +85,24 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
             });
             _entityManager.SetComponentData(entity, new RepeatTimerComponent
             {
-                delay = 1 / 60f
+                delay = 1f / spawnRate
             });
             _entityManager.SetComponentData(entity, new ParticleEmitterComponent
             {
-                particleVelocity = 5
+                particleVelocity = particleVelocity
             });
         }
 
         public void OnToolActivation()
         {
             _spawnPointTool.SetEnabled(true);
+            _uiManager.AddToRoot(_window, "ContainerA");
         }
 
         public void OnToolDeactivation()
         {
             _spawnPointTool.SetEnabled(false);
+            _uiManager.RemoveFromRoot(_window, "ContainerA");
         }
 
         public void FinalizeTool()
