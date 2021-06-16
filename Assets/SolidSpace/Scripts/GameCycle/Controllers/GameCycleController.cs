@@ -53,32 +53,33 @@ namespace SolidSpace.GameCycle
 
         private T[] PrepareSequence<T>(ICollection<T> instances, IReadOnlyCollection<ControllerGroup> order, string orderName)
         {
-            var intOrder = new Dictionary<Type, int>(); 
+            var correctOrder = new Dictionary<Type, int>(); 
             var j = 0;
             foreach (var typeName in order.SelectMany(g => g.Controllers))
             {
                 var type = Type.GetType(typeName);
                 if (type is null)
                 {
-                    throw new InvalidOperationException($"Can not resolve type for '{typeName}'");
+                    throw new InvalidOperationException($"Can not resolve type '{typeName}'");
                 }
                 
-                intOrder.Add(type, j++);
+                correctOrder.Add(type, j++);
             }
             
-            var sequence = new T[instances.Count];
+            var sequence = new List<(T, int)>(instances.Count);
             foreach (var instance in instances)
             {
                 var type = instance.GetType();
-                if (!intOrder.TryGetValue(type, out var index))
+                if (!correctOrder.TryGetValue(type, out var executionOrder))
                 {
-                    throw new InvalidOperationException($"Type '{type.FullName}' is not defined in {orderName} order");
+                    var message = $"Controller '{type.FullName}' is not defined in {orderName} order";
+                    throw new InvalidOperationException(message);
                 }
 
-                sequence[index] = instance;
+                sequence.Add((instance, executionOrder));
             }
 
-            return sequence;
+            return sequence.OrderBy(i => i.Item2).Select(i => i.Item1).ToArray();
         }
 
         private void OnUpdate()
