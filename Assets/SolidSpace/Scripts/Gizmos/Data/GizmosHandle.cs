@@ -42,5 +42,16 @@ namespace SolidSpace.Gizmos
                 rotationRad = (half) angleRad
             });
         }
+
+        public void DrawPolygon(float2 center, float radius, int topology, Color color)
+        {
+            _manager.SchedulePolygonDraw(new GizmosPolygon
+            {
+                center = center,
+                topology = (byte) topology,
+                color = color,
+                radius = (half) radius
+            });
+        }
     }
 }

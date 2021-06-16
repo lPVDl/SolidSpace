@@ -18,8 +18,10 @@ namespace SolidSpace.Gizmos
         private Material _material;
         private NativeArray<GizmosLine> _lines;
         private NativeArray<GizmosRect> _rects;
+        private NativeArray<GizmosPolygon> _polygons;
         private int _lineCount;
         private int _rectCount;
+        private int _polygonCount;
         
         public GizmosManager(GizmosConfig config)
         {
@@ -30,6 +32,7 @@ namespace SolidSpace.Gizmos
         {
             _lines = NativeMemory.CreatePersistentArray<GizmosLine>(BufferSize);
             _rects = NativeMemory.CreatePersistentArray<GizmosRect>(BufferSize);
+            _polygons = NativeMemory.CreatePersistentArray<GizmosPolygon>(BufferSize);
             _material = new Material(_config.Shader);
 
             Camera.onPostRender += OnRender;
@@ -43,6 +46,16 @@ namespace SolidSpace.Gizmos
             GL.MultMatrix(Matrix4x4.identity);
             GL.Begin(GL.LINES);
 
+            DrawLines();
+            DrawRects();
+            DrawPolygons();
+
+            GL.End();
+            GL.PopMatrix();
+        }
+
+        private void DrawLines()
+        {
             for (var i = 0; i < _lineCount; i++)
             {
                 var line = _lines[i];
@@ -50,7 +63,10 @@ namespace SolidSpace.Gizmos
                 GL_Line(line.start, line.end);
             }
             _lineCount = 0;
+        }
 
+        private void DrawRects()
+        {
             for (var i = 0; i < _rectCount; i++)
             {
                 var rect = _rects[i];
@@ -68,10 +84,33 @@ namespace SolidSpace.Gizmos
                 GL_Line(p3, p0);
             }
             _rectCount = 0;
-            
-            GL.End();
-            GL.PopMatrix();
         }
+
+        private void DrawPolygons()
+        {
+            for (var i = 0; i < _polygonCount; i++)
+            {
+                var polygon = _polygons[i];
+                GL.Color(polygon.color);
+                var step = FloatMath.TwoPI / polygon.topology;
+                var forward = new float2(polygon.radius, 0);
+                var startPoint = polygon.center + forward;
+                var prevPoint = startPoint;
+
+                for (var j = 1; j < polygon.topology; j++)
+                {
+                    FloatMath.SinCos(step * j, out var sin, out var cos);
+                    var newPoint = polygon.center + FloatMath.Rotate(forward, sin, cos);
+                    GL_Line(prevPoint, newPoint);
+                    prevPoint = newPoint;
+                }
+                
+                GL_Line(prevPoint, startPoint);
+            }
+            
+            _polygonCount = 0;
+        }
+        
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void GL_Line(float2 start, float2 end)
@@ -92,7 +131,7 @@ namespace SolidSpace.Gizmos
             _lines[_lineCount++] = line;
         }
 
-        internal void ScheduleRectDraw(GizmosRect gizmosRect)
+        internal void ScheduleRectDraw(GizmosRect rect)
         {
             NativeMemory.MaintainPersistentArrayLength(ref _rects, new ArrayMaintenanceData
             {
@@ -101,7 +140,19 @@ namespace SolidSpace.Gizmos
                 requiredCapacity = _rectCount + 1
             });
 
-            _rects[_rectCount++] = gizmosRect;
+            _rects[_rectCount++] = rect;
+        }
+
+        internal void SchedulePolygonDraw(GizmosPolygon polygon)
+        {
+            NativeMemory.MaintainPersistentArrayLength(ref _polygons, new ArrayMaintenanceData
+            {
+                itemPerAllocation = BufferSize,
+                copyOnResize = true,
+                requiredCapacity = _polygonCount + 1
+            });
+
+            _polygons[_polygonCount++] = polygon;
         }
 
         public GizmosHandle GetHandle(object owner)
@@ -113,6 +164,7 @@ namespace SolidSpace.Gizmos
         {
             _lines.Dispose();
             _rects.Dispose();
+            _polygons.Dispose();
             Object.Destroy(_material);
             
             Camera.onPostRender -= OnRender;
