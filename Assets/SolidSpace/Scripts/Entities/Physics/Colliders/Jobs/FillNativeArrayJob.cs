@@ -1,7 +1,7 @@
+using System;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
-using Unity.Mathematics;
 
 namespace SolidSpace.Entities.Physics.Colliders
 {
@@ -17,7 +17,7 @@ namespace SolidSpace.Entities.Physics.Colliders
         public void Execute(int jobIndex)
         {
             var startIndex = jobIndex * inItemPerJob;
-            var endIndex = math.min(startIndex + inItemPerJob, inTotalItem);
+            var endIndex = Math.Min(startIndex + inItemPerJob, inTotalItem);
             for (var i = startIndex; i < endIndex; i++)
             {
                 outNativeArray[i] = inValue;

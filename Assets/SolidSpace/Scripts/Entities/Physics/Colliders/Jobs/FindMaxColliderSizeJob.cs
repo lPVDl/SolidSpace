@@ -1,3 +1,4 @@
+using System;
 using SolidSpace.Mathematics;
 using Unity.Burst;
 using Unity.Collections;
@@ -18,7 +19,7 @@ namespace SolidSpace.Entities.Physics.Colliders
         public void Execute(int jobIndex)
         {
             var startIndex = jobIndex * inBoundsPerJob;
-            var endIndex = math.min(startIndex + inBoundsPerJob, inTotalBounds);
+            var endIndex = Math.Min(startIndex + inBoundsPerJob, inTotalBounds);
             
             var bounds = inBounds[startIndex];
             var xMax = bounds.xMax - bounds.xMin;

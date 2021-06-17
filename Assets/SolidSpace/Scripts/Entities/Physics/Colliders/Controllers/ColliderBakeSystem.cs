@@ -1,3 +1,4 @@
+using System;
 using SolidSpace.Debugging;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.World;
@@ -8,7 +9,6 @@ using SolidSpace.Profiling;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
-using Unity.Mathematics;
 
 namespace SolidSpace.Entities.Physics.Colliders
 {
@@ -145,13 +145,13 @@ namespace SolidSpace.Entities.Physics.Colliders
                 inTotalItem = worldChunkTotal,
                 outNativeArray = _worldChunks
             };
-            var jobCount = (int) math.ceil(worldChunkTotal / 128f);
+            var jobCount = (int) Math.Ceiling(worldChunkTotal / 128f);
             var resetChunksJobHandle = resetChunksJob.Schedule(jobCount, 8);
             resetChunksJobHandle.Complete();
             _profiler.EndSample("Reset Chunks");
 
             _profiler.BeginSample("Chunk Colliders");
-            jobCount = (int) math.ceil(colliderCount / 128f);
+            jobCount = (int) Math.Ceiling(colliderCount / 128f);
             var chunkedColliders = NativeMemory.CreateTempJobArray<ChunkedCollider>(colliderCount * 4);
             var chunkedColliderCounts = NativeMemory.CreateTempJobArray<int>(jobCount);
 

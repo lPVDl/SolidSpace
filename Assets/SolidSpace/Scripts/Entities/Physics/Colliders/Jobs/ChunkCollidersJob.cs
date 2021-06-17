@@ -1,3 +1,4 @@
+using System;
 using SolidSpace.Mathematics;
 using Unity.Burst;
 using Unity.Collections;
@@ -20,7 +21,7 @@ namespace SolidSpace.Entities.Physics.Colliders
         public void Execute(int jobIndex)
         {
             var startIndex = jobIndex * inColliderPerJob;
-            var endIndex = math.min(startIndex + inColliderPerJob, inColliderTotalCount);
+            var endIndex = Math.Min(startIndex + inColliderPerJob, inColliderTotalCount);
             var colliderCount = 0;
             var writeOffset = jobIndex * inColliderPerJob * 4;
             var worldPower = inWorldGrid.power;

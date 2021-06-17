@@ -1,4 +1,5 @@
 using SolidSpace.Entities.Components;
+using SolidSpace.Mathematics;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -10,8 +11,6 @@ namespace SolidSpace.Entities.ParticleEmitters
     [BurstCompile]
     internal struct ParticleEmitterComputeJob : IJobParallelFor
     {
-        private const float TwoPI = (float)(2 * math.PI_DBL);
-        
         [ReadOnly] public NativeArray<ArchetypeChunk> inChunks;
         [ReadOnly] public NativeArray<int> inWriteOffsets;
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
@@ -50,10 +49,11 @@ namespace SolidSpace.Entities.ParticleEmitters
                 timers[i] = timer;
 
                 var emitter = emitters[i];
-                var angle = TwoPI * randoms[i].value;
+                var angle = FloatMath.TwoPI * randoms[i].value;
                 emitterData.position = positions[i].value;
                 var velocity = emitter.particleVelocity;
-                emitterData.velocity = new float2(velocity * math.cos(angle), velocity * math.sin(angle));
+                FloatMath.SinCos(angle, out var sin, out var cos);
+                emitterData.velocity = new float2(velocity * cos, velocity * sin);
 
                 outParticles[writeOffset + emitCount] = emitterData;
                 emitCount++;
