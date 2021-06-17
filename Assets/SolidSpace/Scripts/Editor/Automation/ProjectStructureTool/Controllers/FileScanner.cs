@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using SolidSpace.IO.Editor;
 using SolidSpace.RegularExpressions;
 using UnityEngine;
 
@@ -25,9 +26,7 @@ namespace SolidSpace.Editor.Automation.ProjectStructureTool
             _blacklistFilters.Clear();
             _blacklistFilters.AddRange(config.BlackListFilters.Where(f => f.enabled).Select(f => f.filter));
 
-            var appRoot = Application.dataPath;
-            var projectRoot = appRoot.Substring(0, appRoot.Length - 7);
-            var scanRoot = Path.Combine(projectRoot, config.ScanRoot);
+            var scanRoot = EditorPath.Combine(EditorPath.ProjectRoot, config.ScanRoot);
             ScanRecursive(scanRoot, 0);
             
             return _outEntities;

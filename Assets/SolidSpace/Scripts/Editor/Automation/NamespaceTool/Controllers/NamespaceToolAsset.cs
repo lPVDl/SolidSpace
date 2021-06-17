@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Sirenix.OdinInspector;
 using SolidSpace.Editor.Utilities;
+using SolidSpace.IO.Editor;
 using UnityEngine;
 
 namespace SolidSpace.Editor.Automation.NamespaceTool
@@ -17,9 +18,7 @@ namespace SolidSpace.Editor.Automation.NamespaceTool
             ConsoleUtil.ClearLog();
             
             var folderScanner = new FolderScanner();
-            // TODO [T-11]: Add PathUtil, separate common methods.
-            var projectRoot = Application.dataPath.Substring(0, Application.dataPath.Length - 7);
-            var folders = folderScanner.Scan(projectRoot, _config);
+            var folders = folderScanner.Scan(_config);
 
             foreach (var info in folders)
             {
@@ -60,8 +59,7 @@ namespace SolidSpace.Editor.Automation.NamespaceTool
         [Button]
         private void OverrideProjDotSettings()
         {
-            var projectRoot = Application.dataPath.Substring(0, Application.dataPath.Length - 7);
-            var oldFiles = Directory.GetFiles(projectRoot, "*.csproj.DotSettings");
+            var oldFiles = Directory.GetFiles(EditorPath.ProjectRoot, "*.csproj.DotSettings");
             foreach (var file in oldFiles)
             {
                 File.Delete(file);
@@ -70,7 +68,7 @@ namespace SolidSpace.Editor.Automation.NamespaceTool
             var folderScanner = new FolderScanner();
             var assemblyUtil = new AssemblyUtil();
             var dotSettingsWriter = new DotSettingsWriter();
-            var folders = folderScanner.Scan(projectRoot, _config);
+            var folders = folderScanner.Scan(_config);
             var folderNames = new HashSet<string>(folders.Select(f => f.name));
             var assemblies = assemblyUtil.Scan(_config);
             foreach (var assembly in assemblies)

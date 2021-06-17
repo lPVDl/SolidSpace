@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using SolidSpace.IO.Editor;
 
 namespace SolidSpace.Editor.Automation.NamespaceTool
 {
@@ -10,14 +11,14 @@ namespace SolidSpace.Editor.Automation.NamespaceTool
         private IReadOnlyList<FilterInfo> _filters;
         private int _rootLength;
         
-        public HashSet<FolderInfo> Scan(string projectRoot, Config config)
+        public HashSet<FolderInfo> Scan(Config config)
         {
             _outFolders = new HashSet<FolderInfo>();
             _filters = config.FolderFilters;
-            _rootLength = projectRoot.Length + 1;
+            _rootLength = EditorPath.ProjectRoot.Length + 1;
             
-            // TODO [T-11]: Add PathUtil, separate common methods.
-            ScanRecursive(Path.Combine(projectRoot + "/" + config.ScriptsRoot));
+            var path = EditorPath.Combine(EditorPath.ProjectRoot, config.ScriptsRoot);
+            ScanRecursive(path);
 
             return _outFolders;
         }

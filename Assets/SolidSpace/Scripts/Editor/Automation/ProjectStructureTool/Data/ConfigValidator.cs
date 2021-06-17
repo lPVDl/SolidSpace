@@ -1,5 +1,6 @@
 using System.IO;
 using SolidSpace.DataValidation;
+using SolidSpace.IO.Editor;
 using UnityEngine;
 
 namespace SolidSpace.Editor.Automation.ProjectStructureTool
@@ -19,15 +20,13 @@ namespace SolidSpace.Editor.Automation.ProjectStructureTool
                 return $"{nameof(data.ExportPath)} is null";
             }
 
-            var appRoot = Application.dataPath;
-            var projectRoot = appRoot.Substring(0, appRoot.Length - 7);
-            var directory = Path.Combine(projectRoot, data.ScanRoot);
+            var directory = EditorPath.Combine(EditorPath.ProjectRoot, data.ScanRoot);
             if (!Directory.Exists(directory))
             {
                 return $"{nameof(data.ScanRoot)}, directory '{directory}' does not exist";
             }
 
-            var file = Path.Combine(projectRoot, data.ExportPath);
+            var file = EditorPath.Combine(EditorPath.ProjectRoot, data.ExportPath);
             if (!File.Exists(file))
             {
                 return $"{nameof(data.ExportPath)}, file '{file}' does not exist";

@@ -1,5 +1,6 @@
 using System.IO;
 using Sirenix.OdinInspector;
+using SolidSpace.IO.Editor;
 using UnityEngine;
 
 namespace SolidSpace.Editor.Automation.ProjectStructureTool
@@ -19,10 +20,7 @@ namespace SolidSpace.Editor.Automation.ProjectStructureTool
         [Button]
         private void ScanAndExport()
         {
-            var dataPath = Application.dataPath;
-            var projectRoot = dataPath.Substring(0, dataPath.Length - 7);
-            var exportPath = Path.Combine(projectRoot, _config.ExportPath);
-
+            var exportPath = EditorPath.Combine(EditorPath.ProjectRoot, _config.ExportPath);
             using var console = new FileConsole(exportPath, true);
             var writer = new FileWriter();
             writer.Write(_config, console);
