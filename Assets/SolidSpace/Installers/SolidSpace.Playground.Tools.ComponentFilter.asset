@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: SolidSpace.Playground.Tools.ComponentFilter
   m_EditorClassIdentifier: 
   _factoryConfig:
-    _filterRegex: (?i)SolidSpace\..*Component
-    _nameRegex: (Component$)|([A-Z][a-z0-9]+)
-    _nameSubstitution: $2
+    _filter:
+      pattern: (?i)SolidSpace\..*Component
+    _nameConverter:
+      pattern: (Component$)|([A-Z][a-z0-9]+)
+      substitution: $2

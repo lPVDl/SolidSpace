@@ -16,5 +16,6 @@ MonoBehaviour:
     _scanRoot: Assets/SolidSpace/Scripts
     _blacklistFilters:
     - enabled: 1
-      regex: (?i).*\.meta$
+      filter:
+        pattern: (?i).*\.meta$
     _exportPath: .resume/Scripts/Scripts.txt

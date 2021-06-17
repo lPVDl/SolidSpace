@@ -53,7 +53,7 @@ namespace SolidSpace.Playground.Tools.ComponentFilter
                 var state = filter[i];
                 var tag = _uiFactory.CreateTagLabel();
                 var labelIndex = i;
-                var name = Regex.Replace(rawTypes[i].Name, _config.NameRegex, _config.NameSubstitution);
+                var name = _config.NameConverter.Replace(rawTypes[i].Name);
                 tag.SetLabel(name);
                 tag.SetState(state.state);
                 tag.SetLocked(state.isLocked);
@@ -69,9 +69,10 @@ namespace SolidSpace.Playground.Tools.ComponentFilter
         private IEnumerable<Type> IterateAllComponents()
         {
             var inter = typeof(IComponentData);
+            
             return AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes())
                 .Where(t => t.IsValueType && inter.IsAssignableFrom(t))
-                .Where(t => Regex.IsMatch(t.FullName, _config.FilterRegex));
+                .Where(t => _config.Filter.IsMatch(t.FullName));
         }
     }
 }

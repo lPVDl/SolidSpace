@@ -32,7 +32,7 @@ namespace SolidSpace.Editor.Automation.NamespaceTool
                     continue;
                 }
 
-                if (!Regex.IsMatch(path, filter.regex))
+                if (!filter.filter.IsMatch(path))
                 {
                     continue;
                 }

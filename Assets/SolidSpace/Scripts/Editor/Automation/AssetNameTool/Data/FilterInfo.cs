@@ -1,13 +1,14 @@
 using System;
+using SolidSpace.RegularExpressions;
+using UnityEngine;
 
 namespace SolidSpace.Editor.Automation.AssetNameTool
 {
     [Serializable]
     internal struct FilterInfo
     {
-        public bool enabled;
-        public string scannerRegex;
-        public string nameRegex;
-        public string nameSubstitution;
+        [SerializeField] public bool enabled;
+        [SerializeField] public RegexPattern scannerFilter;
+        [SerializeField] public RegexPatternSubstitution nameConverter;
     }
 }

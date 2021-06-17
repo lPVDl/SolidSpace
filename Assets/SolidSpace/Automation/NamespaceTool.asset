@@ -16,45 +16,66 @@ MonoBehaviour:
     _scriptsRoot: Assets
     _folderFilters:
     - enabled: 1
-      regex: \/(?i)Scripts$
+      filter:
+        pattern: \/(?i)Scripts$
     - enabled: 1
-      regex: \/(?i)Plugins$
+      filter:
+        pattern: \/(?i)Plugins$
     - enabled: 1
-      regex: \/(?i)SolidSpace\/.*\/Controllers$
+      filter:
+        pattern: \/(?i)SolidSpace\/.*\/Controllers$
     - enabled: 1
-      regex: \/(?i)SolidSpace\/.*\/Enums$
+      filter:
+        pattern: \/(?i)SolidSpace\/.*\/Enums$
     - enabled: 1
-      regex: \/(?i)SolidSpace\/.*\/Interfaces$
+      filter:
+        pattern: \/(?i)SolidSpace\/.*\/Interfaces$
     - enabled: 1
-      regex: \/(?i)SolidSpace\/.*\/Data$
+      filter:
+        pattern: \/(?i)SolidSpace\/.*\/Data$
     - enabled: 1
-      regex: \/(?i)SolidSpace\/.*\/Jobs$
+      filter:
+        pattern: \/(?i)SolidSpace\/.*\/Jobs$
     - enabled: 1
-      regex: \/(?i)SolidSpace\/.*\/Views$
+      filter:
+        pattern: \/(?i)SolidSpace\/.*\/Views$
     - enabled: 1
-      regex: \/(?i)SolidSpace\/.*\/Installers$
+      filter:
+        pattern: \/(?i)SolidSpace\/.*\/Installers$
     - enabled: 1
-      regex: \/(?i)SolidSpace\/.*\/Utils$
+      filter:
+        pattern: \/(?i)SolidSpace\/.*\/Utils$
     - enabled: 1
-      regex: \/(?i)SolidSpace\/.*\/Runtime$
+      filter:
+        pattern: \/(?i)SolidSpace\/.*\/Runtime$
     - enabled: 1
-      regex: \/(?i)Plugins\/Zenject\/.*
+      filter:
+        pattern: \/(?i)Plugins\/Zenject\/.*
     - enabled: 1
-      regex: \/(?i)Plugins\/FuchaTools\/.*
+      filter:
+        pattern: \/(?i)Plugins\/FuchaTools\/.*
     - enabled: 1
-      regex: \/(?i)OdinValidator\/.*\/Profiles$
+      filter:
+        pattern: \/(?i)OdinValidator\/.*\/Profiles$
     - enabled: 1
-      regex: \/(?i)OdinValidator\/.*\/Automation$
+      filter:
+        pattern: \/(?i)OdinValidator\/.*\/Automation$
     - enabled: 1
-      regex: \/(?i)OdinValidator\/.*\/Editors$
+      filter:
+        pattern: \/(?i)OdinValidator\/.*\/Editors$
     _assemblyFilters:
     - enabled: 1
-      regex: ^Assembly-CSharp
+      filter:
+        pattern: ^Assembly-CSharp
     - enabled: 1
-      regex: ^SolidSpace
+      filter:
+        pattern: ^SolidSpace
     - enabled: 1
-      regex: ^FuchaTools
+      filter:
+        pattern: ^FuchaTools
     - enabled: 1
-      regex: ^Sirenix
+      filter:
+        pattern: ^Sirenix
     - enabled: 1
-      regex: ^Zenject
+      filter:
+        pattern: ^Zenject

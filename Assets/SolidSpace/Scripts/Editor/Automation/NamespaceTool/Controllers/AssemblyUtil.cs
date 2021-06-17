@@ -29,11 +29,11 @@ namespace SolidSpace.Editor.Automation.NamespaceTool
                         continue;
                     }
 
-                    if (!Regex.IsMatch(assemblyName, filter.regex))
+                    if (!filter.filter.IsMatch(assemblyName))
                     {
-                        continue;    
+                        continue;
                     }
-                    
+
                     outAssemblies.Add(new AssemblyInfo
                     {
                         name = assemblyName,

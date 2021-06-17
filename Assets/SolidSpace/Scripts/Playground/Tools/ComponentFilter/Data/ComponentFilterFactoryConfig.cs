@@ -1,4 +1,5 @@
 using System;
+using SolidSpace.RegularExpressions;
 using UnityEngine;
 
 namespace SolidSpace.Playground.Tools.ComponentFilter
@@ -6,12 +7,10 @@ namespace SolidSpace.Playground.Tools.ComponentFilter
     [Serializable]
     public class ComponentFilterFactoryConfig
     {
-        public string NameRegex => _nameRegex;
-        public string NameSubstitution => _nameSubstitution;
-        public string FilterRegex => _filterRegex;
+        public RegexPattern Filter => _filter;
+        public RegexPatternSubstitution NameConverter => _nameConverter;
 
-        [SerializeField] private string _filterRegex;
-        [SerializeField] private string _nameRegex;
-        [SerializeField] private string _nameSubstitution;
+        [SerializeField] private RegexPattern _filter;
+        [SerializeField] private RegexPatternSubstitution _nameConverter;
     }
 }

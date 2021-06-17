@@ -23,7 +23,7 @@ namespace SolidSpace.Editor.Automation.NamespaceTool
 
             foreach (var info in folders)
             {
-                var regex = _config.FolderFilters[info.regexId].regex;
+                var regex = _config.FolderFilters[info.regexId].filter.pattern;
                 var message = $"'{info.name}' by regex '{regex}' ({info.regexId})";
                 Debug.Log(message);
             }
@@ -41,7 +41,7 @@ namespace SolidSpace.Editor.Automation.NamespaceTool
 
             foreach (var assembly in assemblies)
             {
-                var regex = _config.AssemblyFilters[assembly.regexId].regex;
+                var regex = _config.AssemblyFilters[assembly.regexId].filter.pattern;
                 var fileName = assemblyUtil.AssemblyToFileName(assembly.name);
                 var message = $"'{assembly.name}' -> '{fileName}' by regex '{regex}' ({assembly.regexId}):";
                 

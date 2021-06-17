@@ -27,8 +27,8 @@ namespace SolidSpace.Editor.Automation.AssetNameTool
                     {
                         continue;
                     }
-                    
-                    if (!Regex.IsMatch(assetPath, filter.scannerRegex))
+
+                    if (!filter.scannerFilter.IsMatch(assetPath))
                     {
                         continue;
                     }
@@ -36,7 +36,7 @@ namespace SolidSpace.Editor.Automation.AssetNameTool
                     var obj = AssetDatabase.LoadAssetAtPath<ScriptableObject>(assetPath);
                     var typeName = obj.GetType().ToString();
                     var oldName = Path.GetFileName(assetPath);
-                    var newName = Regex.Replace(typeName, filter.nameRegex, filter.nameSubstitution);
+                    var newName = filter.nameConverter.Replace(typeName);
                     var assetRoot = assetPath.Substring(0, assetPath.LastIndexOf(oldName));
 
                     result.Add( new FileInfo
