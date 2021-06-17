@@ -16,5 +16,5 @@ MonoBehaviour:
     _folders:
     - enabled: 1
       scannerRegex: (?i)Assets\/SolidSpace\/Installers
-      nameRegex: (\w*\.)(.*)
-      nameSubstitution: $2.asset
+      nameRegex: (.*)((?i)\.\w*Installer)
+      nameSubstitution: $1.asset

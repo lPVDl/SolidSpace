@@ -9,6 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ccb7c0ca2c6d4d5f97b20dd0ac4af2f2, type: 3}
-  m_Name: SpawnPointToolInstaller
+  m_Script: {fileID: 11500000, guid: 81bc27d8476b43feb5e19c30420d6b90, type: 3}
+  m_Name: SolidSpace.Entities.Physics.Velocity
   m_EditorClassIdentifier: 

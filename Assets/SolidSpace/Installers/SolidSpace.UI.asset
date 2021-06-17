@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2d787ac73eb4e2e83943a0db63124c2, type: 3}
-  m_Name: UI.UIInstaller
+  m_Name: SolidSpace.UI
   m_EditorClassIdentifier: 
   _config:
     _containerNames:

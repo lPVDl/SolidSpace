@@ -9,11 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4bfeab0ce174357ba638a7cdb65f68b, type: 3}
-  m_Name: ShipSpawnToolInstaller
+  m_Script: {fileID: 11500000, guid: 47361ffa42774a6a99e1aea3bda1afe6, type: 3}
+  m_Name: SolidSpace.Playground.Tools.ComponentFilter
   m_EditorClassIdentifier: 
-  _config:
-    _toolConfig:
-      _name: 
-      _icon: {fileID: 0}
-    _shipTexture: {fileID: 0}
+  _factoryConfig:
+    _filterRegex: (?i)SolidSpace\..*Component
+    _nameRegex: (Component$)|([A-Z][a-z0-9]+)
+    _nameSubstitution: $2

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a8e026fe882a47bfbd8a427525ee2978, type: 3}
-  m_Name: Playground.Core.PlaygroundCoreInstaller
+  m_Name: SolidSpace.Playground.Core
   m_EditorClassIdentifier: 
   _installers:
   - {fileID: 11400000, guid: 7de0ac86c98e4a84cb13d7fe101a1730, type: 2}
