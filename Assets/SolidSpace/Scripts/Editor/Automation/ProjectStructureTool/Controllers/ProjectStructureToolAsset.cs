@@ -20,7 +20,7 @@ namespace SolidSpace.Editor.Automation.ProjectStructureTool
         [Button]
         private void ScanAndExport()
         {
-            var exportPath = EditorPath.Combine(EditorPath.ProjectRoot, _config.ExportPath);
+            var exportPath = EditorPath.Combine(EditorPath.ProjectRoot, _config.ExportPath.path);
             using var console = new FileConsole(exportPath, true);
             var writer = new FileWriter();
             writer.Write(_config, console);

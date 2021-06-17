@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using SolidSpace.IO.Editor;
 using UnityEngine;
 
 namespace SolidSpace.Editor.Automation.ProjectStructureTool
@@ -7,12 +8,12 @@ namespace SolidSpace.Editor.Automation.ProjectStructureTool
     [Serializable]
     internal class Config
     {
-        public string ScanRoot => _scanRoot;
-        public IReadOnlyList<FilterInfo> BlackListFilters => _blacklistFilters;
-        public string ExportPath => _exportPath;
-        
-        [SerializeField] private string _scanRoot;
-        [SerializeField] private List<FilterInfo> _blacklistFilters;
-        [SerializeField] private string _exportPath;
+        public EditorFolderPath ScanPath => _scanPath;
+        public EditorFilePath ExportPath => _exportPath;
+        public IReadOnlyList<FilterInfo> Blacklist => _blacklist;
+
+        [SerializeField] private EditorFolderPath _scanPath;
+        [SerializeField] private EditorFilePath _exportPath;
+        [SerializeField] private List<FilterInfo> _blacklist;
     }
 }

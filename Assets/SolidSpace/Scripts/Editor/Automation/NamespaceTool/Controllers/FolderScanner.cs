@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Text.RegularExpressions;
 using SolidSpace.IO.Editor;
 
 namespace SolidSpace.Editor.Automation.NamespaceTool
@@ -17,7 +16,7 @@ namespace SolidSpace.Editor.Automation.NamespaceTool
             _filters = config.FolderFilters;
             _rootLength = EditorPath.ProjectRoot.Length + 1;
             
-            var path = EditorPath.Combine(EditorPath.ProjectRoot, config.ScriptsRoot);
+            var path = EditorPath.Combine(EditorPath.ProjectRoot, config.ScanPath.path);
             ScanRecursive(path);
 
             return _outFolders;

@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: ScriptsStructureTool
   m_EditorClassIdentifier: 
   _config:
-    _scanRoot: Assets/SolidSpace/Scripts
-    _blacklistFilters:
+    _scanPath:
+      path: Assets/SolidSpace/Scripts
+    _exportPath:
+      path: .resume/Scripts/Scripts.txt
+    _blacklist:
     - enabled: 1
       filter:
         pattern: (?i).*\.meta$
-    _exportPath: .resume/Scripts/Scripts.txt

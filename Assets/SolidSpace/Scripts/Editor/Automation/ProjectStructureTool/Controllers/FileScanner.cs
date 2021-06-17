@@ -24,9 +24,9 @@ namespace SolidSpace.Editor.Automation.ProjectStructureTool
             _outEntities = new List<EntityInfo>();
 
             _blacklistFilters.Clear();
-            _blacklistFilters.AddRange(config.BlackListFilters.Where(f => f.enabled).Select(f => f.filter));
+            _blacklistFilters.AddRange(config.Blacklist.Where(f => f.enabled).Select(f => f.filter));
 
-            var scanRoot = EditorPath.Combine(EditorPath.ProjectRoot, config.ScanRoot);
+            var scanRoot = EditorPath.Combine(EditorPath.ProjectRoot, config.ScanPath.path);
             ScanRecursive(scanRoot, 0);
             
             return _outEntities;
