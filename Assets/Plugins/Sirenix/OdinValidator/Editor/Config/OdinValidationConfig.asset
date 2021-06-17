@@ -335,5 +335,6 @@ MonoBehaviour:
     AssetPaths:
     - Assets
     AssetReferences: []
-    ExcludeAssetPaths: []
+    ExcludeAssetPaths:
+    - Assets/SolidSpace/UIElements
     ExcludeAssetReferences: []
