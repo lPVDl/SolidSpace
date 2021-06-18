@@ -50,5 +50,11 @@ namespace SolidSpace.Entities.Atlases
 
             throw new OutOfMemoryException($"Failed to allocate sector with size {1 << power}");
         }
+
+        public void Release(ushort offset, int power)
+        {
+            // TODO: [SOL-34]: Make atlas restore & join sectors  when chunks are released.
+            _emptySectors[power].Push(offset);
+        }
     }
 }
