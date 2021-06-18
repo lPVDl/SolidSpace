@@ -11,6 +11,7 @@ namespace SolidSpace.Entities.Health
         public override void InstallBindings(IDependencyContainer container)
         {
             container.Bind<HealthAtlasSystem>(_healthAtlasConfig);
+            container.Bind<HealthAtlasGarbageCollector>();
         }
     }
 }

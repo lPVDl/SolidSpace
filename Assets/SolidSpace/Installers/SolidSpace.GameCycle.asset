@@ -32,6 +32,7 @@ MonoBehaviour:
         - SolidSpace.Entities.Health.HealthAtlasSystem
         - SolidSpace.Entities.Bullets.BulletsCommandSystem
         - SolidSpace.Playground.Tools.Eraser.EntityByPositionSearchSystem
+        - SolidSpace.Entities.Health.HealthAtlasGarbageCollector
       - _name: Managed
         _controllers:
         - SolidSpace.UI.UIEventManager
@@ -54,6 +55,7 @@ MonoBehaviour:
         - SolidSpace.Playground.Tools.Eraser.EntityByPositionSearchSystem
       - _name: EntityCommand
         _controllers:
+        - SolidSpace.Entities.Health.HealthAtlasGarbageCollector
         - SolidSpace.Entities.ParticleEmitters.ParticleEmitterCommandSystem
         - SolidSpace.Entities.Bullets.BulletsCommandSystem
         - SolidSpace.Entities.Despawn.DespawnCommandSystem

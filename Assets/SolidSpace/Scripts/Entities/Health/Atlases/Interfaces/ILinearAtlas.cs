@@ -9,6 +9,8 @@ namespace SolidSpace.Entities.Health.Atlases
         public NativeArray<T> Data { get; }
         
         public NativeSlice<AtlasChunk1D> Chunks { get; }
+        
+        public NativeSlice<ushort> ChunksOccupation { get; }
 
         public AtlasIndex Allocate(int size);
 

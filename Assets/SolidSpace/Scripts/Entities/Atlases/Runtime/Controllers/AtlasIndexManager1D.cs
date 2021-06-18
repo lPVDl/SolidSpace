@@ -83,7 +83,7 @@ namespace SolidSpace.Entities.Atlases
             var chunkOccupation = _chunksOccupation[index.chunkId];
             chunk.GetPower(out _, out var itemPower);
 
-            if ((chunkOccupation & (1 << index.chunkId)) == 0)
+            if ((chunkOccupation & (1 << index.itemId)) == 0)
             {
                 throw new InvalidOperationException($"Can not release '{index}'. It was not allocated yet");
             }

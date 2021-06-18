@@ -13,6 +13,7 @@ namespace SolidSpace.Entities.Health
     {
         public NativeArray<byte> Data => _data;
         public NativeSlice<AtlasChunk1D> Chunks => _indexManager.Chunks;
+        public NativeSlice<ushort> ChunksOccupation => _indexManager.ChunksOccupation;
         
         private readonly LinearAtlasConfig _config;
         
