@@ -65,5 +65,10 @@ namespace SolidSpace.Entities.Atlases
 
             throw new OutOfMemoryException($"Failed to allocate sector {1 << power}x{1 << power}");
         }
+
+        public void Release(byte2 offset, int power)
+        {
+            _emptySectors[power].Push(offset);
+        }
     }
 }
