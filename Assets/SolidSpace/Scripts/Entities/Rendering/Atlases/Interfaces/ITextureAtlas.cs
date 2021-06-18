@@ -10,6 +10,8 @@ namespace SolidSpace.Entities.Rendering.Atlases
         public Texture2D Texture { get; }
         
         public NativeSlice<AtlasChunk2D> Chunks { get; }
+        
+        public NativeSlice<ushort> ChunksOccupation { get; }
 
         public AtlasIndex Allocate(int width, int height);
 

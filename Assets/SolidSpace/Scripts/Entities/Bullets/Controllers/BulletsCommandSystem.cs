@@ -46,7 +46,7 @@ namespace SolidSpace.Entities.Bullets
             _shipComponents = new NativeHashSet<ComponentType>(2, Allocator.Persistent)
             {
                 typeof(HealthComponent),
-                typeof(SpriteRenderComponent)
+                typeof(SpriteComponent)
             };
             _bulletComponents = new NativeHashSet<ComponentType>(3, Allocator.Persistent)
             {
@@ -101,7 +101,7 @@ namespace SolidSpace.Entities.Bullets
             var colliderArchetypeIndices = colliderWorld.colliderArchetypeIndices;
             var colliderCount = colliderEntities.Length;
             var colliderHealth = NativeMemory.CreateTempJobArray<HealthComponent>(colliderCount);
-            var colliderSprites = NativeMemory.CreateTempJobArray<SpriteRenderComponent>(colliderCount);
+            var colliderSprites = NativeMemory.CreateTempJobArray<SpriteComponent>(colliderCount);
             for (var i = 0; i < colliderCount; i++)
             {
                 var colliderEntity = colliderEntities[i];
@@ -112,7 +112,7 @@ namespace SolidSpace.Entities.Bullets
                 }
                 
                 colliderHealth[i] = _entityManager.GetComponentData<HealthComponent>(colliderEntity);
-                colliderSprites[i] = _entityManager.GetComponentData<SpriteRenderComponent>(colliderEntity);
+                colliderSprites[i] = _entityManager.GetComponentData<SpriteComponent>(colliderEntity);
             }
             _profiler.EndSample("Query Collider Data");
             

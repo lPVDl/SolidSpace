@@ -13,6 +13,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
         {
             container.Bind<SpriteColorSystem>(_colorAtlasConfig);
             container.Bind<SpriteMeshSystem>(_meshSystemConfig);
+            container.Bind<SpriteGarbageCollectorSystem>();
         }
     }
 }

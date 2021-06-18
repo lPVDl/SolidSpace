@@ -18,7 +18,7 @@ namespace SolidSpace.Entities.Bullets
         [ReadOnly] public int inItemPerJob;
         [ReadOnly] public int inItemTotal;
         [ReadOnly] public NativeArray<HealthComponent> inHealthComponents;
-        [ReadOnly] public NativeArray<SpriteRenderComponent> inSpriteComponents;
+        [ReadOnly] public NativeArray<SpriteComponent> inSpriteComponents;
         [ReadOnly] public NativeArray<byte> inHealthAtlas;
         [ReadOnly] public NativeSlice<AtlasChunk1D> inHealthChunks;
         [ReadOnly] public NativeSlice<AtlasChunk2D> inSpriteChunks;

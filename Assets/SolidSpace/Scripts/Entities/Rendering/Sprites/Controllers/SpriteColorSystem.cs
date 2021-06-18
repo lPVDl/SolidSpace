@@ -13,6 +13,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
     {
         public Texture2D Texture { get; private set; }
         public NativeSlice<AtlasChunk2D> Chunks => _indexManager.Chunks;
+        public NativeSlice<ushort> ChunksOccupation => _indexManager.ChunksOccupation;
         
         private readonly TextureAtlasConfig _config;
         

@@ -99,7 +99,7 @@ namespace SolidSpace.Entities.Atlases
             if (chunkOccupation == 0)
             {
                 _partiallyFilledChunks[itemPower].Remove(index.chunkId);
-                _sectorManager.Release(chunk.offset, itemPower + 4);
+                _sectorManager.Release(chunk.offset, itemPower + 2);
                 _freeChunkIndices.Push(index.chunkId);
             }
         }

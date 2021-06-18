@@ -28,7 +28,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
         [ReadOnly] public int inFirstChunkIndex;
         [ReadOnly] public int inChunkCount;
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
-        [ReadOnly] public ComponentTypeHandle<SpriteRenderComponent> spriteHandle;
+        [ReadOnly] public ComponentTypeHandle<SpriteComponent> spriteHandle;
         [ReadOnly] public ComponentTypeHandle<RotationComponent> rotationHandle;
         [ReadOnly] public NativeSlice<AtlasChunk2D> inAtlasChunks;
         [ReadOnly] public ComponentTypeHandle<SizeComponent> sizeHandle;

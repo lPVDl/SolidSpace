@@ -44,7 +44,7 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
                 typeof(RotationComponent),
                 typeof(SizeComponent),
                 typeof(ColliderComponent),
-                typeof(SpriteRenderComponent),
+                typeof(SpriteComponent),
                 typeof(HealthComponent)
             });
 
@@ -84,7 +84,7 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
             {
                 value = (half) Random.value
             });
-            _entityManager.SetComponentData(entity, new SpriteRenderComponent
+            _entityManager.SetComponentData(entity, new SpriteComponent
             {
                 index = colorIndex
             });
