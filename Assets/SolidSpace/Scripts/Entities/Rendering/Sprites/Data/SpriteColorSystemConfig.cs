@@ -1,4 +1,4 @@
-using SolidSpace.Entities.Rendering.Atlases;
+using SolidSpace.Entities.Atlases;
 using UnityEngine;
 
 namespace SolidSpace.Entities.Rendering.Sprites

@@ -1,6 +1,5 @@
 using System;
 using SolidSpace.Entities.Atlases;
-using SolidSpace.Entities.Rendering.Atlases;
 using SolidSpace.GameCycle;
 using SolidSpace.Mathematics;
 using Unity.Collections;

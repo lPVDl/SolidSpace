@@ -1,8 +1,7 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace SolidSpace.Entities.Health.Atlases
+namespace SolidSpace.Entities.Atlases
 {
     [Serializable]
     public class Atlas1DConfig

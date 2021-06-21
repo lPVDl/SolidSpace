@@ -3,7 +3,7 @@ using SolidSpace.Mathematics;
 using Unity.Collections;
 using UnityEngine;
 
-namespace SolidSpace.Entities.Rendering.Atlases
+namespace SolidSpace.Entities.Rendering.Sprites
 {
     public interface ITextureAtlas
     {

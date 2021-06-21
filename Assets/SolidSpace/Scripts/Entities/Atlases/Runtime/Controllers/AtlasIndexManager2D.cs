@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using SolidSpace.Entities.Rendering.Atlases;
 using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
 using Unity.Collections;

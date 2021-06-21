@@ -1,7 +1,6 @@
 using System.Runtime.CompilerServices;
 using SolidSpace.Entities.Atlases;
 using SolidSpace.Entities.Components;
-using SolidSpace.Entities.Rendering.Atlases;
 using SolidSpace.Mathematics;
 using Unity.Burst;
 using Unity.Collections;

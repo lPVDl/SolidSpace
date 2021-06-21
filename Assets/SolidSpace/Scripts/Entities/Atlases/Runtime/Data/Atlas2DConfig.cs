@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace SolidSpace.Entities.Rendering.Atlases
+namespace SolidSpace.Entities.Atlases
 {
     [Serializable]
     public class Atlas2DConfig

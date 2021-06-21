@@ -1,4 +1,3 @@
-using SolidSpace.Entities.Rendering.Atlases;
 using SolidSpace.Mathematics;
 using UnityEngine;
 

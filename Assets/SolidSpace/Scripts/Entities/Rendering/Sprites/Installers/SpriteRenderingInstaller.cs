@@ -1,5 +1,4 @@
 using SolidSpace.DependencyInjection;
-using SolidSpace.Entities.Rendering.Atlases;
 using UnityEngine;
 
 namespace SolidSpace.Entities.Rendering.Sprites

@@ -1,8 +1,8 @@
 using SolidSpace.DataValidation;
-using SolidSpace.Entities.Atlases;
+using SolidSpace.Entities.Health.Atlases;
 using SolidSpace.Mathematics;
 
-namespace SolidSpace.Entities.Health.Atlases
+namespace SolidSpace.Entities.Atlases
 {
     [InspectorDataValidator]
     public class Atlas1DConfigValidator : IDataValidator<Atlas1DConfig>
