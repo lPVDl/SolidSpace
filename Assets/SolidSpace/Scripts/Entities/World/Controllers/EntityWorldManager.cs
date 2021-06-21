@@ -83,6 +83,11 @@ namespace SolidSpace.Entities.World
             _world.EntityManager.SetComponentData(entity, componentData);
         }
 
+        public bool CheckExists(Entity entity)
+        {
+            return _world.EntityManager.Exists(entity);
+        }
+
         public T GetComponentData<T>(Entity entity) where T : struct, IComponentData
         {
             return _world.EntityManager.GetComponentData<T>(entity);

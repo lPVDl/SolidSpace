@@ -6,7 +6,9 @@ namespace SolidSpace.Playground.Core
 {
     internal class MouseTracker : IPointerTracker, IUpdatable
     {
-        public bool ClickedThisFrame =>  Input.GetMouseButtonDown(0);
+        public bool ClickedThisFrame => Input.GetMouseButtonDown(0);
+
+        public bool IsHeldThisFrame => Input.GetMouseButton(0);
         
         public float2 Position { get; private set; }
         

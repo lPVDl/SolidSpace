@@ -20,5 +20,6 @@ namespace SolidSpace.Entities.World
         Entity CreateEntity(EntityArchetype archetype);
         EntityQuery CreateEntityQuery(params EntityQueryDesc[] queryDesc);
         void DestroyEntity(EntityQuery query);
+        bool CheckExists(Entity entity);
     }
 }

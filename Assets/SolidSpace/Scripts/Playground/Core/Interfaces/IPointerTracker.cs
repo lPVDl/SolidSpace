@@ -7,5 +7,7 @@ namespace SolidSpace.Playground.Core
         public float2 Position { get; }
 
         public bool ClickedThisFrame { get; }
+        
+        public bool IsHeldThisFrame { get; }
     }
 }
