@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using SolidSpace.Gizmos;
 using SolidSpace.Playground.Core;
@@ -20,6 +21,8 @@ namespace SolidSpace.Playground.Tools.SpawnPoint
         public IStringField SpawnRadiusField { get; set; }
         public IStringField SpawnAmountField { get; set; }
         
+        public IPlaygroundToolValueStorage ValueStorage { get; set; }
+        
         public int SpawnRadius { get; set; }
         
         public int SpawnAmount { get; set; }
@@ -40,6 +43,26 @@ namespace SolidSpace.Playground.Tools.SpawnPoint
                 var randomOffset = Random.insideUnitCircle * SpawnRadius;
 
                 yield return pointerPosition + new float2(randomOffset.x, randomOffset.y);
+            }
+        }
+
+        public void OnActivate(bool isActive)
+        {
+            if (isActive)
+            {
+                SpawnRadius = (int) ValueStorage.GetValueOrDefault("InteractionRange");
+                SpawnAmount = (int) ValueStorage.GetValueOrDefault("SpawnAmount");
+
+                SpawnRadius = Math.Max(0, SpawnRadius);
+                SpawnAmount = Math.Max(1, SpawnAmount);
+                
+                SpawnRadiusField.SetValue(SpawnRadius.ToString());
+                SpawnAmountField.SetValue(SpawnAmount.ToString());
+            }
+            else
+            {
+                ValueStorage.SetValue("InteractionRange", SpawnRadius);
+                ValueStorage.SetValue("SpawnAmount", SpawnAmount);
             }
         }
     }

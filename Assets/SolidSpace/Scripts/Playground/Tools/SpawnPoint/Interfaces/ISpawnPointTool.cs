@@ -7,5 +7,6 @@ namespace SolidSpace.Playground.Tools.SpawnPoint
     public interface ISpawnPointTool : IUIElement
     {
         IEnumerable<float2> OnUpdate();
+        void OnActivate(bool isActive);
     }
 }

@@ -78,6 +78,7 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
         
         public void OnActivate(bool isActive)
         {
+            _spawnPointTool.OnActivate(isActive);
             _uiManager.SetElementVisible(_componentsWindow, isActive);
             _uiManager.SetElementVisible(_spawnPointTool, isActive);
             _uiManager.SetElementVisible(_emitterWindow, isActive);

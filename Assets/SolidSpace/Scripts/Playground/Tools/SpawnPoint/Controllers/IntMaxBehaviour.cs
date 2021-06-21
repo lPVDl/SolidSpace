@@ -2,15 +2,13 @@ using SolidSpace.Playground.UI;
 
 namespace SolidSpace.Playground.Tools.SpawnPoint
 {
-    public class MinMaxIntRangeBehaviour : IStringFieldCorrectionBehaviour
+    public class IntMaxBehaviour : IStringFieldCorrectionBehaviour
     {
         private readonly int _min;
-        private readonly int _max;
-        
-        public MinMaxIntRangeBehaviour(int min, int max)
+
+        public IntMaxBehaviour(int min)
         {
             _min = min;
-            _max = max;
         }
         
         public string TryFixString(string value, out bool wasFixed)
@@ -25,11 +23,6 @@ namespace SolidSpace.Playground.Tools.SpawnPoint
             if (parsedInt < _min)
             {
                 return _min.ToString();
-            }
-
-            if (parsedInt > _max)
-            {
-                return _max.ToString();
             }
 
             wasFixed = false;

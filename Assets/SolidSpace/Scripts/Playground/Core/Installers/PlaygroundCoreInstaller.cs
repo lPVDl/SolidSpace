@@ -13,6 +13,7 @@ namespace SolidSpace.Playground.Core
         {
             container.BindFromComponentInHierarchy<Camera>();
             container.Bind<PlaygroundCoreController>();
+            container.Bind<PlaygroundToolValueStorage>();
             container.Bind<MouseTracker>();
 
             foreach (var installer in _installers)

@@ -11,14 +11,16 @@ namespace SolidSpace.Playground.Tools.SpawnPoint
         private readonly IPointerTracker _pointer;
         private readonly IPlaygroundUIFactory _uiFactory;
         private readonly IGizmosManager _gizmosManager;
+        private readonly IPlaygroundToolValueStorage _valueStorage;
 
         public SpawnPointToolFactory(IUIManager uiManager, IPointerTracker pointer, IPlaygroundUIFactory uiFactory,
-            IGizmosManager gizmosManager)
+            IGizmosManager gizmosManager, IPlaygroundToolValueStorage valueStorage)
         {
             _uiManager = uiManager;
             _pointer = pointer;
             _uiFactory = uiFactory;
             _gizmosManager = gizmosManager;
+            _valueStorage = valueStorage;
         }
         
         public ISpawnPointTool Create()
@@ -29,13 +31,13 @@ namespace SolidSpace.Playground.Tools.SpawnPoint
             var radiusField = _uiFactory.CreateStringField();
             radiusField.SetLabel("Radius");
             radiusField.SetValue("0");
-            radiusField.SetValueCorrectionBehaviour(new MinMaxIntRangeBehaviour(0, 1000));
+            radiusField.SetValueCorrectionBehaviour(new IntMaxBehaviour(0));
             window.AttachChild(radiusField);
 
             var amountField = _uiFactory.CreateStringField();
             amountField.SetLabel("Amount");
             amountField.SetValue("1");
-            amountField.SetValueCorrectionBehaviour(new MinMaxIntRangeBehaviour(1, 100000));
+            amountField.SetValueCorrectionBehaviour(new IntMaxBehaviour(1));
             window.AttachChild(amountField);
 
             var tool = new SpawnPointTool
@@ -46,7 +48,8 @@ namespace SolidSpace.Playground.Tools.SpawnPoint
                 SpawnRadiusField = radiusField,
                 SpawnAmountField = amountField,
                 SpawnAmount = 1,
-                SpawnRadius = 0
+                SpawnRadius = 0,
+                ValueStorage = _valueStorage
             };
 
             tool.Gizmos = _gizmosManager.GetHandle(tool);
