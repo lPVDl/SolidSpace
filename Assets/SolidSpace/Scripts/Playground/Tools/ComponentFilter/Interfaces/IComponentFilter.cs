@@ -10,8 +10,6 @@ namespace SolidSpace.Playground.Tools.ComponentFilter
     {
         event Action FilterModified;
 
-        void SetState(ComponentType componentType, FilterState state);
-
         IEnumerable<ComponentType> GetTagsWithState(ETagLabelState state);
     }
 }

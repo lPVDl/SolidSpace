@@ -2,16 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using SolidSpace.GameCycle;
 using SolidSpace.Playground.UI;
+using SolidSpace.UI;
 using Unity.Entities;
 using UnityEngine.UIElements;
 
 namespace SolidSpace.Playground.Tools.ComponentFilter
 {
-    public class ComponentFilterFactory : IComponentFilterFactory
+    public class ComponentFilterFactory : IComponentFilterFactory, IInitializable
     {
         private readonly IPlaygroundUIFactory _uiFactory;
         private readonly ComponentFilterFactoryConfig _config;
+
+        private Dictionary<ComponentType, string> _componentToName;
 
         public ComponentFilterFactory(IPlaygroundUIFactory uiFactory, ComponentFilterFactoryConfig config)
         {
@@ -19,7 +23,16 @@ namespace SolidSpace.Playground.Tools.ComponentFilter
             _config = config;
         }
 
-        public IComponentFilter Create()
+        public void OnInitialize()
+        {
+            _componentToName = new Dictionary<ComponentType, string>();
+            foreach (var type in IterateAllComponents())
+            {
+                _componentToName[type] = _config.NameConverter.Replace(type.Name);
+            }
+        }
+
+        public IComponentFilter Create(params ComponentType[] readonlyEnabledComponents)
         {
             var rawTypes = IterateAllComponents().ToArray();
             var allComponents = new ComponentType[rawTypes.Length];
@@ -34,6 +47,17 @@ namespace SolidSpace.Playground.Tools.ComponentFilter
                 {
                     isLocked = false,
                     state = ETagLabelState.Neutral
+                };
+            }
+
+            for (var i = 0; i < readonlyEnabledComponents.Length; i++)
+            {
+                var componentType = readonlyEnabledComponents[i];
+                var index = componentToIndex[componentType];
+                filter[index] = new FilterState
+                {
+                    isLocked = true,
+                    state = ETagLabelState.Positive
                 };
             }
 
@@ -57,7 +81,7 @@ namespace SolidSpace.Playground.Tools.ComponentFilter
                 var state = filter[i];
                 var tag = _uiFactory.CreateTagLabel();
                 var labelIndex = i;
-                var name = _config.NameConverter.Replace(rawTypes[i].Name);
+                var name = _componentToName[rawTypes[i]];
                 tag.SetLabel(name);
                 tag.SetState(state.state);
                 tag.SetLocked(state.isLocked);
@@ -70,6 +94,29 @@ namespace SolidSpace.Playground.Tools.ComponentFilter
             return view;
         }
 
+        public IUIElement CreateReadonly(params ComponentType[] components)
+        {
+            var window = _uiFactory.CreateToolWindow();
+            window.SetTitle("Components");
+
+            var container = _uiFactory.CreateLayoutGrid();
+            container.SetFlexDirection(FlexDirection.Row);
+            container.SetFlexWrap(Wrap.Wrap);
+            window.AttachChild(container);
+
+            for (var i = 0; i < components.Length; i++)
+            {
+                var component = components[i];
+                var tag = _uiFactory.CreateTagLabel();
+                tag.SetLabel(_componentToName[component]);
+                tag.SetLocked(true);
+                tag.SetState(ETagLabelState.Positive);
+                container.AttachChild(tag);
+            }
+
+            return window;
+        }
+
         private IEnumerable<Type> IterateAllComponents()
         {
             var inter = typeof(IComponentData);
@@ -78,5 +125,7 @@ namespace SolidSpace.Playground.Tools.ComponentFilter
                 .Where(t => t.IsValueType && inter.IsAssignableFrom(t))
                 .Where(t => _config.Filter.IsMatch(t.FullName));
         }
+
+        public void OnFinalize() { }
     }
 }

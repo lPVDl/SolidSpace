@@ -51,12 +51,7 @@ namespace SolidSpace.Playground.Tools.Eraser
             _window = _uiFactory.CreateToolWindow();
             _window.SetTitle("Eraser");
 
-            _filter = _filterFactory.Create();
-            _filter.SetState(typeof(PositionComponent), new FilterState
-            {
-                isLocked = true,
-                state = ETagLabelState.Positive
-            });
+            _filter = _filterFactory.Create(typeof(PositionComponent));
             _filter.FilterModified += UpdateSearchSystemQuery;
 
             var button = _uiFactory.CreateGeneralButton();

@@ -3,8 +3,10 @@ using SolidSpace.Entities.Health;
 using SolidSpace.Entities.Rendering.Sprites;
 using SolidSpace.Entities.World;
 using SolidSpace.Playground.Core;
+using SolidSpace.Playground.Tools.ComponentFilter;
 using SolidSpace.Playground.Tools.SpawnPoint;
 using SolidSpace.Playground.UI;
+using SolidSpace.UI;
 using Unity.Entities;
 using Unity.Mathematics;
 
@@ -21,27 +23,31 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
         private readonly ISpriteColorSystem _spriteSystem;
         private readonly ISpawnPointToolFactory _pointToolFactory;
         private readonly IPlaygroundUIManager _uiManager;
+        private readonly IComponentFilterFactory _filterFactory;
         private readonly IHealthAtlasSystem _healthSystem;
 
         private ISpawnPointTool _spawnPointTool;
         private EntityArchetype _shipArchetype;
+        private IUIElement _componentsWindow;
 
         public ShipSpawnTool(ShipSpawnToolConfig config, IEntityWorldManager entityManager, IHealthAtlasSystem healthSystem,
-            ISpriteColorSystem spriteSystem, ISpawnPointToolFactory pointToolFactory, IPlaygroundUIManager uiManager)
+            ISpriteColorSystem spriteSystem, ISpawnPointToolFactory pointToolFactory, IPlaygroundUIManager uiManager,
+            IComponentFilterFactory filterFactory)
         {
             _config = config;
             _entityManager = entityManager;
             _spriteSystem = spriteSystem;
             _pointToolFactory = pointToolFactory;
             _uiManager = uiManager;
+            _filterFactory = filterFactory;
             _healthSystem = healthSystem;
         }
 
         public void OnInitialize()
         {
             Config = _config.ToolConfig;
-            
-            _shipArchetype = _entityManager.CreateArchetype(new ComponentType[]
+
+            var shipComponents = new ComponentType[]
             {
                 typeof(PositionComponent),
                 typeof(RotationComponent),
@@ -49,13 +55,16 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
                 typeof(ColliderComponent),
                 typeof(SpriteComponent),
                 typeof(HealthComponent)
-            });
+            };
+            _shipArchetype = _entityManager.CreateArchetype(shipComponents);
 
+            _componentsWindow = _filterFactory.CreateReadonly(shipComponents);
             _spawnPointTool = _pointToolFactory.Create();
         }
         
         public void OnActivate(bool isActive)
         {
+            _uiManager.SetElementVisible(_componentsWindow, isActive);
             _uiManager.SetElementVisible(_spawnPointTool, isActive);
         }
         
@@ -100,9 +109,6 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
             _healthSystem.Copy(texture, healthIndex);
         }
 
-        public void OnFinalize()
-        {
-            
-        }
+        public void OnFinalize() { }
     }
 }

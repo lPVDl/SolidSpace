@@ -1,8 +1,10 @@
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.World;
 using SolidSpace.Playground.Core;
+using SolidSpace.Playground.Tools.ComponentFilter;
 using SolidSpace.Playground.Tools.SpawnPoint;
 using SolidSpace.Playground.UI;
+using SolidSpace.UI;
 using Unity.Entities;
 using Unity.Mathematics;
 
@@ -16,38 +18,44 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
         private readonly ISpawnPointToolFactory _spawnPointToolFactory;
         private readonly IPlaygroundUIManager _uiManager;
         private readonly IPlaygroundUIFactory _uiFactory;
+        private readonly IComponentFilterFactory _filterFactory;
 
         private EntityArchetype _emitterArchetype;
         private ISpawnPointTool _spawnPointTool;
-        private IToolWindow _window;
+        private IToolWindow _emitterWindow;
+        private IUIElement _componentsWindow;
         private IStringField _spawnRateField;
         private IStringField _particleVelocityField;
 
         private float _spawnRate;
         private float _particleVelocity;
 
-        public EmitterSpawnTool(PlaygroundToolConfig config, IEntityWorldManager entityManager,
-            ISpawnPointToolFactory spawnPointToolFactory, IPlaygroundUIManager uiManager, IPlaygroundUIFactory uiFactory)
+        public EmitterSpawnTool(PlaygroundToolConfig config, IEntityWorldManager entityManager, IPlaygroundUIManager uiManager,
+            ISpawnPointToolFactory spawnPointToolFactory, IPlaygroundUIFactory uiFactory, IComponentFilterFactory filterFactory)
         {
             _entityManager = entityManager;
             _spawnPointToolFactory = spawnPointToolFactory;
             _uiManager = uiManager;
             _uiFactory = uiFactory;
+            _filterFactory = filterFactory;
             Config = config;
         }
         
         public void OnInitialize()
         {
-            _emitterArchetype = _entityManager.CreateArchetype(new ComponentType[]
+            var emitterComponents = new ComponentType[]
             {
                 typeof(PositionComponent),
                 typeof(ParticleEmitterComponent),
                 typeof(RandomComponent),
                 typeof(RepeatTimerComponent),
-            });
+            };
+            _emitterArchetype = _entityManager.CreateArchetype(emitterComponents);
 
-            _window = _uiFactory.CreateToolWindow();
-            _window.SetTitle("Emitter");
+            _componentsWindow = _filterFactory.CreateReadonly(emitterComponents);
+
+            _emitterWindow = _uiFactory.CreateToolWindow();
+            _emitterWindow.SetTitle("Emitter");
 
             _spawnPointTool = _spawnPointToolFactory.Create();
 
@@ -57,7 +65,7 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
             _spawnRateField.SetLabel("Spawn Rate");
             _spawnRateField.SetValueCorrectionBehaviour(new FloatMinMaxBehaviour(1, 60));
             _spawnRateField.ValueChanged += () => _spawnRate = float.Parse(_spawnRateField.Value);
-            _window.AttachChild(_spawnRateField);
+            _emitterWindow.AttachChild(_spawnRateField);
 
             _particleVelocity = 10;
             _particleVelocityField = _uiFactory.CreateStringField();
@@ -65,7 +73,14 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
             _particleVelocityField.SetLabel("Particle Velocity");
             _particleVelocityField.SetValueCorrectionBehaviour(new FloatMinMaxBehaviour(0, 1000));
             _particleVelocityField.ValueChanged += () => _particleVelocity = float.Parse(_particleVelocityField.Value);
-            _window.AttachChild(_particleVelocityField);
+            _emitterWindow.AttachChild(_particleVelocityField);
+        }
+        
+        public void OnActivate(bool isActive)
+        {
+            _uiManager.SetElementVisible(_componentsWindow, isActive);
+            _uiManager.SetElementVisible(_spawnPointTool, isActive);
+            _uiManager.SetElementVisible(_emitterWindow, isActive);
         }
 
         public void OnUpdate()
@@ -93,15 +108,6 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
             });
         }
 
-        public void OnActivate(bool isActive)
-        {
-            _uiManager.SetElementVisible(_spawnPointTool, isActive);
-            _uiManager.SetElementVisible(_window, isActive);
-        }
-
-        public void OnFinalize()
-        {
-            
-        }
+        public void OnFinalize() { }
     }
 }
