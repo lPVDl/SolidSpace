@@ -9,12 +9,13 @@ namespace SolidSpace.Gizmos
         private const int BufferSize = 256;
         
         private readonly GizmosConfig _config;
-        
+
         private Material _material;
         private ShapeStorage<Line> _wireLines;
         private ShapeStorage<Rect> _wireRects;
         private ShapeStorage<Polygon> _wirePolygons;
         private ShapeStorage<Square> _wireSquares;
+        private ShapeStorage<Square> _screenSquares;
 
         public GizmosManager(GizmosConfig config)
         {
@@ -27,6 +28,7 @@ namespace SolidSpace.Gizmos
             _wireRects = new ShapeStorage<Rect>(BufferSize);
             _wirePolygons = new ShapeStorage<Polygon>(BufferSize);
             _wireSquares = new ShapeStorage<Square>(BufferSize);
+            _screenSquares = new ShapeStorage<Square>(BufferSize);
             _material = new Material(_config.Shader);
             
             Camera.onPostRender += OnRender;
@@ -35,6 +37,12 @@ namespace SolidSpace.Gizmos
         private void OnRender(Camera camera)
         {
             _material.SetPass(0);
+            
+            GizmosScreenDrawer.BeginDraw(camera);
+            GizmosScreenDrawer.DrawSquares(_screenSquares);
+            GizmosScreenDrawer.EndDraw();
+            
+            _screenSquares.Clear();
             
             GizmosWireDrawer.BeginDraw();
             GizmosWireDrawer.DrawLines(_wireLines);
@@ -53,6 +61,7 @@ namespace SolidSpace.Gizmos
         internal void ScheduleWireRectDraw(Rect rect) => _wireRects.Add(rect);
         internal void ScheduleWirePolygonDraw(Polygon polygon) => _wirePolygons.Add(polygon);
         internal void ScheduleWireSquareDraw(Square square) => _wireSquares.Add(square);
+        internal void ScheduleScreenSquareDraw(Square square) => _screenSquares.Add(square);
 
         public GizmosHandle GetHandle(object owner)
         {
@@ -65,6 +74,7 @@ namespace SolidSpace.Gizmos
             _wireRects.Dispose();
             _wirePolygons.Dispose();
             _wireSquares.Dispose();
+            _screenSquares.Dispose();
             Object.Destroy(_material);
             
             Camera.onPostRender -= OnRender;

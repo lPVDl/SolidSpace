@@ -42,7 +42,8 @@ namespace SolidSpace.Playground.Tools.SpawnPoint
             
             foreach (var pos in positions)
             {
-                Gizmos.DrawWireSquare(pos, 2, Color.yellow);
+                Gizmos.DrawScreenSquare(pos, 6, Color.yellow);
+                Gizmos.DrawScreenSquare(pos, 4, Color.blue);
             }
             
             if (!Pointer.ClickedThisFrame)

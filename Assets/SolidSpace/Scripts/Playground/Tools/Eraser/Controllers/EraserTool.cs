@@ -8,6 +8,7 @@ using SolidSpace.Playground.Tools.ComponentFilter;
 using SolidSpace.Playground.UI;
 using SolidSpace.UI;
 using Unity.Entities;
+using UnityEngine;
 
 namespace SolidSpace.Playground.Tools.Eraser
 {
@@ -88,7 +89,9 @@ namespace SolidSpace.Playground.Tools.Eraser
                 return;
             }
             
-            _gizmos.DrawLine(_pointer.Position, result.position, _config.GizmosColor);
+            _gizmos.DrawLine(_pointer.Position, result.position, Color.red);
+            _gizmos.DrawScreenSquare(result.position, 6, Color.red);
+            _gizmos.DrawScreenSquare(result.position, 4, Color.black);
 
             if (_pointer.ClickedThisFrame)
             {

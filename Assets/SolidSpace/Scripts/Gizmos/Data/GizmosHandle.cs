@@ -53,6 +53,16 @@ namespace SolidSpace.Gizmos
             });
         }
 
+        public void DrawScreenSquare(float2 center, float size, Color color)
+        {
+            _manager.ScheduleScreenSquareDraw(new Square
+            {
+                center = center,
+                size = (half) size,
+                color = color
+            });
+        }
+
         public void DrawWirePolygon(float2 center, float radius, int topology, Color color)
         {
             _manager.ScheduleWirePolygonDraw(new Polygon
