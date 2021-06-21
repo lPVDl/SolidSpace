@@ -42,7 +42,7 @@ namespace SolidSpace.Playground.Tools.Eraser
             _config = config;
         }
         
-        public void InitializeTool()
+        public void OnInitialize()
         {
             Config = _config.ToolConfig;
             _gizmos = _gizmosManager.GetHandle(this);
@@ -65,14 +65,22 @@ namespace SolidSpace.Playground.Tools.Eraser
             _window.AttachChild(button);
         }
         
-        public void OnToolActivation()
+        public void OnActivate(bool isActive)
         {
-            UpdateSearchSystemQuery();
-            _searchSystem.SetEnabled(true);
-            _uiManager.AddToRoot(_window, "ContainerA");
+            if (isActive)
+            {
+                UpdateSearchSystemQuery();
+                _searchSystem.SetEnabled(true);
+                _uiManager.AddToRoot(_window, "ContainerA");
+            }
+            else
+            {
+                _searchSystem.SetEnabled(false);
+                _uiManager.RemoveFromRoot(_window, "ContainerA");
+            }
         }
 
-        public void Update()
+        public void OnUpdate()
         {
             if (_uiManager.IsMouseOver)
             {
@@ -104,12 +112,6 @@ namespace SolidSpace.Playground.Tools.Eraser
             });
         }
 
-        public void OnToolDeactivation()
-        {
-            _searchSystem.SetEnabled(false);
-            _uiManager.RemoveFromRoot(_window, "ContainerA");
-        }
-
         private void OnDestroyClicked()
         {
             var query = _entityManager.CreateEntityQuery(new EntityQueryDesc
@@ -121,7 +123,7 @@ namespace SolidSpace.Playground.Tools.Eraser
             _entityManager.DestroyEntity(query);
         }
 
-        public void FinalizeTool()
+        public void OnFinalize()
         {
             
         }

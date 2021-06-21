@@ -43,7 +43,7 @@ namespace SolidSpace.Playground.Core
             for (var i = 0; i < _tools.Count; i++)
             {
                 var tool = _tools[i];
-                tool.InitializeTool();
+                tool.OnInitialize();
                 
                 var config = tool.Config;
                 var button = _uiFactory.CreateToolButton();
@@ -62,7 +62,7 @@ namespace SolidSpace.Playground.Core
         {
             if (_toolIndex != -1)
             {
-                _tools[_toolIndex].Update();
+                _tools[_toolIndex].OnUpdate();
             }
         }
 
@@ -71,7 +71,7 @@ namespace SolidSpace.Playground.Core
             if (_toolIndex == newIndex)
             {
                 _buttons[_toolIndex].SetSelected(false);
-                _tools[_toolIndex].OnToolDeactivation();
+                _tools[_toolIndex].OnActivate(false);
                 _toolIndex = -1;
                 _window.SetTitle(NoToolTitle);
                 return;
@@ -80,12 +80,12 @@ namespace SolidSpace.Playground.Core
             if (_toolIndex != -1)
             {
                 _buttons[_toolIndex].SetSelected(false);
-                _tools[_toolIndex].OnToolDeactivation();
+                _tools[_toolIndex].OnActivate(false);
             }
 
             _toolIndex = newIndex;
             _buttons[_toolIndex].SetSelected(true);
-            _tools[_toolIndex].OnToolActivation();
+            _tools[_toolIndex].OnActivate(true);
             _window.SetTitle(_configs[_toolIndex].Name);
         }
 
@@ -93,7 +93,7 @@ namespace SolidSpace.Playground.Core
         {
             foreach (var tool in _tools)
             {
-                tool.FinalizeTool();
+                tool.OnFinalize();
             }
         }
     }

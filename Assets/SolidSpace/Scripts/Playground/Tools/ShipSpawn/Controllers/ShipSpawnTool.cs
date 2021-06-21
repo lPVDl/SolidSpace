@@ -34,7 +34,7 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
             _healthSystem = healthSystem;
         }
 
-        public void InitializeTool()
+        public void OnInitialize()
         {
             Config = _config.ToolConfig;
             
@@ -51,14 +51,21 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
             _spawnPointTool = _pointToolFactory.Create();
         }
         
-        public void OnToolActivation()
+        public void OnActivate(bool isActive)
         {
-            _spawnPointTool.SetEnabled(true);
+            if (isActive)
+            {
+                _spawnPointTool.OnActivate(true);
+            }
+            else
+            {
+                _spawnPointTool.OnActivate(false);
+            }
         }
         
-        public void Update()
+        public void OnUpdate()
         {
-            foreach (var position in _spawnPointTool.Update())
+            foreach (var position in _spawnPointTool.OnUpdate())
             {
                 SpawnShip(position);
             }
@@ -97,12 +104,7 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
             _healthSystem.Copy(texture, healthIndex);
         }
 
-        public void OnToolDeactivation()
-        {
-            _spawnPointTool.SetEnabled(false);   
-        }
-
-        public void FinalizeTool()
+        public void OnFinalize()
         {
             
         }

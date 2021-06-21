@@ -5,7 +5,7 @@ namespace SolidSpace.Playground.Tools.SpawnPoint
 {
     public interface ISpawnPointTool
     {
-        IEnumerable<float2> Update();
-        void SetEnabled(bool isEnabled);
+        IEnumerable<float2> OnUpdate();
+        void OnActivate(bool isActive);
     }
 }

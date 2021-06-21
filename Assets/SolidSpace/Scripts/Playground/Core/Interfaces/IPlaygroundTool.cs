@@ -4,10 +4,9 @@ namespace SolidSpace.Playground.Core
     {
         PlaygroundToolConfig Config { get; }
         
-        void InitializeTool();
-        void Update();
-        void OnToolActivation();
-        void OnToolDeactivation();
-        void FinalizeTool();
+        void OnInitialize();
+        void OnUpdate();
+        void OnActivate(bool isActive);
+        void OnFinalize();
     }
 }

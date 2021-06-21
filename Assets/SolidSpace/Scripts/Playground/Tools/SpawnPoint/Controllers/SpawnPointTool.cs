@@ -22,7 +22,7 @@ namespace SolidSpace.Playground.Tools.SpawnPoint
         
         public int SpawnAmount { get; set; }
 
-        public IEnumerable<float2> Update()
+        public IEnumerable<float2> OnUpdate()
         {
             var pointerPosition = Pointer.Position;
             
@@ -41,9 +41,9 @@ namespace SolidSpace.Playground.Tools.SpawnPoint
             }
         }
 
-        public void SetEnabled(bool isEnabled)
+        public void OnActivate(bool isActive)
         {
-            if (isEnabled)
+            if (isActive)
             {
                 UIManager.AddToRoot(Window, "ContainerA");
             }

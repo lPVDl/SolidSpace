@@ -37,7 +37,7 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
             Config = config;
         }
         
-        public void InitializeTool()
+        public void OnInitialize()
         {
             _spawnPointTool = _spawnPointToolFactory.Create();
             _emitterArchetype = _entityManager.CreateArchetype(new ComponentType[]
@@ -68,9 +68,9 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
             _window.AttachChild(_particleVelocityField);
         }
 
-        public void Update()
+        public void OnUpdate()
         {
-            foreach (var point in _spawnPointTool.Update())
+            foreach (var point in _spawnPointTool.OnUpdate())
             {
                 Spawn(point, _spawnRate, _particleVelocity);
             }
@@ -93,19 +93,21 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
             });
         }
 
-        public void OnToolActivation()
+        public void OnActivate(bool isActive)
         {
-            _spawnPointTool.SetEnabled(true);
-            _uiManager.AddToRoot(_window, "ContainerA");
+            if (isActive)
+            {
+                _spawnPointTool.OnActivate(true);
+                _uiManager.AddToRoot(_window, "ContainerA");
+            }
+            else
+            {
+                _spawnPointTool.OnActivate(false);
+                _uiManager.RemoveFromRoot(_window, "ContainerA");
+            }
         }
 
-        public void OnToolDeactivation()
-        {
-            _spawnPointTool.SetEnabled(false);
-            _uiManager.RemoveFromRoot(_window, "ContainerA");
-        }
-
-        public void FinalizeTool()
+        public void OnFinalize()
         {
             
         }
