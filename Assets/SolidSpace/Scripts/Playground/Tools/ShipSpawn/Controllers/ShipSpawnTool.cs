@@ -54,7 +54,8 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
                 typeof(SizeComponent),
                 typeof(ColliderComponent),
                 typeof(SpriteComponent),
-                typeof(HealthComponent)
+                typeof(HealthComponent),
+                typeof(VelocityComponent)
             };
             _shipArchetype = _entityManager.CreateArchetype(shipComponents);
 
