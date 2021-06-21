@@ -49,7 +49,8 @@ namespace SolidSpace.Playground.Tools.SpawnPoint
                 SpawnAmountField = amountField,
                 SpawnAmount = 1,
                 SpawnRadius = 0,
-                ValueStorage = _valueStorage
+                ValueStorage = _valueStorage,
+                PositionGenerator = new PositionGenerator()
             };
 
             tool.Gizmos = _gizmosManager.GetHandle(tool);

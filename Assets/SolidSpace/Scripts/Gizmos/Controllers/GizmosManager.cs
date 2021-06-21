@@ -19,9 +19,11 @@ namespace SolidSpace.Gizmos
         private NativeArray<GizmosLine> _lines;
         private NativeArray<GizmosRect> _rects;
         private NativeArray<GizmosPolygon> _polygons;
+        private NativeArray<GizmosSquare> _squares;
         private int _lineCount;
         private int _rectCount;
         private int _polygonCount;
+        private int _squareCount;
         
         public GizmosManager(GizmosConfig config)
         {
@@ -33,6 +35,7 @@ namespace SolidSpace.Gizmos
             _lines = NativeMemory.CreatePersistentArray<GizmosLine>(BufferSize);
             _rects = NativeMemory.CreatePersistentArray<GizmosRect>(BufferSize);
             _polygons = NativeMemory.CreatePersistentArray<GizmosPolygon>(BufferSize);
+            _squares = NativeMemory.CreatePersistentArray<GizmosSquare>(BufferSize);
             _material = new Material(_config.Shader);
 
             Camera.onPostRender += OnRender;
@@ -49,6 +52,7 @@ namespace SolidSpace.Gizmos
             DrawLines();
             DrawRects();
             DrawPolygons();
+            DrawSquares();
 
             GL.End();
             GL.PopMatrix();
@@ -71,7 +75,7 @@ namespace SolidSpace.Gizmos
             {
                 var rect = _rects[i];
                 GL.Color(rect.color);
-                var center = new float2(rect.center.x, rect.center.y);
+                var center = rect.center;
                 var halfSize = new float2(rect.size.x / 2f, rect.size.y / 2f);
                 FloatMath.SinCos(rect.rotationRad, out var sin, out var cos);
                 var p0 = center + FloatMath.Rotate(-halfSize.x, -halfSize.y, sin, cos);
@@ -84,6 +88,27 @@ namespace SolidSpace.Gizmos
                 GL_Line(p3, p0);
             }
             _rectCount = 0;
+        }
+
+        private void DrawSquares()
+        {
+            for (var i = 0; i < _squareCount; i++)
+            {
+                var square = _squares[i];
+                GL.Color(square.color);
+                var center = square.center;
+                var halfSize = square.size / 2f;
+                var p0 = center + new float2(-halfSize, -halfSize);
+                var p1 = center + new float2(-halfSize, +halfSize);
+                var p2 = center + new float2(+halfSize, +halfSize);
+                var p3 = center + new float2(+halfSize, -halfSize);
+                GL_Line(p0, p1);
+                GL_Line(p1, p2);
+                GL_Line(p2, p3);
+                GL_Line(p3, p0);
+            }
+
+            _squareCount = 0;
         }
 
         private void DrawPolygons()
@@ -155,6 +180,18 @@ namespace SolidSpace.Gizmos
             _polygons[_polygonCount++] = polygon;
         }
 
+        internal void ScheduleSquareDraw(GizmosSquare square)
+        {
+            NativeMemory.MaintainPersistentArrayLength(ref _squares, new ArrayMaintenanceData
+            {
+                itemPerAllocation = BufferSize,
+                copyOnResize = true,
+                requiredCapacity = _squareCount + 1
+            });
+
+            _squares[_squareCount++] = square;
+        }
+
         public GizmosHandle GetHandle(object owner)
         {
             return new GizmosHandle(this);
@@ -165,6 +202,7 @@ namespace SolidSpace.Gizmos
             _lines.Dispose();
             _rects.Dispose();
             _polygons.Dispose();
+            _squares.Dispose();
             Object.Destroy(_material);
             
             Camera.onPostRender -= OnRender;

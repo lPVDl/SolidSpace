@@ -8,8 +8,6 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-using Random = UnityEngine.Random;
-
 namespace SolidSpace.Playground.Tools.SpawnPoint
 {
     internal class SpawnPointTool : ISpawnPointTool
@@ -26,23 +24,35 @@ namespace SolidSpace.Playground.Tools.SpawnPoint
         public int SpawnRadius { get; set; }
         
         public int SpawnAmount { get; set; }
+        
+        public PositionGenerator PositionGenerator { get; set; }
 
         public IEnumerable<float2> OnUpdate()
         {
             var pointerPosition = Pointer.Position;
-            
-            Gizmos.DrawPolygon(pointerPosition, SpawnRadius, 32, Color.yellow);
-            
-            if (UIManager.IsMouseOver || !Pointer.ClickedThisFrame)
+
+            if (UIManager.IsMouseOver)
             {
                 yield break;
             }
+            
+            Gizmos.DrawPolygon(pointerPosition, SpawnRadius, 64, Color.yellow);
 
-            for (var i = 0; i < SpawnAmount; i++)
+            var positions = PositionGenerator.IteratePositions(pointerPosition, SpawnRadius, SpawnAmount);
+            
+            foreach (var pos in positions)
             {
-                var randomOffset = Random.insideUnitCircle * SpawnRadius;
-
-                yield return pointerPosition + new float2(randomOffset.x, randomOffset.y);
+                Gizmos.DrawWireSquare(pos, 2, Color.yellow);
+            }
+            
+            if (!Pointer.ClickedThisFrame)
+            {
+                yield break;
+            }
+            
+            foreach (var pos in positions)
+            {
+                yield return pos;
             }
         }
 
