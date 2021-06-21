@@ -15,12 +15,12 @@ namespace SolidSpace.Entities.Health
         public NativeSlice<AtlasChunk1D> Chunks => _indexManager.Chunks;
         public NativeSlice<ushort> ChunksOccupation => _indexManager.ChunksOccupation;
         
-        private readonly LinearAtlasConfig _config;
+        private readonly Atlas1DConfig _config;
         
         private AtlasIndexManager1D _indexManager;
         private NativeArray<byte> _data;
 
-        public HealthAtlasSystem(LinearAtlasConfig config)
+        public HealthAtlasSystem(Atlas1DConfig config)
         {
             _config = config;
         }
@@ -28,7 +28,7 @@ namespace SolidSpace.Entities.Health
         public void Initialize()
         {
             _data = NativeMemory.CreatePersistentArray<byte>(_config.AtlasSize);
-            _indexManager = new AtlasIndexManager1D(_config.AtlasSize, _config.Chunks);
+            _indexManager = new AtlasIndexManager1D(_config);
         }
 
         public void Copy(Texture2D source, AtlasIndex target)

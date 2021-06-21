@@ -15,22 +15,24 @@ namespace SolidSpace.Entities.Rendering.Sprites
         public NativeSlice<AtlasChunk2D> Chunks => _indexManager.Chunks;
         public NativeSlice<ushort> ChunksOccupation => _indexManager.ChunksOccupation;
         
-        private readonly TextureAtlasConfig _config;
+        private readonly SpriteColorSystemConfig _config;
         
         private AtlasIndexManager2D _indexManager;
 
-        public SpriteColorSystem(TextureAtlasConfig config)
+        public SpriteColorSystem(SpriteColorSystemConfig config)
         {
             _config = config;
         }
         
         public void Initialize()
         {
-            Texture = new Texture2D(_config.AtlasSize, _config.AtlasSize, _config.AtlasFormat, false, true);
+            var atlasSize = _config.AtlasConfig.AtlasSize;
+            
+            Texture = new Texture2D(atlasSize, atlasSize, _config.TextureFormat, false, true);
             Texture.name = nameof(SpriteColorSystem);
             Texture.filterMode = FilterMode.Point;
             
-            _indexManager = new AtlasIndexManager2D(_config.AtlasSize, _config.Chunks);
+            _indexManager = new AtlasIndexManager2D(_config.AtlasConfig);
         }
 
         public AtlasIndex Allocate(int width, int height)
@@ -45,7 +47,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
 
         public void Copy(Texture2D source, AtlasIndex target)
         {
-            var atlasFormat = _config.AtlasFormat;
+            var atlasFormat = _config.TextureFormat;
             
             if (source.format != atlasFormat)
             {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using SolidSpace.Entities.Health.Atlases;
 using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
 using Unity.Collections;
@@ -24,11 +25,11 @@ namespace SolidSpace.Entities.Atlases
         private NativeArray<AtlasChunk1D> _chunks;
         private NativeArray<ushort> _chunksOccupation;
 
-        public AtlasIndexManager1D(int atlasSize, IReadOnlyList<AtlasChunk1DConfig> chunkConfig)
+        public AtlasIndexManager1D(Atlas1DConfig config)
         {
-            _sectorManager = new AtlasSectorManager1D(atlasSize);
-            _minEntityPower = (int) CeilLog2(chunkConfig[0].itemSize);
-            _maxEntityPower = (int) CeilLog2(chunkConfig[chunkConfig.Count - 1].itemSize);
+            _sectorManager = new AtlasSectorManager1D(config.AtlasSize);
+            _minEntityPower = (int) CeilLog2(config.MinItemSize);
+            _maxEntityPower = (int) CeilLog2(config.MaxItemSize);
             _freeChunkIndices = new Stack<ushort>();
             _partiallyFilledChunks = new List<ushort>[_maxEntityPower + 1];
             for (var i = _minEntityPower; i < _maxEntityPower; i++)

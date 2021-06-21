@@ -1,17 +1,18 @@
 using System;
 using System.Collections.Generic;
-using SolidSpace.Entities.Atlases;
 using UnityEngine;
 
 namespace SolidSpace.Entities.Health.Atlases
 {
     [Serializable]
-    public class LinearAtlasConfig
+    public class Atlas1DConfig
     {
         public int AtlasSize => _atlasSize;
-        public IReadOnlyList<AtlasChunk1DConfig> Chunks => _chunks; 
-        
+        public int MinItemSize => _minItemSize;
+        public int MaxItemSize => _maxItemSize;
+
         [SerializeField] private int _atlasSize;
-        [SerializeField] private List<AtlasChunk1DConfig> _chunks;
+        [SerializeField] private int _minItemSize;
+        [SerializeField] private int _maxItemSize;
     }
 }

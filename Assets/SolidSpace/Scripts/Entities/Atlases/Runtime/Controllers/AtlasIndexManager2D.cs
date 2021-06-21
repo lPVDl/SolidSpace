@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using SolidSpace.Entities.Rendering.Atlases;
 using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
 using Unity.Collections;
@@ -11,7 +12,6 @@ namespace SolidSpace.Entities.Atlases
         private const int BufferSize = 16;
         
         public NativeSlice<AtlasChunk2D> Chunks { get; private set; }
-        
         public NativeSlice<ushort> ChunksOccupation { get; private set; }
 
         private readonly AtlasSectorManager2D _sectorManager;
@@ -23,11 +23,11 @@ namespace SolidSpace.Entities.Atlases
         private NativeArray<AtlasChunk2D> _chunks;
         private NativeArray<ushort> _chunksOccupation;
 
-        public AtlasIndexManager2D(int atlasSize, IReadOnlyList<AtlasChunk2DConfig> chunkConfig)
+        public AtlasIndexManager2D(Atlas2DConfig config)
         {
-            _sectorManager = new AtlasSectorManager2D(atlasSize);
-            _minEntityPower = (int) CeilLog2(chunkConfig[0].itemSize);
-            _maxEntityPower = (int) CeilLog2(chunkConfig[chunkConfig.Count - 1].itemSize);
+            _sectorManager = new AtlasSectorManager2D(config.AtlasSize);
+            _minEntityPower = (int) CeilLog2(config.MinItemSize);
+            _maxEntityPower = (int) CeilLog2(config.MaxItemSize);
             _freeChunkIndices = new Stack<ushort>();
             _partiallyFilledChunks = new List<ushort>[_maxEntityPower + 1];
             for (var i = _minEntityPower; i <= _maxEntityPower; i++)

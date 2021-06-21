@@ -6,7 +6,7 @@ namespace SolidSpace.Entities.Health
 {
     internal class HealthInstaller : ScriptableObjectInstaller
     {
-        [SerializeField] private LinearAtlasConfig _healthAtlasConfig;
+        [SerializeField] private Atlas1DConfig _healthAtlasConfig;
         
         public override void InstallBindings(IDependencyContainer container)
         {

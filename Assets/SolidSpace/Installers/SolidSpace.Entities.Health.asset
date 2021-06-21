@@ -14,22 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _healthAtlasConfig:
     _atlasSize: 262144
-    _chunks:
-    - itemSize: 16
-      itemCount: 16
-    - itemSize: 32
-      itemCount: 16
-    - itemSize: 64
-      itemCount: 16
-    - itemSize: 128
-      itemCount: 16
-    - itemSize: 256
-      itemCount: 16
-    - itemSize: 512
-      itemCount: 8
-    - itemSize: 1024
-      itemCount: 4
-    - itemSize: 2048
-      itemCount: 2
-    - itemSize: 4096
-      itemCount: 1
+    _minItemSize: 16
+    _maxItemSize: 1024
