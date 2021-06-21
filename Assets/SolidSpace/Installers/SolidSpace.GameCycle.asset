@@ -31,7 +31,7 @@ MonoBehaviour:
         - SolidSpace.Entities.Rendering.Sprites.SpriteMeshSystem
         - SolidSpace.Entities.Health.HealthAtlasSystem
         - SolidSpace.Entities.Bullets.BulletsCommandSystem
-        - SolidSpace.Playground.Entities.SearchNearestEntity.SearchNearestEntitySystem
+        - SolidSpace.Playground.Tools.EntitySearch.EntitySearchSystem
         - SolidSpace.Entities.Health.HealthAtlasGarbageCollector
         - SolidSpace.Entities.Rendering.Sprites.SpriteGarbageCollectorSystem
       - _name: Managed
@@ -55,7 +55,7 @@ MonoBehaviour:
         - SolidSpace.Entities.Physics.Velocity.VelocitySystem
         - SolidSpace.Entities.ParticleEmitters.ParticleEmitterComputeSystem
         - SolidSpace.Entities.Despawn.DespawnComputeSystem
-        - SolidSpace.Playground.Entities.SearchNearestEntity.SearchNearestEntitySystem
+        - SolidSpace.Playground.Tools.EntitySearch.EntitySearchSystem
       - _name: EntityCommand
         _controllers:
         - SolidSpace.Entities.Health.HealthAtlasGarbageCollector

@@ -1,7 +1,7 @@
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace SolidSpace.Gizmos
+namespace SolidSpace.Gizmos.Shapes
 {
     internal struct Rect
     {

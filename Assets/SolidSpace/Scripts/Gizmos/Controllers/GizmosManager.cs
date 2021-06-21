@@ -1,5 +1,7 @@
 using SolidSpace.GameCycle;
+using SolidSpace.Gizmos.Shapes;
 using UnityEngine;
+using Rect = SolidSpace.Gizmos.Shapes.Rect;
 
 namespace SolidSpace.Gizmos
 {

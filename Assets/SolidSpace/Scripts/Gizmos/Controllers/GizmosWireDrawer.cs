@@ -1,7 +1,9 @@
 using System.Runtime.CompilerServices;
+using SolidSpace.Gizmos.Shapes;
 using SolidSpace.Mathematics;
 using Unity.Mathematics;
 using UnityEngine;
+using Rect = SolidSpace.Gizmos.Shapes.Rect;
 
 namespace SolidSpace.Gizmos
 {

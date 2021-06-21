@@ -1,16 +1,17 @@
 using Unity.Entities;
 using Unity.Mathematics;
 
-namespace SolidSpace.Playground.Entities.SearchNearestEntity
+namespace SolidSpace.Playground.Tools.EntitySearch
 {
-    internal interface ISearchNearestEntitySystem
+    internal interface IEntitySearchSystem
     {
-        EntityPosition Result { get; }
+        EntitySearchResult Result { get; }
 
         void SetSearchPosition(float2 position);
         
         void SetEnabled(bool enabled);
 
         void SetQuery(EntityQueryDesc queryDesc);
+        void SetSearchRadius(float radius);
     }
 }
