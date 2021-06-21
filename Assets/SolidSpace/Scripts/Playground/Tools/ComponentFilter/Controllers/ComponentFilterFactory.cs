@@ -36,16 +36,20 @@ namespace SolidSpace.Playground.Tools.ComponentFilter
                     state = ETagLabelState.Neutral
                 };
             }
-            
+
+            var window = _uiFactory.CreateToolWindow();
+            window.SetTitle("Components");
+
             var view = new ComponentFilter();
             view.AllComponents = allComponents;
             view.ComponentToIndex = componentToIndex;
             view.Filter = filter;
+            view.Root = window.Root;
             
             var container = _uiFactory.CreateLayoutGrid();
             container.SetFlexDirection(FlexDirection.Row);
             container.SetFlexWrap(Wrap.Wrap);
-            view.Root = container.Root;
+            window.AttachChild(container);
 
             var tags = new ITagLabel[allComponents.Length];
             for (var i = 0; i < allComponents.Length; i++)

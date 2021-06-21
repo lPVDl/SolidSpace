@@ -10,6 +10,7 @@ namespace SolidSpace.Playground.UI
         public override void InstallBindings(IDependencyContainer container)
         {
             container.Bind<PlaygroundUIFactory>(_prefabs);
+            container.Bind<PlaygroundUIManager>();
             
             container.Bind<ToolButtonFactory>();
             container.Bind<ToolWindowFactory>();

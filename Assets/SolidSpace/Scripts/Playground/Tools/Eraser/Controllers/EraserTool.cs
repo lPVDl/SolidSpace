@@ -7,7 +7,6 @@ using SolidSpace.Playground.Tools.ComponentFilter;
 using SolidSpace.Playground.UI;
 using SolidSpace.UI;
 using Unity.Entities;
-using UnityEngine;
 
 namespace SolidSpace.Playground.Tools.Eraser
 {
@@ -18,9 +17,10 @@ namespace SolidSpace.Playground.Tools.Eraser
         private readonly IEntityWorldManager _entityManager;
         private readonly IEntityByPositionSearchSystem _searchSystem;
         private readonly IPointerTracker _pointer;
-        private readonly IUIManager _uiManager;
+        private readonly IPlaygroundUIManager _playgroundUIManager;
         private readonly IComponentFilterFactory _filterFactory;
         private readonly IPlaygroundUIFactory _uiFactory;
+        private readonly IUIManager _uiManager;
         private readonly IGizmosManager _gizmosManager;
         private readonly EraserToolConfig _config;
         
@@ -29,15 +29,16 @@ namespace SolidSpace.Playground.Tools.Eraser
         private IComponentFilter _filter;
 
         public EraserTool(EraserToolConfig config, IEntityWorldManager entityManager, IGizmosManager gizmosManager,
-            IEntityByPositionSearchSystem searchSystem, IPointerTracker pointer, IUIManager uiManager, 
-            IComponentFilterFactory filterFactory, IPlaygroundUIFactory uiFactory)
+            IEntityByPositionSearchSystem searchSystem, IPointerTracker pointer, IPlaygroundUIManager playgroundUIManager, 
+            IComponentFilterFactory filterFactory, IPlaygroundUIFactory uiFactory, IUIManager uiManager)
         {
             _entityManager = entityManager;
             _searchSystem = searchSystem;
             _pointer = pointer;
-            _uiManager = uiManager;
+            _playgroundUIManager = playgroundUIManager;
             _filterFactory = filterFactory;
             _uiFactory = uiFactory;
+            _uiManager = uiManager;
             _gizmosManager = gizmosManager;
             _config = config;
         }
@@ -48,7 +49,7 @@ namespace SolidSpace.Playground.Tools.Eraser
             _gizmos = _gizmosManager.GetHandle(this);
 
             _window = _uiFactory.CreateToolWindow();
-            _window.SetTitle("Filter");
+            _window.SetTitle("Eraser");
 
             _filter = _filterFactory.Create();
             _filter.SetState(typeof(PositionComponent), new FilterState
@@ -57,7 +58,6 @@ namespace SolidSpace.Playground.Tools.Eraser
                 state = ETagLabelState.Positive
             });
             _filter.FilterModified += UpdateSearchSystemQuery;
-            _window.AttachChild(_filter);
 
             var button = _uiFactory.CreateGeneralButton();
             button.SetLabel("Destroy matching");
@@ -70,14 +70,11 @@ namespace SolidSpace.Playground.Tools.Eraser
             if (isActive)
             {
                 UpdateSearchSystemQuery();
-                _searchSystem.SetEnabled(true);
-                _uiManager.AddToRoot(_window, "ContainerA");
             }
-            else
-            {
-                _searchSystem.SetEnabled(false);
-                _uiManager.RemoveFromRoot(_window, "ContainerA");
-            }
+            
+            _searchSystem.SetEnabled(isActive);
+            _playgroundUIManager.SetElementVisible(_filter, isActive);
+            _playgroundUIManager.SetElementVisible(_window, isActive);
         }
 
         public void OnUpdate()

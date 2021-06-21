@@ -80,7 +80,7 @@ namespace SolidSpace.UI
             return (T) factory.Create(prefab.Asset.CloneTree());
         }
 
-        public void AddToRoot(IUIElement view, string rootContainerName)
+        public void AttachToRoot(IUIElement view, string rootContainerName)
         {
             if (view is null) throw new ArgumentNullException(nameof(view));
 
@@ -91,7 +91,7 @@ namespace SolidSpace.UI
             container.Add(view.Root);
         }
 
-        public void RemoveFromRoot(IUIElement view, string rootContainerName)
+        public void DetachFromRoot(IUIElement view, string rootContainerName)
         {
             if (view is null) throw new ArgumentNullException(nameof(view));
 

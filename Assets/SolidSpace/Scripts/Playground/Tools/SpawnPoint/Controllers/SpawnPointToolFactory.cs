@@ -24,7 +24,7 @@ namespace SolidSpace.Playground.Tools.SpawnPoint
         public ISpawnPointTool Create()
         {
             var window = _uiFactory.CreateToolWindow();
-            window.SetTitle("Spawn Config");
+            window.SetTitle("Spawn");
 
             var radiusField = _uiFactory.CreateStringField();
             radiusField.SetLabel("Radius");
@@ -42,7 +42,7 @@ namespace SolidSpace.Playground.Tools.SpawnPoint
             {
                 UIManager = _uiManager,
                 Pointer = _pointer,
-                Window = window,
+                Root = window.Root,
                 SpawnRadiusField = radiusField,
                 SpawnAmountField = amountField,
                 SpawnAmount = 1,

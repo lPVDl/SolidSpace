@@ -3,7 +3,6 @@ using SolidSpace.Entities.World;
 using SolidSpace.Playground.Core;
 using SolidSpace.Playground.Tools.SpawnPoint;
 using SolidSpace.Playground.UI;
-using SolidSpace.UI;
 using Unity.Entities;
 using Unity.Mathematics;
 
@@ -15,7 +14,7 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
 
         private readonly IEntityWorldManager _entityManager;
         private readonly ISpawnPointToolFactory _spawnPointToolFactory;
-        private readonly IUIManager _uiManager;
+        private readonly IPlaygroundUIManager _uiManager;
         private readonly IPlaygroundUIFactory _uiFactory;
 
         private EntityArchetype _emitterArchetype;
@@ -28,7 +27,7 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
         private float _particleVelocity;
 
         public EmitterSpawnTool(PlaygroundToolConfig config, IEntityWorldManager entityManager,
-            ISpawnPointToolFactory spawnPointToolFactory, IUIManager uiManager, IPlaygroundUIFactory uiFactory)
+            ISpawnPointToolFactory spawnPointToolFactory, IPlaygroundUIManager uiManager, IPlaygroundUIFactory uiFactory)
         {
             _entityManager = entityManager;
             _spawnPointToolFactory = spawnPointToolFactory;
@@ -39,7 +38,6 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
         
         public void OnInitialize()
         {
-            _spawnPointTool = _spawnPointToolFactory.Create();
             _emitterArchetype = _entityManager.CreateArchetype(new ComponentType[]
             {
                 typeof(PositionComponent),
@@ -49,7 +47,9 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
             });
 
             _window = _uiFactory.CreateToolWindow();
-            _window.SetTitle("Emitter Config");
+            _window.SetTitle("Emitter");
+
+            _spawnPointTool = _spawnPointToolFactory.Create();
 
             _spawnRate = 60;
             _spawnRateField = _uiFactory.CreateStringField();
@@ -95,16 +95,8 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
 
         public void OnActivate(bool isActive)
         {
-            if (isActive)
-            {
-                _spawnPointTool.OnActivate(true);
-                _uiManager.AddToRoot(_window, "ContainerA");
-            }
-            else
-            {
-                _spawnPointTool.OnActivate(false);
-                _uiManager.RemoveFromRoot(_window, "ContainerA");
-            }
+            _uiManager.SetElementVisible(_spawnPointTool, isActive);
+            _uiManager.SetElementVisible(_window, isActive);
         }
 
         public void OnFinalize()

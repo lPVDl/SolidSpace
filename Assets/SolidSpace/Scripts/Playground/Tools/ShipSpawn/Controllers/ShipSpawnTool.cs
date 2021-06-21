@@ -4,6 +4,7 @@ using SolidSpace.Entities.Rendering.Sprites;
 using SolidSpace.Entities.World;
 using SolidSpace.Playground.Core;
 using SolidSpace.Playground.Tools.SpawnPoint;
+using SolidSpace.Playground.UI;
 using Unity.Entities;
 using Unity.Mathematics;
 
@@ -19,18 +20,20 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
         private readonly IEntityWorldManager _entityManager;
         private readonly ISpriteColorSystem _spriteSystem;
         private readonly ISpawnPointToolFactory _pointToolFactory;
+        private readonly IPlaygroundUIManager _uiManager;
         private readonly IHealthAtlasSystem _healthSystem;
 
         private ISpawnPointTool _spawnPointTool;
         private EntityArchetype _shipArchetype;
 
         public ShipSpawnTool(ShipSpawnToolConfig config, IEntityWorldManager entityManager, IHealthAtlasSystem healthSystem,
-            ISpriteColorSystem spriteSystem, ISpawnPointToolFactory pointToolFactory)
+            ISpriteColorSystem spriteSystem, ISpawnPointToolFactory pointToolFactory, IPlaygroundUIManager uiManager)
         {
             _config = config;
             _entityManager = entityManager;
             _spriteSystem = spriteSystem;
             _pointToolFactory = pointToolFactory;
+            _uiManager = uiManager;
             _healthSystem = healthSystem;
         }
 
@@ -53,14 +56,7 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
         
         public void OnActivate(bool isActive)
         {
-            if (isActive)
-            {
-                _spawnPointTool.OnActivate(true);
-            }
-            else
-            {
-                _spawnPointTool.OnActivate(false);
-            }
+            _uiManager.SetElementVisible(_spawnPointTool, isActive);
         }
         
         public void OnUpdate()

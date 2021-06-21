@@ -5,15 +5,17 @@ using SolidSpace.Playground.UI;
 using SolidSpace.UI;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.UIElements;
+
 using Random = UnityEngine.Random;
 
 namespace SolidSpace.Playground.Tools.SpawnPoint
 {
     internal class SpawnPointTool : ISpawnPointTool
     {
+        public VisualElement Root { get; set; }
         public IUIManager UIManager { get; set; }
         public IPointerTracker Pointer { get; set; }
-        public IToolWindow Window { get; set; }
         public GizmosHandle Gizmos { get; set; }
         public IStringField SpawnRadiusField { get; set; }
         public IStringField SpawnAmountField { get; set; }
@@ -38,18 +40,6 @@ namespace SolidSpace.Playground.Tools.SpawnPoint
                 var randomOffset = Random.insideUnitCircle * SpawnRadius;
 
                 yield return pointerPosition + new float2(randomOffset.x, randomOffset.y);
-            }
-        }
-
-        public void OnActivate(bool isActive)
-        {
-            if (isActive)
-            {
-                UIManager.AddToRoot(Window, "ContainerA");
-            }
-            else
-            {
-                UIManager.RemoveFromRoot(Window, "ContainerA");
             }
         }
     }

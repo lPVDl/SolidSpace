@@ -8,8 +8,6 @@ namespace SolidSpace.Playground.Core
 {
     internal class PlaygroundCoreController : IInitializable, IUpdatable
     {
-        private const string NoToolTitle = "Tools";
-        
         private readonly IUIManager _uiManager;
         private readonly List<IPlaygroundTool> _tools;
         private readonly IPlaygroundUIFactory _uiFactory;
@@ -29,8 +27,8 @@ namespace SolidSpace.Playground.Core
         public void OnInitialize()
         {
             _window = _uiFactory.CreateToolWindow();
-            _uiManager.AddToRoot(_window, "ContainerA");
-            _window.SetTitle(NoToolTitle);
+            _uiManager.AttachToRoot(_window, "ContainerA");
+            _window.SetTitle("Tools");
 
             var grid = _uiFactory.CreateLayoutGrid();
             grid.SetFlexDirection(FlexDirection.Row);
@@ -73,7 +71,6 @@ namespace SolidSpace.Playground.Core
                 _buttons[_toolIndex].SetSelected(false);
                 _tools[_toolIndex].OnActivate(false);
                 _toolIndex = -1;
-                _window.SetTitle(NoToolTitle);
                 return;
             }
 
@@ -86,7 +83,6 @@ namespace SolidSpace.Playground.Core
             _toolIndex = newIndex;
             _buttons[_toolIndex].SetSelected(true);
             _tools[_toolIndex].OnActivate(true);
-            _window.SetTitle(_configs[_toolIndex].Name);
         }
 
         public void OnFinalize()
