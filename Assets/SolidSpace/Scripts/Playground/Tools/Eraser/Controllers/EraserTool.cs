@@ -3,6 +3,7 @@ using SolidSpace.Entities.Components;
 using SolidSpace.Entities.World;
 using SolidSpace.Gizmos;
 using SolidSpace.Playground.Core;
+using SolidSpace.Playground.Entities.SearchNearestEntity;
 using SolidSpace.Playground.Tools.ComponentFilter;
 using SolidSpace.Playground.UI;
 using SolidSpace.UI;
@@ -15,7 +16,7 @@ namespace SolidSpace.Playground.Tools.Eraser
         public PlaygroundToolConfig Config { get; private set; }
         
         private readonly IEntityWorldManager _entityManager;
-        private readonly IEntityByPositionSearchSystem _searchSystem;
+        private readonly ISearchNearestEntitySystem _searchSystem;
         private readonly IPointerTracker _pointer;
         private readonly IPlaygroundUIManager _playgroundUIManager;
         private readonly IComponentFilterFactory _filterFactory;
@@ -29,7 +30,7 @@ namespace SolidSpace.Playground.Tools.Eraser
         private IComponentFilter _filter;
 
         public EraserTool(EraserToolConfig config, IEntityWorldManager entityManager, IGizmosManager gizmosManager,
-            IEntityByPositionSearchSystem searchSystem, IPointerTracker pointer, IPlaygroundUIManager playgroundUIManager, 
+            ISearchNearestEntitySystem searchSystem, IPointerTracker pointer, IPlaygroundUIManager playgroundUIManager, 
             IComponentFilterFactory filterFactory, IPlaygroundUIFactory uiFactory, IUIManager uiManager)
         {
             _entityManager = entityManager;

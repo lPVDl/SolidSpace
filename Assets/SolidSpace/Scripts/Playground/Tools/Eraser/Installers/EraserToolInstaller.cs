@@ -10,7 +10,6 @@ namespace SolidSpace.Playground.Tools.Eraser
         public override void InstallBindings(IDependencyContainer container)
         {
             container.Bind<EraserTool>(_config);
-            container.Bind<EntityByPositionSearchSystem>();
         }
     }
 }

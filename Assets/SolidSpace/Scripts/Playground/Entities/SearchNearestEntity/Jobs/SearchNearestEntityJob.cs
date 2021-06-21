@@ -6,10 +6,10 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 
-namespace SolidSpace.Playground.Tools.Eraser
+namespace SolidSpace.Playground.Entities.SearchNearestEntity
 {
     [BurstCompile]
-    public struct FindNearestEntityJob : IJobParallelFor
+    public struct SearchNearestEntityJob : IJobParallelFor
     {
         [ReadOnly] public NativeArray<ArchetypeChunk> inChunks;
         [ReadOnly] public float2 inSearchPoint;

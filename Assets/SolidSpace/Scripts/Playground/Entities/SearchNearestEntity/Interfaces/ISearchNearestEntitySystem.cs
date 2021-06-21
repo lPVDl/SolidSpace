@@ -1,9 +1,9 @@
 using Unity.Entities;
 using Unity.Mathematics;
 
-namespace SolidSpace.Playground.Tools.Eraser
+namespace SolidSpace.Playground.Entities.SearchNearestEntity
 {
-    internal interface IEntityByPositionSearchSystem
+    internal interface ISearchNearestEntitySystem
     {
         EntityPosition Result { get; }
 

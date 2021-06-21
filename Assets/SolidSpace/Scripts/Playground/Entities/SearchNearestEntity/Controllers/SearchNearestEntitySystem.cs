@@ -9,9 +9,9 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 
-namespace SolidSpace.Playground.Tools.Eraser
+namespace SolidSpace.Playground.Entities.SearchNearestEntity
 {
-    internal class EntityByPositionSearchSystem : IInitializable, IUpdatable, IEntityByPositionSearchSystem
+    internal class SearchNearestEntitySystem : IInitializable, IUpdatable, ISearchNearestEntitySystem
     {
         public EntityPosition Result { get; private set; }
         
@@ -23,7 +23,7 @@ namespace SolidSpace.Playground.Tools.Eraser
         private float2 _searchPosition;
         private bool _enabled;
 
-        public EntityByPositionSearchSystem(IEntityWorldManager entityManager, IProfilingManager profilingManager)
+        public SearchNearestEntitySystem(IEntityWorldManager entityManager, IProfilingManager profilingManager)
         {
             _entityManager = entityManager;
             _profilingManager = profilingManager;
@@ -71,7 +71,7 @@ namespace SolidSpace.Playground.Tools.Eraser
             _profiler.BeginSample("Job");
             var positions = NativeMemory.CreateTempJobArray<float2>(archetypeChunks.Length);
             var entities = NativeMemory.CreateTempJobArray<Entity>(archetypeChunks.Length);
-            new FindNearestEntityJob
+            new SearchNearestEntityJob
             {
                 inChunks = archetypeChunks,
                 inSearchPoint = _searchPosition,

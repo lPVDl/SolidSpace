@@ -1,7 +1,7 @@
 using Unity.Entities;
 using Unity.Mathematics;
 
-namespace SolidSpace.Playground.Tools.Eraser
+namespace SolidSpace.Playground.Entities.SearchNearestEntity
 {
     public struct EntityPosition
     {
