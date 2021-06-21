@@ -14,7 +14,7 @@ namespace SolidSpace.Gizmos
 
         public void DrawLine(float2 start, float2 end, Color color)
         {
-            _manager.ScheduleLineDraw(new GizmosLine
+            _manager.ScheduleLineDraw(new Line
             {
                 start = start,
                 end = end,
@@ -24,7 +24,7 @@ namespace SolidSpace.Gizmos
 
         public void DrawLine(float x0, float y0, float x1, float y1, Color color)
         {
-            _manager.ScheduleLineDraw(new GizmosLine
+            _manager.ScheduleLineDraw(new Line
             {
                 start = new float2(x0, y0),
                 end = new float2(x1, y1),
@@ -34,7 +34,7 @@ namespace SolidSpace.Gizmos
 
         public void DrawWireRect(float2 center, float2 size, float angleRad, Color color)
         {
-            _manager.ScheduleRectDraw(new GizmosRect
+            _manager.ScheduleWireRectDraw(new Rect
             {
                 center = center,
                 size = new half2((half) size.x, (half) size.y),
@@ -45,7 +45,7 @@ namespace SolidSpace.Gizmos
 
         public void DrawWireSquare(float2 center, float size, Color color)
         {
-            _manager.ScheduleSquareDraw(new GizmosSquare
+            _manager.ScheduleWireSquareDraw(new Square
             {
                 center = center,
                 size = (half) size,
@@ -53,9 +53,9 @@ namespace SolidSpace.Gizmos
             });
         }
 
-        public void DrawPolygon(float2 center, float radius, int topology, Color color)
+        public void DrawWirePolygon(float2 center, float radius, int topology, Color color)
         {
-            _manager.SchedulePolygonDraw(new GizmosPolygon
+            _manager.ScheduleWirePolygonDraw(new Polygon
             {
                 center = center,
                 topology = (byte) topology,

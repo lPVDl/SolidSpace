@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace SolidSpace.Gizmos
 {
-    public struct GizmosPolygon
+    public struct Polygon
     {
         public float2 center;
         public byte topology;

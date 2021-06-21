@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace SolidSpace.Gizmos
 {
-    public struct GizmosSquare
+    public struct Square
     {
         public float2 center;
         public half size;

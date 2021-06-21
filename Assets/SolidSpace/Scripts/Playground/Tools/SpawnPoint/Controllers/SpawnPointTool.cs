@@ -36,7 +36,7 @@ namespace SolidSpace.Playground.Tools.SpawnPoint
                 yield break;
             }
             
-            Gizmos.DrawPolygon(pointerPosition, SpawnRadius, 64, Color.yellow);
+            Gizmos.DrawWirePolygon(pointerPosition, SpawnRadius, 64, Color.yellow);
 
             var positions = PositionGenerator.IteratePositions(pointerPosition, SpawnRadius, SpawnAmount);
             

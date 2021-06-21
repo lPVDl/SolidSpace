@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace SolidSpace.Gizmos
 {
-    internal struct GizmosLine
+    internal struct Line
     {
         public float2 start;
         public float2 end;
