@@ -81,8 +81,8 @@ namespace SolidSpace.Entities.Atlases
         {
             var chunk = _chunks[index.chunkId];
             var chunkOccupation = _chunksOccupation[index.chunkId];
-            chunk.GetPower(out _, out var itemPower);
-            
+            var itemPower = chunk.itemPower;
+
             if ((chunkOccupation & (1 << index.itemId)) == 0)
             {
                 throw new InvalidOperationException($"Can not release '{index}'. It was not allocated yet");
@@ -112,15 +112,13 @@ namespace SolidSpace.Entities.Atlases
             }
             
             var chunkId = _freeChunkIndices.Pop();
-
-            var chunkIndexPower = 2;
-            var sector = _sectorManager.Allocate(itemPower + chunkIndexPower);
+            var sector = _sectorManager.Allocate(itemPower + 2);
             var chunk = new AtlasChunk2D
             {
                 offset = sector
             };
-            chunk.SetPower(chunkIndexPower, itemPower);
-            
+            chunk.itemPower = (byte) itemPower;
+
             _chunks[chunkId] = chunk;
             _chunksOccupation[chunkId] = 0;
             _partiallyFilledChunks[itemPower].Add(chunkId);

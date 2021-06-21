@@ -14,17 +14,14 @@ namespace SolidSpace.Entities.Atlases
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ComputeOffset(AtlasChunk1D chunk, AtlasIndex index)
         {
-            chunk.GetPower(out var indexPower, out var itemPower);
-
-            return (chunk.offset << 2) + index.itemId * (1 << itemPower);
+            return (chunk.offset << 2) + index.itemId * (1 << chunk.itemPower);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int2 ComputeOffset(AtlasChunk2D chunk, AtlasIndex index)
         {
-            chunk.GetPower(out var indexPower, out var itemPower);
-            var x = (chunk.offset.x << 2) + (index.itemId & ((1 << indexPower) - 1)) * (1 << itemPower);
-            var y = (chunk.offset.y << 2) + (index.itemId >> indexPower) * (1 << itemPower);
+            var x = (chunk.offset.x << 2) + (index.itemId &  3) * (1 << chunk.itemPower);
+            var y = (chunk.offset.y << 2) + (index.itemId >> 2) * (1 << chunk.itemPower);
 
             return new int2(x, y);
         }

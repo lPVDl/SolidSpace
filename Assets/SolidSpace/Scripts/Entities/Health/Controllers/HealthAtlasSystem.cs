@@ -40,8 +40,7 @@ namespace SolidSpace.Entities.Health
             }
             
             var chunk = _indexManager.Chunks[target.chunkId];
-            chunk.GetPower(out var indexPower, out var itemPower);
-            var itemMaxSize = 1 << itemPower;
+            var itemMaxSize = 1 << chunk.itemPower;
             var textureSize = source.width * source.height;
             if (textureSize > itemMaxSize)
             {

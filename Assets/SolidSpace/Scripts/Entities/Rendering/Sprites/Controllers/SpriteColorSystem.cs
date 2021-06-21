@@ -56,8 +56,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             }
 
             var chunk = _indexManager.Chunks[target.chunkId];
-            chunk.GetPower(out var indexPower, out var itemPower);
-            var itemMaxSize = 1 << itemPower;
+            var itemMaxSize = 1 << chunk.itemPower;
             if (source.width > itemMaxSize || source.height > itemMaxSize)
             {
                 var message = $"Expected texture with size less that {itemMaxSize}x{itemMaxSize}, but got {source.width}x{source.height}";

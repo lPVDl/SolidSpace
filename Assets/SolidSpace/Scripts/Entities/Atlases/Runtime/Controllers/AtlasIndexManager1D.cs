@@ -82,7 +82,7 @@ namespace SolidSpace.Entities.Atlases
         {
             var chunk = _chunks[index.chunkId];
             var chunkOccupation = _chunksOccupation[index.chunkId];
-            chunk.GetPower(out _, out var itemPower);
+            var itemPower = chunk.itemPower;
 
             if ((chunkOccupation & (1 << index.itemId)) == 0)
             {
@@ -113,14 +113,12 @@ namespace SolidSpace.Entities.Atlases
             }
             
             var chunkId = _freeChunkIndices.Pop();
-
-            var chunkIndexPower = 4;
-            var sector = _sectorManager.Allocate(itemPower + chunkIndexPower);
+            var sector = _sectorManager.Allocate(itemPower + 4);
             var chunk = new AtlasChunk1D
             {
                 offset = sector
             };
-            chunk.SetPower(chunkIndexPower, itemPower);
+            chunk.itemPower = (byte) itemPower;
             
             _chunks[chunkId] = chunk;
             _chunksOccupation[chunkId] = 0;

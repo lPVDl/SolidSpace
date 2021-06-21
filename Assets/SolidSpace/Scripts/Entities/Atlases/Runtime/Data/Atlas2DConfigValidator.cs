@@ -9,6 +9,11 @@ namespace SolidSpace.Entities.Rendering.Atlases
     {
         public string Validate(Atlas2DConfig data)
         {
+            if (data.AtlasSize > AtlasMath.Max2DAtlasSize)
+            {
+                return $"'{nameof(data.AtlasSize)}' is more than {AtlasMath.Max2DAtlasSize}";
+            }
+            
             if (data.MaxItemSize < data.MinItemSize)
             {
                 return $"'{nameof(data.MaxItemSize)}' is less than '{nameof(data.MinItemSize)}'";

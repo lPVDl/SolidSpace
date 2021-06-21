@@ -9,6 +9,11 @@ namespace SolidSpace.Entities.Health.Atlases
     {
         public string Validate(Atlas1DConfig data)
         {
+            if (data.AtlasSize > AtlasMath.Max1DAtlasSize)
+            {
+                return $"'{nameof(data.AtlasSize)}' is more than {AtlasMath.Max1DAtlasSize}";
+            }
+            
             if (data.MaxItemSize < data.MinItemSize)
             {
                 return $"'{nameof(data.MaxItemSize)}' is less than '{nameof(data.MinItemSize)}'";
