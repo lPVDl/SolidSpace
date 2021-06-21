@@ -28,7 +28,7 @@ namespace SolidSpace.Gizmos
             _config = config;
         }
         
-        public void Initialize()
+        public void OnInitialize()
         {
             _lines = NativeMemory.CreatePersistentArray<GizmosLine>(BufferSize);
             _rects = NativeMemory.CreatePersistentArray<GizmosRect>(BufferSize);
@@ -160,7 +160,7 @@ namespace SolidSpace.Gizmos
             return new GizmosHandle(this);
         }
 
-        public void Finalize()
+        public void OnFinalize()
         {
             _lines.Dispose();
             _rects.Dispose();

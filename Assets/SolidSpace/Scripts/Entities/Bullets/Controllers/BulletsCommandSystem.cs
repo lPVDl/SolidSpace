@@ -40,7 +40,7 @@ namespace SolidSpace.Entities.Bullets
             _entityManager = entityManager;
         }
         
-        public void Initialize()
+        public void OnInitialize()
         {
             _profiler = _profilingManager.GetHandle(this);
             _shipComponents = new NativeHashSet<ComponentType>(2, Allocator.Persistent)
@@ -56,7 +56,7 @@ namespace SolidSpace.Entities.Bullets
             };
         }
 
-        public void Update()
+        public void OnUpdate()
         {
             var raycastWorld = _raycastSystem.World;
             var colliderWorld = _colliderSystem.World;
@@ -203,7 +203,7 @@ namespace SolidSpace.Entities.Bullets
             return outArchetypes;
         }
 
-        public void Finalize()
+        public void OnFinalize()
         {
             _shipComponents.Dispose();
             _bulletComponents.Dispose();

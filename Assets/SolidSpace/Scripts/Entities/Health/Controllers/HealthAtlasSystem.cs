@@ -25,7 +25,7 @@ namespace SolidSpace.Entities.Health
             _config = config;
         }
         
-        public void Initialize()
+        public void OnInitialize()
         {
             _data = NativeMemory.CreatePersistentArray<byte>(_config.AtlasSize);
             _indexManager = new AtlasIndexManager1D(_config);
@@ -67,7 +67,7 @@ namespace SolidSpace.Entities.Health
             _indexManager.Release(index);
         }
 
-        public void Finalize()
+        public void OnFinalize()
         {
             _indexManager.Dispose();
             Data.Dispose();

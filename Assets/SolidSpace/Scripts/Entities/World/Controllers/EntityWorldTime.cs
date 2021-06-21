@@ -8,7 +8,7 @@ namespace SolidSpace.Entities.World
         
         public float DeltaTime { get; private set; }
         
-        public void Update()
+        public void OnUpdate()
         {
             var deltaTime = UnityEngine.Time.deltaTime;
             ElapsedTime += deltaTime;

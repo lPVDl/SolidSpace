@@ -2,8 +2,8 @@ namespace SolidSpace.GameCycle
 {
     public interface IInitializable
     {
-        void Initialize();
+        void OnInitialize();
 
-        void Finalize();
+        void OnFinalize();
     }
 }

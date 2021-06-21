@@ -29,7 +29,7 @@ namespace SolidSpace.Playground.Tools.Eraser
             _profilingManager = profilingManager;
         }
         
-        public void Initialize()
+        public void OnInitialize()
         {
             _profiler = _profilingManager.GetHandle(this);
         }
@@ -49,7 +49,7 @@ namespace SolidSpace.Playground.Tools.Eraser
             _enabled = enabled;
         }
         
-        public void Update()
+        public void OnUpdate()
         {
             Result = new EntityPosition
             {
@@ -111,7 +111,7 @@ namespace SolidSpace.Playground.Tools.Eraser
             };
         }
 
-        public void Finalize()
+        public void OnFinalize()
         {
             
         }

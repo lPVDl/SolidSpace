@@ -21,12 +21,12 @@ namespace SolidSpace.Entities.Physics.Colliders
             _config = config;
         }
         
-        public void Initialize()
+        public void OnInitialize()
         {
             _gizmos = _gizmosManager.GetHandle(this);
         }
 
-        public void Update()
+        public void OnUpdate()
         {
             if (_config.DrawGrid)
             {
@@ -84,7 +84,7 @@ namespace SolidSpace.Entities.Physics.Colliders
             }
         }
 
-        public void Finalize()
+        public void OnFinalize()
         {
             
         }

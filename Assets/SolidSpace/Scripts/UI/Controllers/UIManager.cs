@@ -26,7 +26,7 @@ namespace SolidSpace.UI
             _events = events;
         }
         
-        public void Initialize()
+        public void OnInitialize()
         {
             _factoryStorage = new Dictionary<Type, IUIFactory>();
             foreach (var factory in _factories)
@@ -112,6 +112,6 @@ namespace SolidSpace.UI
             return container;
         }
 
-        public void Finalize() { }
+        public void OnFinalize() { }
     }
 }

@@ -41,7 +41,7 @@ namespace SolidSpace.Entities.Physics.Raycast
             _profilingManager = profilingManager;
         }
         
-        public void Initialize()
+        public void OnInitialize()
         {
             _raycasterQuery = _entityManager.CreateEntityQuery(new ComponentType[]
             {
@@ -58,7 +58,7 @@ namespace SolidSpace.Entities.Physics.Raycast
             _profiler = _profilingManager.GetHandle(this);
         }
 
-        public void Update()
+        public void OnUpdate()
         {
             _profiler.BeginSample("Query Chunks");
             var raycasterChunks = _raycasterQuery.CreateArchetypeChunkArray(Allocator.TempJob);
@@ -156,7 +156,7 @@ namespace SolidSpace.Entities.Physics.Raycast
             };
         }
 
-        public void Finalize()
+        public void OnFinalize()
         {
             _hitRayOrigins.Dispose();
             _hitEntityArchetypeIndices.Dispose();

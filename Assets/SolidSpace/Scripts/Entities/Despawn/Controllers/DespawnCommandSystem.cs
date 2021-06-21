@@ -17,7 +17,7 @@ namespace SolidSpace.Entities.Despawn
             _entityManager = entityManager;
         }
 
-        public void Update()
+        public void OnUpdate()
         {
             var slice = new NativeSlice<Entity>(_computeSystem.ResultBuffer, 0, _computeSystem.ResultCount);
             

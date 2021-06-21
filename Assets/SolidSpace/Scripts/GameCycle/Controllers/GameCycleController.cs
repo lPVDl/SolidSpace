@@ -41,7 +41,7 @@ namespace SolidSpace.GameCycle
 
             foreach (var item in _initializationSequence)
             {
-                item.Initialize();
+                item.OnInitialize();
             }
 
             _gameCycleNames = _gameCycle.Select(i => i.GetType().Name).ToArray();
@@ -87,7 +87,7 @@ namespace SolidSpace.GameCycle
             for (var i = 0; i < _gameCycle.Length; i++)
             {
                 _profilingHandle.BeginSample(_gameCycleNames[i]);
-                _gameCycle[i].Update();
+                _gameCycle[i].OnUpdate();
                 _profilingHandle.EndSample(_gameCycleNames[i]);
             }
 
@@ -100,7 +100,7 @@ namespace SolidSpace.GameCycle
 
             foreach (var controller in _initializables)
             {
-                controller.Finalize();
+                controller.OnFinalize();
             }
             
             _profilingProcessor.FinalizeObject();

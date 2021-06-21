@@ -21,12 +21,12 @@ namespace SolidSpace.Entities.RepeatTimer
             _time = time;
         }
         
-        public void Initialize()
+        public void OnInitialize()
         {
             _query = _entityManager.CreateEntityQuery(typeof(RepeatTimerComponent));
         }
 
-        public void Update()
+        public void OnUpdate()
         {
             var chunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
             var job = new RepeatTimerJob
@@ -44,7 +44,7 @@ namespace SolidSpace.Entities.RepeatTimer
             chunks.Dispose();
         }
 
-        public void Finalize()
+        public void OnFinalize()
         {
             
         }

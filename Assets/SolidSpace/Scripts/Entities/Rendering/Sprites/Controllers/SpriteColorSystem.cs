@@ -23,7 +23,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             _config = config;
         }
         
-        public void Initialize()
+        public void OnInitialize()
         {
             var atlasSize = _config.AtlasConfig.AtlasSize;
             
@@ -67,7 +67,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
                 Texture, 0, 0, offset.x, offset.y);
         }
 
-        public void Finalize()
+        public void OnFinalize()
         {
             _indexManager.Dispose();
             Object.Destroy(Texture);

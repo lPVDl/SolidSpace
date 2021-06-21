@@ -33,7 +33,7 @@ namespace SolidSpace.Entities.Despawn
             _profilingManager = profilingManager;
         }
         
-        public void Initialize()
+        public void OnInitialize()
         {
             _profiler = _profilingManager.GetHandle(this);
             _query = _entityManager.CreateEntityQuery(typeof(DespawnComponent));
@@ -42,7 +42,7 @@ namespace SolidSpace.Entities.Despawn
             _entityCount = NativeMemory.CreatePersistentReference(0);
         }
 
-        public void Update()
+        public void OnUpdate()
         {
             _profiler.BeginSample("Compute Chunk Count");
             var chunkCount = _query.CalculateChunkCount();
@@ -106,7 +106,7 @@ namespace SolidSpace.Entities.Despawn
             computeOffsets.Dispose();
         }
 
-        public void Finalize()
+        public void OnFinalize()
         {
             _entities.Dispose();
             _entityCount.Dispose();

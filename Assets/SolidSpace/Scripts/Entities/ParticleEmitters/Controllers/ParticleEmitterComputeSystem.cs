@@ -32,7 +32,7 @@ namespace SolidSpace.Entities.ParticleEmitters
             _profilingManager = profilingManager;
         }
 
-        public void Initialize()
+        public void OnInitialize()
         {
             _profiler = _profilingManager.GetHandle(this);
             _query = _entityManager.CreateEntityQuery(new ComponentType[]
@@ -46,7 +46,7 @@ namespace SolidSpace.Entities.ParticleEmitters
             _particleCount = NativeMemory.CreatePersistentReference(0);
         }
 
-        public void Update()
+        public void OnUpdate()
         {
             _profiler.BeginSample("Query Chunks");
             var chunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
@@ -102,7 +102,7 @@ namespace SolidSpace.Entities.ParticleEmitters
             counts.Dispose();
         }
 
-        public void Finalize()
+        public void OnFinalize()
         {
             _particles.Dispose();
             _particleCount.Dispose();

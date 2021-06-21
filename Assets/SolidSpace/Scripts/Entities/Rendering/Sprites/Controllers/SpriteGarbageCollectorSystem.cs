@@ -31,7 +31,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             _profilingManager = profilingManager;
         }
 
-        public void Initialize()
+        public void OnInitialize()
         {
             _query = _entityManager.CreateEntityQuery(new ComponentType[]
             {
@@ -40,7 +40,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             _profiler = _profilingManager.GetHandle(this);
         }
         
-        public void Update()
+        public void OnUpdate()
         {
             var archetypeChunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
             _profiler.BeginSample("Create byte mask");
@@ -106,7 +106,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             _profiler.EndSample("Dispose arrays");
         }
 
-        public void Finalize()
+        public void OnFinalize()
         {
             
         }

@@ -17,7 +17,7 @@ namespace SolidSpace.Playground.Core
             _camera = camera;
         }
 
-        public void Update()
+        public void OnUpdate()
         {
             if (GetClickPosition(out var position))
             {

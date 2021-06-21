@@ -39,7 +39,7 @@ namespace SolidSpace.Entities.Rendering.Pixels
             _profilingManager = profilingManager;
         }
         
-        public void Initialize()
+        public void OnInitialize()
         {
             _profiler = _profilingManager.GetHandle(this);
             _material = new Material(_config.Shader);
@@ -65,7 +65,7 @@ namespace SolidSpace.Entities.Rendering.Pixels
             };
         }
 
-        public void Update()
+        public void OnUpdate()
         {
             _profiler.BeginSample("Query Chunks");
             var chunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
@@ -164,7 +164,7 @@ namespace SolidSpace.Entities.Rendering.Pixels
             SpaceDebug.LogState("ParticleMeshCount", meshCount);
         }
 
-        public void Finalize()
+        public void OnFinalize()
         {
             for (var i = 0; i < _meshes.Count; i++)
             {

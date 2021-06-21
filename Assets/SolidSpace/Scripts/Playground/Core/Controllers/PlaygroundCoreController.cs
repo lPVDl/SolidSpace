@@ -26,7 +26,7 @@ namespace SolidSpace.Playground.Core
             _uiFactory = uiFactory;
         }
         
-        public void Initialize()
+        public void OnInitialize()
         {
             _window = _uiFactory.CreateToolWindow();
             _uiManager.AddToRoot(_window, "ContainerA");
@@ -58,7 +58,7 @@ namespace SolidSpace.Playground.Core
             }
         }
         
-        public void Update()
+        public void OnUpdate()
         {
             if (_toolIndex != -1)
             {
@@ -89,7 +89,7 @@ namespace SolidSpace.Playground.Core
             _window.SetTitle(_configs[_toolIndex].Name);
         }
 
-        public void Finalize()
+        public void OnFinalize()
         {
             foreach (var tool in _tools)
             {

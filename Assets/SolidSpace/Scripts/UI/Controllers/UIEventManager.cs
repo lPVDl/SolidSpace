@@ -23,13 +23,13 @@ namespace SolidSpace.UI
         private Dictionary<HandlerId, IUICallbackHandler> _handlers;
         private List<EventData> _events;
 
-        public void Initialize()
+        public void OnInitialize()
         {
             _handlers = new Dictionary<HandlerId, IUICallbackHandler>();
             _events = new List<EventData>();
         }
         
-        public void Update()
+        public void OnUpdate()
         {
             for (var i = 0; i < _events.Count; i++)
             {
@@ -102,6 +102,6 @@ namespace SolidSpace.UI
             });
         }
 
-        public void Finalize() { }
+        public void OnFinalize() { }
     }
 }
