@@ -2,6 +2,7 @@ using SolidSpace.Gizmos;
 using SolidSpace.Playground.Core;
 using SolidSpace.Playground.UI;
 using SolidSpace.UI;
+using UnityEngine;
 
 namespace SolidSpace.Playground.Tools.SpawnPoint
 {
@@ -53,7 +54,7 @@ namespace SolidSpace.Playground.Tools.SpawnPoint
                 PositionGenerator = new PositionGenerator()
             };
 
-            tool.Gizmos = _gizmosManager.GetHandle(tool);
+            tool.Gizmos = _gizmosManager.GetHandle(tool, Color.yellow);
 
             radiusField.ValueChanged += () => tool.SpawnRadius = int.Parse(tool.SpawnRadiusField.Value);
             amountField.ValueChanged += () => tool.SpawnAmount = int.Parse(tool.SpawnAmountField.Value);

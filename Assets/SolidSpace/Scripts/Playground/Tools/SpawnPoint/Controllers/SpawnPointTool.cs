@@ -33,13 +33,13 @@ namespace SolidSpace.Playground.Tools.SpawnPoint
                 yield break;
             }
             
-            Gizmos.DrawWirePolygon(pointerPosition, SpawnRadius, 64, Color.yellow);
+            Gizmos.DrawWirePolygon(pointerPosition, SpawnRadius, 48);
 
             var positions = PositionGenerator.IteratePositions(pointerPosition, SpawnRadius, SpawnAmount);
             
             foreach (var pos in positions)
             {
-                Gizmos.DrawScreenSquare(pos, 6, Color.yellow);
+                Gizmos.DrawScreenSquare(pos, 6);
             }
             
             if (!Pointer.ClickedThisFrame)

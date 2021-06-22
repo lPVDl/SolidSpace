@@ -65,9 +65,14 @@ namespace SolidSpace.Gizmos
         internal void ScheduleWireSquareDraw(Square square) => _wireSquares.Add(square);
         internal void ScheduleScreenSquareDraw(Square square) => _screenSquares.Add(square);
 
-        public GizmosHandle GetHandle(object owner)
+        public GizmosHandle GetHandle(object owner, string name, Color defaultColor)
         {
-            return new GizmosHandle(this);
+            return new GizmosHandle(this, defaultColor);
+        }
+
+        public GizmosHandle GetHandle(object owner, Color defaultColor)
+        {
+            return new GizmosHandle(this, defaultColor);
         }
 
         public void OnFinalize()
@@ -78,7 +83,6 @@ namespace SolidSpace.Gizmos
             _wireSquares.Dispose();
             _screenSquares.Dispose();
             Object.Destroy(_material);
-            
             Camera.onPostRender -= OnRender;
         }
     }

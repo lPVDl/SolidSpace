@@ -31,7 +31,7 @@ namespace SolidSpace.Playground.Tools.VelocityChange
         
         public void OnInitialize()
         {
-            _gizmos = _gizmosManager.GetHandle(this);
+            _gizmos = _gizmosManager.GetHandle(this, Color.cyan);
             _captureTool = _captureToolFactory.Create(this, typeof(PositionComponent), typeof(VelocityComponent));
         }
 
@@ -54,8 +54,8 @@ namespace SolidSpace.Playground.Tools.VelocityChange
                 
                 case ECaptureEventType.CaptureUpdate:
                     var delta = eventData.currentPointer - eventData.startPointer;
-                    _gizmos.DrawScreenSquare(eventData.startEntityPosition, 6, Color.cyan);
-                    _gizmos.DrawLine(eventData.startEntityPosition, eventData.startEntityPosition + delta, Color.cyan);
+                    _gizmos.DrawScreenSquare(eventData.startEntityPosition, 6);
+                    _gizmos.DrawLine(eventData.startEntityPosition, eventData.startEntityPosition + delta);
                     _entityManager.SetComponentData(eventData.entity, new PositionComponent
                     {
                         value = eventData.startEntityPosition
@@ -70,12 +70,12 @@ namespace SolidSpace.Playground.Tools.VelocityChange
                     break;
                 
                 case ECaptureEventType.SelectionSingle:
-                    _gizmos.DrawScreenSquare(eventData.startEntityPosition, 6, Color.cyan);
-                    _gizmos.DrawLine(eventData.currentPointer, eventData.startEntityPosition, Color.cyan);
+                    _gizmos.DrawScreenSquare(eventData.startEntityPosition, 6);
+                    _gizmos.DrawLine(eventData.currentPointer, eventData.startEntityPosition);
                     break;
                 
                 case ECaptureEventType.SelectionMultiple:
-                    _gizmos.DrawScreenSquare(eventData.startEntityPosition, 6, Color.cyan);
+                    _gizmos.DrawScreenSquare(eventData.startEntityPosition, 6);
                     break;
                 
                 default:
@@ -85,7 +85,7 @@ namespace SolidSpace.Playground.Tools.VelocityChange
 
         public void OnDrawSelectionCircle(float2 position, float radius)
         {
-            _gizmos.DrawWirePolygon(position, radius, 48, Color.cyan);
+            _gizmos.DrawWirePolygon(position, radius, 48);
         }
         
         public void OnFinalize() { }

@@ -11,7 +11,8 @@ namespace SolidSpace.Entities.Physics.Colliders
         private readonly IGizmosManager _gizmosManager;
         private readonly ColliderGizmoSystemConfig _config;
 
-        private GizmosHandle _gizmos;
+        private GizmosHandle _gridGizmos;
+        private GizmosHandle _colliderGizmos;
 
         public ColliderGizmoSystem(IColliderSystem bakeSystem, IGizmosManager gizmosManager,
             ColliderGizmoSystemConfig config)
@@ -23,7 +24,8 @@ namespace SolidSpace.Entities.Physics.Colliders
         
         public void OnInitialize()
         {
-            _gizmos = _gizmosManager.GetHandle(this);
+            _gridGizmos = _gizmosManager.GetHandle(this, "Grid", _config.GridColor);
+            _colliderGizmos = _gizmosManager.GetHandle(this, "Colliders", _config.ColliderColor);
         }
 
         public void OnUpdate()
@@ -41,8 +43,6 @@ namespace SolidSpace.Entities.Physics.Colliders
 
         private void DrawColliders(ColliderWorld world)
         {
-            var color = _config.ColliderColor;
-            
             for (var i = 0; i < world.colliderBounds.Length; i++)
             {
                 var bounds = world.colliderBounds[i];
@@ -50,7 +50,7 @@ namespace SolidSpace.Entities.Physics.Colliders
                 var center = new float2(bounds.xMin + bounds.xMax, bounds.yMin + bounds.yMax) / 2f;
                 var angle = shape.rotation * FloatMath.TwoPI;
                 
-                _gizmos.DrawWireRect(center, shape.size, angle, color);
+                _colliderGizmos.DrawWireRect(center, shape.size, angle);
             }
         }
         
@@ -62,25 +62,23 @@ namespace SolidSpace.Entities.Physics.Colliders
             var worldMin = worldGrid.anchor * cellSize;
             var worldMax = (worldGrid.anchor + worldGrid.size) * cellSize;
 
-            var gridColor = _config.GridColor;
-            
-            _gizmos.DrawLine(worldMin.x, worldMin.y, worldMin.x, worldMax.y, gridColor);
-            _gizmos.DrawLine(worldMin.x, worldMax.y, worldMax.x, worldMax.y, gridColor);
-            _gizmos.DrawLine(worldMax.x, worldMax.y, worldMax.x, worldMin.y, gridColor);
-            _gizmos.DrawLine(worldMax.x, worldMin.y, worldMin.x, worldMin.y, gridColor);
+            _gridGizmos.DrawLine(worldMin.x, worldMin.y, worldMin.x, worldMax.y);
+            _gridGizmos.DrawLine(worldMin.x, worldMax.y, worldMax.x, worldMax.y);
+            _gridGizmos.DrawLine(worldMax.x, worldMax.y, worldMax.x, worldMin.y);
+            _gridGizmos.DrawLine(worldMax.x, worldMin.y, worldMin.x, worldMin.y);
 
             for (var i = 1; i < cellCountX; i++)
             {
                 var p0 = new float2(worldMin.x + cellSize * i, worldMax.y);
                 var p1 = new float2(worldMin.x + cellSize * i, worldMin.y);
-                _gizmos.DrawLine(p0, p1, gridColor);
+                _gridGizmos.DrawLine(p0, p1);
             }
             
             for (var i = 1; i < cellCountY; i++)
             {
                 var p2 = new float2(worldMin.x, worldMin.y + i * cellSize);
                 var p3 = new float2(worldMax.x, worldMin.y + i * cellSize);
-                _gizmos.DrawLine(p2, p3, gridColor);
+                _gridGizmos.DrawLine(p2, p3);
             }
         }
 
