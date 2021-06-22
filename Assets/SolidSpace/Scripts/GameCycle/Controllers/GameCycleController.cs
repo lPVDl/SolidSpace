@@ -55,14 +55,9 @@ namespace SolidSpace.GameCycle
         {
             var correctOrder = new Dictionary<Type, int>(); 
             var j = 0;
-            foreach (var typeName in order.SelectMany(g => g.Controllers))
+            foreach (var controllerReference in order.SelectMany(g => g.Controllers))
             {
-                var type = Type.GetType(typeName);
-                if (type is null)
-                {
-                    throw new InvalidOperationException($"Can not resolve type '{typeName}'");
-                }
-                
+                var type = controllerReference.Resolve();
                 correctOrder.Add(type, j++);
             }
             

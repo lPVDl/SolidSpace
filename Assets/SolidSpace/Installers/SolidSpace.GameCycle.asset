@@ -17,60 +17,60 @@ MonoBehaviour:
       _groups:
       - _name: Entities
         _controllers:
-        - SolidSpace.Entities.Physics.Velocity.VelocitySystem
-        - SolidSpace.Entities.Physics.Colliders.ColliderBakeSystem
-        - SolidSpace.Entities.Physics.Colliders.ColliderGizmoSystem
-        - SolidSpace.Entities.Despawn.DespawnComputeSystem
-        - SolidSpace.Entities.ParticleEmitters.ParticleEmitterComputeSystem
-        - SolidSpace.Entities.ParticleEmitters.ParticleEmitterCommandSystem
-        - SolidSpace.Entities.Rendering.Pixels.PixelMeshSystem
-        - SolidSpace.Entities.Randomization.RandomValueSystem
-        - SolidSpace.Entities.Physics.Raycast.RaycastComputeSystem
-        - SolidSpace.Entities.RepeatTimer.RepeatTimerSystem
-        - SolidSpace.Entities.Rendering.Sprites.SpriteColorSystem
-        - SolidSpace.Entities.Rendering.Sprites.SpriteMeshSystem
-        - SolidSpace.Entities.Health.HealthAtlasSystem
-        - SolidSpace.Entities.Bullets.BulletsCommandSystem
-        - SolidSpace.Playground.Tools.EntitySearch.EntitySearchSystem
-        - SolidSpace.Entities.Health.HealthAtlasGarbageCollector
-        - SolidSpace.Entities.Rendering.Sprites.SpriteGarbageCollectorSystem
+        - typeName: SolidSpace.Entities.Physics.Velocity.VelocitySystem
+        - typeName: SolidSpace.Entities.Physics.Colliders.ColliderBakeSystem
+        - typeName: SolidSpace.Entities.Physics.Colliders.ColliderGizmoSystem
+        - typeName: SolidSpace.Entities.Despawn.DespawnComputeSystem
+        - typeName: SolidSpace.Entities.ParticleEmitters.ParticleEmitterComputeSystem
+        - typeName: SolidSpace.Entities.ParticleEmitters.ParticleEmitterCommandSystem
+        - typeName: SolidSpace.Entities.Rendering.Pixels.PixelMeshSystem
+        - typeName: SolidSpace.Entities.Randomization.RandomValueSystem
+        - typeName: SolidSpace.Entities.Physics.Raycast.RaycastComputeSystem
+        - typeName: SolidSpace.Entities.RepeatTimer.RepeatTimerSystem
+        - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteColorSystem
+        - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteMeshSystem
+        - typeName: SolidSpace.Entities.Health.HealthAtlasSystem
+        - typeName: SolidSpace.Entities.Bullets.BulletsCommandSystem
+        - typeName: SolidSpace.Playground.Tools.EntitySearch.EntitySearchSystem
+        - typeName: SolidSpace.Entities.Health.HealthAtlasGarbageCollector
+        - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteGarbageCollectorSystem
       - _name: Managed
         _controllers:
-        - SolidSpace.UI.UIEventManager
-        - SolidSpace.Gizmos.GizmosManager
-        - SolidSpace.UI.UIManager
-        - SolidSpace.CameraMotion.CameraMotionController
-        - SolidSpace.Playground.Core.PlaygroundToolValueStorage
-        - SolidSpace.Playground.Tools.ComponentFilter.ComponentFilterFactory
-        - SolidSpace.Playground.Core.PlaygroundCoreController
+        - typeName: SolidSpace.Gizmos.GizmosManager
+        - typeName: SolidSpace.UI.UIEventManager
+        - typeName: SolidSpace.UI.UIManager
+        - typeName: SolidSpace.CameraMotion.CameraMotionController
+        - typeName: SolidSpace.Playground.Core.PlaygroundToolValueStorage
+        - typeName: SolidSpace.Playground.Tools.ComponentFilter.ComponentFilterFactory
+        - typeName: SolidSpace.Playground.Core.PlaygroundCoreController
     _updateOrder:
       _groups:
       - _name: EntityCompute
         _controllers:
-        - SolidSpace.Entities.World.EntityWorldTime
-        - SolidSpace.Entities.RepeatTimer.RepeatTimerSystem
-        - SolidSpace.Entities.Randomization.RandomValueSystem
-        - SolidSpace.Entities.Physics.Colliders.ColliderBakeSystem
-        - SolidSpace.Entities.Physics.Raycast.RaycastComputeSystem
-        - SolidSpace.Entities.Physics.Velocity.VelocitySystem
-        - SolidSpace.Entities.ParticleEmitters.ParticleEmitterComputeSystem
-        - SolidSpace.Entities.Despawn.DespawnComputeSystem
-        - SolidSpace.Playground.Tools.EntitySearch.EntitySearchSystem
+        - typeName: SolidSpace.Entities.World.EntityWorldTime
+        - typeName: SolidSpace.Entities.RepeatTimer.RepeatTimerSystem
+        - typeName: SolidSpace.Entities.Randomization.RandomValueSystem
+        - typeName: SolidSpace.Entities.Physics.Colliders.ColliderBakeSystem
+        - typeName: SolidSpace.Entities.Physics.Raycast.RaycastComputeSystem
+        - typeName: SolidSpace.Entities.Physics.Velocity.VelocitySystem
+        - typeName: SolidSpace.Entities.ParticleEmitters.ParticleEmitterComputeSystem
+        - typeName: SolidSpace.Entities.Despawn.DespawnComputeSystem
+        - typeName: SolidSpace.Playground.Tools.EntitySearch.EntitySearchSystem
       - _name: EntityCommand
         _controllers:
-        - SolidSpace.Entities.Health.HealthAtlasGarbageCollector
-        - SolidSpace.Entities.Rendering.Sprites.SpriteGarbageCollectorSystem
-        - SolidSpace.Entities.ParticleEmitters.ParticleEmitterCommandSystem
-        - SolidSpace.Entities.Bullets.BulletsCommandSystem
-        - SolidSpace.Entities.Despawn.DespawnCommandSystem
+        - typeName: SolidSpace.Entities.Health.HealthAtlasGarbageCollector
+        - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteGarbageCollectorSystem
+        - typeName: SolidSpace.Entities.ParticleEmitters.ParticleEmitterCommandSystem
+        - typeName: SolidSpace.Entities.Bullets.BulletsCommandSystem
+        - typeName: SolidSpace.Entities.Despawn.DespawnCommandSystem
       - _name: Managed
         _controllers:
-        - SolidSpace.CameraMotion.CameraMotionController
-        - SolidSpace.Playground.Core.MouseTracker
-        - SolidSpace.Playground.Core.PlaygroundCoreController
-        - SolidSpace.UI.UIEventManager
+        - typeName: SolidSpace.CameraMotion.CameraMotionController
+        - typeName: SolidSpace.Playground.Core.MouseTracker
+        - typeName: SolidSpace.Playground.Core.PlaygroundCoreController
+        - typeName: SolidSpace.UI.UIEventManager
       - _name: Render
         _controllers:
-        - SolidSpace.Entities.Rendering.Pixels.PixelMeshSystem
-        - SolidSpace.Entities.Rendering.Sprites.SpriteMeshSystem
-        - SolidSpace.Entities.Physics.Colliders.ColliderGizmoSystem
+        - typeName: SolidSpace.Entities.Rendering.Pixels.PixelMeshSystem
+        - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteMeshSystem
+        - typeName: SolidSpace.Entities.Physics.Colliders.ColliderGizmoSystem

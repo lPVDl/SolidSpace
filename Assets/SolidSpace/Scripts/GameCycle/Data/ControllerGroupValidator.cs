@@ -1,16 +1,17 @@
 using System.Collections.Generic;
 using SolidSpace.DataValidation;
+using SolidSpace.Reflection;
 
 namespace SolidSpace.GameCycle
 {
     [InspectorDataValidator]
     public class ControllerGroupValidator : IDataValidator<ControllerGroup>
     {
-        private readonly HashSet<string> _names;
+        private readonly HashSet<TypeReference> _names;
 
         public ControllerGroupValidator()
         {
-            _names = new HashSet<string>();
+            _names = new HashSet<TypeReference>();
         }
         
         public string Validate(ControllerGroup data)
@@ -30,11 +31,6 @@ namespace SolidSpace.GameCycle
             for (var i = 0; i < data.Controllers.Count; i++)
             {
                 var name = data.Controllers[i];
-                if (string.IsNullOrEmpty(name))
-                {
-                    return $"Null or empty string at ({i}) in '{nameof(data.Controllers)}'";
-                }
-
                 if (!_names.Add(name))
                 {
                     return $"Duplicated item '{name}' in {nameof(data.Controllers)}";

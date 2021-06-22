@@ -1,22 +1,23 @@
 using System;
 using System.Collections.Generic;
 using SolidSpace.DataValidation;
+using SolidSpace.Reflection;
 
 namespace SolidSpace.GameCycle
 {
     [InspectorDataValidator]
     public class UpdateOrderValidator : IDataValidator<UpdateOrder>
     {
-        private readonly HashSet<string> _controllerNames;
+        private readonly HashSet<TypeReference> _controllers;
         private readonly HashSet<string> _groupNames;
-        private readonly Dictionary<string, Type> _nameToType;
+        private readonly HashSet<TypeReference> _validTypes;
         private readonly Type _updatableType;
 
         public UpdateOrderValidator()
         {
-            _controllerNames = new HashSet<string>();
+            _controllers = new HashSet<TypeReference>();
             _groupNames = new HashSet<string>();
-            _nameToType = new Dictionary<string, Type>();
+            _validTypes = new HashSet<TypeReference>();
             _updatableType = typeof(IUpdatable);
         }
         
@@ -28,7 +29,7 @@ namespace SolidSpace.GameCycle
             }
 
             _groupNames.Clear();
-            _controllerNames.Clear();
+            _controllers.Clear();
 
             for (var i = 0; i < data.Groups.Count; i++)
             {
@@ -45,29 +46,28 @@ namespace SolidSpace.GameCycle
                 
                 for (var j = 0; j < group.Controllers.Count; j++)
                 {
-                    var controllerName = group.Controllers[j];
-                    if (!_controllerNames.Add(controllerName))
+                    var controller = group.Controllers[j];
+                    if (!_controllers.Add(controller))
                     {
-                        return $"Controller name '{controllerName}' is duplicated";
+                        return $"Controller name '{controller}' is duplicated";
                     }
 
-                    if (_nameToType.ContainsKey(controllerName))
+                    if (_validTypes.Contains(controller))
                     {
                         continue;
                     }
 
-                    var type = Type.GetType(controllerName);
-                    if (type is null)
+                    if (!controller.TryResolve(out var type))
                     {
-                        return $"Type for controller with name '{controllerName}' was not found";
+                        return $"Type for controller with name '{controller}' was not found";
                     }
 
                     if (!_updatableType.IsAssignableFrom(type))
                     {
-                        return $"Controller '{controllerName}' does not implement {nameof(IUpdatable)}";
+                        return $"Controller '{controller}' does not implement {nameof(IUpdatable)}";
                     }
                     
-                    _nameToType.Add(controllerName, type);
+                    _validTypes.Add(controller);
                 }
             }
             
