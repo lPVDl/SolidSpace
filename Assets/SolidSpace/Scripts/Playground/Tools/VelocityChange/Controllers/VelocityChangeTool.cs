@@ -1,146 +1,93 @@
-using System.Linq;
+using System;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.World;
 using SolidSpace.Gizmos;
 using SolidSpace.Playground.Core;
-using SolidSpace.Playground.Tools.ComponentFilter;
-using SolidSpace.Playground.Tools.EntitySearch;
-using SolidSpace.Playground.UI;
-using SolidSpace.UI;
-using Unity.Entities;
+using SolidSpace.Playground.Tools.Capture;
 using Unity.Mathematics;
 using UnityEngine;
 
 namespace SolidSpace.Playground.Tools.VelocityChange
 {
-    internal class VelocityChangeTool : IPlaygroundTool
+    internal class VelocityChangeTool : IPlaygroundTool, ICaptureToolHandler
     {
         public PlaygroundToolConfig Config { get; }
         
         private readonly IGizmosManager _gizmosManager;
-        private readonly IUIManager _uiManager;
-        private readonly IComponentFilterFactory _filterFactory;
-        private readonly IEntitySearchSystem _searchSystem;
-        private readonly IPlaygroundUIManager _playgroundUIManager;
-        private readonly IPointerTracker _pointer;
         private readonly IEntityWorldManager _entityManager;
+        private readonly ICaptureToolFactory _captureToolFactory;
 
-        private IComponentFilter _filter;
         private GizmosHandle _gizmos;
-        private bool _captured;
-        private float2 _pointerClickPosition;
-        private float2 _entityClickPosition;
-        private Entity _capturedEntity;
+        private ICaptureTool _captureTool;
 
-        public VelocityChangeTool(PlaygroundToolConfig config, IGizmosManager gizmosManager, IUIManager uiManager,
-            IComponentFilterFactory filterFactory, IEntitySearchSystem searchSystem, IPlaygroundUIManager playgroundUIManager,
-            IPointerTracker pointer, IEntityWorldManager entityManager)
+        public VelocityChangeTool(PlaygroundToolConfig config, IGizmosManager gizmosManager, IEntityWorldManager entityManager,
+            ICaptureToolFactory captureToolFactory)
         {
             _gizmosManager = gizmosManager;
-            _uiManager = uiManager;
-            _filterFactory = filterFactory;
-            _searchSystem = searchSystem;
-            _playgroundUIManager = playgroundUIManager;
-            _pointer = pointer;
             _entityManager = entityManager;
+            _captureToolFactory = captureToolFactory;
             Config = config;
         }
         
         public void OnInitialize()
         {
             _gizmos = _gizmosManager.GetHandle(this);
-            _filter = _filterFactory.Create(typeof(PositionComponent), typeof(VelocityComponent));
-            _filter.FilterModified += UpdateSearchSystemQuery;
+            _captureTool = _captureToolFactory.Create(this, typeof(PositionComponent), typeof(VelocityComponent));
         }
 
         public void OnUpdate()
         {
-            if (_captured)
-            {
-                var entityExists = _entityManager.CheckExists(_capturedEntity);
-                var pointerDelta = _pointer.Position - _pointerClickPosition;
-                
-                if (_pointer.IsHeldThisFrame && entityExists)
-                {
-                    DrawRay(_entityClickPosition + pointerDelta, _entityClickPosition);
-                    
-                    _entityManager.SetComponentData(_capturedEntity, new PositionComponent
-                    {
-                        value = _entityClickPosition
-                    });
-                    _entityManager.SetComponentData(_capturedEntity, new VelocityComponent()
-                    {
-                        value = float2.zero
-                    });
-                    
-                    return;
-                }
-                
-                if (entityExists)
-                {
-                    _entityManager.SetComponentData(_capturedEntity, new VelocityComponent()
-                    {
-                        value = pointerDelta
-                    });
-                }
-
-                _captured = false;
-            }
-            
-            if (_uiManager.IsMouseOver)
-            {
-                return;
-            }
-            
-            _searchSystem.SetSearchPosition(_pointer.Position);
-
-            var result = _searchSystem.Result;
-            if (!result.isValid)
-            {
-                return;
-            }
-            
-            DrawRay(_pointer.Position, result.nearestPosition);
-            
-            if (_pointer.ClickedThisFrame)
-            {
-                _captured = true;
-                _capturedEntity = result.nearestEntity;
-                _pointerClickPosition = _pointer.Position;
-                _entityClickPosition = result.nearestPosition;
-            }
-        }
-        
-        private void DrawRay(float2 start, float2 end)
-        {
-            _gizmos.DrawLine(start, end, Color.yellow);
-            _gizmos.DrawScreenSquare(end, 6, Color.yellow);
-            _gizmos.DrawScreenSquare(end, 4, Color.blue);
+            _captureTool.OnUpdate();
         }
 
         public void OnActivate(bool isActive)
         {
-            if (isActive)
-            {
-                UpdateSearchSystemQuery();
-            }
-            
-            _playgroundUIManager.SetElementVisible(_filter, isActive);
-            _searchSystem.SetEnabled(isActive);
-        }
-        
-        private void UpdateSearchSystemQuery()
-        {
-            _searchSystem.SetQuery(new EntityQueryDesc
-            {
-                All = _filter.GetTagsWithState(ETagLabelState.Positive).ToArray(),
-                None = _filter.GetTagsWithState(ETagLabelState.Negative).ToArray()
-            });
+           _captureTool.OnActivate(isActive);
         }
 
-        public void OnFinalize()
+        public void OnCaptureEvent(CaptureEventData eventData)
         {
-            
+            switch (eventData.eventType)
+            {
+                case ECaptureEventType.CaptureStart:
+                    break;
+                
+                case ECaptureEventType.CaptureUpdate:
+                    var delta = eventData.currentPointer - eventData.startPointer;
+                    _gizmos.DrawScreenSquare(eventData.startEntityPosition, 6, Color.cyan);
+                    _gizmos.DrawLine(eventData.startEntityPosition, eventData.startEntityPosition + delta, Color.cyan);
+                    _entityManager.SetComponentData(eventData.entity, new PositionComponent
+                    {
+                        value = eventData.startEntityPosition
+                    });
+                    break;
+                
+                case ECaptureEventType.CaptureEnd:
+                    _entityManager.SetComponentData(eventData.entity, new VelocityComponent
+                    {
+                        value = eventData.currentPointer - eventData.startPointer
+                    });
+                    break;
+                
+                case ECaptureEventType.SelectionSingle:
+                    _gizmos.DrawScreenSquare(eventData.startEntityPosition, 6, Color.cyan);
+                    _gizmos.DrawLine(eventData.currentPointer, eventData.startEntityPosition, Color.cyan);
+                    break;
+                
+                case ECaptureEventType.SelectionMultiple:
+                    _gizmos.DrawScreenSquare(eventData.startEntityPosition, 6, Color.cyan);
+                    break;
+                
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
+
+        public void OnDrawSelectionCircle(float2 position, float radius)
+        {
+            _gizmos.DrawWirePolygon(position, radius, 48, Color.cyan);
+        }
+        
+        public void OnFinalize() { }
     }
 }
