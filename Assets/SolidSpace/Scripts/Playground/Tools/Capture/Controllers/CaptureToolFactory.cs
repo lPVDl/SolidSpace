@@ -8,7 +8,6 @@ using SolidSpace.Playground.UI;
 using SolidSpace.UI;
 using Unity.Entities;
 using Unity.Mathematics;
-using UnityEngine;
 
 namespace SolidSpace.Playground.Tools.Capture
 {
@@ -37,7 +36,7 @@ namespace SolidSpace.Playground.Tools.Capture
             _valueStorage = valueStorage;
         }
         
-        public ICaptureTool Create(ICaptureToolHandler handler, Color gizmosColor, params ComponentType[] requiredComponents)
+        public ICaptureTool Create(ICaptureToolHandler handler, params ComponentType[] requiredComponents)
         {
             var window = _uiFactory.CreateToolWindow();
             window.SetTitle("Capture");

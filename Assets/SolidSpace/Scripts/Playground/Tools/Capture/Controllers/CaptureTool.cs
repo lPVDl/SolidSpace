@@ -27,7 +27,6 @@ namespace SolidSpace.Playground.Tools.Capture
         public IEntityWorldManager EntityManager { get; set; }
         public ICaptureToolHandler Handler { get; set; }
         public IPlaygroundToolValueStorage ValueStorage { get; set; }
-        
         public IToolWindow Window { get; set; }
 
         public void OnActivate(bool isActive)
@@ -191,8 +190,9 @@ namespace SolidSpace.Playground.Tools.Capture
             {
                 return;
             }
-            
+
             eventData.eventType = ECaptureEventType.CaptureStart;
+            CapturedPointer = Pointer.Position;
 
             for (var i = 0; i < searchResult.inRadiusCount; i++)
             {

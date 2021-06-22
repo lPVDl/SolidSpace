@@ -5,6 +5,6 @@ namespace SolidSpace.Playground.Tools.Capture
 {
     public interface ICaptureToolFactory
     {
-        ICaptureTool Create(ICaptureToolHandler handler, Color gizmosColor, params ComponentType[] requiredComponents);
+        ICaptureTool Create(ICaptureToolHandler handler, params ComponentType[] requiredComponents);
     }
 }

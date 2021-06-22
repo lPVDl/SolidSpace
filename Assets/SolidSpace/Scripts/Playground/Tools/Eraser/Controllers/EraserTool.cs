@@ -50,7 +50,7 @@ namespace SolidSpace.Playground.Tools.Eraser
             button.Clicked += OnDestroyClicked;
             _window.AttachChild(button);
 
-            _captureTool = _captureToolFactory.Create(this, Color.red, typeof(PositionComponent));
+            _captureTool = _captureToolFactory.Create(this, typeof(PositionComponent));
         }
         
         public void OnActivate(bool isActive)
