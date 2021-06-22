@@ -17,7 +17,6 @@ namespace SolidSpace.UI
         {
             public IUICallbackHandler handler;
             public object data;
-
         }
 
         private Dictionary<HandlerId, IUICallbackHandler> _handlers;

@@ -18,11 +18,8 @@ namespace SolidSpace.Playground.Tools.SpawnPoint
         public GizmosHandle Gizmos { get; set; }
         public IStringField SpawnRadiusField { get; set; }
         public IStringField SpawnAmountField { get; set; }
-        
         public IPlaygroundToolValueStorage ValueStorage { get; set; }
-        
         public int SpawnRadius { get; set; }
-        
         public int SpawnAmount { get; set; }
         
         public PositionGenerator PositionGenerator { get; set; }
@@ -43,7 +40,6 @@ namespace SolidSpace.Playground.Tools.SpawnPoint
             foreach (var pos in positions)
             {
                 Gizmos.DrawScreenSquare(pos, 6, Color.yellow);
-                Gizmos.DrawScreenSquare(pos, 4, Color.blue);
             }
             
             if (!Pointer.ClickedThisFrame)
