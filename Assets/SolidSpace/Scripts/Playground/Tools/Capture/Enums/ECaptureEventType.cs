@@ -2,8 +2,10 @@ namespace SolidSpace.Playground.Tools.Capture
 {
     public enum ECaptureEventType
     {
-        Start = 1,
-        Update = 2,
-        End = 3
+        CaptureStart = 1,
+        CaptureUpdate = 2,
+        CaptureEnd = 3,
+        SelectionSingle = 4,
+        SelectionMultiple = 5,
     }
 }

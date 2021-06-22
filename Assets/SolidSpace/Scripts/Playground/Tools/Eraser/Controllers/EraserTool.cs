@@ -1,8 +1,11 @@
+using System;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.World;
+using SolidSpace.Gizmos;
 using SolidSpace.Playground.Core;
 using SolidSpace.Playground.Tools.Capture;
 using SolidSpace.Playground.UI;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace SolidSpace.Playground.Tools.Eraser
@@ -15,18 +18,21 @@ namespace SolidSpace.Playground.Tools.Eraser
         private readonly IPlaygroundUIManager _playgroundUIManager;
         private readonly IPlaygroundUIFactory _uiFactory;
         private readonly ICaptureToolFactory _captureToolFactory;
+        private readonly IGizmosManager _gizmosManager;
         private readonly EraserToolConfig _config;
         
         private ICaptureTool _captureTool;
         private IToolWindow _window;
+        private GizmosHandle _gizmos;
 
         public EraserTool(EraserToolConfig config, IEntityWorldManager entityManager, IPlaygroundUIManager playgroundUIManager, 
-            IPlaygroundUIFactory uiFactory, ICaptureToolFactory captureToolFactory)
+            IPlaygroundUIFactory uiFactory, ICaptureToolFactory captureToolFactory, IGizmosManager gizmosManager)
         {
             _entityManager = entityManager;
             _playgroundUIManager = playgroundUIManager;
             _uiFactory = uiFactory;
             _captureToolFactory = captureToolFactory;
+            _gizmosManager = gizmosManager;
             _config = config;
         }
         
@@ -34,6 +40,8 @@ namespace SolidSpace.Playground.Tools.Eraser
         {
             Config = _config.ToolConfig;
 
+            _gizmos = _gizmosManager.GetHandle(this);
+            
             _window = _uiFactory.CreateToolWindow();
             _window.SetTitle("Eraser");
 
@@ -58,7 +66,35 @@ namespace SolidSpace.Playground.Tools.Eraser
         
         public void OnCaptureEvent(CaptureEventData eventData)
         {
-            _entityManager.DestroyEntity(eventData.entity);
+            switch (eventData.eventType)
+            {
+                case ECaptureEventType.SelectionSingle:
+                    _gizmos.DrawScreenSquare(eventData.startEntityPosition, 6, Color.red);
+                    _gizmos.DrawLine(eventData.currentPointer, eventData.startEntityPosition, Color.red);
+                    break;
+                
+                case ECaptureEventType.SelectionMultiple:
+                    _gizmos.DrawScreenSquare(eventData.startEntityPosition, 6, Color.red);
+                    break;
+                
+                case ECaptureEventType.CaptureStart:
+                    _entityManager.DestroyEntity(eventData.entity);
+                    break;
+                
+                case ECaptureEventType.CaptureUpdate:
+                    break;
+                
+                case ECaptureEventType.CaptureEnd:
+                    break;
+                
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public void OnDrawSelectionCircle(float2 position, float radius)
+        {
+            _gizmos.DrawWirePolygon(position, radius, 48, Color.red);
         }
 
         private void OnDestroyClicked()

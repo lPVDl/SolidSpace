@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using SolidSpace.Entities.World;
-using SolidSpace.Gizmos;
 using SolidSpace.Playground.Core;
 using SolidSpace.Playground.Tools.ComponentFilter;
 using SolidSpace.Playground.Tools.EntitySearch;
@@ -20,21 +19,19 @@ namespace SolidSpace.Playground.Tools.Capture
         private readonly IPlaygroundUIManager _playgroundUI;
         private readonly IUIManager _uiManager;
         private readonly IPointerTracker _pointer;
-        private readonly IGizmosManager _gizmosManager;
         private readonly IPlaygroundUIFactory _uiFactory;
         private readonly IEntityWorldManager _entityManager;
         private readonly IPlaygroundToolValueStorage _valueStorage;
 
         public CaptureToolFactory(IComponentFilterFactory filterFactory, IEntitySearchSystem searchSystem, 
-            IPlaygroundUIManager playgroundUI, IUIManager uiManager, IPointerTracker pointer, IGizmosManager gizmosManager,
-            IPlaygroundUIFactory uiFactory, IEntityWorldManager entityManager, IPlaygroundToolValueStorage valueStorage)
+            IPlaygroundUIManager playgroundUI, IUIManager uiManager, IPointerTracker pointer, IPlaygroundUIFactory uiFactory, 
+            IEntityWorldManager entityManager, IPlaygroundToolValueStorage valueStorage)
         {
             _filterFactory = filterFactory;
             _searchSystem = searchSystem;
             _playgroundUI = playgroundUI;
             _uiManager = uiManager;
             _pointer = pointer;
-            _gizmosManager = gizmosManager;
             _uiFactory = uiFactory;
             _entityManager = entityManager;
             _valueStorage = valueStorage;
@@ -60,8 +57,6 @@ namespace SolidSpace.Playground.Tools.Capture
                 Pointer = _pointer,
                 CapturedEntities = new List<Entity>(),
                 CapturedPositions = new List<float2>(),
-                GizmosColor = gizmosColor,
-                Gizmos = _gizmosManager.GetHandle(this),
                 SearchRadius = 0,
                 SearchRadiusField = searchRadiusField,
                 Handler = handler,

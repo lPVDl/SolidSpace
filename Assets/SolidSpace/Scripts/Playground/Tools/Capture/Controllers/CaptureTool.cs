@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SolidSpace.Entities.World;
-using SolidSpace.Gizmos;
 using SolidSpace.Playground.Core;
 using SolidSpace.Playground.Tools.ComponentFilter;
 using SolidSpace.Playground.Tools.EntitySearch;
@@ -10,14 +9,11 @@ using SolidSpace.Playground.UI;
 using SolidSpace.UI;
 using Unity.Entities;
 using Unity.Mathematics;
-using UnityEngine;
 
 namespace SolidSpace.Playground.Tools.Capture
 {
     internal class CaptureTool : ICaptureTool
     {
-        private const int GizmosSquareSize = 6;
-        
         public IEntitySearchSystem SearchSystem { get; set; }
         public IComponentFilter Filter { get; set; }
         public IPlaygroundUIManager PlaygroundUI { get; set; }
@@ -26,8 +22,6 @@ namespace SolidSpace.Playground.Tools.Capture
         public List<Entity> CapturedEntities { get; set; }
         public List<float2> CapturedPositions { get; set; }
         public float2 CapturedPointer { get; set; }
-        public Color GizmosColor { get; set; }
-        public GizmosHandle Gizmos { get; set; }
         public int SearchRadius { get; set; }
         public IStringField SearchRadiusField { get; set; }
         public IEntityWorldManager EntityManager { get; set; }
@@ -100,7 +94,7 @@ namespace SolidSpace.Playground.Tools.Capture
         {
             var eventData = new CaptureEventData
             {
-                eventType = ECaptureEventType.Update,
+                eventType = ECaptureEventType.CaptureUpdate,
                 currentPointer = Pointer.Position,
                 startPointer = CapturedPointer,
             };
@@ -119,8 +113,6 @@ namespace SolidSpace.Playground.Tools.Capture
                 eventData.entity = entity;
                 eventData.startEntityPosition = entityPosition;
                 Handler.OnCaptureEvent(eventData);
-                
-                Gizmos.DrawScreenSquare(entityPosition, GizmosSquareSize, GizmosColor);
             }
 
             if (Pointer.IsHeldThisFrame)
@@ -128,7 +120,7 @@ namespace SolidSpace.Playground.Tools.Capture
                 return;
             }
 
-            eventData.eventType = ECaptureEventType.End;
+            eventData.eventType = ECaptureEventType.CaptureEnd;
             for (var i = 0; i < CapturedEntities.Count; i++)
             {
                 eventData.entity = CapturedEntities[i];
@@ -147,9 +139,16 @@ namespace SolidSpace.Playground.Tools.Capture
             {
                 return;
             }
-            
-            Gizmos.DrawLine(Pointer.Position, searchResult.nearestPosition, GizmosColor);
-            Gizmos.DrawScreenSquare(searchResult.nearestPosition, GizmosSquareSize, GizmosColor);
+
+            var eventData = new CaptureEventData
+            {
+                eventType = ECaptureEventType.SelectionSingle,
+                entity = searchResult.nearestEntity,
+                startEntityPosition = searchResult.nearestPosition,
+                currentPointer = Pointer.Position,
+                startPointer = Pointer.Position
+            };
+            Handler.OnCaptureEvent(eventData);
 
             if (!Pointer.ClickedThisFrame)
             {
@@ -159,55 +158,52 @@ namespace SolidSpace.Playground.Tools.Capture
             CapturedEntities.Add(searchResult.nearestEntity);
             CapturedPositions.Add(searchResult.nearestPosition);
             CapturedPointer = Pointer.Position;
-                
-            Handler.OnCaptureEvent(new CaptureEventData
-            {
-                eventType = ECaptureEventType.Start,
-                entity = searchResult.nearestEntity,
-                startEntityPosition = searchResult.nearestPosition,
-                currentPointer = Pointer.Position,
-                startPointer = Pointer.Position
-            });
+            
+            eventData.eventType = ECaptureEventType.CaptureStart;
+            Handler.OnCaptureEvent(eventData);
         }
         
         private void OnRadiusSearchUpdate()
         {
-            Gizmos.DrawWirePolygon(Pointer.Position, SearchRadius, 64, GizmosColor);
-            
+            Handler.OnDrawSelectionCircle(Pointer.Position, SearchRadius);
+
             var searchResult = SearchSystem.Result;
             if (!searchResult.isValid)
             {
                 return;
             }
             
+            var eventData = new CaptureEventData
+            {
+                eventType = ECaptureEventType.SelectionMultiple,
+                startPointer = Pointer.Position,
+                currentPointer = Pointer.Position,
+            };
+            
             for (var i = 0; i < searchResult.inRadiusCount; i++)
             {
-                var entityPosition = searchResult.inRadiusPositions[i];
-                Gizmos.DrawScreenSquare(entityPosition, GizmosSquareSize, GizmosColor);
+                eventData.entity = searchResult.inRadiusEntities[i];
+                eventData.startEntityPosition = searchResult.inRadiusPositions[i];
+                Handler.OnCaptureEvent(eventData);
             }
 
-            if (!Pointer.ClickedThisFrame || !EntityManager.CheckExists(searchResult.nearestEntity))
+            if (!Pointer.ClickedThisFrame)
             {
                 return;
             }
-
-            CapturedPointer = Pointer.Position;
-            var eventData = new CaptureEventData
-            {
-                startPointer = Pointer.Position,
-                currentPointer = Pointer.Position,
-                eventType = ECaptureEventType.Start
-            };
+            
+            eventData.eventType = ECaptureEventType.CaptureStart;
 
             for (var i = 0; i < searchResult.inRadiusCount; i++)
             {
                 var entity = searchResult.inRadiusEntities[i];
+                var position = searchResult.inRadiusPositions[i];
+                
                 if (!EntityManager.CheckExists(entity))
                 {
                     continue;
                 }
                 
-                var position = searchResult.inRadiusPositions[i];
                 CapturedEntities.Add(entity);
                 CapturedPositions.Add(position);
                 eventData.entity = entity;
