@@ -3,7 +3,7 @@ using SolidSpace.Entities.World;
 using SolidSpace.Playground.Core;
 using SolidSpace.Playground.Tools.ComponentFilter;
 using SolidSpace.Playground.Tools.EntitySearch;
-using SolidSpace.Playground.Tools.SpawnPoint;
+using SolidSpace.Playground.Tools.Spawn;
 using SolidSpace.Playground.UI;
 using SolidSpace.UI;
 using Unity.Entities;

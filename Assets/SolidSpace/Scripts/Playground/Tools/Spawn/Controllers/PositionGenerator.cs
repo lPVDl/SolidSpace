@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace SolidSpace.Playground.Tools.SpawnPoint
+namespace SolidSpace.Playground.Tools.Spawn
 {
-    public class PositionGenerator
+    internal class PositionGenerator
     {
         private float2[] _positions;
         private int _radius;

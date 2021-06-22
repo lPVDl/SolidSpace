@@ -1,45 +1,54 @@
+using System;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.World;
+using SolidSpace.Gizmos;
 using SolidSpace.Playground.Core;
 using SolidSpace.Playground.Tools.ComponentFilter;
-using SolidSpace.Playground.Tools.SpawnPoint;
+using SolidSpace.Playground.Tools.Spawn;
 using SolidSpace.Playground.UI;
 using SolidSpace.UI;
 using Unity.Entities;
 using Unity.Mathematics;
+using UnityEngine;
 
 namespace SolidSpace.Playground.Tools.EmitterSpawn
 {
-    public class EmitterSpawnTool : IPlaygroundTool
+    public class EmitterSpawnTool : IPlaygroundTool, ISpawnToolHandler
     {
         private readonly IEntityWorldManager _entityManager;
-        private readonly ISpawnPointToolFactory _spawnPointToolFactory;
+        private readonly ISpawnToolFactory _spawnToolFactory;
         private readonly IPlaygroundUIManager _uiManager;
         private readonly IPlaygroundUIFactory _uiFactory;
         private readonly IComponentFilterFactory _filterFactory;
+        private readonly IGizmosManager _gizmosManager;
 
         private EntityArchetype _emitterArchetype;
-        private ISpawnPointTool _spawnPointTool;
+        private ISpawnTool _spawnTool;
         private IToolWindow _emitterWindow;
         private IUIElement _componentsWindow;
         private IStringField _spawnRateField;
         private IStringField _particleVelocityField;
+        private GizmosHandle _gizmos;
 
         private float _spawnRate;
         private float _particleVelocity;
 
         public EmitterSpawnTool(IEntityWorldManager entityManager, IPlaygroundUIManager uiManager,
-            ISpawnPointToolFactory spawnPointToolFactory, IPlaygroundUIFactory uiFactory, IComponentFilterFactory filterFactory)
+            ISpawnToolFactory spawnToolFactory, IPlaygroundUIFactory uiFactory, IComponentFilterFactory filterFactory,
+            IGizmosManager gizmosManager)
         {
             _entityManager = entityManager;
-            _spawnPointToolFactory = spawnPointToolFactory;
+            _spawnToolFactory = spawnToolFactory;
             _uiManager = uiManager;
             _uiFactory = uiFactory;
             _filterFactory = filterFactory;
+            _gizmosManager = gizmosManager;
         }
         
         public void OnInitialize()
         {
+            _gizmos = _gizmosManager.GetHandle(this, Color.yellow);
+            
             var emitterComponents = new ComponentType[]
             {
                 typeof(PositionComponent),
@@ -54,7 +63,7 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
             _emitterWindow = _uiFactory.CreateToolWindow();
             _emitterWindow.SetTitle("Emitter");
 
-            _spawnPointTool = _spawnPointToolFactory.Create();
+            _spawnTool = _spawnToolFactory.Create(this);
 
             _spawnRate = 60;
             _spawnRateField = _uiFactory.CreateStringField();
@@ -75,18 +84,36 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
         
         public void OnActivate(bool isActive)
         {
-            _spawnPointTool.OnActivate(isActive);
+            _spawnTool.OnActivate(isActive);
             _uiManager.SetElementVisible(_componentsWindow, isActive);
-            _uiManager.SetElementVisible(_spawnPointTool, isActive);
             _uiManager.SetElementVisible(_emitterWindow, isActive);
         }
 
         public void OnUpdate()
         {
-            foreach (var point in _spawnPointTool.OnUpdate())
+            _spawnTool.OnUpdate();
+        }
+        
+        public void OnSpawnEvent(SpawnEventData eventData)
+        {
+            switch (eventData.eventType)
             {
-                Spawn(point, _spawnRate, _particleVelocity);
+                case ESpawnEventType.Preview:
+                    _gizmos.DrawScreenSquare(eventData.position, 6);
+                    break;
+                
+                case ESpawnEventType.Place:
+                    Spawn(eventData.position, _spawnRate, _particleVelocity);
+                    break;
+                
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
+        }
+
+        public void OnDrawSpawnCircle(float2 position, float radius)
+        {
+            _gizmos.DrawWirePolygon(position, radius, 48);
         }
 
         private void Spawn(float2 position, float spawnRate, float particleVelocity)

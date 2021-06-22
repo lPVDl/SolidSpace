@@ -1,6 +1,6 @@
 using SolidSpace.Playground.UI;
 
-namespace SolidSpace.Playground.Tools.SpawnPoint
+namespace SolidSpace.Playground.Tools.Spawn
 {
     public class IntMaxBehaviour : IStringFieldCorrectionBehaviour
     {

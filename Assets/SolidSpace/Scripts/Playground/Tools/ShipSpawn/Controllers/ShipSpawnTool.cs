@@ -1,43 +1,49 @@
+using System;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Health;
 using SolidSpace.Entities.Rendering.Sprites;
 using SolidSpace.Entities.World;
+using SolidSpace.Gizmos;
 using SolidSpace.Playground.Core;
 using SolidSpace.Playground.Tools.ComponentFilter;
-using SolidSpace.Playground.Tools.SpawnPoint;
+using SolidSpace.Playground.Tools.Spawn;
 using SolidSpace.Playground.UI;
 using SolidSpace.UI;
 using Unity.Entities;
 using Unity.Mathematics;
+using UnityEngine;
 
 using Random = UnityEngine.Random;
 
 namespace SolidSpace.Playground.Tools.ShipSpawn
 {
-    internal class ShipSpawnTool : IPlaygroundTool
+    internal class ShipSpawnTool : IPlaygroundTool, ISpawnToolHandler
     {
         private readonly ShipSpawnToolConfig _config;
         private readonly IEntityWorldManager _entityManager;
         private readonly ISpriteColorSystem _spriteSystem;
-        private readonly ISpawnPointToolFactory _pointToolFactory;
+        private readonly ISpawnToolFactory _spawnToolFactory;
         private readonly IPlaygroundUIManager _uiManager;
         private readonly IComponentFilterFactory _filterFactory;
+        private readonly IGizmosManager _gizmosManager;
         private readonly IHealthAtlasSystem _healthSystem;
 
-        private ISpawnPointTool _spawnPointTool;
+        private ISpawnTool _spawnTool;
         private EntityArchetype _shipArchetype;
         private IUIElement _componentsWindow;
+        private GizmosHandle _gizmos;
 
         public ShipSpawnTool(ShipSpawnToolConfig config, IEntityWorldManager entityManager, IHealthAtlasSystem healthSystem,
-            ISpriteColorSystem spriteSystem, ISpawnPointToolFactory pointToolFactory, IPlaygroundUIManager uiManager,
-            IComponentFilterFactory filterFactory)
+            ISpriteColorSystem spriteSystem, ISpawnToolFactory spawnToolFactory, IPlaygroundUIManager uiManager,
+            IComponentFilterFactory filterFactory, IGizmosManager gizmosManager)
         {
             _config = config;
             _entityManager = entityManager;
             _spriteSystem = spriteSystem;
-            _pointToolFactory = pointToolFactory;
+            _spawnToolFactory = spawnToolFactory;
             _uiManager = uiManager;
             _filterFactory = filterFactory;
+            _gizmosManager = gizmosManager;
             _healthSystem = healthSystem;
         }
 
@@ -54,24 +60,42 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
                 typeof(VelocityComponent)
             };
             _shipArchetype = _entityManager.CreateArchetype(shipComponents);
-
             _componentsWindow = _filterFactory.CreateReadonly(shipComponents);
-            _spawnPointTool = _pointToolFactory.Create();
+            _spawnTool = _spawnToolFactory.Create(this);
+            _gizmos = _gizmosManager.GetHandle(this, Color.yellow);
         }
         
         public void OnActivate(bool isActive)
         {
-            _spawnPointTool.OnActivate(isActive);       
+            _spawnTool.OnActivate(isActive);       
             _uiManager.SetElementVisible(_componentsWindow, isActive);
-            _uiManager.SetElementVisible(_spawnPointTool, isActive);
         }
         
         public void OnUpdate()
         {
-            foreach (var position in _spawnPointTool.OnUpdate())
+            _spawnTool.OnUpdate();
+        }
+        
+        public void OnSpawnEvent(SpawnEventData eventData)
+        {
+            switch (eventData.eventType)
             {
-                SpawnShip(position);
+                case ESpawnEventType.Preview:
+                    _gizmos.DrawScreenSquare(eventData.position, 6);
+                    break;
+                
+                case ESpawnEventType.Place:
+                    SpawnShip(eventData.position);
+                    break;
+                
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
+        }
+
+        public void OnDrawSpawnCircle(float2 position, float radius)
+        {
+            _gizmos.DrawWirePolygon(position, radius, 48);
         }
 
         private void SpawnShip(float2 position)

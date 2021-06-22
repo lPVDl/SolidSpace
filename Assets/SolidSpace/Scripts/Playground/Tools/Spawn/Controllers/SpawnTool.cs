@@ -8,48 +8,57 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace SolidSpace.Playground.Tools.SpawnPoint
+namespace SolidSpace.Playground.Tools.Spawn
 {
-    internal class SpawnPointTool : ISpawnPointTool
+    internal class SpawnTool : ISpawnTool
     {
-        public VisualElement Root { get; set; }
+        public IToolWindow Window { get; set; }
         public IUIManager UIManager { get; set; }
         public IPointerTracker Pointer { get; set; }
-        public GizmosHandle Gizmos { get; set; }
         public IStringField SpawnRadiusField { get; set; }
         public IStringField SpawnAmountField { get; set; }
         public IPlaygroundToolValueStorage ValueStorage { get; set; }
         public int SpawnRadius { get; set; }
         public int SpawnAmount { get; set; }
-        
+        public ISpawnToolHandler Handler { get; set; }
         public PositionGenerator PositionGenerator { get; set; }
+        
+        public IPlaygroundUIManager PlaygroundUI { get; set; }
 
-        public IEnumerable<float2> OnUpdate()
+        public void OnUpdate()
         {
             var pointerPosition = Pointer.Position;
 
             if (UIManager.IsMouseOver)
             {
-                yield break;
+                return;
             }
             
-            Gizmos.DrawWirePolygon(pointerPosition, SpawnRadius, 48);
+            Handler.OnDrawSpawnCircle(pointerPosition, SpawnRadius);
 
             var positions = PositionGenerator.IteratePositions(pointerPosition, SpawnRadius, SpawnAmount);
             
             foreach (var pos in positions)
             {
-                Gizmos.DrawScreenSquare(pos, 6);
+                Handler.OnSpawnEvent(new SpawnEventData
+                {
+                    eventType = ESpawnEventType.Preview,
+                    position = pos
+                });
             }
             
             if (!Pointer.ClickedThisFrame)
             {
-                yield break;
+                return;
             }
             
             foreach (var pos in positions)
             {
-                yield return pos;
+                Handler.OnSpawnEvent(new SpawnEventData
+                {
+                    eventType = ESpawnEventType.Place,
+                    position = pos
+                });
             }
         }
 
@@ -71,6 +80,8 @@ namespace SolidSpace.Playground.Tools.SpawnPoint
                 ValueStorage.SetValue("InteractionRange", SpawnRadius);
                 ValueStorage.SetValue("SpawnAmount", SpawnAmount);
             }
+            
+            PlaygroundUI.SetElementVisible(Window, isActive);
         }
     }
 }

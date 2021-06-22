@@ -4,27 +4,27 @@ using SolidSpace.Playground.UI;
 using SolidSpace.UI;
 using UnityEngine;
 
-namespace SolidSpace.Playground.Tools.SpawnPoint
+namespace SolidSpace.Playground.Tools.Spawn
 {
-    internal class SpawnPointToolFactory : ISpawnPointToolFactory
+    internal class SpawnToolFactory : ISpawnToolFactory
     {
         private readonly IUIManager _uiManager;
         private readonly IPointerTracker _pointer;
         private readonly IPlaygroundUIFactory _uiFactory;
-        private readonly IGizmosManager _gizmosManager;
         private readonly IPlaygroundToolValueStorage _valueStorage;
+        private readonly IPlaygroundUIManager _playgroundUI;
 
-        public SpawnPointToolFactory(IUIManager uiManager, IPointerTracker pointer, IPlaygroundUIFactory uiFactory,
-            IGizmosManager gizmosManager, IPlaygroundToolValueStorage valueStorage)
+        public SpawnToolFactory(IUIManager uiManager, IPointerTracker pointer, IPlaygroundUIFactory uiFactory,
+            IPlaygroundToolValueStorage valueStorage, IPlaygroundUIManager playgroundUI)
         {
             _uiManager = uiManager;
             _pointer = pointer;
             _uiFactory = uiFactory;
-            _gizmosManager = gizmosManager;
             _valueStorage = valueStorage;
+            _playgroundUI = playgroundUI;
         }
         
-        public ISpawnPointTool Create()
+        public ISpawnTool Create(ISpawnToolHandler handler)
         {
             var window = _uiFactory.CreateToolWindow();
             window.SetTitle("Spawn");
@@ -41,20 +41,20 @@ namespace SolidSpace.Playground.Tools.SpawnPoint
             amountField.SetValueCorrectionBehaviour(new IntMaxBehaviour(1));
             window.AttachChild(amountField);
 
-            var tool = new SpawnPointTool
+            var tool = new SpawnTool
             {
                 UIManager = _uiManager,
                 Pointer = _pointer,
-                Root = window.Root,
+                Window = window,
                 SpawnRadiusField = radiusField,
                 SpawnAmountField = amountField,
                 SpawnAmount = 1,
                 SpawnRadius = 0,
                 ValueStorage = _valueStorage,
-                PositionGenerator = new PositionGenerator()
+                PositionGenerator = new PositionGenerator(),
+                Handler = handler,
+                PlaygroundUI = _playgroundUI
             };
-
-            tool.Gizmos = _gizmosManager.GetHandle(tool, Color.yellow);
 
             radiusField.ValueChanged += () => tool.SpawnRadius = int.Parse(tool.SpawnRadiusField.Value);
             amountField.ValueChanged += () => tool.SpawnAmount = int.Parse(tool.SpawnAmountField.Value);
