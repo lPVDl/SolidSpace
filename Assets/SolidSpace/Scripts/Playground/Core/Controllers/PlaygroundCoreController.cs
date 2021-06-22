@@ -1,58 +1,95 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using SolidSpace.GameCycle;
 using SolidSpace.Playground.UI;
 using SolidSpace.UI;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace SolidSpace.Playground.Core
 {
     internal class PlaygroundCoreController : IInitializable, IUpdatable
     {
+        private struct ToolInfo
+        {
+            public int order;
+            public Sprite icon;
+        }
+        
+        private static readonly string NoToolText = string.Empty;
+        
         private readonly IUIManager _uiManager;
         private readonly List<IPlaygroundTool> _tools;
         private readonly IPlaygroundUIFactory _uiFactory;
+        private readonly PlaygroundCoreConfig _config;
 
         private IToolWindow _window;
         private IToolButton[] _buttons;
+        private string[] _names;
         private int _toolIndex;
-        private PlaygroundToolConfig[] _configs;
 
-        public PlaygroundCoreController(IUIManager uiManager, List<IPlaygroundTool> tools, IPlaygroundUIFactory uiFactory)
+        public PlaygroundCoreController(IUIManager uiManager, List<IPlaygroundTool> tools, IPlaygroundUIFactory uiFactory,
+            PlaygroundCoreConfig config)
         {
             _uiManager = uiManager;
             _tools = tools;
             _uiFactory = uiFactory;
+            _config = config;
         }
         
         public void OnInitialize()
         {
             _window = _uiFactory.CreateToolWindow();
             _uiManager.AttachToRoot(_window, "ContainerA");
-            _window.SetTitle("Tools");
+            _window.SetTitle(NoToolText);
 
             var grid = _uiFactory.CreateLayoutGrid();
             grid.SetFlexDirection(FlexDirection.Row);
             _window.AttachChild(grid);
 
+            var displayInfo = new Dictionary<Type, ToolInfo>();
+            for (var i = 0; i < _config.ToolIcons.Count; i++)
+            {
+                var toolIcon = _config.ToolIcons[i];
+                var toolType = toolIcon.toolType.Resolve();
+                displayInfo.Add(toolType, new ToolInfo
+                {
+                    icon = toolIcon.icon,
+                    order = i
+                });
+            }
+
+            foreach (var toolType in _tools.Select(t => t.GetType()))
+            {
+                if (!displayInfo.ContainsKey(toolType))
+                {
+                    throw new InvalidOperationException($"Missing configuration for '{toolType.FullName}'");
+                }
+            }
+
             _toolIndex = -1;
             _buttons = new IToolButton[_tools.Count];
-            _configs = new PlaygroundToolConfig[_tools.Count];
+            _names = new string[_tools.Count];
 
-            for (var i = 0; i < _tools.Count; i++)
+            var j = 0;
+            foreach(var tool in _tools.OrderBy(t => displayInfo[t.GetType()].order))
             {
-                var tool = _tools[i];
                 tool.OnInitialize();
                 
-                var config = tool.Config;
+                var toolType = tool.GetType();
+                var toolInfo = displayInfo[toolType];
                 var button = _uiFactory.CreateToolButton();
-                grid.AttachChild(button);
-                var toolIndex = i;
-                button.Clicked += () => OnToolViewClicked(toolIndex);
+                var buttonIndex = j;
                 button.SetSelected(false);
-                button.SetIcon(config.Icon);
+                button.SetIcon(toolInfo.icon);
+                grid.AttachChild(button);
+                button.Clicked += () => OnToolViewClicked(buttonIndex);
                 
-                _buttons[i] = button;
-                _configs[i] = config;
+                _buttons[j] = button;
+                _names[j] = _config.ToolNameConverter.Replace(toolType.Name);
+
+                j++;
             }
         }
         
@@ -70,7 +107,9 @@ namespace SolidSpace.Playground.Core
             {
                 _buttons[_toolIndex].SetSelected(false);
                 _tools[_toolIndex].OnActivate(false);
+                _window.SetTitle(_config.WindowDefaultTitle);
                 _toolIndex = -1;
+                
                 return;
             }
 
@@ -83,6 +122,7 @@ namespace SolidSpace.Playground.Core
             _toolIndex = newIndex;
             _buttons[_toolIndex].SetSelected(true);
             _tools[_toolIndex].OnActivate(true);
+            _window.SetTitle(_names[_toolIndex]);
         }
 
         public void OnFinalize()

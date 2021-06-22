@@ -12,20 +12,17 @@ namespace SolidSpace.Playground.Tools.Eraser
 {
     internal class EraserTool : IPlaygroundTool, ICaptureToolHandler
     {
-        public PlaygroundToolConfig Config { get; private set; }
-        
         private readonly IEntityWorldManager _entityManager;
         private readonly IPlaygroundUIManager _playgroundUIManager;
         private readonly IPlaygroundUIFactory _uiFactory;
         private readonly ICaptureToolFactory _captureToolFactory;
         private readonly IGizmosManager _gizmosManager;
-        private readonly EraserToolConfig _config;
-        
+
         private ICaptureTool _captureTool;
         private IToolWindow _window;
         private GizmosHandle _gizmos;
 
-        public EraserTool(EraserToolConfig config, IEntityWorldManager entityManager, IPlaygroundUIManager playgroundUIManager, 
+        public EraserTool(IEntityWorldManager entityManager, IPlaygroundUIManager playgroundUIManager, 
             IPlaygroundUIFactory uiFactory, ICaptureToolFactory captureToolFactory, IGizmosManager gizmosManager)
         {
             _entityManager = entityManager;
@@ -33,13 +30,10 @@ namespace SolidSpace.Playground.Tools.Eraser
             _uiFactory = uiFactory;
             _captureToolFactory = captureToolFactory;
             _gizmosManager = gizmosManager;
-            _config = config;
         }
         
         public void OnInitialize()
         {
-            Config = _config.ToolConfig;
-
             _gizmos = _gizmosManager.GetHandle(this, Color.red);
             
             _window = _uiFactory.CreateToolWindow();

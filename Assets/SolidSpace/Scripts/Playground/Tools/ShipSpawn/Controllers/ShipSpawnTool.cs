@@ -16,8 +16,6 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
 {
     internal class ShipSpawnTool : IPlaygroundTool
     {
-        public PlaygroundToolConfig Config { get; private set; }
-        
         private readonly ShipSpawnToolConfig _config;
         private readonly IEntityWorldManager _entityManager;
         private readonly ISpriteColorSystem _spriteSystem;
@@ -45,8 +43,6 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
 
         public void OnInitialize()
         {
-            Config = _config.ToolConfig;
-
             var shipComponents = new ComponentType[]
             {
                 typeof(PositionComponent),

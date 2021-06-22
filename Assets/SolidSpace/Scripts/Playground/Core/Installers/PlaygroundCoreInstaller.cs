@@ -7,12 +7,13 @@ namespace SolidSpace.Playground.Core
 {
     internal class PlaygroundCoreInstaller : ScriptableObjectInstaller
     {
+        [SerializeField] private PlaygroundCoreConfig _config;
         [SerializeField, InlineEditor] private List<ScriptableObjectInstaller> _installers;
         
         public override void InstallBindings(IDependencyContainer container)
         {
             container.BindFromComponentInHierarchy<Camera>();
-            container.Bind<PlaygroundCoreController>();
+            container.Bind<PlaygroundCoreController>(_config);
             container.Bind<PlaygroundToolValueStorage>();
             container.Bind<MouseTracker>();
 
