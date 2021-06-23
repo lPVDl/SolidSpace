@@ -5,6 +5,6 @@ namespace SolidSpace.Entities.Components
 {
     public struct RotationComponent : IComponentData
     {
-        public half value;
+        public float value;
     }
 }

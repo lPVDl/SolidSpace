@@ -54,7 +54,7 @@ namespace SolidSpace.Entities.Physics.Colliders
                     var halfSize = new float2(size.x / 2f, size.y / 2f);
                     var angle = rotations[i].value;
                     
-                    FloatMath.SinCos(angle * FloatMath.TwoPI, out var sin, out var cos);
+                    FloatMath.SinCos(angle, out var sin, out var cos);
                     var p0 = FloatMath.Rotate(-halfSize.x, -halfSize.y, sin, cos);
                     var p1 = FloatMath.Rotate(-halfSize.x, +halfSize.y, sin, cos);
                     var p2 = FloatMath.Rotate(+halfSize.x, +halfSize.y, sin, cos);
@@ -76,7 +76,7 @@ namespace SolidSpace.Entities.Physics.Colliders
                         shape = new ColliderShape
                         {
                             size = size,
-                            rotation = angle
+                            rotation = (half) angle
                         }
                     });
                 }

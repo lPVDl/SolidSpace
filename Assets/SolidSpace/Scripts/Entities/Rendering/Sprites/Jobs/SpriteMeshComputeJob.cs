@@ -87,7 +87,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             var halfSize = square.size * 0.5f;
             var uvMin = square.uvMin;
             var uvMax = square.uvMax;
-            FloatMath.SinCos(square.rotation * FloatMath.TwoPI, out var sin, out var cos);
+            FloatMath.SinCos(square.rotation, out var sin, out var cos);
 
             vertex.position = center + FloatMath.Rotate(-halfSize.x, -halfSize.y, sin, cos);
             vertex.uv = uvMin;

@@ -45,7 +45,7 @@ namespace SolidSpace.Entities.Bullets
                 var ray = inRaycastWorld.raycastOrigins[filterIndex];
                 var p0 = ray.pos0 - colliderCenter;
                 var p1 = ray.pos1 - colliderCenter;
-                FloatMath.SinCos(-colliderShape.rotation * FloatMath.TwoPI, out var sin, out var cos);
+                FloatMath.SinCos(-colliderShape.rotation, out var sin, out var cos);
                 var halfSize = new float2(colliderShape.size.x / 2f, colliderShape.size.y / 2f);
                 p0 = FloatMath.Rotate(p0, sin, cos) + halfSize;
                 p1 = FloatMath.Rotate(p1, sin, cos) + halfSize;

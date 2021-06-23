@@ -156,7 +156,7 @@ namespace SolidSpace.Entities.Physics.Raycast
                 var p0 = new float2(ray.xMin, ray.yMin) - center;
                 var p1 = new float2(ray.xMax, ray.yMax) - center;
                 var colliderShape = world.colliderShapes[colliderIndex];
-                FloatMath.SinCos(-colliderShape.rotation * FloatMath.TwoPI, out var sin, out var cos);
+                FloatMath.SinCos(-colliderShape.rotation, out var sin, out var cos);
                 p0 = FloatMath.Rotate(p0, sin, cos);
                 p1 = FloatMath.Rotate(p1, sin, cos);
                 FloatMath.MinMax(p0.x, p1.x, out var xMin, out var xMax);

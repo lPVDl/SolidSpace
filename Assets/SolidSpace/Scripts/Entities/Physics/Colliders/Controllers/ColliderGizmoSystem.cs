@@ -48,7 +48,7 @@ namespace SolidSpace.Entities.Physics.Colliders
                 var bounds = world.colliderBounds[i];
                 var shape = world.colliderShapes[i];
                 var center = new float2(bounds.xMin + bounds.xMax, bounds.yMin + bounds.yMax) / 2f;
-                var angle = shape.rotation * FloatMath.TwoPI;
+                var angle = shape.rotation;
                 
                 _colliderGizmos.DrawWireRect(center, shape.size, angle);
             }

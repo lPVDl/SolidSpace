@@ -116,7 +116,7 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
             });
             _entityManager.SetComponentData(entity, new RotationComponent
             {
-                value = (half) Random.value
+                value = Random.value * FloatMath.TwoPI
             });
             _entityManager.SetComponentData(entity, new SpriteComponent
             {
