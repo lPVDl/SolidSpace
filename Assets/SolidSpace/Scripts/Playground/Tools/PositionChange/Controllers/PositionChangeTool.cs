@@ -53,7 +53,7 @@ namespace SolidSpace.Playground.Tools.PositionChange
                     var delta = eventData.currentPointer - eventData.startPointer;
                     _entityManager.SetComponentData(eventData.entity, new PositionComponent
                     {
-                        value = eventData.startEntityPosition + delta
+                        value = eventData.entityPosition + delta
                     });
                     break;
                 
@@ -61,12 +61,12 @@ namespace SolidSpace.Playground.Tools.PositionChange
                     break;
                 
                 case ECaptureEventType.SelectionSingle:
-                    _gizmos.DrawScreenSquare(eventData.startEntityPosition, 6);
-                    _gizmos.DrawLine(eventData.currentPointer, eventData.startEntityPosition);
+                    _gizmos.DrawScreenSquare(eventData.entityPosition, 6);
+                    _gizmos.DrawLine(eventData.currentPointer, eventData.entityPosition);
                     break;
                 
                 case ECaptureEventType.SelectionMultiple:
-                    _gizmos.DrawScreenSquare(eventData.startEntityPosition, 6);
+                    _gizmos.DrawScreenSquare(eventData.entityPosition, 6);
                     break;
                 
                 default:

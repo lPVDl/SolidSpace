@@ -110,7 +110,7 @@ namespace SolidSpace.Playground.Tools.Capture
 
                 var entityPosition = CapturedPositions[i];
                 eventData.entity = entity;
-                eventData.startEntityPosition = entityPosition;
+                eventData.entityPosition = entityPosition;
                 Handler.OnCaptureEvent(eventData);
             }
 
@@ -123,7 +123,7 @@ namespace SolidSpace.Playground.Tools.Capture
             for (var i = 0; i < CapturedEntities.Count; i++)
             {
                 eventData.entity = CapturedEntities[i];
-                eventData.startEntityPosition = CapturedPositions[i];
+                eventData.entityPosition = CapturedPositions[i];
                 Handler.OnCaptureEvent(eventData);
             }
             
@@ -143,7 +143,7 @@ namespace SolidSpace.Playground.Tools.Capture
             {
                 eventType = ECaptureEventType.SelectionSingle,
                 entity = searchResult.nearestEntity,
-                startEntityPosition = searchResult.nearestPosition,
+                entityPosition = searchResult.nearestPosition,
                 currentPointer = Pointer.Position,
                 startPointer = Pointer.Position
             };
@@ -182,7 +182,7 @@ namespace SolidSpace.Playground.Tools.Capture
             for (var i = 0; i < searchResult.inRadiusCount; i++)
             {
                 eventData.entity = searchResult.inRadiusEntities[i];
-                eventData.startEntityPosition = searchResult.inRadiusPositions[i];
+                eventData.entityPosition = searchResult.inRadiusPositions[i];
                 Handler.OnCaptureEvent(eventData);
             }
 
@@ -207,7 +207,7 @@ namespace SolidSpace.Playground.Tools.Capture
                 CapturedEntities.Add(entity);
                 CapturedPositions.Add(position);
                 eventData.entity = entity;
-                eventData.startEntityPosition = position;
+                eventData.entityPosition = position;
                 Handler.OnCaptureEvent(eventData);
             }
         }

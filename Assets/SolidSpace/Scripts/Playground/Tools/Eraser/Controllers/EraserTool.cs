@@ -63,12 +63,12 @@ namespace SolidSpace.Playground.Tools.Eraser
             switch (eventData.eventType)
             {
                 case ECaptureEventType.SelectionSingle:
-                    _gizmos.DrawScreenSquare(eventData.startEntityPosition, 6);
-                    _gizmos.DrawLine(eventData.currentPointer, eventData.startEntityPosition);
+                    _gizmos.DrawScreenSquare(eventData.entityPosition, 6);
+                    _gizmos.DrawLine(eventData.currentPointer, eventData.entityPosition);
                     break;
                 
                 case ECaptureEventType.SelectionMultiple:
-                    _gizmos.DrawScreenSquare(eventData.startEntityPosition, 6);
+                    _gizmos.DrawScreenSquare(eventData.entityPosition, 6);
                     break;
                 
                 case ECaptureEventType.CaptureStart:

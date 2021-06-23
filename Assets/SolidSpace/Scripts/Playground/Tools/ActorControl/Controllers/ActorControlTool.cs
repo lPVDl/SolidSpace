@@ -1,35 +1,31 @@
 using System;
 using SolidSpace.Entities.Components;
-using SolidSpace.Entities.World;
 using SolidSpace.Gizmos;
 using SolidSpace.Playground.Core;
 using SolidSpace.Playground.Tools.Capture;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace SolidSpace.Playground.Tools.VelocityChange
+namespace SolidSpace.Playground.Tools.ActorControl
 {
-    internal class VelocityChangeTool : IPlaygroundTool, ICaptureToolHandler
+    public class ActorControlTool : IPlaygroundTool, ICaptureToolHandler
     {
-        private readonly IGizmosManager _gizmosManager;
-        private readonly IEntityWorldManager _entityManager;
         private readonly ICaptureToolFactory _captureToolFactory;
+        private readonly IGizmosManager _gizmosManager;
 
         private GizmosHandle _gizmos;
         private ICaptureTool _captureTool;
 
-        public VelocityChangeTool(IGizmosManager gizmosManager, IEntityWorldManager entityManager,
-            ICaptureToolFactory captureToolFactory)
+        public ActorControlTool(ICaptureToolFactory captureToolFactory, IGizmosManager gizmosManager)
         {
-            _gizmosManager = gizmosManager;
-            _entityManager = entityManager;
             _captureToolFactory = captureToolFactory;
+            _gizmosManager = gizmosManager;
         }
         
         public void OnInitialize()
         {
-            _gizmos = _gizmosManager.GetHandle(this, Color.cyan);
-            _captureTool = _captureToolFactory.Create(this, typeof(PositionComponent), typeof(VelocityComponent));
+            _gizmos = _gizmosManager.GetHandle(this, Color.magenta);
+            _captureTool = _captureToolFactory.Create(this, typeof(PositionComponent));
         }
 
         public void OnUpdate()
@@ -39,9 +35,9 @@ namespace SolidSpace.Playground.Tools.VelocityChange
 
         public void OnActivate(bool isActive)
         {
-           _captureTool.OnActivate(isActive);
+            _captureTool.OnActivate(isActive);
         }
-
+        
         public void OnCaptureEvent(CaptureEventData eventData)
         {
             switch (eventData.eventType)
@@ -50,20 +46,9 @@ namespace SolidSpace.Playground.Tools.VelocityChange
                     break;
                 
                 case ECaptureEventType.CaptureUpdate:
-                    var delta = eventData.currentPointer - eventData.startPointer;
-                    _gizmos.DrawScreenSquare(eventData.entityPosition, 6);
-                    _gizmos.DrawLine(eventData.entityPosition, eventData.entityPosition + delta);
-                    _entityManager.SetComponentData(eventData.entity, new PositionComponent
-                    {
-                        value = eventData.entityPosition
-                    });
                     break;
                 
                 case ECaptureEventType.CaptureEnd:
-                    _entityManager.SetComponentData(eventData.entity, new VelocityComponent
-                    {
-                        value = eventData.currentPointer - eventData.startPointer
-                    });
                     break;
                 
                 case ECaptureEventType.SelectionSingle:
@@ -84,7 +69,7 @@ namespace SolidSpace.Playground.Tools.VelocityChange
         {
             _gizmos.DrawWirePolygon(position, radius, 48);
         }
-        
+
         public void OnFinalize() { }
     }
 }

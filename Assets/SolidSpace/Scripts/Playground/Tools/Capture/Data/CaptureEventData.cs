@@ -7,7 +7,7 @@ namespace SolidSpace.Playground.Tools.Capture
     {
         public ECaptureEventType eventType;
         public Entity entity;
-        public float2 startEntityPosition;
+        public float2 entityPosition;
         public float2 startPointer;
         public float2 currentPointer;
     }
