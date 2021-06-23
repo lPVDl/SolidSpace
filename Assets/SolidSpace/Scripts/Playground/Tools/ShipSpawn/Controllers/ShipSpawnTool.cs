@@ -4,6 +4,7 @@ using SolidSpace.Entities.Health;
 using SolidSpace.Entities.Rendering.Sprites;
 using SolidSpace.Entities.World;
 using SolidSpace.Gizmos;
+using SolidSpace.Mathematics;
 using SolidSpace.Playground.Core;
 using SolidSpace.Playground.Tools.ComponentFilter;
 using SolidSpace.Playground.Tools.Spawn;
@@ -57,7 +58,8 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
                 typeof(ColliderComponent),
                 typeof(SpriteComponent),
                 typeof(HealthComponent),
-                typeof(VelocityComponent)
+                typeof(VelocityComponent),
+                typeof(ActorComponent)
             };
             _shipArchetype = _entityManager.CreateArchetype(shipComponents);
             _componentsWindow = _filterFactory.CreateReadonly(shipComponents);
@@ -125,6 +127,10 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
             _entityManager.SetComponentData(entity, new HealthComponent
             {
                 index = healthIndex
+            });
+            _entityManager.SetComponentData(entity, new ActorComponent()
+            {
+                isActive = false
             });
             
             _spriteSystem.Copy(texture, colorIndex);

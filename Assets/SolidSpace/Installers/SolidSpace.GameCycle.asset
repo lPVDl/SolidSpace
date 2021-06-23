@@ -34,6 +34,7 @@ MonoBehaviour:
         - typeName: SolidSpace.Playground.Tools.EntitySearch.EntitySearchSystem
         - typeName: SolidSpace.Entities.Health.HealthAtlasGarbageCollector
         - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteGarbageCollectorSystem
+        - typeName: SolidSpace.Entities.Actors.ActorControlSystem
       - _name: Managed
         _controllers:
         - typeName: SolidSpace.Gizmos.GizmosManager
@@ -48,6 +49,7 @@ MonoBehaviour:
       - _name: EntityCompute
         _controllers:
         - typeName: SolidSpace.Entities.World.EntityWorldTime
+        - typeName: SolidSpace.Entities.Actors.ActorControlSystem
         - typeName: SolidSpace.Entities.RepeatTimer.RepeatTimerSystem
         - typeName: SolidSpace.Entities.Randomization.RandomValueSystem
         - typeName: SolidSpace.Entities.Physics.Colliders.ColliderBakeSystem

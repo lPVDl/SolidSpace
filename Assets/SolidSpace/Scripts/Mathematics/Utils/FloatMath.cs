@@ -6,6 +6,7 @@ namespace SolidSpace.Mathematics
 {
     public static class FloatMath
     {
+        public const float PI = (float) Math.PI;
         public const float TwoPI = (float) (2 * Math.PI);
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -16,6 +17,104 @@ namespace SolidSpace.Mathematics
                 x = x * cos - y * sin,
                 y = x * sin + y * cos
             };
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Clamp(float value, float min, float max)
+        {
+            if (value < min)
+            {
+                return min;
+            }
+            
+            if (value > max)
+            {
+                return max;
+            }
+
+            return value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Repeat(float value, float length)
+        {
+            return Clamp(value - (float) Math.Floor(value / length) * length, 0, length);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float DeltaAngle(float currentRad, float targetRad)
+        {
+            var delta = Repeat(targetRad - currentRad, TwoPI);
+            if (delta > PI)
+            {
+                return delta - TwoPI;
+            }
+
+            return delta;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float MoveTowards(float current, float target, float maxDelta)
+        {
+            var delta = target - current;
+            if (Math.Abs(delta) <= maxDelta)
+            {
+                return target;
+            }
+
+            return current + Math.Sign(delta) * maxDelta;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float2 MoveTowards(float2 current, float2 target, float maxDelta)
+        {
+            var deltaX = target.x - current.x;
+            var deltaY = target.y - current.y;
+            var distanceSqr = deltaX * deltaX + deltaY * deltaY;
+            if (distanceSqr == 0 || maxDelta >= 0 && distanceSqr < maxDelta * maxDelta)
+            {
+                return target;
+            }
+
+            var distance = (float) Math.Sqrt(distanceSqr);
+            
+            return new float2
+            {
+                x = current.x + deltaX / distance * maxDelta,
+                y = current.y + deltaY / distance * maxDelta
+            };
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float MoveAngleTowards(float currentRad, float targetRad, float maxDeltaRad)
+        {
+            var delta = DeltaAngle(currentRad, targetRad);
+            if (-maxDeltaRad < delta && delta < maxDeltaRad)
+            {
+                return targetRad;
+            }
+
+            targetRad = currentRad + delta;
+            
+            return MoveTowards(currentRad, targetRad, maxDeltaRad);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Atan2(float2 vector)
+        {
+            var angle = (float) Math.Atan2(vector.y, vector.x);
+            if (angle < 0)
+            {
+                return TwoPI + angle;
+            }
+            
+            return angle;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float2 Normalize(float2 vector)
+        {
+            return math.normalize(vector);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
