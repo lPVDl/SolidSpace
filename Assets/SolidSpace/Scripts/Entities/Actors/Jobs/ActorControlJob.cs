@@ -1,4 +1,5 @@
 using System;
+using SolidSpace.Debugging;
 using SolidSpace.Entities.Components;
 using SolidSpace.Mathematics;
 using Unity.Burst;
@@ -6,6 +7,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
+using UnityEngine;
 
 namespace SolidSpace.Entities.Actors
 {
@@ -13,8 +15,7 @@ namespace SolidSpace.Entities.Actors
     public struct ActorControlJob : IJobParallelFor
     {
         private const float Acceleration = 30f;
-        private const float RotationSpeed = FloatMath.TwoPI * 0.1f;
-        private const float DesiredSpeed = Acceleration * 3;
+        private const float RotationSpeed = FloatMath.TwoPI * 0.2f;
 
         [ReadOnly] public NativeArray<ArchetypeChunk> inArchetypeChunks;
         [ReadOnly] public float2 inSeekPosition;
@@ -45,13 +46,20 @@ namespace SolidSpace.Entities.Actors
 
                 var currentPosition = positions[i].value;
                 var currentVelocity = velocities[i].value;
+                var targetDirection = inSeekPosition - currentPosition;
+                var targetDirectionNormalized = FloatMath.Normalize(targetDirection);
+                var targetDistance = FloatMath.Magnitude(targetDirection);
+
+                var currentRotation = rotations[i].value;
+                FloatMath.SinCos(currentRotation, out var dirSin, out var dirCos);
+                var currentDirection = new float2(dirCos, dirSin);
+
                 var currentAngle = rotations[i].value;
-                var targetDirection = FloatMath.Normalize(inSeekPosition - currentPosition);
-                var targetImpulse = targetDirection * DesiredSpeed - currentVelocity;
+                var distanceOverVelocity = targetDistance / Math.Max(1f, FloatMath.Magnitude(currentVelocity));
+                var targetImpulse = targetDirectionNormalized * Acceleration * distanceOverVelocity - currentVelocity;
                 var impulseAngle = FloatMath.Atan2(targetImpulse);
+
                 var deltaAngle = FloatMath.DeltaAngle(currentAngle, impulseAngle);
-                FloatMath.SinCos(currentAngle, out var sin, out var cos);
-                var currentDirection = new float2(cos, sin);
                 var thrusterPower = 1 - Math.Min(1, Math.Abs(deltaAngle) / (FloatMath.PI * 0.5f));
                 var impulse = currentDirection * (inDeltaTime * thrusterPower * Acceleration);
 

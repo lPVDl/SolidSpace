@@ -36,6 +36,12 @@ namespace SolidSpace.Mathematics
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Magnitude(float2 vector)
+        {
+            return (float) Math.Sqrt(vector.x * vector.x + vector.y * vector.y);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Repeat(float value, float length)
         {
             return Clamp(value - (float) Math.Floor(value / length) * length, 0, length);
@@ -109,6 +115,12 @@ namespace SolidSpace.Mathematics
             }
             
             return angle;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Dot(float2 a, float2 b)
+        {
+            return a.x * b.x + a.y * b.y;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
