@@ -2,11 +2,12 @@ using SolidSpace.DependencyInjection;
 
 namespace SolidSpace.Playground.Tools.ActorControl
 {
-    public class ActorControlToolInstaller : ScriptableObjectInstaller
+    internal class ActorControlInstaller : ScriptableObjectInstaller
     {
         public override void InstallBindings(IDependencyContainer container)
         {
-            container.Bind<ActorControlTool>();
+            container.Bind<ActorActivationTool>();
+            container.Bind<ActorNavigationTool>();
         }
     }
 }

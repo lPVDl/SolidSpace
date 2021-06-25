@@ -46,6 +46,7 @@ namespace SolidSpace.Playground.Core
 
             var grid = _uiFactory.CreateLayoutGrid();
             grid.SetFlexDirection(FlexDirection.Row);
+            grid.SetFlexWrap(Wrap.Wrap);
             _window.AttachChild(grid);
 
             var displayInfo = new Dictionary<Type, ToolInfo>();

@@ -34,7 +34,10 @@ MonoBehaviour:
         typeName: SolidSpace.Playground.Tools.VelocityChange.VelocityChangeTool
       icon: {fileID: 21300000, guid: 203999b16e3f94344b3c6bc7dd3fced5, type: 3}
     - toolType:
-        typeName: SolidSpace.Playground.Tools.ActorControl.ActorControlTool
+        typeName: SolidSpace.Playground.Tools.ActorControl.ActorActivationTool
+      icon: {fileID: 21300000, guid: 3e89b26a47ec6064eb9261d989a06e84, type: 3}
+    - toolType:
+        typeName: SolidSpace.Playground.Tools.ActorControl.ActorNavigationTool
       icon: {fileID: 21300000, guid: 672630b487fb1c2458d069ca60018ec1, type: 3}
   _installers:
   - {fileID: 11400000, guid: 7de0ac86c98e4a84cb13d7fe101a1730, type: 2}

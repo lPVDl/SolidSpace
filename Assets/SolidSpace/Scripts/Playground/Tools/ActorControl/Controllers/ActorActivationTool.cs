@@ -1,5 +1,4 @@
 using System;
-using SolidSpace.Entities.Actors.Interfaces;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.World;
 using SolidSpace.Gizmos;
@@ -10,24 +9,20 @@ using UnityEngine;
 
 namespace SolidSpace.Playground.Tools.ActorControl
 {
-    public class ActorControlTool : IPlaygroundTool, ICaptureToolHandler
+    internal class ActorActivationTool : IPlaygroundTool, ICaptureToolHandler
     {
         private readonly ICaptureToolFactory _captureToolFactory;
         private readonly IGizmosManager _gizmosManager;
-        private readonly IActorControlSystem _actorControlSystem;
-        private readonly IPointerTracker _pointer;
         private readonly IEntityWorldManager _entityManager;
 
         private GizmosHandle _gizmos;
         private ICaptureTool _captureTool;
 
-        public ActorControlTool(ICaptureToolFactory captureToolFactory, IGizmosManager gizmosManager, 
-            IActorControlSystem actorControlSystem, IPointerTracker pointer, IEntityWorldManager entityManager)
+        public ActorActivationTool(ICaptureToolFactory captureToolFactory, IGizmosManager gizmosManager, 
+            IEntityWorldManager entityManager)
         {
             _captureToolFactory = captureToolFactory;
             _gizmosManager = gizmosManager;
-            _actorControlSystem = actorControlSystem;
-            _pointer = pointer;
             _entityManager = entityManager;
         }
         
@@ -39,8 +34,6 @@ namespace SolidSpace.Playground.Tools.ActorControl
 
         public void OnUpdate()
         {
-            _gizmos.DrawWireRect(_pointer.Position, new float2(8, 8), (float) (Math.PI * 0.25));
-            _actorControlSystem.SetActorsTargetPosition(_pointer.Position);
             _captureTool.OnUpdate();
         }
 
@@ -66,7 +59,6 @@ namespace SolidSpace.Playground.Tools.ActorControl
                     break;
                 
                 case ECaptureEventType.SelectionSingle:
-                    _gizmos.DrawScreenSquare(eventData.entityPosition, 6);
                     _gizmos.DrawLine(eventData.currentPointer, eventData.entityPosition);
                     break;
                 

@@ -3,7 +3,7 @@ using Unity.Mathematics;
 
 namespace SolidSpace.Playground.Tools.EntitySearch
 {
-    internal interface IEntitySearchSystem
+    public interface IEntitySearchSystem
     {
         EntitySearchResult Result { get; }
 
