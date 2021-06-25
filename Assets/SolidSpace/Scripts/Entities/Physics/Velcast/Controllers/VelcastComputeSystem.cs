@@ -1,3 +1,4 @@
+using SolidSpace.Debugging;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Physics.Colliders;
 using SolidSpace.Entities.World;
@@ -14,6 +15,7 @@ namespace SolidSpace.Entities.Physics.Velcast
     internal class VelcastComputeSystem : IInitializable, IUpdatable, IVelcastSystem
     {
         private const int EntityPerAllocation = 4096;
+        private const int HitStackSize = 8;
         
         public VelcastWorld World { get; private set; }
 
@@ -108,6 +110,8 @@ namespace SolidSpace.Entities.Physics.Velcast
             NativeMemory.MaintainPersistentArrayLength(ref _hitEntityArchetypeIndices, maintenanceRule);
             NativeMemory.MaintainPersistentArrayLength(ref _hitRayOrigins, maintenanceRule);
 
+            var hitStack = NativeMemory.CreateTempJobArray<ushort>(raycasterChunkCount * HitStackSize);
+
             new VelcastJob
             {
                 inRaycasterChunks = raycasterChunks,
@@ -115,9 +119,13 @@ namespace SolidSpace.Entities.Physics.Velcast
                 inRaycasterArchetypeIndices = chunkArchetypeIndices,
                 inColliderWorld = _colliderSystem.World,
                 inDeltaTime = _time.DeltaTime,
+                
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
                 velocityHandle = _entityManager.GetComponentTypeHandle<VelocityComponent>(true),
                 entityHandle = _entityManager.GetEntityTypeHandle(),
+                hitStack = hitStack,
+                hitStackSize = HitStackSize,
+                
                 outCounts = raycastResultCounts,
                 outRaycasterEntities = _hitEntities,
                 outColliderIndices = _hitColliderIndices,
@@ -144,6 +152,7 @@ namespace SolidSpace.Entities.Physics.Velcast
             raycastResultCounts.Dispose();
             chunkArchetypeIndices.Dispose();
             raycasterChunks.Dispose();
+            hitStack.Dispose();
             _profiler.EndSample("Dispose Arrays");
 
             World = new VelcastWorld
@@ -154,6 +163,8 @@ namespace SolidSpace.Entities.Physics.Velcast
                 raycastOrigins = new NativeSlice<FloatRay>(_hitRayOrigins, 0, _hitCount.Value),
                 colliderIndices = new NativeSlice<ushort>(_hitColliderIndices, 0, _hitCount.Value)
             };
+            
+            SpaceDebug.LogState("VelcastHitCount", _hitCount.Value);
         }
 
         public void OnFinalize()

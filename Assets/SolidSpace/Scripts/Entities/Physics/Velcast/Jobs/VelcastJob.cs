@@ -30,6 +30,9 @@ namespace SolidSpace.Entities.Physics.Velcast
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
         [ReadOnly] public ComponentTypeHandle<VelocityComponent> velocityHandle;
         [ReadOnly] public EntityTypeHandle entityHandle;
+
+        [NativeDisableParallelForRestriction] public NativeArray<ushort> hitStack;
+        [ReadOnly] public int hitStackSize;
         
         [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<Entity> outRaycasterEntities;
         [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<ushort> outColliderIndices;
@@ -45,13 +48,14 @@ namespace SolidSpace.Entities.Physics.Velcast
             var velocities = chunk.GetNativeArray(velocityHandle);
             var entities = chunk.GetNativeArray(entityHandle);
             var writeOffset = inResultWriteOffsets[chunkIndex];
-            var hitCount = 0;
             var worldPower = inColliderWorld.worldGrid.power;
             var worldAnchor = inColliderWorld.worldGrid.anchor;
             var worldSize = inColliderWorld.worldGrid.size;
             var cellTotal = worldSize.x * worldSize.y;
+            var stackOffset = chunkIndex * hitStackSize;
+            var jobHitCount = 0;
 
-            for (var i = 0; i < rayCount; i++)
+            for (var i = 0; (i < rayCount) && (jobHitCount < rayCount); i++)
             {
                 var velocity = velocities[i].value;
                 var pos0 = positions[i].value;
@@ -78,10 +82,22 @@ namespace SolidSpace.Entities.Physics.Velcast
                 
                 if ((x0 == x1) && (y0 == y1))
                 {
-                    var index = y0 * worldSize.x + x0;
-                    if (Raycast(inColliderWorld, index, ray, out var colliderIndex))
+                    var cellData = inColliderWorld.worldCells[y0 * worldSize.x + x0];
+                    if (cellData.count == 0)
                     {
-                        WriteResult(writeOffset + hitCount++, new RaycastHit
+                        continue;
+                    }
+
+                    for (var j = 0; (j < cellData.count) && (jobHitCount < rayCount); j++)
+                    {
+                        var colliderIndex = inColliderWorld.colliderStream[cellData.offset + j];
+                        
+                        if (!RaycastCollider(ray, colliderIndex))
+                        {
+                            continue;
+                        }
+                        
+                        WriteResult(writeOffset + jobHitCount++, new RaycastHit
                         {
                             raycasterEntity = entities[i],
                             raycasterArchetypeIndex = rayArchetype,
@@ -89,94 +105,112 @@ namespace SolidSpace.Entities.Physics.Velcast
                             raycastOrigin = new FloatRay(pos0, pos1)
                         });
                     }
-                    
+
                     continue;
                 }
 
-                var isHit = false;
-                for (var yOffset = y0; (yOffset <= y1) && (!isHit); yOffset++)
+                var rayHitCount = 0;
+                var memoryLimitReached = false;
+                for (var yOffset = y0; (yOffset <= y1) && (!memoryLimitReached); yOffset++)
                 {
-                    for (var xOffset = x0; xOffset <= x1; xOffset++)
+                    for (var xOffset = x0; (xOffset <= x1) && (!memoryLimitReached); xOffset++)
                     {
-                        var index = yOffset * worldSize.x + xOffset;
-                        if (index < 0 || index >= cellTotal)
+                        var cellIndex = yOffset * worldSize.x + xOffset;
+                        if (cellIndex < 0 || cellIndex >= cellTotal)
                         {
                             continue;
                         }
-                        
-                        if (!Raycast(inColliderWorld, index, ray, out var colliderIndex))
-                        {
-                            continue;
-                        }
-                        
-                        WriteResult(writeOffset + hitCount++, new RaycastHit
-                        {
-                            raycasterEntity = entities[i],
-                            raycasterArchetypeIndex = rayArchetype,
-                            colliderIndex = colliderIndex,
-                            raycastOrigin = new FloatRay(pos0, pos1)
-                        });
 
-                        isHit = true;
-                        break;
+                        var cellData = inColliderWorld.worldCells[cellIndex];
+                        if (cellData.count == 0)
+                        {
+                            continue;
+                        }
+
+                        for (var j = 0; j < cellData.count; j++)
+                        {
+                            var colliderIndex = inColliderWorld.colliderStream[cellData.offset + j];
+                            var alreadyHit = false;
+                            if (rayHitCount > 0)
+                            {
+                                for (var q = 0; q < rayHitCount; q++)
+                                {
+                                    if (hitStack[stackOffset + q] == colliderIndex)
+                                    {
+                                        alreadyHit = true;
+                                        break;
+                                    }
+                                }
+
+                                if (alreadyHit)
+                                {
+                                    continue;
+                                }
+                            }
+
+                            if (!RaycastCollider(ray, colliderIndex))
+                            {
+                                continue;
+                            }
+                            
+                            WriteResult(writeOffset + jobHitCount++, new RaycastHit
+                            {
+                                raycasterEntity = entities[i],
+                                raycasterArchetypeIndex = rayArchetype,
+                                colliderIndex = colliderIndex,
+                                raycastOrigin = new FloatRay(pos0, pos1)
+                            });
+                            rayHitCount++;
+
+                            if (jobHitCount >= rayCount || rayHitCount >= hitStackSize)
+                            {
+                                memoryLimitReached = true;
+                                break;
+                            }
+                        }
                     }
                 }
             }
 
-            outCounts[chunkIndex] = hitCount;
+            outCounts[chunkIndex] = jobHitCount;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool Raycast(ColliderWorld world, int cellIndex, FloatBounds ray, out ushort colliderIndex)
+        private bool RaycastCollider(FloatBounds ray, ushort colliderIndex)
         {
-            colliderIndex = 0;
-            
-            var cellData = world.worldCells[cellIndex];
-            if (cellData.count == 0)
+            var colliderBounds = inColliderWorld.colliderBounds[colliderIndex];
+            if (!FloatMath.BoundsOverlap(ray.xMin, ray.xMax, colliderBounds.xMin, colliderBounds.xMax))
             {
                 return false;
             }
 
-            for (var i = 0; i < cellData.count; i++)
+            if (!FloatMath.BoundsOverlap(ray.yMin, ray.yMax, colliderBounds.yMin, colliderBounds.yMax))
             {
-                colliderIndex = world.colliderStream[cellData.offset + i];
-                var colliderBounds = world.colliderBounds[colliderIndex];
+                return false;
+            }
+            
+            var center = FloatMath.GetBoundsCenter(colliderBounds);
+            var p0 = new float2(ray.xMin, ray.yMin) - center;
+            var p1 = new float2(ray.xMax, ray.yMax) - center;
+            var colliderShape = inColliderWorld.colliderShapes[colliderIndex];
+            FloatMath.SinCos(-colliderShape.rotation, out var sin, out var cos);
+            p0 = FloatMath.Rotate(p0, sin, cos);
+            p1 = FloatMath.Rotate(p1, sin, cos);
+            FloatMath.MinMax(p0.x, p1.x, out var xMin, out var xMax);
+            FloatMath.MinMax(p0.y, p1.y, out var yMin, out var yMax);
+            var halfSize = new float2(colliderShape.size.x / 2f, colliderShape.size.y / 2f);
 
-                if (!FloatMath.BoundsOverlap(ray.xMin, ray.xMax, colliderBounds.xMin, colliderBounds.xMax))
-                {
-                    continue;
-                }
-
-                if (!FloatMath.BoundsOverlap(ray.yMin, ray.yMax, colliderBounds.yMin, colliderBounds.yMax))
-                {
-                    continue;
-                }
-
-                var center = FloatMath.GetBoundsCenter(colliderBounds);
-                var p0 = new float2(ray.xMin, ray.yMin) - center;
-                var p1 = new float2(ray.xMax, ray.yMax) - center;
-                var colliderShape = world.colliderShapes[colliderIndex];
-                FloatMath.SinCos(-colliderShape.rotation, out var sin, out var cos);
-                p0 = FloatMath.Rotate(p0, sin, cos);
-                p1 = FloatMath.Rotate(p1, sin, cos);
-                FloatMath.MinMax(p0.x, p1.x, out var xMin, out var xMax);
-                FloatMath.MinMax(p0.y, p1.y, out var yMin, out var yMax);
-                var halfSize = new float2(colliderShape.size.x / 2f, colliderShape.size.y / 2f);
-
-                if (!FloatMath.BoundsOverlap(xMin, xMax, -halfSize.x, +halfSize.x))
-                {
-                    continue;
-                }
-
-                if (!FloatMath.BoundsOverlap(yMin, yMax, -halfSize.y, +halfSize.y))
-                {
-                    continue;
-                }
-
-                return true;
+            if (!FloatMath.BoundsOverlap(xMin, xMax, -halfSize.x, +halfSize.x))
+            {
+                return false;
             }
 
-            return false;
+            if (!FloatMath.BoundsOverlap(yMin, yMax, -halfSize.y, +halfSize.y))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
