@@ -2,9 +2,9 @@ using SolidSpace.Mathematics;
 using Unity.Collections;
 using Unity.Entities;
 
-namespace SolidSpace.Entities.Physics.Raycast
+namespace SolidSpace.Entities.Physics.Velcast
 {
-    public struct RaycastWorld
+    public struct VelcastWorld
     {
         public NativeSlice<EntityArchetype> raycastArchetypes;
 

@@ -46,7 +46,7 @@ namespace SolidSpace.Entities.Physics.Colliders
             _query = _entityManager.CreateEntityQuery(new ComponentType[]
             {
                 typeof(PositionComponent),
-                typeof(ColliderComponent)
+                typeof(RectColliderComponent)
             });
             _colliderBounds = NativeMemory.CreatePersistentArray<FloatBounds>(ColliderPerAllocation);
             _colliderShapes = NativeMemory.CreatePersistentArray<ColliderShape>(ColliderPerAllocation);
@@ -116,7 +116,7 @@ namespace SolidSpace.Entities.Physics.Colliders
                 outArchetypeIndices = _colliderArchetypeIndices,
                 outEntities = _colliderEntities,
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
-                sizeHandle = _entityManager.GetComponentTypeHandle<SizeComponent>(true),
+                sizeHandle = _entityManager.GetComponentTypeHandle<RectSizeComponent>(true),
                 rotationHandle = _entityManager.GetComponentTypeHandle<RotationComponent>(true),
                 entityHandle = _entityManager.GetEntityTypeHandle()
             };

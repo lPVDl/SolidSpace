@@ -59,8 +59,8 @@ namespace SolidSpace.Entities.Rendering.Sprites
             _query = _entityManager.CreateEntityQuery(new ComponentType[]
             {
                 typeof(PositionComponent),
-                typeof(SpriteComponent),
-                typeof(SizeComponent)
+                typeof(SpriteRenderComponent),
+                typeof(RectSizeComponent)
             });
         }
 
@@ -92,9 +92,9 @@ namespace SolidSpace.Entities.Rendering.Sprites
             var meshDataArray = Mesh.AllocateWritableMeshData(meshCount);
             var computeJobHandles = NativeMemory.CreateTempJobArray<JobHandle>(meshCount);
             var positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true);
-            var spriteHandle = _entityManager.GetComponentTypeHandle<SpriteComponent>(true);
+            var spriteHandle = _entityManager.GetComponentTypeHandle<SpriteRenderComponent>(true);
             var rotationHandle = _entityManager.GetComponentTypeHandle<RotationComponent>(true);
-            var sizeHandle = _entityManager.GetComponentTypeHandle<SizeComponent>(true);
+            var sizeHandle = _entityManager.GetComponentTypeHandle<RectSizeComponent>(true);
             var atlasChunks = _colorSystem.Chunks;
             var atlasSize = new int2(_colorSystem.Texture.width, _colorSystem.Texture.height);
             var chunkOffset = 0;

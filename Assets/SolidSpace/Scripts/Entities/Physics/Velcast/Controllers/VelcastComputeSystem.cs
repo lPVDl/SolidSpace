@@ -9,13 +9,13 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
-namespace SolidSpace.Entities.Physics.Raycast
+namespace SolidSpace.Entities.Physics.Velcast
 {
-    internal class RaycastComputeSystem : IInitializable, IUpdatable, IRaycastSystem
+    internal class VelcastComputeSystem : IInitializable, IUpdatable, IVelcastSystem
     {
         private const int EntityPerAllocation = 4096;
         
-        public RaycastWorld World { get; private set; }
+        public VelcastWorld World { get; private set; }
 
         private readonly IEntityManager _entityManager;
         private readonly IColliderSystem _colliderSystem;
@@ -32,7 +32,7 @@ namespace SolidSpace.Entities.Physics.Raycast
         private NativeArray<EntityArchetype> _hitEntityArchetypes;
         private NativeReference<int> _hitCount;
 
-        public RaycastComputeSystem(IEntityManager entityManager, IColliderSystem colliderSystem,
+        public VelcastComputeSystem(IEntityManager entityManager, IColliderSystem colliderSystem,
             IEntityWorldTime time, IProfilingManager profilingManager)
         {
             _time = time;
@@ -47,7 +47,7 @@ namespace SolidSpace.Entities.Physics.Raycast
             {
                 typeof(PositionComponent),
                 typeof(VelocityComponent),
-                typeof(RaycastComponent)
+                typeof(VelcastComponent)
             });
             _hitEntities = NativeMemory.CreatePersistentArray<Entity>(EntityPerAllocation);
             _hitColliderIndices = NativeMemory.CreatePersistentArray<ushort>(EntityPerAllocation);
@@ -108,7 +108,7 @@ namespace SolidSpace.Entities.Physics.Raycast
             NativeMemory.MaintainPersistentArrayLength(ref _hitEntityArchetypeIndices, maintenanceRule);
             NativeMemory.MaintainPersistentArrayLength(ref _hitRayOrigins, maintenanceRule);
 
-            new RaycastJob
+            new VelcastJob
             {
                 inRaycasterChunks = raycasterChunks,
                 inResultWriteOffsets = raycasterOffsets,
@@ -146,7 +146,7 @@ namespace SolidSpace.Entities.Physics.Raycast
             raycasterChunks.Dispose();
             _profiler.EndSample("Dispose Arrays");
 
-            World = new RaycastWorld
+            World = new VelcastWorld
             {
                 raycastArchetypes = new NativeSlice<EntityArchetype>(_hitEntityArchetypes, 0, archetypeCount),
                 raycastEntities = new NativeSlice<Entity>(_hitEntities, 0, _hitCount.Value),

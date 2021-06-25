@@ -10,7 +10,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
     public struct FillByteMaskJob : IJobParallelFor
     {
         [ReadOnly] public NativeArray<ArchetypeChunk> inChunks;
-        [ReadOnly] public ComponentTypeHandle<SpriteComponent> spriteHandle;
+        [ReadOnly] public ComponentTypeHandle<SpriteRenderComponent> spriteHandle;
 
         [WriteOnly, NativeDisableParallelForRestriction]
         public NativeArray<byte> outMask;

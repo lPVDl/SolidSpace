@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using SolidSpace.Entities.Atlases;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Physics.Colliders;
-using SolidSpace.Entities.Physics.Raycast;
+using SolidSpace.Entities.Physics.Velcast;
 using SolidSpace.Mathematics;
 using Unity.Burst;
 using Unity.Collections;
@@ -18,11 +18,11 @@ namespace SolidSpace.Entities.Bullets
         [ReadOnly] public int inItemPerJob;
         [ReadOnly] public int inItemTotal;
         [ReadOnly] public NativeArray<HealthComponent> inHealthComponents;
-        [ReadOnly] public NativeArray<SpriteComponent> inSpriteComponents;
+        [ReadOnly] public NativeArray<SpriteRenderComponent> inSpriteComponents;
         [ReadOnly] public NativeArray<byte> inHealthAtlas;
         [ReadOnly] public NativeSlice<AtlasChunk1D> inHealthChunks;
         [ReadOnly] public NativeSlice<AtlasChunk2D> inSpriteChunks;
-        [ReadOnly] public RaycastWorld inRaycastWorld;
+        [ReadOnly] public VelcastWorld inVelcastWorld;
         [ReadOnly] public ColliderWorld inColliderWorld;
         [ReadOnly] public NativeArray<int> inFilteredIndices;
 
@@ -38,11 +38,11 @@ namespace SolidSpace.Entities.Bullets
             for (var i = startIndex; i < endIndex; i++)
             {
                 var filterIndex = inFilteredIndices[i];
-                var colliderIndex = inRaycastWorld.colliderIndices[filterIndex];
+                var colliderIndex = inVelcastWorld.colliderIndices[filterIndex];
                 var colliderShape = inColliderWorld.colliderShapes[colliderIndex];
                 var colliderBounds = inColliderWorld.colliderBounds[colliderIndex];
                 var colliderCenter = FloatMath.GetBoundsCenter(colliderBounds);
-                var ray = inRaycastWorld.raycastOrigins[filterIndex];
+                var ray = inVelcastWorld.raycastOrigins[filterIndex];
                 var p0 = ray.pos0 - colliderCenter;
                 var p1 = ray.pos1 - colliderCenter;
                 FloatMath.SinCos(-colliderShape.rotation, out var sin, out var cos);
@@ -75,7 +75,7 @@ namespace SolidSpace.Entities.Bullets
                     
                     outHits[startIndex + hitCount++] = new BulletHit
                     {
-                        bulletEntity = inRaycastWorld.raycastEntities[filterIndex],
+                        bulletEntity = inVelcastWorld.raycastEntities[filterIndex],
                         spriteOffset = new ushort2(spriteOffset.x, spriteOffset.y),
                         healthOffset = offset
                     };
@@ -105,7 +105,7 @@ namespace SolidSpace.Entities.Bullets
                     
                     outHits[startIndex + hitCount++] = new BulletHit
                     {
-                        bulletEntity = inRaycastWorld.raycastEntities[filterIndex],
+                        bulletEntity = inVelcastWorld.raycastEntities[filterIndex],
                         spriteOffset = new ushort2(spriteOffset.x, spriteOffset.y),
                         healthOffset = offset
                     };

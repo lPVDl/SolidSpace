@@ -53,7 +53,7 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
             {
                 typeof(PositionComponent),
                 typeof(ParticleEmitterComponent),
-                typeof(RandomComponent),
+                typeof(RandomValueComponent),
                 typeof(RepeatTimerComponent),
             };
             _emitterArchetype = _entityManager.CreateArchetype(emitterComponents);

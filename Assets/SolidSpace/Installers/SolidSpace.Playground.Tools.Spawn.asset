@@ -9,8 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4bfeab0ce174357ba638a7cdb65f68b, type: 3}
+  m_Script: {fileID: 11500000, guid: ccb7c0ca2c6d4d5f97b20dd0ac4af2f2, type: 3}
   m_Name: SolidSpace.Playground.Tools.Spawn
   m_EditorClassIdentifier: 
-  _config:
-    _shipTexture: {fileID: 2800000, guid: c7dc818a243fcca41b5ce4e55ce9e7ca, type: 3}

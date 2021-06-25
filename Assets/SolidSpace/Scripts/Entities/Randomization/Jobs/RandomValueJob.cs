@@ -13,7 +13,7 @@ namespace SolidSpace.Entities.Randomization
         [ReadOnly] public NativeArray<float> randomValues;
         [ReadOnly] public int randomIndex;
         
-        public ComponentTypeHandle<RandomComponent> randomHandle;
+        public ComponentTypeHandle<RandomValueComponent> randomHandle;
         
         public void Execute(int chunkIndex)
         {
@@ -22,7 +22,7 @@ namespace SolidSpace.Entities.Randomization
             var randomCount = randomValues.Length;
             var randomOffset = chunkIndex * chunk.Capacity + randomIndex;
             var chunksRandoms = chunk.GetNativeArray(randomHandle);
-            var randomCom = new RandomComponent();
+            var randomCom = new RandomValueComponent();
             
             for (var i = 0; i < entityCount; i++)
             {

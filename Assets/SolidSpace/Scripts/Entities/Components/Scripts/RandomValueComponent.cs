@@ -2,7 +2,7 @@ using Unity.Entities;
 
 namespace SolidSpace.Entities.Components
 {
-    public struct RandomComponent : IComponentData
+    public struct RandomValueComponent : IComponentData
     {
         public float value;
     }

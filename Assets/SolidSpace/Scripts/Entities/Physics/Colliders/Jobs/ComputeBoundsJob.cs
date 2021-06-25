@@ -24,7 +24,7 @@ namespace SolidSpace.Entities.Physics.Colliders
         [ReadOnly] public NativeArray<int> inWriteOffsets;
         [ReadOnly] public NativeArray<byte> inArchetypeIndices;
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
-        [ReadOnly] public ComponentTypeHandle<SizeComponent> sizeHandle;
+        [ReadOnly] public ComponentTypeHandle<RectSizeComponent> sizeHandle;
         [ReadOnly] public ComponentTypeHandle<RotationComponent> rotationHandle;
         [ReadOnly] public EntityTypeHandle entityHandle;
         

@@ -8,10 +8,10 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 
-namespace SolidSpace.Entities.Physics.Raycast
+namespace SolidSpace.Entities.Physics.Velcast
 {
     [BurstCompile]
-    internal struct RaycastJob : IJobParallelFor
+    internal struct VelcastJob : IJobParallelFor
     {
         private struct RaycastHit
         {

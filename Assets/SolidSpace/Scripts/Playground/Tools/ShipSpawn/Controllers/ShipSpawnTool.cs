@@ -54,9 +54,9 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
             {
                 typeof(PositionComponent),
                 typeof(RotationComponent),
-                typeof(SizeComponent),
-                typeof(ColliderComponent),
-                typeof(SpriteComponent),
+                typeof(RectSizeComponent),
+                typeof(RectColliderComponent),
+                typeof(SpriteRenderComponent),
                 typeof(HealthComponent),
                 typeof(VelocityComponent),
                 typeof(ActorComponent)
@@ -112,7 +112,7 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
             {
                 value = position
             });
-            _entityManager.SetComponentData(entity, new SizeComponent
+            _entityManager.SetComponentData(entity, new RectSizeComponent
             {
                 value = new half2((half)size.x, (half)size.y)
             });
@@ -120,7 +120,7 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
             {
                 value = Random.value * FloatMath.TwoPI
             });
-            _entityManager.SetComponentData(entity, new SpriteComponent
+            _entityManager.SetComponentData(entity, new SpriteRenderComponent
             {
                 index = colorIndex
             });

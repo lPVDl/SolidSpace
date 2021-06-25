@@ -35,7 +35,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
         {
             _query = _entityManager.CreateEntityQuery(new ComponentType[]
             {
-                typeof(SpriteComponent)
+                typeof(SpriteRenderComponent)
             });
             _profiler = _profilingManager.GetHandle(this);
         }
@@ -61,7 +61,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             new FillByteMaskJob
             {
                 inChunks = archetypeChunks,
-                spriteHandle = _entityManager.GetComponentTypeHandle<SpriteComponent>(true),
+                spriteHandle = _entityManager.GetComponentTypeHandle<SpriteRenderComponent>(true),
                 outMask = occupationByteMask
             }.Schedule(archetypeChunks.Length, 4).Complete();
             _profiler.EndSample("Fill byte mask");

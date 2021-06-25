@@ -3,7 +3,7 @@ using Unity.Entities;
 
 namespace SolidSpace.Entities.Components
 {
-    public struct SpriteComponent : IComponentData
+    public struct SpriteRenderComponent : IComponentData
     {
         public AtlasIndex index;
     }

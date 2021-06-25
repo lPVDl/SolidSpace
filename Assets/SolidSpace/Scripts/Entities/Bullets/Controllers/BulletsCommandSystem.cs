@@ -2,7 +2,7 @@ using System;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Health;
 using SolidSpace.Entities.Physics.Colliders;
-using SolidSpace.Entities.Physics.Raycast;
+using SolidSpace.Entities.Physics.Velcast;
 using SolidSpace.Entities.Rendering.Sprites;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
@@ -20,7 +20,7 @@ namespace SolidSpace.Entities.Bullets
         private readonly ISpriteColorSystem _colorSystem;
         private readonly IHealthAtlasSystem _healthSystem;
         private readonly IColliderSystem _colliderSystem;
-        private readonly IRaycastSystem _raycastSystem;
+        private readonly IVelcastSystem _velcastSystem;
         private readonly IProfilingManager _profilingManager;
         private readonly IEntityManager _entityManager;
 
@@ -29,13 +29,13 @@ namespace SolidSpace.Entities.Bullets
         private NativeHashSet<ComponentType> _bulletComponents;
 
         public BulletsCommandSystem(ISpriteColorSystem colorSystem, IHealthAtlasSystem healthSystem,
-            IColliderSystem colliderSystem, IRaycastSystem raycastSystem, IProfilingManager profilingManager,
+            IColliderSystem colliderSystem, IVelcastSystem velcastSystem, IProfilingManager profilingManager,
             IEntityManager entityManager)
         {
             _colorSystem = colorSystem;
             _healthSystem = healthSystem;
             _colliderSystem = colliderSystem;
-            _raycastSystem = raycastSystem;
+            _velcastSystem = velcastSystem;
             _profilingManager = profilingManager;
             _entityManager = entityManager;
         }
@@ -46,7 +46,7 @@ namespace SolidSpace.Entities.Bullets
             _shipComponents = new NativeHashSet<ComponentType>(2, Allocator.Persistent)
             {
                 typeof(HealthComponent),
-                typeof(SpriteComponent)
+                typeof(SpriteRenderComponent)
             };
             _bulletComponents = new NativeHashSet<ComponentType>(3, Allocator.Persistent)
             {
@@ -58,7 +58,7 @@ namespace SolidSpace.Entities.Bullets
 
         public void OnUpdate()
         {
-            var raycastWorld = _raycastSystem.World;
+            var raycastWorld = _velcastSystem.World;
             var colliderWorld = _colliderSystem.World;
             
             _profiler.BeginSample("Create Filter");
@@ -101,7 +101,7 @@ namespace SolidSpace.Entities.Bullets
             var colliderArchetypeIndices = colliderWorld.colliderArchetypeIndices;
             var colliderCount = colliderEntities.Length;
             var colliderHealth = NativeMemory.CreateTempJobArray<HealthComponent>(colliderCount);
-            var colliderSprites = NativeMemory.CreateTempJobArray<SpriteComponent>(colliderCount);
+            var colliderSprites = NativeMemory.CreateTempJobArray<SpriteRenderComponent>(colliderCount);
             for (var i = 0; i < colliderCount; i++)
             {
                 var colliderEntity = colliderEntities[i];
@@ -112,7 +112,7 @@ namespace SolidSpace.Entities.Bullets
                 }
                 
                 colliderHealth[i] = _entityManager.GetComponentData<HealthComponent>(colliderEntity);
-                colliderSprites[i] = _entityManager.GetComponentData<SpriteComponent>(colliderEntity);
+                colliderSprites[i] = _entityManager.GetComponentData<SpriteRenderComponent>(colliderEntity);
             }
             _profiler.EndSample("Query Collider Data");
             
@@ -130,7 +130,7 @@ namespace SolidSpace.Entities.Bullets
                 inSpriteChunks = _colorSystem.Chunks,
                 inSpriteComponents = colliderSprites,
                 inColliderWorld = colliderWorld,
-                inRaycastWorld = raycastWorld,
+                inVelcastWorld = raycastWorld,
                 inHealthComponents = colliderHealth,
                 inFilteredIndices = filterIndices,
                 outCounts = bulletCastCounts,
