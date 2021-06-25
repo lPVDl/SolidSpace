@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using SolidSpace.Mathematics;
 using UnityEngine;
 
 namespace SolidSpace.Debugging
@@ -6,34 +7,26 @@ namespace SolidSpace.Debugging
     // TODO [T-27]: Move debug related classes to one folder, create facade.
     public static class SpaceDebug
     {
-        public static IReadOnlyDictionary<string, SpaceDebugValue<int>> IntStates => _intStates;
-        public static IReadOnlyDictionary<string, SpaceDebugValue<float>> FloatStates => _floatStates;
+        public static IReadOnlyDictionary<string, int> IntStates => _intStates;
+        public static IReadOnlyDictionary<string, float> FloatStates => _floatStates;
 
-        private static readonly Dictionary<string, SpaceDebugValue<int>> _intStates;
-        private static readonly Dictionary<string, SpaceDebugValue<float>> _floatStates;
+        private static readonly Dictionary<string, int> _intStates;
+        private static readonly Dictionary<string, float> _floatStates;
         
         static SpaceDebug()
         {
-            _intStates = new Dictionary<string, SpaceDebugValue<int>>();
-            _floatStates = new Dictionary<string, SpaceDebugValue<float>>();
+            _intStates = new Dictionary<string, int>();
+            _floatStates = new Dictionary<string, float>();
         }
         
         public static void LogState(string id, int value)
         {
-            _intStates[id] = new SpaceDebugValue<int>
-            {
-                value = value,
-                logTime = Time.time
-            };
+            _intStates[id] = value;
         }
         
         public static void LogState(string id, float value)
         {
-            _floatStates[id] = new SpaceDebugValue<float>
-            {
-                value = value,
-                logTime = Time.time
-            };
+            _floatStates[id] = value;
         }
     }
 }

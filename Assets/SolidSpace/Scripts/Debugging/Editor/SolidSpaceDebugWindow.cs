@@ -7,19 +7,14 @@ namespace SolidSpace.Debugging.Editor
     {
         private void OnGUI()
         {
-            if (!Application.isPlaying)
-            {
-                return;
-            }
-
             foreach (var floatState in SpaceDebug.FloatStates)
             {
-                EditorGUILayout.FloatField(floatState.Key, floatState.Value.value);
+                EditorGUILayout.FloatField(floatState.Key, floatState.Value);
             }
 
             foreach (var intState in SpaceDebug.IntStates)
             {
-                EditorGUILayout.IntField(intState.Key, intState.Value.value);
+                EditorGUILayout.IntField(intState.Key, intState.Value);
             }
 
             Repaint();
