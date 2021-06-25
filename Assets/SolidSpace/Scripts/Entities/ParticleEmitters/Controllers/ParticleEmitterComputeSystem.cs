@@ -16,7 +16,7 @@ namespace SolidSpace.Entities.ParticleEmitters
         public NativeArray<ParticleEmitterData> Particles => _particles;
         public int ParticleCount => _particleCount.Value;
         
-        private readonly IEntityWorldManager _entityManager;
+        private readonly IEntityManager _entityManager;
         private readonly IEntityWorldTime _time;
         private readonly IProfilingManager _profilingManager;
 
@@ -25,7 +25,7 @@ namespace SolidSpace.Entities.ParticleEmitters
         private NativeReference<int> _particleCount;
         private ProfilingHandle _profiler;
 
-        public ParticleEmitterComputeSystem(IEntityWorldManager entityManager, IEntityWorldTime time, IProfilingManager profilingManager)
+        public ParticleEmitterComputeSystem(IEntityManager entityManager, IEntityWorldTime time, IProfilingManager profilingManager)
         {
             _entityManager = entityManager;
             _time = time;

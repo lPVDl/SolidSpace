@@ -13,13 +13,13 @@ namespace SolidSpace.Entities.Randomization
     {
         private const int BufferChunkSize = 1024;
 
-        private readonly IEntityWorldManager _entityManager;
+        private readonly IEntityManager _entityManager;
         
         private NativeArray<float> _buffer;
         private int _index;
         private EntityQuery _query;
 
-        public RandomValueSystem(IEntityWorldManager entityManager)
+        public RandomValueSystem(IEntityManager entityManager)
         {
             _entityManager = entityManager;
         }

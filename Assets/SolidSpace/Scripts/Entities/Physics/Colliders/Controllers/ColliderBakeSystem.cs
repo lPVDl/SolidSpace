@@ -20,7 +20,7 @@ namespace SolidSpace.Entities.Physics.Colliders
         private const int ChunkPerAllocation = 256;
         private const int MaxCellCount = 65536;
 
-        private readonly IEntityWorldManager _entityManager;
+        private readonly IEntityManager _entityManager;
         private readonly IProfilingManager _profilingManager;
 
         private EntityQuery _query;
@@ -34,7 +34,7 @@ namespace SolidSpace.Entities.Physics.Colliders
         private NativeArray<ColliderListPointer> _worldChunks;
         private ProfilingHandle _profiler;
 
-        public ColliderBakeSystem(IEntityWorldManager entityManager, IProfilingManager profilingManager)
+        public ColliderBakeSystem(IEntityManager entityManager, IProfilingManager profilingManager)
         {
             _entityManager = entityManager;
             _profilingManager = profilingManager;

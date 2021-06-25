@@ -17,7 +17,7 @@ namespace SolidSpace.Playground.Tools.EntitySearch
         
         public EntitySearchResult Result { get; private set; }
         
-        private readonly IEntityWorldManager _entityManager;
+        private readonly IEntityManager _entityManager;
         private readonly IProfilingManager _profilingManager;
 
         private EntityQuery _query;
@@ -28,7 +28,7 @@ namespace SolidSpace.Playground.Tools.EntitySearch
         private NativeArray<Entity> _entitiesInRadius;
         private NativeArray<float2> _pointsInRadius;
 
-        public EntitySearchSystem(IEntityWorldManager entityManager, IProfilingManager profilingManager)
+        public EntitySearchSystem(IEntityManager entityManager, IProfilingManager profilingManager)
         {
             _entityManager = entityManager;
             _profilingManager = profilingManager;

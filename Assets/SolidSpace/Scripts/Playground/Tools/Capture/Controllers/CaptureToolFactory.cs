@@ -19,12 +19,12 @@ namespace SolidSpace.Playground.Tools.Capture
         private readonly IUIManager _uiManager;
         private readonly IPointerTracker _pointer;
         private readonly IPlaygroundUIFactory _uiFactory;
-        private readonly IEntityWorldManager _entityManager;
+        private readonly IEntityManager _entityManager;
         private readonly IPlaygroundToolValueStorage _valueStorage;
 
         public CaptureToolFactory(IComponentFilterFactory filterFactory, IEntitySearchSystem searchSystem, 
             IPlaygroundUIManager playgroundUI, IUIManager uiManager, IPointerTracker pointer, IPlaygroundUIFactory uiFactory, 
-            IEntityWorldManager entityManager, IPlaygroundToolValueStorage valueStorage)
+            IEntityManager entityManager, IPlaygroundToolValueStorage valueStorage)
         {
             _filterFactory = filterFactory;
             _searchSystem = searchSystem;

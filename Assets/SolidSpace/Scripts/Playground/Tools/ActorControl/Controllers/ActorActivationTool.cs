@@ -13,13 +13,13 @@ namespace SolidSpace.Playground.Tools.ActorControl
     {
         private readonly ICaptureToolFactory _captureToolFactory;
         private readonly IGizmosManager _gizmosManager;
-        private readonly IEntityWorldManager _entityManager;
+        private readonly IEntityManager _entityManager;
 
         private GizmosHandle _gizmos;
         private ICaptureTool _captureTool;
 
         public ActorActivationTool(ICaptureToolFactory captureToolFactory, IGizmosManager gizmosManager, 
-            IEntityWorldManager entityManager)
+            IEntityManager entityManager)
         {
             _captureToolFactory = captureToolFactory;
             _gizmosManager = gizmosManager;

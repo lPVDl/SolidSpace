@@ -15,7 +15,7 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
 {
     public class EmitterSpawnTool : IPlaygroundTool, ISpawnToolHandler
     {
-        private readonly IEntityWorldManager _entityManager;
+        private readonly IEntityManager _entityManager;
         private readonly ISpawnToolFactory _spawnToolFactory;
         private readonly IPlaygroundUIManager _uiManager;
         private readonly IPlaygroundUIFactory _uiFactory;
@@ -33,7 +33,7 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
         private float _spawnRate;
         private float _particleVelocity;
 
-        public EmitterSpawnTool(IEntityWorldManager entityManager, IPlaygroundUIManager uiManager,
+        public EmitterSpawnTool(IEntityManager entityManager, IPlaygroundUIManager uiManager,
             ISpawnToolFactory spawnToolFactory, IPlaygroundUIFactory uiFactory, IComponentFilterFactory filterFactory,
             IGizmosManager gizmosManager)
         {

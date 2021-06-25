@@ -22,7 +22,7 @@ namespace SolidSpace.Entities.Bullets
         private readonly IColliderSystem _colliderSystem;
         private readonly IRaycastSystem _raycastSystem;
         private readonly IProfilingManager _profilingManager;
-        private readonly IEntityWorldManager _entityManager;
+        private readonly IEntityManager _entityManager;
 
         private ProfilingHandle _profiler;
         private NativeHashSet<ComponentType> _shipComponents;
@@ -30,7 +30,7 @@ namespace SolidSpace.Entities.Bullets
 
         public BulletsCommandSystem(ISpriteColorSystem colorSystem, IHealthAtlasSystem healthSystem,
             IColliderSystem colliderSystem, IRaycastSystem raycastSystem, IProfilingManager profilingManager,
-            IEntityWorldManager entityManager)
+            IEntityManager entityManager)
         {
             _colorSystem = colorSystem;
             _healthSystem = healthSystem;

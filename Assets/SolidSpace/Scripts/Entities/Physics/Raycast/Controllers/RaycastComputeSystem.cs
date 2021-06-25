@@ -17,7 +17,7 @@ namespace SolidSpace.Entities.Physics.Raycast
         
         public RaycastWorld World { get; private set; }
 
-        private readonly IEntityWorldManager _entityManager;
+        private readonly IEntityManager _entityManager;
         private readonly IColliderSystem _colliderSystem;
         private readonly IEntityWorldTime _time;
         private readonly IProfilingManager _profilingManager;
@@ -32,7 +32,7 @@ namespace SolidSpace.Entities.Physics.Raycast
         private NativeArray<EntityArchetype> _hitEntityArchetypes;
         private NativeReference<int> _hitCount;
 
-        public RaycastComputeSystem(IEntityWorldManager entityManager, IColliderSystem colliderSystem,
+        public RaycastComputeSystem(IEntityManager entityManager, IColliderSystem colliderSystem,
             IEntityWorldTime time, IProfilingManager profilingManager)
         {
             _time = time;

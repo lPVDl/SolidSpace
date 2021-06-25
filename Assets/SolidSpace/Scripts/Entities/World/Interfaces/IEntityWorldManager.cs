@@ -3,7 +3,7 @@ using Unity.Entities;
 
 namespace SolidSpace.Entities.World
 {
-    public interface IEntityWorldManager
+    public interface IEntityManager
     {
         EntityQuery CreateEntityQuery(params ComponentType[] requiredComponents);
         ComponentTypeHandle<T> GetComponentTypeHandle<T>(bool isReadOnly);

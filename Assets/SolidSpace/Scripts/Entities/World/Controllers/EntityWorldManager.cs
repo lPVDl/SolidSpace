@@ -4,11 +4,11 @@ using Unity.Entities;
 
 namespace SolidSpace.Entities.World
 {
-    internal class EntityWorldManager : IEntityWorldManager
+    internal class EntityManager : IEntityManager
     {
         private readonly Unity.Entities.World _world;
 
-        public EntityWorldManager()
+        public EntityManager()
         {
             _world = new Unity.Entities.World("SolidSpace");
         }

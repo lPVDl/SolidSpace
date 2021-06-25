@@ -16,7 +16,7 @@ namespace SolidSpace.Entities.Despawn
         public NativeArray<Entity> ResultBuffer => _entities;
         public int ResultCount => _entityCount.Value;
         
-        private readonly IEntityWorldManager _entityManager;
+        private readonly IEntityManager _entityManager;
         private readonly IEntityWorldTime _time;
         private readonly IProfilingManager _profilingManager;
 
@@ -26,7 +26,7 @@ namespace SolidSpace.Entities.Despawn
         private int _lastOffset;
         private ProfilingHandle _profiler;
 
-        public DespawnComputeSystem(IEntityWorldManager entityManager, IEntityWorldTime time, IProfilingManager profilingManager)
+        public DespawnComputeSystem(IEntityManager entityManager, IEntityWorldTime time, IProfilingManager profilingManager)
         {
             _entityManager = entityManager;
             _time = time;

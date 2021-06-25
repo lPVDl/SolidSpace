@@ -10,12 +10,12 @@ namespace SolidSpace.Entities.RepeatTimer
 {
     public class RepeatTimerSystem : IInitializable, IUpdatable
     {
-        private readonly IEntityWorldManager _entityManager;
+        private readonly IEntityManager _entityManager;
         private readonly IEntityWorldTime _time;
 
         private EntityQuery _query;
 
-        public RepeatTimerSystem(IEntityWorldManager entityManager, IEntityWorldTime time)
+        public RepeatTimerSystem(IEntityManager entityManager, IEntityWorldTime time)
         {
             _entityManager = entityManager;
             _time = time;

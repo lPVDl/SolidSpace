@@ -15,7 +15,7 @@ namespace SolidSpace.Entities.Actors
 {
     public class ActorControlSystem : IInitializable, IUpdatable, IActorControlSystem
     {
-        private readonly IEntityWorldManager _entityManager;
+        private readonly IEntityManager _entityManager;
         private readonly IProfilingManager _profilingManager;
         private readonly IEntityWorldTime _worldTime;
         private readonly IGizmosManager _gizmosManager;
@@ -25,7 +25,7 @@ namespace SolidSpace.Entities.Actors
         private ProfilingHandle _profiler;
         private GizmosHandle _gizmos;
 
-        public ActorControlSystem(IEntityWorldManager entityManager, IProfilingManager profilingManager, 
+        public ActorControlSystem(IEntityManager entityManager, IProfilingManager profilingManager, 
             IEntityWorldTime worldTime, IGizmosManager gizmosManager)
         {
             _entityManager = entityManager;

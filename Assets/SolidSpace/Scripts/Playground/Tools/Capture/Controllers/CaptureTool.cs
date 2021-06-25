@@ -24,7 +24,7 @@ namespace SolidSpace.Playground.Tools.Capture
         public float2 CapturedPointer { get; set; }
         public int SearchRadius { get; set; }
         public IStringField SearchRadiusField { get; set; }
-        public IEntityWorldManager EntityManager { get; set; }
+        public IEntityManager EntityManager { get; set; }
         public ICaptureToolHandler Handler { get; set; }
         public IPlaygroundToolValueStorage ValueStorage { get; set; }
         public IToolWindow Window { get; set; }

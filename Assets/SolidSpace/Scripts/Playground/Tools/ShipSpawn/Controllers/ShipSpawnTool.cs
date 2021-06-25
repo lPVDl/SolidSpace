@@ -21,7 +21,7 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
     internal class ShipSpawnTool : IPlaygroundTool, ISpawnToolHandler
     {
         private readonly ShipSpawnToolConfig _config;
-        private readonly IEntityWorldManager _entityManager;
+        private readonly IEntityManager _entityManager;
         private readonly ISpriteColorSystem _spriteSystem;
         private readonly ISpawnToolFactory _spawnToolFactory;
         private readonly IPlaygroundUIManager _uiManager;
@@ -34,7 +34,7 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
         private IUIElement _componentsWindow;
         private GizmosHandle _gizmos;
 
-        public ShipSpawnTool(ShipSpawnToolConfig config, IEntityWorldManager entityManager, IHealthAtlasSystem healthSystem,
+        public ShipSpawnTool(ShipSpawnToolConfig config, IEntityManager entityManager, IHealthAtlasSystem healthSystem,
             ISpriteColorSystem spriteSystem, ISpawnToolFactory spawnToolFactory, IPlaygroundUIManager uiManager,
             IComponentFilterFactory filterFactory, IGizmosManager gizmosManager)
         {

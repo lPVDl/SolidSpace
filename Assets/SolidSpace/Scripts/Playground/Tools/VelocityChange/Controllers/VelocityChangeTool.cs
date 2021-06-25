@@ -12,13 +12,13 @@ namespace SolidSpace.Playground.Tools.VelocityChange
     internal class VelocityChangeTool : IPlaygroundTool, ICaptureToolHandler
     {
         private readonly IGizmosManager _gizmosManager;
-        private readonly IEntityWorldManager _entityManager;
+        private readonly IEntityManager _entityManager;
         private readonly ICaptureToolFactory _captureToolFactory;
 
         private GizmosHandle _gizmos;
         private ICaptureTool _captureTool;
 
-        public VelocityChangeTool(IGizmosManager gizmosManager, IEntityWorldManager entityManager,
+        public VelocityChangeTool(IGizmosManager gizmosManager, IEntityManager entityManager,
             ICaptureToolFactory captureToolFactory)
         {
             _gizmosManager = gizmosManager;

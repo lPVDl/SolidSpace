@@ -9,9 +9,9 @@ namespace SolidSpace.Entities.Despawn
     internal class DespawnCommandSystem : IUpdatable
     {
         private readonly IDespawnComputeSystem _computeSystem;
-        private readonly IEntityWorldManager _entityManager;
+        private readonly IEntityManager _entityManager;
 
-        public DespawnCommandSystem(IDespawnComputeSystem computeSystem, IEntityWorldManager entityManager)
+        public DespawnCommandSystem(IDespawnComputeSystem computeSystem, IEntityManager entityManager)
         {
             _computeSystem = computeSystem;
             _entityManager = entityManager;

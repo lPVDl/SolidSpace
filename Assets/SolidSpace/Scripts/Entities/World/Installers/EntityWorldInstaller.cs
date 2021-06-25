@@ -6,7 +6,7 @@ namespace SolidSpace.Entities.World
     {
         public override void InstallBindings(IDependencyContainer container)
         {
-            container.Bind<EntityWorldManager>();
+            container.Bind<EntityManager>();
             container.Bind<EntityWorldTime>();
         }
     }

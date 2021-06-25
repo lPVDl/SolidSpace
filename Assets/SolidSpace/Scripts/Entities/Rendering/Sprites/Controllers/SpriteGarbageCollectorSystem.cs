@@ -17,13 +17,13 @@ namespace SolidSpace.Entities.Rendering.Sprites
     public class SpriteGarbageCollectorSystem : IInitializable, IUpdatable
     {
         private readonly ISpriteColorSystem _spriteAtlas;
-        private readonly IEntityWorldManager _entityManager;
+        private readonly IEntityManager _entityManager;
         private readonly IProfilingManager _profilingManager;
         
         private EntityQuery _query;
         private ProfilingHandle _profiler;
 
-        public SpriteGarbageCollectorSystem(ISpriteColorSystem spriteAtlas, IEntityWorldManager entityManager,
+        public SpriteGarbageCollectorSystem(ISpriteColorSystem spriteAtlas, IEntityManager entityManager,
             IProfilingManager profilingManager)
         {
             _spriteAtlas = spriteAtlas;

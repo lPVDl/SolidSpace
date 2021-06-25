@@ -16,13 +16,13 @@ namespace SolidSpace.Entities.Health
     public class HealthAtlasGarbageCollector : IUpdatable, IInitializable
     {
         private readonly IHealthAtlasSystem _healthAtlas;
-        private readonly IEntityWorldManager _entityManager;
+        private readonly IEntityManager _entityManager;
         private readonly IProfilingManager _profilingManager;
 
         private EntityQuery _query;
         private ProfilingHandle _profiler;
 
-        public HealthAtlasGarbageCollector(IHealthAtlasSystem healthAtlas, IEntityWorldManager entityManager, 
+        public HealthAtlasGarbageCollector(IHealthAtlasSystem healthAtlas, IEntityManager entityManager, 
             IProfilingManager profilingManager)
         {
             _healthAtlas = healthAtlas;
