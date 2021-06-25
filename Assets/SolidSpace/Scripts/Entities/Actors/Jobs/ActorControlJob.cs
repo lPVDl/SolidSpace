@@ -1,4 +1,5 @@
 using System;
+using SolidSpace.Debugging;
 using SolidSpace.Entities.Components;
 using SolidSpace.Mathematics;
 using Unity.Burst;
@@ -15,6 +16,7 @@ namespace SolidSpace.Entities.Actors
         private const float Acceleration = 30f;
         private const float RotationSpeed = FloatMath.TwoPI * 0.2f;
         private const float ApproachDistanceOffset = 100f;
+        private const float RadialThruster = 1.5f;
 
         [ReadOnly] public NativeArray<ArchetypeChunk> inArchetypeChunks;
         [ReadOnly] public float2 inSeekPosition;
@@ -45,37 +47,45 @@ namespace SolidSpace.Entities.Actors
 
                 var currentPosition = positions[i].value;
                 var currentVelocity = velocities[i].value;
+                var currentAngle = rotations[i].value;
+                
                 var targetDirection = inSeekPosition - currentPosition;
                 var targetDirectionNormalized = FloatMath.Normalize(targetDirection);
                 var targetDistance = FloatMath.Magnitude(targetDirection) - ApproachDistanceOffset;
-
-                var currentRotation = rotations[i].value;
-                FloatMath.SinCos(currentRotation, out var dirSin, out var dirCos);
-                var currentDirection = new float2(dirCos, dirSin);
-
-                var currentAngle = rotations[i].value;
+                
                 var distanceOverVelocity = targetDistance / Math.Max(1f, FloatMath.Magnitude(currentVelocity));
-                var targetImpulse = targetDirectionNormalized * Acceleration * distanceOverVelocity - currentVelocity;
+                var targetVelocity = targetDirectionNormalized * Acceleration * distanceOverVelocity;
+                var targetImpulse = targetVelocity - currentVelocity;
 
+                var impulsePower = FloatMath.Magnitude(targetImpulse);
                 var impulseDot = FloatMath.Dot(targetImpulse, targetDirection);
                 var impulseAngle = FloatMath.Atan2(targetImpulse);
                 if (impulseDot < 0)
                 {
                     impulseAngle += FloatMath.PI;
                 }
-                
                 var deltaAngle = FloatMath.DeltaAngle(currentAngle, impulseAngle);
                 var thrusterPower = 1f - 2f * Math.Abs(deltaAngle) / FloatMath.PI;
-                var impulse = currentDirection * (inDeltaTime * thrusterPower * Acceleration * Math.Sign(impulseDot));
+                
+                FloatMath.SinCos(currentAngle, out var dirSin, out var dirCos);
+                var currentDirection = new float2(dirCos, dirSin);
+                var mainImpulse = currentDirection * (inDeltaTime * thrusterPower * Acceleration * Math.Sign(impulseDot));
 
+                FloatMath.SinCos(FloatMath.Atan2(targetImpulse), out var impSin, out var impCos);
+                var radialImpulse = new float2(impCos, impSin) * (RadialThruster * inDeltaTime);
+                
                 velocities[i] = new VelocityComponent
                 {
-                    value = currentVelocity + impulse
+                    value = currentVelocity + mainImpulse + radialImpulse
                 };
+
+                var targetAngle = FloatMath.Atan2(targetDirection);
+                var rel = FloatMath.Clamp01((impulsePower - RadialThruster) / Acceleration);
+                var finalAngle = FloatMath.LerpAngle(targetAngle, impulseAngle, rel);
                 
                 rotations[i] = new RotationComponent
                 {
-                    value = FloatMath.MoveAngleTowards(currentAngle, impulseAngle, inDeltaTime * RotationSpeed)
+                    value = FloatMath.MoveAngleTowards(currentAngle, finalAngle, inDeltaTime * RotationSpeed)
                 };
             }
         }

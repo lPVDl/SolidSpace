@@ -34,6 +34,22 @@ namespace SolidSpace.Mathematics
 
             return value;
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Clamp01(float value)
+        {
+            if (value < 0)
+            {
+                return 0;
+            }
+
+            if (value > 1)
+            {
+                return 1;
+            }
+
+            return value;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Magnitude(float2 vector)
@@ -133,6 +149,18 @@ namespace SolidSpace.Mathematics
         public static float2 Rotate(float2 vector, float sin, float cos)
         {
             return Rotate(vector.x, vector.y, sin, cos);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float LerpAngle(float a, float b, float t)
+        {
+            var num = Repeat(b - a, TwoPI);
+            if (num > PI)
+            {
+                num -= TwoPI;
+            }
+
+            return a + num * Clamp01(t);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
