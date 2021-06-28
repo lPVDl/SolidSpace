@@ -162,7 +162,7 @@ namespace SolidSpace.Entities.Physics.Colliders
                 inColliderPerJob = 128,
                 inColliderTotalCount = colliderCount,
                 outColliders = chunkedColliders,
-                outColliderCount = chunkedColliderCounts
+                outColliderCounts = chunkedColliderCounts
             };
             var chunkingJobHandle = chunkingJob.Schedule(jobCount, 8);
             chunkingJobHandle.Complete();

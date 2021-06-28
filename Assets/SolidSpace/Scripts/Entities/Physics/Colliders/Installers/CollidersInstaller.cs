@@ -11,6 +11,7 @@ namespace SolidSpace.Entities.Physics.Colliders
         {
             container.Bind<ColliderBakeSystem>();
             container.Bind<ColliderGizmoSystem>(_gizmoConfig);
+            container.Bind<KovacFactory>();
         }
     }
 }

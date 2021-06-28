@@ -16,7 +16,7 @@ namespace SolidSpace.Entities.Physics.Colliders
         [ReadOnly] public ColliderWorldGrid inWorldGrid;
 
         [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<ChunkedCollider> outColliders;
-        [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<int> outColliderCount;
+        [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<int> outColliderCounts;
         
         public void Execute(int jobIndex)
         {
@@ -67,7 +67,7 @@ namespace SolidSpace.Entities.Physics.Colliders
                 }
             }
 
-            outColliderCount[jobIndex] = colliderCount;
+            outColliderCounts[jobIndex] = colliderCount;
         }
     }
 }
