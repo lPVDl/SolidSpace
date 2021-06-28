@@ -7,6 +7,7 @@ namespace SolidSpace.Entities.Physics.Velcast
         public override void InstallBindings(IDependencyContainer container)
         {
             container.Bind<VelcastComputeSystem>();
+            container.Bind<KovacRaycasterFactory>();
         }
     }
 }

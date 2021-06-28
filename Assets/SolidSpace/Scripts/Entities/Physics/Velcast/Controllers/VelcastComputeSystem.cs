@@ -62,6 +62,8 @@ namespace SolidSpace.Entities.Physics.Velcast
 
         public void OnUpdate()
         {
+            return;
+            
             _profiler.BeginSample("Query Chunks");
             var raycasterChunks = _raycasterQuery.CreateArchetypeChunkArray(Allocator.TempJob);
             _profiler.EndSample("Query Chunks");

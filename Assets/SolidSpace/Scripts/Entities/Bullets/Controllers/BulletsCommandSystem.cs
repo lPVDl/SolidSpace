@@ -28,11 +28,10 @@ namespace SolidSpace.Entities.Bullets
         private ProfilingHandle _profiler;
         private NativeHashSet<ComponentType> _shipComponents;
         private NativeHashSet<ComponentType> _bulletComponents;
-        private IKovacBakery<BulletColliderWorld> _kovacBakery;
 
         public BulletsCommandSystem(ISpriteColorSystem colorSystem, IHealthAtlasSystem healthSystem,
             IColliderSystem colliderSystem, IVelcastSystem velcastSystem, IProfilingManager profilingManager,
-            IEntityManager entityManager, IKovacFactory kovacFactory)
+            IEntityManager entityManager)
         {
             _colorSystem = colorSystem;
             _healthSystem = healthSystem;
@@ -40,20 +39,11 @@ namespace SolidSpace.Entities.Bullets
             _velcastSystem = velcastSystem;
             _profilingManager = profilingManager;
             _entityManager = entityManager;
-            _kovacFactory = kovacFactory;
         }
         
         public void OnInitialize()
         {
             _profiler = _profilingManager.GetHandle(this);
-            _kovacBakery = _kovacFactory.Create<BulletColliderWorld>(_profiler, new ComponentType[]
-            {
-                typeof(PositionComponent),
-                typeof(RectColliderComponent),
-                typeof(RectSizeComponent),
-                typeof(SpriteRenderComponent),
-                typeof(HealthComponent)
-            });
             _shipComponents = new NativeHashSet<ComponentType>(2, Allocator.Persistent)
             {
                 typeof(HealthComponent),
@@ -69,14 +59,11 @@ namespace SolidSpace.Entities.Bullets
 
         public void OnUpdate()
         {
+            return;
+            
             var raycastWorld = _velcastSystem.World;
             var colliderWorld = _colliderSystem.World;
 
-            _profiler.BeginSample("Kovak stuff");
-            var kovacWorld = _kovacBakery.Bake();
-            kovacWorld.Dispose();
-            _profiler.EndSample("Kovak stuff");
-            
             _profiler.BeginSample("Create Filter");
             var colliderFilter = FilterArchetypes(colliderWorld.archetypes, _shipComponents);
             var raycasterFilter = FilterArchetypes(raycastWorld.raycastArchetypes, _bulletComponents);

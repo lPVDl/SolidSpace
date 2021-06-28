@@ -1,9 +1,10 @@
 using System;
+using SolidSpace.Entities.Physics.Velcast;
 
 namespace SolidSpace.Entities.Physics.Colliders
 {
-    public interface IKovacBakery<T> where T : struct, IColliderWorld
+    public interface IKovacBakery<T> where T : struct, IColliderBakeBehaviour
     {
-        KovacWorld<T> Bake();
+        BakedCollidersData Bake(ref T behaviour);
     }
 }

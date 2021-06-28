@@ -7,6 +7,7 @@ namespace SolidSpace.Entities.Bullets
         public override void InstallBindings(IDependencyContainer container)
         {
             container.Bind<BulletsCommandSystem>();
+            container.Bind<KovacBullets>();
         }
     }
 }

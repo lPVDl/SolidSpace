@@ -1,5 +1,6 @@
 using System;
 using SolidSpace.Entities.Components;
+using SolidSpace.Entities.Physics.Velcast;
 using SolidSpace.Entities.World;
 using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
@@ -11,16 +12,14 @@ using Unity.Jobs;
 namespace SolidSpace.Entities.Physics.Colliders
 {
     public class KovacBakery<T> : IKovacBakery<T> 
-        where T : struct, IColliderWorld
+        where T : struct, IColliderBakeBehaviour
     {
         public ProfilingHandle Profiler { get; set; }
         public EntityQuery Query { get; set; }
         public IEntityManager EntityManager { get; set; }
 
-        public KovacWorld<T> Bake()
+        public BakedCollidersData Bake(ref T behaviour)
         {
-            T colliderData = default;
-
             Profiler.BeginSample("Query archetype chunks");
             var archetypeChunks = Query.CreateArchetypeChunkArray(Allocator.TempJob);
             Profiler.EndSample("Query archetype chunks");
@@ -41,10 +40,10 @@ namespace SolidSpace.Entities.Physics.Colliders
             Profiler.EndSample("Compute offsets");
             
             Profiler.BeginSample("Collect data");
-            colliderData.Initialize(EntityManager, colliderCount);
+            behaviour.Initialize(colliderCount);
             var dataCollectJob = new KovacDataCollectJob<T>
             {
-                colliderData = colliderData,
+                behaviour = behaviour,
                 inArchetypeChunks = archetypeChunks,
                 inWriteOffsets = archetypeChunkOffsets,
                 positionHandle = EntityManager.GetComponentTypeHandle<PositionComponent>(true),
@@ -123,15 +122,13 @@ namespace SolidSpace.Entities.Physics.Colliders
             bakingJob.outColliderCounts.Dispose();
             Profiler.EndSample("Dispose arrays");
 
-            return new KovacWorld<T>
+            return new BakedCollidersData
             {
-                colliderData = colliderData,
-                colliderShapes = dataCollectJob.outShapes,
-                colliderBounds = dataCollectJob.outBounds,
+                shapes = dataCollectJob.outShapes,
+                bounds = dataCollectJob.outBounds,
                 grid = worldGrid,
-                colliderCount = (ushort) colliderCount,
                 cells = worldCells,
-                colliderIndices = listsFillJob.outColliders,
+                indices = listsFillJob.outColliders
             };
         }
     }

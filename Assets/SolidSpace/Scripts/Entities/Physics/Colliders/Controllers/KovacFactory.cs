@@ -14,7 +14,7 @@ namespace SolidSpace.Entities.Physics.Colliders
         }
         
         public IKovacBakery<T> Create<T>(ProfilingHandle profiler, params ComponentType[] requiredComponents) 
-            where T : struct, IColliderWorld
+            where T : struct, IColliderBakeBehaviour
         {
             return new KovacBakery<T>
             {

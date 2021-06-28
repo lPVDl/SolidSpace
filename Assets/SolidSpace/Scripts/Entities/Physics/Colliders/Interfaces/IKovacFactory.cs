@@ -6,6 +6,6 @@ namespace SolidSpace.Entities.Physics.Colliders
     public interface IKovacFactory
     {
         IKovacBakery<T> Create<T>(ProfilingHandle profiler, params ComponentType[] requiredComponents)
-            where T : struct, IColliderWorld;
+            where T : struct, IColliderBakeBehaviour;
     }
 }

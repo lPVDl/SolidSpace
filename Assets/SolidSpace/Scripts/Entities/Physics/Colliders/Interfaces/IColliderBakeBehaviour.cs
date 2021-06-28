@@ -4,9 +4,9 @@ using Unity.Entities;
 
 namespace SolidSpace.Entities.Physics.Colliders
 {
-    public interface IColliderWorld : IDisposable
+    public interface IColliderBakeBehaviour
     {
-        void Initialize(IEntityManager entityManager, int colliderCount);
+        void Initialize(int colliderCount);
 
         void ReadChunk(ArchetypeChunk chunk);
 

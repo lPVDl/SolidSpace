@@ -9,7 +9,7 @@ using Unity.Mathematics;
 namespace SolidSpace.Entities.Physics.Colliders
 {
     [BurstCompile]
-    public struct KovacDataCollectJob<T> : IJobParallelFor where T : struct, IColliderWorld
+    public struct KovacDataCollectJob<T> : IJobParallelFor where T : struct, IColliderBakeBehaviour
     {
         private struct ColliderInfo
         {
@@ -17,7 +17,7 @@ namespace SolidSpace.Entities.Physics.Colliders
             public ColliderShape shape;
         }
         
-        public T colliderData;
+        public T behaviour;
 
         [ReadOnly] public NativeArray<ArchetypeChunk> inArchetypeChunks;
         [ReadOnly] public NativeArray<int> inWriteOffsets;
@@ -37,7 +37,7 @@ namespace SolidSpace.Entities.Physics.Colliders
             var rectSizes = chunk.GetNativeArray(rectSizeHandle);
             var entityCount = chunk.Count;
             
-            colliderData.ReadChunk(chunk);
+            behaviour.ReadChunk(chunk);
 
             if (chunk.Has(rotationHandle))
             {
@@ -45,7 +45,7 @@ namespace SolidSpace.Entities.Physics.Colliders
                 
                 for (var i = 0; i < entityCount; i++)
                 {
-                    colliderData.ReadEntity(i, writeOffset);
+                    behaviour.ReadEntity(i, writeOffset);
                     
                     var center = positions[i].value;
                     var size = rectSizes[i].value;
@@ -82,7 +82,7 @@ namespace SolidSpace.Entities.Physics.Colliders
             
             for (var i = 0; i < entityCount; i++)
             {
-                colliderData.ReadEntity(i, writeOffset);
+                behaviour.ReadEntity(i, writeOffset);
                 
                 var center = positions[i].value;
                 var size = rectSizes[i].value;
