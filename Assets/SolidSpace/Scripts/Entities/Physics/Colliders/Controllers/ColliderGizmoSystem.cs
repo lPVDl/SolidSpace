@@ -4,7 +4,7 @@ using Unity.Mathematics;
 
 namespace SolidSpace.Entities.Physics.Colliders
 {
-    public static class ColliderGizmoUtil
+    public static class ColliderGizmosUtil
     {
         public static void DrawColliders(GizmosHandle gizmos, BakedColliders colliders)
         {

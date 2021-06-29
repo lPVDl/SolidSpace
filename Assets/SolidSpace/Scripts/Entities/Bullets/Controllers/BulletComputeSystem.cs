@@ -5,6 +5,7 @@ using SolidSpace.Entities.Physics.Raycast;
 using SolidSpace.Entities.Rendering.Sprites;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
+using SolidSpace.Gizmos;
 using SolidSpace.JobUtilities;
 using SolidSpace.Profiling;
 using Unity.Collections;
@@ -24,14 +25,17 @@ namespace SolidSpace.Entities.Bullets
         private readonly IEntityWorldTime _worldTime;
         private readonly ISpriteColorSystem _spriteSystem;
         private readonly IHealthAtlasSystem _healthSystem;
+        private readonly IGizmosManager _gizmosManager;
 
         private ProfilingHandle _profiler;
         private IColliderBakeSystem<BulletColliderBakeBehaviour> _bakeSystem;
         private IRaycastSystem<BulletRaycastBehaviour> _raycaster;
+        private GizmosHandle _gridGizmos;
+        private GizmosHandle _colliderGizmos;
 
         public BulletComputeSystem(IColliderBakeSystemFactory colliderBakeSystemFactory, IRaycastSystemFactory raycasterFactory, 
             IProfilingManager profilingManager, IEntityManager entityManager, IEntityWorldTime worldTime,
-            ISpriteColorSystem spriteSystem, IHealthAtlasSystem healthSystem)
+            ISpriteColorSystem spriteSystem, IHealthAtlasSystem healthSystem, IGizmosManager gizmosManager)
         {
             _colliderBakeSystemFactory = colliderBakeSystemFactory;
             _raycasterFactory = raycasterFactory;
@@ -40,12 +44,15 @@ namespace SolidSpace.Entities.Bullets
             _worldTime = worldTime;
             _spriteSystem = spriteSystem;
             _healthSystem = healthSystem;
+            _gizmosManager = gizmosManager;
         }
         
         public void OnInitialize()
         {
             EntitiesToDestroy = NativeMemory.CreateTempJobArray<Entity>(0);
-            
+
+            _gridGizmos = _gizmosManager.GetHandle(this, "Grid", Color.gray);
+            _colliderGizmos = _gizmosManager.GetHandle(this, "Collider", Color.green);
             _profiler = _profilingManager.GetHandle(this);
             _bakeSystem = _colliderBakeSystemFactory.Create<BulletColliderBakeBehaviour>(_profiler, new ComponentType[]
             {
@@ -111,6 +118,11 @@ namespace SolidSpace.Entities.Bullets
             }
             spriteTexture.Apply();
             _profiler.EndSample("Apply damage");
+            
+            _profiler.BeginSample("Gizmos");
+            ColliderGizmosUtil.DrawGrid(_gridGizmos, colliders.grid);
+            ColliderGizmosUtil.DrawColliders(_colliderGizmos, colliders);
+            _profiler.EndSample("Gizmos");
             
             bakeBehaviour.Dispose();
             raycastBehaviour.Dispose();
