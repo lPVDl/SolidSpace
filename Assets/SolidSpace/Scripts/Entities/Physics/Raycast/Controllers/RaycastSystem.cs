@@ -10,16 +10,11 @@ namespace SolidSpace.Entities.Physics.Raycast
     public class RaycastSystem<T> : IRaycastSystem<T> where T : struct, IRaycastBehaviour
     {
         private const int HitStackSize = 8;
-
-        public EntityQuery Query { get; set; }
+        
         public ProfilingHandle Profiler { get; set; }
 
-        public void Raycast(BakedColliders colliders, ref T behaviour)
+        public void Raycast(BakedColliders colliders, NativeArray<ArchetypeChunk> archetypeChunks, ref T behaviour)
         {
-            Profiler.BeginSample("Query chunks");
-            var archetypeChunks = Query.CreateArchetypeChunkArray(Allocator.TempJob);
-            Profiler.EndSample("Query chunks");
-
             Profiler.BeginSample("Chunk offsets");
             var archetypeChunkCount = archetypeChunks.Length;
             var archetypeChunkOffsets = NativeMemory.CreateTempJobArray<int>(archetypeChunkCount);
@@ -51,7 +46,6 @@ namespace SolidSpace.Entities.Physics.Raycast
             Profiler.EndSample("Collect results");
 
             Profiler.BeginSample("Dispose arrays");
-            archetypeChunks.Dispose();
             raycastJob.hitStack.Dispose();
             raycastJob.outCounts.Dispose();
             archetypeChunkOffsets.Dispose();

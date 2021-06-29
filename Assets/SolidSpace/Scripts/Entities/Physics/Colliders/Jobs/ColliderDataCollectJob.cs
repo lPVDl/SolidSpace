@@ -37,7 +37,7 @@ namespace SolidSpace.Entities.Physics.Colliders
             var rectSizes = chunk.GetNativeArray(rectSizeHandle);
             var entityCount = chunk.Count;
             
-            behaviour.ReadChunk(chunk);
+            behaviour.OnProcessChunk(chunk);
 
             if (chunk.Has(rotationHandle))
             {
@@ -45,7 +45,7 @@ namespace SolidSpace.Entities.Physics.Colliders
                 
                 for (var i = 0; i < entityCount; i++)
                 {
-                    behaviour.ReadEntity(i, writeOffset);
+                    behaviour.OnProcessChunkEntity(i, writeOffset);
                     
                     var center = positions[i].value;
                     var size = rectSizes[i].value;
@@ -82,7 +82,7 @@ namespace SolidSpace.Entities.Physics.Colliders
             
             for (var i = 0; i < entityCount; i++)
             {
-                behaviour.ReadEntity(i, writeOffset);
+                behaviour.OnProcessChunkEntity(i, writeOffset);
                 
                 var center = positions[i].value;
                 var size = rectSizes[i].value;

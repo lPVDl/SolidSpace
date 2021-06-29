@@ -24,17 +24,13 @@ namespace SolidSpace.Entities.Physics.Colliders
             var endIndex = Math.Min(startIndex + inColliderPerJob, inColliderTotalCount);
             var colliderCount = 0;
             var writeOffset = jobIndex * inColliderPerJob * 4;
-            var worldPower = inWorldGrid.power;
-            var worldAnchor = inWorldGrid.anchor;
             var worldSize = inWorldGrid.size;
 
             for (var i = startIndex; i < endIndex; i++)
             {
                 var bounds = inColliderBounds[i];
-                var x0 = ((int) bounds.xMin >> worldPower) - worldAnchor.x;
-                var y0 = ((int) bounds.yMin >> worldPower) - worldAnchor.y;
-                var x1 = ((int) bounds.xMax >> worldPower) - worldAnchor.x;
-                var y1 = ((int) bounds.yMax >> worldPower) - worldAnchor.y;
+                ColliderUtil.WorldToGrid(bounds.xMin, bounds.yMin, inWorldGrid, out var x0, out var y0);
+                ColliderUtil.WorldToGrid(bounds.xMax, bounds.yMax, inWorldGrid, out var x1, out var y1);
                 var anchorChunk = y0 * worldSize.x + x0;
 
                 ChunkedCollider chunkedCollider;

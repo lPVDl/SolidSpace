@@ -28,7 +28,7 @@ namespace SolidSpace.Entities.Physics.Raycast
             var chunk = inArchetypeChunks[chunkIndex];
             var rayCount = chunk.Count;
             var writeOffset = inWriteOffsets[chunkIndex];
-            var stackOffset = chunkIndex * hitStackSize;
+            var hitStackOffset = chunkIndex * hitStackSize;
             var jobHitCount = 0;
             
             behaviour.ReadChunk(chunk);
@@ -40,12 +40,9 @@ namespace SolidSpace.Entities.Physics.Raycast
                 FloatBounds rayBounds;
                 FloatMath.MinMax(ray.pos0.x, ray.pos1.x, out rayBounds.xMin, out rayBounds.xMax);
                 FloatMath.MinMax(ray.pos0.y, ray.pos1.y, out rayBounds.yMin, out rayBounds.yMax);
-                
-                var x0 = ((int) rayBounds.xMin >> inColliders.grid.power) - inColliders.grid.anchor.x;
-                var x1 = ((int) rayBounds.xMax >> inColliders.grid.power) - inColliders.grid.anchor.x;
-                var y0 = ((int) rayBounds.yMin >> inColliders.grid.power) - inColliders.grid.anchor.y;
-                var y1 = ((int) rayBounds.yMax >> inColliders.grid.power) - inColliders.grid.anchor.y;
-                
+                ColliderUtil.WorldToGrid(rayBounds.xMin, rayBounds.yMin, inColliders.grid, out var x0, out var y0);
+                ColliderUtil.WorldToGrid(rayBounds.xMax, rayBounds.yMax, inColliders.grid, out var x1, out var y1);
+
                 if (x1 < 0 || x0 >= inColliders.grid.size.x)
                 {
                     continue;
@@ -64,9 +61,9 @@ namespace SolidSpace.Entities.Physics.Raycast
                         continue;
                     }
 
-                    for (var j = 0; (j < cellData.count) && (jobHitCount < rayCount); j++)
+                    for (var i = 0; (i < cellData.count) && (jobHitCount < rayCount); i++)
                     {
-                        var colliderIndex = inColliders.indices[cellData.offset + j];
+                        var colliderIndex = inColliders.indices[cellData.offset + i];
                         
                         if (!RaycastCollider(rayBounds, colliderIndex))
                         {
@@ -112,22 +109,10 @@ namespace SolidSpace.Entities.Physics.Raycast
                         for (var j = 0; j < cellData.count; j++)
                         {
                             var colliderIndex = inColliders.indices[cellData.offset + j];
-                            var alreadyHit = false;
-                            if (rayHitCount > 0)
+                            
+                            if (HitStackContainsCollider(hitStackOffset, rayHitCount, colliderIndex))
                             {
-                                for (var q = 0; q < rayHitCount; q++)
-                                {
-                                    if (hitStack[stackOffset + q] == colliderIndex)
-                                    {
-                                        alreadyHit = true;
-                                        break;
-                                    }
-                                }
-
-                                if (alreadyHit)
-                                {
-                                    continue;
-                                }
+                                continue;
                             }
 
                             if (!RaycastCollider(rayBounds, colliderIndex))
@@ -161,21 +146,35 @@ namespace SolidSpace.Entities.Physics.Raycast
             
             outCounts[chunkIndex] = jobHitCount;
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool HitStackContainsCollider(int stackOffset, int hitCount, ushort collider)
+        {
+            if (hitCount == 0)
+            {
+                return false;
+            }
+            
+            for (var i = 0; i < hitCount; i++)
+            {
+                if (hitStack[stackOffset + i] == collider)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool RaycastCollider(FloatBounds ray, ushort colliderIndex)
         {
             var colliderBounds = inColliders.bounds[colliderIndex];
-            if (!FloatMath.BoundsOverlap(ray.xMin, ray.xMax, colliderBounds.xMin, colliderBounds.xMax))
+            if (!FloatMath.BoundsOverlap(ray, colliderBounds))
             {
                 return false;
             }
 
-            if (!FloatMath.BoundsOverlap(ray.yMin, ray.yMax, colliderBounds.yMin, colliderBounds.yMax))
-            {
-                return false;
-            }
-            
             var center = FloatMath.GetBoundsCenter(colliderBounds);
             var p0 = new float2(ray.xMin, ray.yMin) - center;
             var p1 = new float2(ray.xMax, ray.yMax) - center;

@@ -59,7 +59,8 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
                 typeof(SpriteRenderComponent),
                 typeof(HealthComponent),
                 typeof(VelocityComponent),
-                typeof(ActorComponent)
+                typeof(ActorComponent),
+                typeof(RigidbodyComponent)
             };
             _shipArchetype = _entityManager.CreateArchetype(shipComponents);
             _componentsWindow = _filterFactory.CreateReadonly(shipComponents);

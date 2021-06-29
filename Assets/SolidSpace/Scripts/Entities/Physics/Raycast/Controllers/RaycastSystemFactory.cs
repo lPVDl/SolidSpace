@@ -13,13 +13,11 @@ namespace SolidSpace.Entities.Physics.Raycast
             _entityManager = entityManager;
         }
         
-        public IRaycastSystem<T> Create<T>(ProfilingHandle profiler, params ComponentType[] requiredComponents)
-            where T : struct, IRaycastBehaviour
+        public IRaycastSystem<T> Create<T>(ProfilingHandle profiler) where T : struct, IRaycastBehaviour
         {
             return new RaycastSystem<T>
             {
-                Profiler = profiler,
-                Query = _entityManager.CreateEntityQuery(requiredComponents)
+                Profiler = profiler
             };
         }
     }

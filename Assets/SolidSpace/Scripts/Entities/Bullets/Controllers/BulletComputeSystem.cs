@@ -19,7 +19,7 @@ namespace SolidSpace.Entities.Bullets
         public NativeArray<Entity> EntitiesToDestroy { get; private set; }
         
         private readonly IColliderBakeSystemFactory _colliderBakeSystemFactory;
-        private readonly IRaycastSystemFactory _raycasterFactory;
+        private readonly IRaycastSystemFactory _raycastSystemFactory;
         private readonly IProfilingManager _profilingManager;
         private readonly IEntityManager _entityManager;
         private readonly IEntityWorldTime _worldTime;
@@ -28,17 +28,19 @@ namespace SolidSpace.Entities.Bullets
         private readonly IGizmosManager _gizmosManager;
 
         private ProfilingHandle _profiler;
-        private IColliderBakeSystem<BulletColliderBakeBehaviour> _bakeSystem;
-        private IRaycastSystem<BulletRaycastBehaviour> _raycaster;
+        private IColliderBakeSystem<BulletColliderBakeBehaviour> _colliderBakeSystem;
+        private IRaycastSystem<BulletRaycastBehaviour> _raycastSystem;
         private GizmosHandle _gridGizmos;
         private GizmosHandle _colliderGizmos;
+        private EntityQuery _colliderQuery;
+        private EntityQuery _bulletQuery;
 
-        public BulletComputeSystem(IColliderBakeSystemFactory colliderBakeSystemFactory, IRaycastSystemFactory raycasterFactory, 
-            IProfilingManager profilingManager, IEntityManager entityManager, IEntityWorldTime worldTime,
+        public BulletComputeSystem(IColliderBakeSystemFactory colliderBakeSystemFactory, IEntityWorldTime worldTime, 
+            IProfilingManager profilingManager, IEntityManager entityManager, IRaycastSystemFactory raycastSystemFactory,
             ISpriteColorSystem spriteSystem, IHealthAtlasSystem healthSystem, IGizmosManager gizmosManager)
         {
             _colliderBakeSystemFactory = colliderBakeSystemFactory;
-            _raycasterFactory = raycasterFactory;
+            _raycastSystemFactory = raycastSystemFactory;
             _profilingManager = profilingManager;
             _entityManager = entityManager;
             _worldTime = worldTime;
@@ -54,19 +56,21 @@ namespace SolidSpace.Entities.Bullets
             _gridGizmos = _gizmosManager.GetHandle(this, "Grid", Color.gray);
             _colliderGizmos = _gizmosManager.GetHandle(this, "Collider", Color.green);
             _profiler = _profilingManager.GetHandle(this);
-            _bakeSystem = _colliderBakeSystemFactory.Create<BulletColliderBakeBehaviour>(_profiler, new ComponentType[]
+            _colliderQuery = _entityManager.CreateEntityQuery(new ComponentType[]
             {
                 typeof(PositionComponent),
                 typeof(RectSizeComponent),
                 typeof(SpriteRenderComponent),
                 typeof(HealthComponent)
             });
-            _raycaster = _raycasterFactory.Create<BulletRaycastBehaviour>(_profiler, new ComponentType[]
+            _colliderBakeSystem = _colliderBakeSystemFactory.Create<BulletColliderBakeBehaviour>(_profiler);
+            _bulletQuery = _entityManager.CreateEntityQuery(new ComponentType[]
             {
                 typeof(PositionComponent),
                 typeof(VelocityComponent),
                 typeof(BulletComponent)
             });
+            _raycastSystem = _raycastSystemFactory.Create<BulletRaycastBehaviour>(_profiler);
         }
         
         public void OnUpdate()
@@ -77,10 +81,18 @@ namespace SolidSpace.Entities.Bullets
                 spriteHandle = _entityManager.GetComponentTypeHandle<SpriteRenderComponent>(true),
             };
             
+            _profiler.BeginSample("Query colliders");
+            var colliderArchetypeChunks = _colliderQuery.CreateArchetypeChunkArray(Allocator.TempJob);
+            _profiler.EndSample("Query colliders");
+            
             _profiler.BeginSample("Bake colliders");
-            var colliders = _bakeSystem.Bake(ref bakeBehaviour);
+            var colliders = _colliderBakeSystem.Bake(colliderArchetypeChunks, ref bakeBehaviour);
             _profiler.EndSample("Bake colliders");
 
+            _profiler.BeginSample("Query bullets");
+            var bulletArchetypeChunks = _bulletQuery.CreateArchetypeChunkArray(Allocator.TempJob);
+            _profiler.EndSample("Query bullets");
+            
             var raycastBehaviour = new BulletRaycastBehaviour
             {
                 inColliders = colliders,
@@ -96,7 +108,7 @@ namespace SolidSpace.Entities.Bullets
             };
             
             _profiler.BeginSample("Raycast");
-            _raycaster.Raycast(colliders, ref raycastBehaviour);
+            _raycastSystem.Raycast(colliders, bulletArchetypeChunks, ref raycastBehaviour);
             _profiler.EndSample("Raycast");
 
             _profiler.BeginSample("Apply damage");
@@ -124,9 +136,14 @@ namespace SolidSpace.Entities.Bullets
             ColliderGizmosUtil.DrawColliders(_colliderGizmos, colliders);
             _profiler.EndSample("Gizmos");
             
+            
+            _profiler.BeginSample("Dispose arrays");
+            colliderArchetypeChunks.Dispose();
+            bulletArchetypeChunks.Dispose();
             bakeBehaviour.Dispose();
             raycastBehaviour.Dispose();
             colliders.Dispose();
+            _profiler.EndSample("Dispose arrays");
         }
 
         public void OnFinalize()

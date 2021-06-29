@@ -18,22 +18,22 @@ namespace SolidSpace.Entities.Bullets
         [NativeDisableContainerSafetyRestriction] private NativeArray<SpriteRenderComponent> _chunkSprites;
         [NativeDisableContainerSafetyRestriction] private NativeArray<HealthComponent> _chunkHealth;
 
-        public void Initialize(int colliderCount)
+        public void OnInitialize(int colliderCount)
         {
             outHealthComponents = NativeMemory.CreateTempJobArray<HealthComponent>(colliderCount);
             outSpriteComponents = NativeMemory.CreateTempJobArray<SpriteRenderComponent>(colliderCount);
         }
 
-        public void ReadChunk(ArchetypeChunk chunk)
+        public void OnProcessChunk(ArchetypeChunk chunk)
         {
             _chunkSprites = chunk.GetNativeArray(spriteHandle);
             _chunkHealth = chunk.GetNativeArray(healthHandle);
         }
 
-        public void ReadEntity(int entityIndex, int writeOffset)
+        public void OnProcessChunkEntity(int chunkEntityIndex, int colliderIndex)
         {
-            outHealthComponents[writeOffset] = _chunkHealth[entityIndex];
-            outSpriteComponents[writeOffset] = _chunkSprites[entityIndex];
+            outHealthComponents[colliderIndex] = _chunkHealth[chunkEntityIndex];
+            outSpriteComponents[colliderIndex] = _chunkSprites[chunkEntityIndex];
         }
         
         public void Dispose()

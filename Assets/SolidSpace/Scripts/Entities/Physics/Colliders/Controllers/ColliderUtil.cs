@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
 using SolidSpace.Profiling;
@@ -8,18 +9,26 @@ using Unity.Mathematics;
 
 namespace SolidSpace.Entities.Physics.Colliders
 {
-    internal static class ColliderGridUtil
+    internal static class ColliderUtil
     {
         private const int MaxCellCount = ushort.MaxValue;
         
-        public static ColliderGrid Static_ComputeGrid(NativeArray<FloatBounds> colliders, int colliderCount, ProfilingHandle profiler)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void WorldToGrid(float x, float y, ColliderGrid grid, out int xInt, out int yInt)
+        {
+            xInt = ((int) x >> grid.power) - grid.anchor.x;
+            yInt = ((int) y >> grid.power) - grid.anchor.y;
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ColliderGrid ComputeGrid(NativeArray<FloatBounds> colliders, int colliderCount, ProfilingHandle profiler)
         {
             profiler.BeginSample("World Bounds");
-            var worldBounds = Static_ComputeWorldBounds(colliders, colliderCount, profiler);
+            var worldBounds = ComputeWorldBounds(colliders, colliderCount, profiler);
             profiler.EndSample("World Bounds");
                 
             profiler.BeginSample("Max Collider Size");
-            var maxColliderSize = Static_FindMaxColliderSize(colliders, colliderCount, profiler);
+            var maxColliderSize = FindMaxColliderSize(colliders, colliderCount, profiler);
             profiler.EndSample("Max Collider Size");
                 
             var cellSize = Math.Max(1, Math.Max(maxColliderSize.x, maxColliderSize.y));
@@ -44,7 +53,8 @@ namespace SolidSpace.Entities.Physics.Colliders
             };
         }
 
-        private static FloatBounds Static_ComputeWorldBounds(NativeArray<FloatBounds> colliders, int colliderCount, ProfilingHandle profiler)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static FloatBounds ComputeWorldBounds(NativeArray<FloatBounds> colliders, int colliderCount, ProfilingHandle profiler)
         {
             var colliderJobCount = (int) Math.Ceiling(colliderCount / 128f);
             var colliderJoinedBounds = NativeMemory.CreateTempJobArray<FloatBounds>(colliderJobCount);
@@ -62,15 +72,64 @@ namespace SolidSpace.Entities.Physics.Colliders
             profiler.EndSample("Jobs");
 
             profiler.BeginSample("Main Thread");
-            var worldBounds = ColliderBoundsUtil.Static_JoinBounds(colliderJoinedBounds);
+            var worldBounds = JoinBounds(colliderJoinedBounds);
             profiler.EndSample("Main Thread");
 
             colliderJoinedBounds.Dispose();
 
             return worldBounds;
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static FloatBounds JoinBounds(NativeArray<FloatBounds> colliders)
+        {
+            if (colliders.Length == 0)
+            {
+                return default;
+            }
 
-        private static float2 Static_FindMaxColliderSize(NativeArray<FloatBounds> colliders, int colliderCount, ProfilingHandle profiler)
+            var entityBounds = colliders[0];
+            var xMin = entityBounds.xMin;
+            var xMax = entityBounds.xMax;
+            var yMin = entityBounds.yMin;
+            var yMax = entityBounds.yMax;
+            var colliderCount = colliders.Length;
+            for (var i = 1; i < colliderCount; i++)
+            {
+                entityBounds = colliders[i];
+
+                if (entityBounds.xMin < xMin)
+                {
+                    xMin = entityBounds.xMin;
+                }
+
+                if (entityBounds.yMin < yMin)
+                {
+                    yMin = entityBounds.yMin;
+                }
+
+                if (entityBounds.xMax > xMax)
+                {
+                    xMax = entityBounds.xMax;
+                }
+
+                if (entityBounds.yMax > yMax)
+                {
+                    yMax = entityBounds.yMax;
+                }
+            }
+
+            return new FloatBounds
+            {
+                xMin = xMin,
+                xMax = xMax,
+                yMin = yMin,
+                yMax = yMax
+            };
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static float2 FindMaxColliderSize(NativeArray<FloatBounds> colliders, int colliderCount, ProfilingHandle profiler)
         {
             var colliderJobCount = (int) Math.Ceiling(colliderCount / 128f);
             var colliderMaxSizes = NativeMemory.CreateTempJobArray<float2>(colliderJobCount);
@@ -88,12 +147,43 @@ namespace SolidSpace.Entities.Physics.Colliders
             profiler.EndSample("Jobs");
 
             profiler.BeginSample("Main Thread");
-            var maxColliderSize = ColliderBoundsUtil.Static_FindBoundsMaxSize(colliderMaxSizes);
+            var maxColliderSize = FindBoundsMaxSize(colliderMaxSizes);
             profiler.EndSample("Main Thread");
 
             colliderMaxSizes.Dispose();
                 
             return maxColliderSize;
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static float2 FindBoundsMaxSize(NativeArray<float2> sizes)
+        {
+            if (sizes.Length == 0)
+            {
+                return default;
+            }
+
+            var size = sizes[0];
+            var xMax = size.x;
+            var yMax = size.y;
+            var colliderCount = sizes.Length;
+
+            for (var i = 1; i < colliderCount; i++)
+            {
+                size = sizes[i];
+
+                if (size.x > xMax)
+                {
+                    xMax = size.x;
+                }
+
+                if (size.y > yMax)
+                {
+                    yMax = size.y;
+                }
+            }
+
+            return new float2(xMax, yMax);
         }
     }
 }

@@ -207,6 +207,17 @@ namespace SolidSpace.Mathematics
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool BoundsOverlap(FloatBounds a, FloatBounds b)
+        {
+            if (!BoundsOverlap(a.xMin, a.xMax, b.xMin, b.xMax))
+            {
+                return false;
+            }
+
+            return BoundsOverlap(a.yMin, a.yMax, b.yMin, b.yMax);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float2 GetBoundsCenter(FloatBounds bounds)
         {
             return new float2

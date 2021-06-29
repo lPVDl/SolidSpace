@@ -6,10 +6,10 @@ namespace SolidSpace.Entities.Physics.Colliders
 {
     public interface IColliderBakeBehaviour
     {
-        void Initialize(int colliderCount);
+        void OnInitialize(int colliderCount);
 
-        void ReadChunk(ArchetypeChunk chunk);
+        void OnProcessChunk(ArchetypeChunk chunk);
 
-        void ReadEntity(int entityIndex, int writeOffset);
+        void OnProcessChunkEntity(int chunkEntityIndex, int colliderIndex);
     }
 }

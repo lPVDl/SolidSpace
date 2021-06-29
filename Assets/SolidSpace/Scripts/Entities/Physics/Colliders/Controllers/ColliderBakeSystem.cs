@@ -11,19 +11,13 @@ using Unity.Jobs;
 
 namespace SolidSpace.Entities.Physics.Colliders
 {
-    public class ColliderBakeSystem<T> : IColliderBakeSystem<T> 
-        where T : struct, IColliderBakeBehaviour
+    public class ColliderBakeSystem<T> : IColliderBakeSystem<T> where T : struct, IColliderBakeBehaviour
     {
         public ProfilingHandle Profiler { get; set; }
-        public EntityQuery Query { get; set; }
         public IEntityManager EntityManager { get; set; }
 
-        public BakedColliders Bake(ref T behaviour)
+        public BakedColliders Bake(NativeArray<ArchetypeChunk> archetypeChunks, ref T behaviour)
         {
-            Profiler.BeginSample("Query archetype chunks");
-            var archetypeChunks = Query.CreateArchetypeChunkArray(Allocator.TempJob);
-            Profiler.EndSample("Query archetype chunks");
-
             Profiler.BeginSample("Compute offsets");
             var archetypeChunkCount = archetypeChunks.Length;
             var archetypeChunkOffsets = NativeMemory.CreateTempJobArray<int>(archetypeChunkCount);
@@ -40,7 +34,7 @@ namespace SolidSpace.Entities.Physics.Colliders
             Profiler.EndSample("Compute offsets");
             
             Profiler.BeginSample("Collect data");
-            behaviour.Initialize(colliderCount);
+            behaviour.OnInitialize(colliderCount);
             var dataCollectJob = new KovacDataCollectJob<T>
             {
                 behaviour = behaviour,
@@ -56,7 +50,7 @@ namespace SolidSpace.Entities.Physics.Colliders
             Profiler.EndSample("Collect data");
             
             Profiler.BeginSample("Construct grid");
-            var worldGrid = ColliderGridUtil.Static_ComputeGrid(dataCollectJob.outBounds, colliderCount, Profiler);
+            var worldGrid = ColliderUtil.ComputeGrid(dataCollectJob.outBounds, colliderCount, Profiler);
             Profiler.EndSample("Construct grid");
             
             Profiler.BeginSample("Allocate cells");
@@ -116,7 +110,6 @@ namespace SolidSpace.Entities.Physics.Colliders
             Profiler.EndSample("Lists fill");
 
             Profiler.BeginSample("Dispose arrays");
-            archetypeChunks.Dispose();
             archetypeChunkOffsets.Dispose();
             bakingJob.outColliders.Dispose();
             bakingJob.outColliderCounts.Dispose();

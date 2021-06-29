@@ -5,7 +5,6 @@ namespace SolidSpace.Entities.Physics.Raycast
 {
     public interface IRaycastSystemFactory
     {
-        public IRaycastSystem<T> Create<T>(ProfilingHandle profiler, params ComponentType[] requiredComponents)
-            where T : struct, IRaycastBehaviour;
+        public IRaycastSystem<T> Create<T>(ProfilingHandle profiler) where T : struct, IRaycastBehaviour;
     }
 }

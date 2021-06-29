@@ -32,6 +32,7 @@ MonoBehaviour:
         - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteGarbageCollectorSystem
         - typeName: SolidSpace.Entities.Actors.ActorControlSystem
         - typeName: SolidSpace.Entities.Bullets.BulletComputeSystem
+        - typeName: SolidSpace.Entities.Physics.Rigidbody.RigidbodyComputeSystem
       - _name: Managed
         _controllers:
         - typeName: SolidSpace.Gizmos.GizmosManager
@@ -51,6 +52,7 @@ MonoBehaviour:
         - typeName: SolidSpace.Entities.Randomization.RandomValueSystem
         - typeName: SolidSpace.Entities.Bullets.BulletComputeSystem
         - typeName: SolidSpace.Entities.Physics.Velocity.VelocitySystem
+        - typeName: SolidSpace.Entities.Physics.Rigidbody.RigidbodyComputeSystem
         - typeName: SolidSpace.Entities.ParticleEmitters.ParticleEmitterComputeSystem
         - typeName: SolidSpace.Entities.Despawn.DespawnComputeSystem
         - typeName: SolidSpace.Playground.Tools.EntitySearch.EntitySearchSystem

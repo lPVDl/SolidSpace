@@ -13,13 +13,11 @@ namespace SolidSpace.Entities.Physics.Colliders
             _entityManager = entityManager;
         }
         
-        public IColliderBakeSystem<T> Create<T>(ProfilingHandle profiler, params ComponentType[] requiredComponents) 
-            where T : struct, IColliderBakeBehaviour
+        public IColliderBakeSystem<T> Create<T>(ProfilingHandle profiler) where T : struct, IColliderBakeBehaviour
         {
             return new ColliderBakeSystem<T>
             {
                 EntityManager = _entityManager,
-                Query = _entityManager.CreateEntityQuery(requiredComponents),
                 Profiler = profiler
             };
         }
