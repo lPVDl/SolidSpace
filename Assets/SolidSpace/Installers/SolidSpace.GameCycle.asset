@@ -31,7 +31,7 @@ MonoBehaviour:
         - typeName: SolidSpace.Entities.Health.HealthAtlasGarbageCollector
         - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteGarbageCollectorSystem
         - typeName: SolidSpace.Entities.Actors.ActorControlSystem
-        - typeName: SolidSpace.Entities.Bullets.BulletSystem
+        - typeName: SolidSpace.Entities.Bullets.BulletComputeSystem
       - _name: Managed
         _controllers:
         - typeName: SolidSpace.Gizmos.GizmosManager
@@ -49,6 +49,7 @@ MonoBehaviour:
         - typeName: SolidSpace.Entities.Actors.ActorControlSystem
         - typeName: SolidSpace.Entities.RepeatTimer.RepeatTimerSystem
         - typeName: SolidSpace.Entities.Randomization.RandomValueSystem
+        - typeName: SolidSpace.Entities.Bullets.BulletComputeSystem
         - typeName: SolidSpace.Entities.Physics.Velocity.VelocitySystem
         - typeName: SolidSpace.Entities.ParticleEmitters.ParticleEmitterComputeSystem
         - typeName: SolidSpace.Entities.Despawn.DespawnComputeSystem
@@ -57,7 +58,7 @@ MonoBehaviour:
         - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteGarbageCollectorSystem
       - _name: EntityCommand
         _controllers:
-        - typeName: SolidSpace.Entities.Bullets.BulletSystem
+        - typeName: SolidSpace.Entities.Bullets.BulletCommandSystem
         - typeName: SolidSpace.Entities.ParticleEmitters.ParticleEmitterCommandSystem
         - typeName: SolidSpace.Entities.Despawn.DespawnCommandSystem
       - _name: Managed

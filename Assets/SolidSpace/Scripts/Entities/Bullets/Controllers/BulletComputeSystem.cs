@@ -5,14 +5,18 @@ using SolidSpace.Entities.Physics.Raycast;
 using SolidSpace.Entities.Rendering.Sprites;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
+using SolidSpace.JobUtilities;
 using SolidSpace.Profiling;
+using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
 namespace SolidSpace.Entities.Bullets
 {
-    public class BulletSystem : IInitializable, IUpdatable
+    public class BulletComputeSystem : IInitializable, IUpdatable, IBulletComputeSystem
     {
+        public NativeArray<Entity> EntitiesToDestroy { get; private set; }
+        
         private readonly IColliderBakeSystemFactory _colliderBakeSystemFactory;
         private readonly IRaycastSystemFactory _raycasterFactory;
         private readonly IProfilingManager _profilingManager;
@@ -25,7 +29,7 @@ namespace SolidSpace.Entities.Bullets
         private IColliderBakeSystem<BulletColliderBakeBehaviour> _bakeSystem;
         private IRaycastSystem<BulletRaycastBehaviour> _raycaster;
 
-        public BulletSystem(IColliderBakeSystemFactory colliderBakeSystemFactory, IRaycastSystemFactory raycasterFactory, 
+        public BulletComputeSystem(IColliderBakeSystemFactory colliderBakeSystemFactory, IRaycastSystemFactory raycasterFactory, 
             IProfilingManager profilingManager, IEntityManager entityManager, IEntityWorldTime worldTime,
             ISpriteColorSystem spriteSystem, IHealthAtlasSystem healthSystem)
         {
@@ -40,6 +44,8 @@ namespace SolidSpace.Entities.Bullets
         
         public void OnInitialize()
         {
+            EntitiesToDestroy = NativeMemory.CreateTempJobArray<Entity>(0);
+            
             _profiler = _profilingManager.GetHandle(this);
             _bakeSystem = _colliderBakeSystemFactory.Create<BulletColliderBakeBehaviour>(_profiler, new ComponentType[]
             {
@@ -91,10 +97,15 @@ namespace SolidSpace.Entities.Bullets
             var hits = raycastBehaviour.outHits;
             var healthAtlas = _healthSystem.Data;
             var spriteTexture = _spriteSystem.Texture;
+            
+            EntitiesToDestroy.Dispose();
+            var entitiesToDestroy = NativeMemory.CreateTempJobArray<Entity>(hitCount);
+            EntitiesToDestroy = entitiesToDestroy;
+            
             for (var i = 0; i < hitCount; i++)
             {
                 var hit = hits[i];
-                _entityManager.DestroyEntity(hit.bulletEntity);
+                entitiesToDestroy[i] = hit.bulletEntity;
                 healthAtlas[hit.healthOffset] = 0;
                 spriteTexture.SetPixel(hit.spriteOffset.x, hit.spriteOffset.y, Color.black);
             }
@@ -108,7 +119,7 @@ namespace SolidSpace.Entities.Bullets
 
         public void OnFinalize()
         {
-            
+            EntitiesToDestroy.Dispose();
         }
     }
 }
