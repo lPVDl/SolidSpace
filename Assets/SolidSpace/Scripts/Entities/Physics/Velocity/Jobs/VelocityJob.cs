@@ -9,7 +9,7 @@ namespace SolidSpace.Entities.Physics.Velocity
     [BurstCompile]
     internal struct VelocityJob : IJobParallelFor
     {
-        [ReadOnly, DeallocateOnJobCompletion] public NativeArray<ArchetypeChunk> chunks;
+        [ReadOnly] public NativeArray<ArchetypeChunk> chunks;
         [ReadOnly] public ComponentTypeHandle<VelocityComponent> velocityHandle;
         [ReadOnly] public float deltaTime;
         

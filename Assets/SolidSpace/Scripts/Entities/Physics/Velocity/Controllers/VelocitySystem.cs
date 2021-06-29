@@ -41,6 +41,8 @@ namespace SolidSpace.Entities.Physics.Velocity
             };
             
             job.Schedule(chunks.Length, 32).Complete();
+
+            chunks.Dispose();
         }
 
         public void OnFinalize()
