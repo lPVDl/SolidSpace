@@ -1,6 +1,6 @@
 using Unity.Mathematics;
 
-namespace SolidSpace.Entities.Actors.Interfaces
+namespace SolidSpace.Entities.Actors
 {
     public interface IActorControlSystem
     {

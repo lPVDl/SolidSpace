@@ -13,7 +13,7 @@ namespace SolidSpace.Entities.Physics.Colliders
         [ReadOnly, NativeDisableParallelForRestriction] public NativeArray<FloatBounds> inColliderBounds;
         [ReadOnly] public int inColliderTotalCount;
         [ReadOnly] public int inColliderPerJob;
-        [ReadOnly] public ColliderWorldGrid inWorldGrid;
+        [ReadOnly] public ColliderGrid inWorldGrid;
 
         [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<ChunkedCollider> outColliders;
         [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<int> outColliderCounts;

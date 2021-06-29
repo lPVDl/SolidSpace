@@ -1,4 +1,4 @@
-using SolidSpace.Entities.Actors.Interfaces;
+using SolidSpace.Entities.Actors;
 using SolidSpace.Entities.Components;
 using SolidSpace.Playground.Core;
 using SolidSpace.UI;

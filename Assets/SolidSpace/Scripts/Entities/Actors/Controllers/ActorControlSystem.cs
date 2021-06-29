@@ -1,4 +1,3 @@
-using SolidSpace.Entities.Actors.Interfaces;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;

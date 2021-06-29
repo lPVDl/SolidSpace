@@ -18,24 +18,20 @@ MonoBehaviour:
       - _name: Entities
         _controllers:
         - typeName: SolidSpace.Entities.Physics.Velocity.VelocitySystem
-        - typeName: SolidSpace.Entities.Physics.Colliders.ColliderBakeSystem
-        - typeName: SolidSpace.Entities.Physics.Colliders.ColliderGizmoSystem
         - typeName: SolidSpace.Entities.Despawn.DespawnComputeSystem
         - typeName: SolidSpace.Entities.ParticleEmitters.ParticleEmitterComputeSystem
         - typeName: SolidSpace.Entities.ParticleEmitters.ParticleEmitterCommandSystem
         - typeName: SolidSpace.Entities.Rendering.Pixels.PixelMeshSystem
         - typeName: SolidSpace.Entities.Randomization.RandomValueSystem
-        - typeName: SolidSpace.Entities.Physics.Velcast.VelcastComputeSystem
         - typeName: SolidSpace.Entities.RepeatTimer.RepeatTimerSystem
         - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteColorSystem
         - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteMeshSystem
         - typeName: SolidSpace.Entities.Health.HealthAtlasSystem
-        - typeName: SolidSpace.Entities.Bullets.BulletsCommandSystem
         - typeName: SolidSpace.Playground.Tools.EntitySearch.EntitySearchSystem
         - typeName: SolidSpace.Entities.Health.HealthAtlasGarbageCollector
         - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteGarbageCollectorSystem
         - typeName: SolidSpace.Entities.Actors.ActorControlSystem
-        - typeName: SolidSpace.Entities.Bullets.KovacBullets
+        - typeName: SolidSpace.Entities.Bullets.BulletSystem
       - _name: Managed
         _controllers:
         - typeName: SolidSpace.Gizmos.GizmosManager
@@ -53,19 +49,16 @@ MonoBehaviour:
         - typeName: SolidSpace.Entities.Actors.ActorControlSystem
         - typeName: SolidSpace.Entities.RepeatTimer.RepeatTimerSystem
         - typeName: SolidSpace.Entities.Randomization.RandomValueSystem
-        - typeName: SolidSpace.Entities.Physics.Colliders.ColliderBakeSystem
-        - typeName: SolidSpace.Entities.Physics.Velcast.VelcastComputeSystem
         - typeName: SolidSpace.Entities.Physics.Velocity.VelocitySystem
         - typeName: SolidSpace.Entities.ParticleEmitters.ParticleEmitterComputeSystem
         - typeName: SolidSpace.Entities.Despawn.DespawnComputeSystem
         - typeName: SolidSpace.Playground.Tools.EntitySearch.EntitySearchSystem
-      - _name: EntityCommand
-        _controllers:
         - typeName: SolidSpace.Entities.Health.HealthAtlasGarbageCollector
         - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteGarbageCollectorSystem
+      - _name: EntityCommand
+        _controllers:
+        - typeName: SolidSpace.Entities.Bullets.BulletSystem
         - typeName: SolidSpace.Entities.ParticleEmitters.ParticleEmitterCommandSystem
-        - typeName: SolidSpace.Entities.Bullets.KovacBullets
-        - typeName: SolidSpace.Entities.Bullets.BulletsCommandSystem
         - typeName: SolidSpace.Entities.Despawn.DespawnCommandSystem
       - _name: Managed
         _controllers:
@@ -77,4 +70,3 @@ MonoBehaviour:
         _controllers:
         - typeName: SolidSpace.Entities.Rendering.Pixels.PixelMeshSystem
         - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteMeshSystem
-        - typeName: SolidSpace.Entities.Physics.Colliders.ColliderGizmoSystem

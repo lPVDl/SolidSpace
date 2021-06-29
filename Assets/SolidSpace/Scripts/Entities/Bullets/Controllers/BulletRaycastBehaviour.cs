@@ -2,7 +2,8 @@ using System;
 using System.Runtime.CompilerServices;
 using SolidSpace.Entities.Atlases;
 using SolidSpace.Entities.Components;
-using SolidSpace.Entities.Physics.Velcast;
+using SolidSpace.Entities.Physics.Colliders;
+using SolidSpace.Entities.Physics.Raycast;
 using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
 using Unity.Collections;
@@ -15,7 +16,7 @@ namespace SolidSpace.Entities.Bullets
 {
     internal struct BulletRaycastBehaviour : IRaycastBehaviour, IDisposable
     {
-        [ReadOnly] public BakedCollidersData inColliders;
+        [ReadOnly] public BakedColliders inColliders;
         [ReadOnly] public float inDeltaTime;
 
         [ReadOnly] public NativeArray<HealthComponent> inColliderHealths;
@@ -61,7 +62,7 @@ namespace SolidSpace.Entities.Bullets
             };
         }
 
-        public bool TryRegisterHit(KovacRayHit hit)
+        public bool TryRegisterHit(RayHit hit)
         {
             var colliderShape = inColliders.shapes[hit.colliderIndex];
             var colliderBounds = inColliders.bounds[hit.colliderIndex];
