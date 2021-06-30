@@ -13,22 +13,25 @@ namespace SolidSpace.Entities.Physics.Rigidbody
 {
     public class RigidbodyComputeSystem : IUpdatable, IInitializable
     {
-        private int CollisionStackSize = 32;
+        private const float MotionSpeed = 100f;
+        private const int CollisionStackSize = 32;
         
         private readonly IColliderBakeSystemFactory _colliderBakeSystemFactory;
         private readonly IProfilingManager _profilingManager;
         private readonly IEntityManager _entityManager;
+        private readonly IEntityWorldTime _worldTime;
 
         private ProfilingHandle _profiler;
         private IColliderBakeSystem<RigidbodyColliderBakeBehaviour> _colliderBakeSystem;
         private EntityQuery _query;
         
         public RigidbodyComputeSystem(IColliderBakeSystemFactory colliderBakeSystemFactory, IProfilingManager profilingManager,
-            IEntityManager entityManager)
+            IEntityManager entityManager, IEntityWorldTime worldTime)
         {
             _colliderBakeSystemFactory = colliderBakeSystemFactory;
             _profilingManager = profilingManager;
             _entityManager = entityManager;
+            _worldTime = worldTime;
         }
         
         public void OnInitialize()
@@ -62,6 +65,7 @@ namespace SolidSpace.Entities.Physics.Rigidbody
             _profiler.BeginSample("Collision job");
             var collisionJob = new RigidbodyCollisionJob
             {
+                inMotionHalfSpeed = MotionSpeed * _worldTime.DeltaTime * 0.5f,
                 rigidbodyHandle = _entityManager.GetComponentTypeHandle<RigidbodyComponent>(true),
                 inArchetypeChunks = archetypeChunks,
                 inColliders = colliders,

@@ -83,25 +83,24 @@ namespace SolidSpace.Entities.Rendering.Sprites
         private void FlushSquare(ref int indexOffset, ref int vertexOffset, Square square)
         {
             SpriteVertexData vertex;
-            var center = square.center;
             var halfSize = square.size * 0.5f;
             var uvMin = square.uvMin;
             var uvMax = square.uvMax;
             FloatMath.SinCos(square.rotation, out var sin, out var cos);
 
-            vertex.position = center + FloatMath.Rotate(-halfSize.x, -halfSize.y, sin, cos);
+            vertex.position = square.center + FloatMath.Rotate(-halfSize.x, -halfSize.y, sin, cos);
             vertex.uv = uvMin;
             outVertices[vertexOffset + 0] = vertex;
 
-            vertex.position = center + FloatMath.Rotate(-halfSize.x, +halfSize.y, sin, cos);
+            vertex.position = square.center + FloatMath.Rotate(-halfSize.x, +halfSize.y, sin, cos);
             vertex.uv.y = uvMax.y;
             outVertices[vertexOffset + 1] = vertex;
                 
-            vertex.position = center + FloatMath.Rotate(+halfSize.x, +halfSize.y, sin, cos);
+            vertex.position = square.center + FloatMath.Rotate(+halfSize.x, +halfSize.y, sin, cos);
             vertex.uv.x = uvMax.x;
             outVertices[vertexOffset + 2] = vertex;
 
-            vertex.position = center + FloatMath.Rotate(+halfSize.x, -halfSize.y, sin, cos);
+            vertex.position = square.center + FloatMath.Rotate(+halfSize.x, -halfSize.y, sin, cos);
             vertex.uv.y = uvMin.y;
             outVertices[vertexOffset + 3] = vertex;
 

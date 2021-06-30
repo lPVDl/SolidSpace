@@ -148,7 +148,7 @@ namespace SolidSpace.Entities.Physics.Raycast
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private bool HitStackContainsCollider(int stackOffset, int hitCount, ushort collider)
+        private readonly bool HitStackContainsCollider(int stackOffset, int hitCount, ushort collider)
         {
             if (hitCount == 0)
             {
@@ -167,7 +167,7 @@ namespace SolidSpace.Entities.Physics.Raycast
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private bool RaycastCollider(FloatBounds ray, ushort colliderIndex)
+        private readonly bool RaycastCollider(FloatBounds ray, ushort colliderIndex)
         {
             var colliderBounds = inColliders.bounds[colliderIndex];
             if (!FloatMath.BoundsOverlap(ray, colliderBounds))
