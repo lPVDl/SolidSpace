@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.CompilerServices;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Physics.Colliders;
@@ -15,7 +16,7 @@ namespace SolidSpace.Entities.Physics.Rigidbody
     {
         [ReadOnly] public BakedColliders inColliders;
         [ReadOnly] public NativeArray<ArchetypeChunk> inArchetypeChunks;
-        [ReadOnly] public float inMotionHalfSpeed;
+        [ReadOnly] public float inMotionMultiplier;
 
         [ReadOnly] public ComponentTypeHandle<RigidbodyComponent> rigidbodyHandle;
 
@@ -30,8 +31,6 @@ namespace SolidSpace.Entities.Physics.Rigidbody
             var entityCount = chunk.Count;
             var rigidbodies = chunk.GetNativeArray(rigidbodyHandle);
             var hitStackOffset = chunkIndex * hitStackSize;
-            var right = new float2(1, 0);
-            var left = new float2(-1, 0);
 
             for (var entityIndex = 0; entityIndex < entityCount; entityIndex++)
             {
@@ -68,7 +67,7 @@ namespace SolidSpace.Entities.Physics.Rigidbody
                             var otherShape = inColliders.shapes[otherIndex];
                             var shapeA = new CenterRotationSize(thisCenter, thisShape.rotation, thisShape.size);
                             var shapeB = new CenterRotationSize(otherCenter, otherShape.rotation, otherShape.size);
-                            if (!CollisionResolver.ShapesIntersect(shapeA, shapeB))
+                            if (!CollisionResolver.ResolveIntersection(shapeA, shapeB, out var motionA, out _))
                             {
                                 continue;
                             }
@@ -77,11 +76,11 @@ namespace SolidSpace.Entities.Physics.Rigidbody
                             var directionMag = FloatMath.Magnitude(direction);
                             if (directionMag > float.Epsilon)
                             {
-                                motion += direction / directionMag * inMotionHalfSpeed;
+                                motion += direction / directionMag * FloatMath.Magnitude(motionA) * inMotionMultiplier;
                             }
                             else
-                            {  
-                                motion += (thisIndex > otherIndex ? right : left) * inMotionHalfSpeed;
+                            {
+                                motion += motionA * inMotionMultiplier;
                             }
                         }
                     }
@@ -123,27 +122,35 @@ namespace SolidSpace.Entities.Physics.Rigidbody
                                 var otherShape = inColliders.shapes[otherIndex];
                                 var shapeA = new CenterRotationSize(thisCenter, thisShape.rotation, thisShape.size);
                                 var shapeB = new CenterRotationSize(otherCenter, otherShape.rotation, otherShape.size);
-                                if (!CollisionResolver.ShapesIntersect(shapeA, shapeB))
+                                if (!CollisionResolver.ResolveIntersection(shapeA, shapeB, out var motionA, out _))
                                 {
                                     continue;
                                 }
 
                                 hitStack[hitStackOffset + hitCount++] = otherIndex;
+
                                 var direction = thisCenter - otherCenter;
                                 var directionMag = FloatMath.Magnitude(direction);
                                 if (directionMag > float.Epsilon)
                                 {
-                                    motion += direction / directionMag * inMotionHalfSpeed;
+                                    motion += direction / directionMag * FloatMath.Magnitude(motionA) * inMotionMultiplier;
                                 }
                                 else
                                 {
-                                    motion += (thisIndex > otherIndex ? right : left) * inMotionHalfSpeed;
+                                    motion += motionA * inMotionMultiplier;
                                 }
                             }
                         }
                     }
                 }
 
+                var motionMag = FloatMath.Magnitude(motion);
+                var maxMotion = Math.Max(thisShape.size.x, thisShape.size.y) * 0.5f;
+                if (motionMag > maxMotion)
+                {
+                    motion = motion / motionMag * maxMotion;
+                }
+                
                 outMotion[thisIndex] = motion;
             }
         }

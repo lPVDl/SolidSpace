@@ -8,6 +8,8 @@ namespace SolidSpace.Mathematics
     {
         public const float PI = (float) Math.PI;
         public const float TwoPI = (float) (2 * Math.PI);
+        public const float Deg2Rad = PI / 180f;
+        public const float Rad2Deg = 180f / PI;
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float2 Rotate(float x, float y, float sin, float cos)

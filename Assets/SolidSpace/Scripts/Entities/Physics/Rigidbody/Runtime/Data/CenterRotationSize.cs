@@ -2,7 +2,7 @@ using Unity.Mathematics;
 
 namespace SolidSpace.Entities.Physics.Rigidbody
 {
-    internal struct CenterRotationSize
+    public struct CenterRotationSize
     {
         public float2 center;
         public float rotation;
