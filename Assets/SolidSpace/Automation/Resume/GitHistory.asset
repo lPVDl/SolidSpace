@@ -9,15 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bdf39cc3a2164f6fbc9dc551a89c5a9b, type: 3}
-  m_Name: ScriptsStructureTool
+  m_Script: {fileID: 11500000, guid: 8598ae6c22084e59a3766aa756ee9ba2, type: 3}
+  m_Name: GitHistory
   m_EditorClassIdentifier: 
   _config:
-    _scanPath:
-      path: Assets/SolidSpace/Scripts
-    _exportPath:
-      path: .resume/Scripts/Scripts.txt
-    _blacklist:
-    - enabled: 1
-      filter:
-        pattern: (?i).*\.meta$
+    _commandLines:
+    - git log --pretty=format:^"%h %cd %s^" --date=format:^"%d %b %Y^" > .resume/git.txt
