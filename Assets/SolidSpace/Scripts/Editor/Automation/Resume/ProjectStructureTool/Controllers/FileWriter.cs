@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace SolidSpace.Editor.Automation.ProjectStructureTool
+namespace SolidSpace.Editor.Automation.Resume.ProjectStructureTool
 {
     internal class FileWriter
     {
@@ -31,7 +31,7 @@ namespace SolidSpace.Editor.Automation.ProjectStructureTool
             
             console.WriteLine(string.Empty);
             console.WriteLine("Summary:");
-            console.WriteLine($"\tTime UTC+0: {DateTime.UtcNow:yy-MMM-dd HH:mm:ss}");
+            console.WriteLine($"\tTime: {DateTime.UtcNow:dd MMMM yyyy HH:mm:ss}");
             console.WriteLine($"\tDirectory count: {directoryCount}");
             console.WriteLine($"\tFile count: {fileCount}");
             console.WriteLine($"\tFiles size total: {FormatBytes(filesSizeTotal)}");

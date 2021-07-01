@@ -1,12 +1,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using SolidSpace.IO.Editor;
 using SolidSpace.RegularExpressions;
-using UnityEngine;
 
-namespace SolidSpace.Editor.Automation.ProjectStructureTool
+namespace SolidSpace.Editor.Automation.Resume.ProjectStructureTool
 {
     internal class FileScanner
     {

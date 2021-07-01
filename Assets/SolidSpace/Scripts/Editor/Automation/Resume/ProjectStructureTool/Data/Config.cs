@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using SolidSpace.IO.Editor;
 using UnityEngine;
 
-namespace SolidSpace.Editor.Automation.ProjectStructureTool
+namespace SolidSpace.Editor.Automation.Resume.ProjectStructureTool
 {
     [Serializable]
     internal class Config

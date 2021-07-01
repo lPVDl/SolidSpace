@@ -1,7 +1,7 @@
 using SolidSpace.Editor.Utilities;
 using UnityEngine;
 
-namespace SolidSpace.Editor.Automation.ProjectStructureTool
+namespace SolidSpace.Editor.Automation.Resume.ProjectStructureTool
 {
     internal class UnityConsole : IConsole
     {
