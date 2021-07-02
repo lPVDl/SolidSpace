@@ -1,9 +1,0 @@
-Supported platforms:
-	Windows 7 x64
-	Windows 10 x64
-
-Controls:
-	LMB - click to add collider
-	RMB - click to remove collider
-	RMB - hold to move camera around
-	MMB - scroll to zoom

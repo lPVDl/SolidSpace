@@ -1,256 +1,394 @@
-f1d2a0d 2021-06-01: [T-13] Optimize colliders data query in BulletsCommandSystem
-9bc6a3a 2021-06-01: [T-13] Fix raycasters archetype indices array size maintenance
-dbfb371 2021-06-01: [T-13] Add auto spawn to ShipSpawnManager
-a6b4a89 2021-06-01: [T-13] Fix AtlasMath provides invalid offsets
-36e4699 2021-06-01: [T-13] Make bullets destroy sprite pixels
-c8f7042 2021-06-01: [T-13] Fix invalid counts array passed to BulletCastJob
-e2e85e0 2021-06-01: [T-13] Fix raycaster archetype array was resized causing reset
-1941a84 2021-05-31: [T-13] Add bullet raycast to sprite pixels
-f342672 2021-05-31: [T-13] Make sprite shader use black pixels for transparency
-1abc6d7 2021-05-28: [T-13] Implement bullet system physics filtering
-59453d9 2021-05-28: [T-13] Reduce atlas items max size
-c10ee51 2021-05-28: [T-13] Add base for bullet system
-c18a69c 2021-05-27: [T-13] Add archetypes to collider & raycast systems
-acc1cd2 2021-05-27: [T-13] Add HealthAtlasSystem
-3b6ab1d 2021-05-27: [T-13] Add linear atlas config
-1512e40 2021-05-26: [T-13] Add manager to spawn ships in playground
-ea4f1ce 2021-05-26: [T-13] Move collider gizmo drawing to separate system
-fe554c8 2021-05-26: [T-13, T-20, T-26] Create single dimension atlases. Refactor.
-536d01f 2021-05-25: [T-13] Integrate collider rotation to raycast system
-1471d46 2021-05-24: Tweak playground installer for collider spawn
-7cb0f12 2021-05-24: [T-13] Integrate rotation into collider bounds compute job.
-b9584d7 2021-05-24: [T-13] Add class for gizmo drawing
-e047429 2021-05-24: Remove unused directives in solution
-4bebe3b 2021-05-24: [T-13] Integrate size component into collider bake system
-ced041b 2021-05-21: [T-23] Create code annotations for existing tasks
-50f3202 2021-05-20: Merge remote-tracking branch 'origin/main' into main
-ae7851a 2021-05-20: [T-22] Remove assemblies due to the maintenance cost
-8e35063 2021-05-20: [T-17] Replace NativeArray[0] with NativeReference
-20da1d3 2021-05-20: [T-24] Return to assembly split method, automate process
-b3794ee 2021-05-19: [C-17] Replace NativeArray[0] with NativeReference
-568acc2 2021-05-19: Remove int2 from Profiling, link Unity.Mathematics
-913f9c7 2021-05-19: Update dotSettings
-a7b853b 2021-05-19: Rename Zenject/Source -> Zenject/Scripts
-0e1c14e 2021-05-19: Rename FuchaTools/Source -> FuchaTools/Scripts
-185f15e 2021-05-19: Move validators folders to data folders
-69581de 2021-05-19: Update about
-abe3f79 2021-05-16: Update project tech stack & description
-70bfadb 2021-05-15: Replace 2021-05-15.zip with 2021-05-15.7z
-8c8475a 2021-05-15: Move resume to root. Add build.
-67cda3d 2021-05-15: Add utc time to project structure output. Update scripts structure in resume.
-fa61f9d 2021-05-15: Add project resume
-155a6bd 2021-05-15: Rename tools -> automation
-46a8c53 2021-05-15: Move ProjectStructureTool to separate library
-4d53c73 2021-05-15: Move console util to separate library
-50333f2 2021-05-15: Make AtlasMath be static
-e32d74c 2021-05-15: Add project structure scanning tool
-779cf7a 2021-05-14: Update DotSettings
-2c3f6b3 2021-05-14: Fix NamespaceTool not removes old DotSettings
-9503e93 2021-05-14: Make NamespaceTool take into account assembly folders ownership
-b08b549 2021-05-14: Fix ParticleEmitterCommandSystem after assemblies separation
-515def7 2021-05-13: Update unity version
-041a771 2021-05-13: Fix profiling tests assembly platforms.
-695ccdc 2021-05-13: Move Playground to separate assembly
-eaf6057 2021-05-13: Remove LegacyNativeArrayUtil
-350c39a 2021-05-13: Move components to separate assembly
-7d12738 2021-05-13: Move sprites to separate assembly
-3f9761a 2021-05-13: Move pixels to separate assembly
-f62e8ac 2021-05-13: Move rendering common to Utilities
-7dc335e 2021-05-13: Move atlases to separate assembly
-2e69dbb 2021-05-13: Move FloatBounds to SolidSpace.Mathematics
-b05f68d 2021-05-13: Move SingleBufferedDataCollectJob to JobUtilities
-5309e2c 2021-05-13: Rename Utilities -> JobUtilities
-690527d 2021-05-13: Adjust namespaces
-bf63343 2021-05-13: Move raycast to separate assembly
-6217317 2021-05-13: Move velocity to separate assembly
-6308d6f 2021-05-13: Move Colliders to separate assembly
-955f475 2021-05-13: Move ParticleEmitters to separate assembly
-a295591 2021-05-13: Update DotSettings
-d7860d7 2021-05-13: Remove repeating methods of NativeArrayUtil
-aa9c810 2021-05-13: Create SolidSpace.Utilities assembly
-d954b1a 2021-05-13: Move Randomization to separate assembly
-8165903 2021-05-13: Move RepeatTimer to separate assembly
-649cd54 2021-05-13: Move despawn to separate assembly
-d2f6318 2021-05-13: Move entity world to separate assembly
-4f69db9 2021-05-13: Rename controller methods
-d9589c4 2021-05-13: Remove EntityCycleController, make entity systems use game cycle instead
-c79a1df 2021-05-13: Add IApplicationBootstrapper to remove Zenject reference in GameCycle
-d522a8f 2021-05-12: Fix GameCycle invocation order
-c543bd4 2021-05-12: Fix profiling is broken after moving to assembly
-500fb88 2021-05-12: Move GameCycle to separate assembly
-50637a5 2021-05-12: Move DiContainer to separate assemblies
-5953cc2 2021-05-12: Move Profiling to separate assembly
-87f1d8a 2021-05-12: Move debugging to separate assembly
-1d93350 2021-05-11: Move AssetNameTool to separate assembly
-9d051ea 2021-05-11: Switch backend to Mono
-d87cc1e 2021-05-11: Move NamespaceTool to separate assembly
-33af691 2021-05-11: Fix AssemblyValidatorFactory not scans additional assemblies for validators
-40bbc4f 2021-05-11: Update csproj.DotSettings
-89e5248 2021-05-11: Adjust namespaces
-788dedd 2021-05-11: Replace "Odin Inspector" with "OdinInspector" in static SirenixAssetPaths()
-ce042a1 2021-05-11: Fix assembly definitions
-0b7bda0 2021-05-11: Fix fuchatools.asmdef root namespace
-c7ff713 2021-05-11: Fix space in Odin folders
-24ec0b9 2021-05-11: Fix namespaces in SolidSpace.DataValidation assembly definitions
-d97af56 2021-05-11: Make NamespaceTool work with multiple assemblies
-2fd46f4 2021-05-11: Fix Zenject.asmdef.meta is missing
-31a89b9 2021-05-11: Fix assembly definition names
-f7d34dc 2021-05-11: Add Runtime folder to NamespaceTool
-59e08e0 2021-05-11: Update application identifier
-e64b3e0 2021-05-11: Fix product & company name
-bd7b553 2021-05-11: Move data validation core to separate assembly
-ddbeb44 2021-05-11: Fix FuchaTools fails build; Make all classes internal
-6422270 2021-05-11: Profiling add time measurement test
-2f764b3 2021-05-11: Fix invalid paths in profiler exceptions
-0f7c437 2021-05-11: Make GameCycleController stop updating after exception thrown
-391e556 2021-05-11: Profiling. Add check for sample begin/end names match
-da11a61 2021-05-10: Make ProfilingManager throw exception when EndSample() called without StartSample()
-fac5c96 2021-05-10: Profiling move stack size to config. Add stack overflow exception
-cba562d 2021-05-10: Profiling. Add exception if stack is not empty after tree is built.
-7066ec5 2021-05-10: Make profiling record count be set in the config. Move processor code to the main class.
-bd83a44 2021-05-10: Add basic tests to ProfilingManager. Fix issues.
-1f9e018 2021-04-29: Improve opened windows titles from window opener
-9652658 2021-04-26: Fix game camera is zooming when mouse outside screen bounds
-5df09c0 2021-04-26: Make entity systems use new profiler, fix samples name, add name requirement to EndSample()
-af59333 2021-04-26: Add profiling time samples display
-0495f71 2021-04-25: Remove ProfilingManager.Instance, add ContextUtil for editor
-42db042 2021-04-25: Move NativeArrayUtil to SolidSpace.Common
-563384b 2021-04-25: Union update & finalize & initialize controllers into GameCycleController
-61ecd47 2021-04-25: Fix namespaces
-406840c 2021-04-25: Integrate profiler into EntityCycleController & UpdatingController
-bd22280 2021-04-25: Add jobs for profiling tree building & reading. Update editor window
-8430a7a 2021-04-25: Profiling, work in progress
-4780abd 2021-04-24: Add profiling prototype
-b5cd5d1 2021-04-24: Increase priority for editor factory window
-4eb71c7 2021-04-24: Add rotation to sprites
-7362f62 2021-04-24: Add rotation component
-1564c1f 2021-04-24: Fix PixelRenderComponent is not struct
-3c7a236 2021-04-24: Rename project to SolidSpace
-95819ef 2021-04-24: Disable domain & scene reload when entering playmode
-29539d1 2021-04-24: Rename installer assets
-79e2cc7 2021-04-24: Fix AssetNameTool not renaming assets
-06e4899 2021-04-24: Remove unused namespaces
-0ef3a2a 2021-04-24: Fix camera motion namespaces
-39a8148 2021-04-24: Implement AssetNameTool
-76685f8 2021-04-24: Add asset naming util prototype
-6050a44 2021-04-23: Improve camera zooming
-ab9ad6f 2021-04-22: Add camera motion controller
-577e02e 2021-04-22: Rename particles to pixels
-92f3f48 2021-04-22: Add size component
-0086a7c 2021-04-22: Add ParticleSpawnManager for tests
-67eb770 2021-04-21: Remove com.unity.rendering.hybrid package
-f53e0d8 2021-04-21: Remove TODO.txt, moved to web
-f108074 2021-04-21: Rename Nammy -> NamespaceTool
-61676ca 2021-04-21: Add texture support to sprite rendering
-63ab9a9 2021-04-20: Move mesh rendering shared code to Common
-288ff54 2021-04-20: Move Particles to Rendering. Rename Particles.Emission To ParticleEmitters
-262b727 2021-04-20: Move EntityWorld to Common
-dad38c3 2021-04-20: Fix NativeArrayUtil fields names
-df9e7c1 2021-04-20: Move NativeArrayUtil to Entities.Common.Utils
-e3fe074 2021-04-20: Add sprite mesh rendering system prototype
-829af4a 2021-04-20: Add TODO list
-54b2c1e 2021-04-20: Move atlases to separate folder
-7ea096a 2021-04-20: Make Nammy work with slashes for folder paths
-b50bc8d 2021-04-19: Fix namespaces with Nammy help
-12a8a1f 2021-04-19: Simplify Nammy by removing editor folder flags
-a92104e 2021-04-19: Fix scripts folder is missing in Nammy filters
-c4feb52 2021-04-19: Move FuchaTools to plugins, add assembly definition
-5341f5d 2021-04-19: Update Nummy filters
-42c55ef 2021-04-19: Add NummyExporter for folders to skip automation
-a8c47ed 2021-04-19: Add Nammy tool for folders scanning with regex matching
-e6a8b25 2021-04-19: Drop Odin serialization support. Reimport all assets.
-8ab90c3 2021-04-18: Fix shader reference, fix particles spawn settings
-073a132 2021-04-18: Switch back to Unity native serialization
-79a209c 2021-04-18: Fix serialized assets are broken after namespace change
-06b974c 2021-04-18: Add missing .meta for scripts
-54ca49b 2021-04-18: Remove Runtime folder. Move all scripts up. Adjust namespaces.
-c1913a5 2021-04-18: Add general purpose enum validation
-c650522 2021-04-18: Simplify validators
-a4fa45e 2021-04-18: Fix GameCycle invokation order
-e60c1f6 2021-04-18: Integrate sprite color system to entities
-0553377 2021-04-17: Improve serialized data validation
-765a38f 2021-04-17: Move particle render shader to own config. Fix repeat timer installer is missing
-e512bc7 2021-04-17: Add null reference & config validation
-643c44a 2021-04-17: I know what I am about, son.
-a8a9e87 2021-04-17: Integrate Odin serialization
-8f922e4 2021-04-17: Remove velocity namespace
-a131001 2021-04-17: Remove self binding
-3179e84 2021-04-17: Add DiContainer interface & wrapper
-ae5fe17 2021-04-17: Refactor ScriptableObjectInstaller
-fe22ba3 2021-04-17: Move SceneContext to SpaceSimulator, refactoring.
-a465001 2021-04-17: Simplify scene context
-c8d2923 2021-04-17: Remove ProjectContext and DecoratorContext
-0601628 2021-04-17: Remove RunnableContext. Remove factories
-3140a4c 2021-04-17: Simplify scene context
-bc666fc 2021-04-17: Simplify scene context
-00de4f0 2021-04-17: Simplify scene context
-b0f70a9 2021-04-16: Wrap entity manager
-5741db0 2021-04-16: Move world time to separate class
-c71f131 2021-04-16: Bring entities to life again. Simplify installers.
-159191d 2021-04-15: Integrate all system to DI Container
-99084db 2021-04-14: Move Zenject to plugins folder
-4b4b5b4 2021-04-14: Add Odin validation config
-c8a1a72 2021-04-14: Add Odin inspector & validator
-2e179ac 2021-04-13: Add DI based game cycle framework
-5a87f0f 2021-04-12: Add tools to open windows & create scriptable objects
-8c22d3d 2021-04-12: Move scripts to correct folder
-2190d3e 2021-04-12: Add Extenject DI Container
-d885b0c 2021-04-11: Move sprite indexing to separate class. Add chunk item count variation.
-88036e6 2021-04-10: Add SpriteCommandSystem and CopyTexture command
-50a1758 2021-04-10: Add Heap Explorer package
-11f7e46 2021-04-09: Add indexing for sprite rendering system.
-4faeebb 2021-04-08: Improve SystemBaseUtil.MaintainPersistentArrayLength
-2396595 2021-04-02: Rename TriangleParticleRenderComponent
-1af2f73 2021-04-02: Fix raycasters ignore neighbour cells
-c411e06 2021-04-01: Partial integration baking to raycasting. Fix issues.
-74845c8 2021-04-01: Move collider debug drawing to separate class
-baf47eb 2021-04-01: Add collider to chunk baking
-219fc26 2021-03-29: Improve collider world grid
-3d491cc 2021-03-29: Collider mapping prototyping
-ecb7de1 2021-03-28: Refactor & improve collider world grid computation
-c669257 2021-03-27: Improve collider world sizes computation
-9c276a6 2021-03-27: Move collider baking to separate system
-dcc8d2e 2021-03-27: Add world size & max collider size computation
-58530d0 2021-03-24: Add SpaceDebugWindow to display state values in Editor
-28dd2cc 2021-03-24: Remove old particle mesh code. Add mesh count log.
-a36babd 2021-03-24: Make particle mesh write directly to gpu
-b63c8ca 2021-03-22: Add ability to set particle velocity
-07141a5 2021-03-22: Refactor repeat timer system
-3632045 2021-03-22: Refactor random value system
-2367d42 2021-03-22: Refactor particle mesh render systems
-eaa6c34 2021-03-22: Refactor particle emission system
-d5ba203 2021-03-22: Refactor despawn system
-01ea4dd 2021-03-21: Add raycast system
-e72b83b 2021-03-20: Add simulation deltaTime logging
-33e2a34 2021-03-20: Remove EntitiesUtil
-f9827b8 2021-03-20: Improve particle emission system
-f69d2d6 2021-03-20: Fix particle rendering
-51d3a42 2021-03-20: Simplify particle rendering
-b0c7a79 2021-03-20: Implement square particles via double buffering
-e7ece0f 2021-03-20: Improve particle mesh drawing
-4d93187 2021-03-19: Fix debug reports not correct
-8d1a54a 2021-03-19: Make command sub systems stop work when main system is not working
-9f9b2c2 2021-03-19: Update some ECS stuff
-8c454b0 2021-03-19: Make particle mesh rendering via Unity.Graphics API
-be10f5f 2021-03-19: Add debug utils
-273db7d 2021-03-18: Despawn system. Increase iteration cycle.
-b620634 2021-03-18: Fix particle build mesh job is not burst compiled
-c4d458a 2021-03-18: Fix particle render system vertex offsets
-29ad875 2021-03-18: Fix despawn system ignores per chunk entity count
-2c50aef 2021-03-18: Fix particle mesh rendering ignores chunk capacities
-226aed2 2021-03-18: Add despawn system
-af2d435 2021-03-16: Mower timer to separate system
-3d4c838 2021-03-16: Move random values generation to separate system
-eef5189 2021-03-16: Simplify root namespace
-0ac9185 2021-03-16: Separate particle mesh rendering & building systems.
-076b0dd 2021-03-16: Move particles render & emitter to separate folders
-e5df1af 2021-03-16: Make jobs run instantly to make system more stable and profile friendly.
-b6c1d6a 2021-03-16: Particle renderer. Optimize memory allocation
-bde2c51 2021-03-16: Add particle emitters
-bf2561f 2021-03-14: Make particle rendering work via ECS Hybrid Renderer
-2aa9109 2021-03-14: Refactor TriangleParticleRenderSystem
-acc63ea 2021-03-14: Optimize particle reset mesh job
-a335a72 2021-03-14: Create components & system for physics. Switch to 2D.
-f17e029 2021-03-14: Move & rename particle render system
-26c9473 2021-03-13: Initial commit
-95a6ee5 2021-03-13: Initial commit
+9ddc85e 02 Jul 2021 [SOL-44] Add tool to copy scripts to examples in resume
+d3bb4c9 02 Jul 2021 Make collision motion vector be drawn on rect points in IntersectionResolverWindow
+fc1a6b4 01 Jul 2021 [SOL-44] Add git command line for history automation
+852db1c 01 Jul 2021 [SOL-44] Move file structure tool to resume folder
+ef0997e 01 Jul 2021 Add linux il2cpp toolchain package
+d71e775 01 Jul 2021 Update Unity version
+8baa131 01 Jul 2021 Update app version
+0942dd7 01 Jul 2021 [SOL-126] Improve collision resolving.
+a12ef0e 30 Jun 2021 [SOL-128] Move collision resolving to separate class.
+d8042d4 30 Jun 2021 [SOL-126] Make collision detection check rects overlapping.
+1cddbd6 29 Jun 2021 [SOL-126] Add prototype rigidbody collision system
+d7712c1 29 Jun 2021 Add prototype check to prevent ship overspawn
+703c017 29 Jun 2021 Fix ColliderGizmosUtil file name
+b72fbf8 29 Jun 2021 [SOL-37] Restore collider & grid gizmos
+e360eed 29 Jun 2021 [SOL-37] Move bullet despawn to separate system
+187e473 29 Jun 2021 Remove DeallocateOnJobCompletion in VelocityJob
+a7d5ac6 29 Jun 2021 [SOL-37] Remove legacy raycast & collider systems. Fix new system names.
+10ac736 28 Jun 2021 [SOL-37] Make raycast be customizable
+a539fe8 28 Jun 2021 [SOL-37] Add customizable collision baking
+ddc7d38 25 Jun 2021 [SOL-39] Fix raycast system can not handle raycast of multiple colliders per ray
+5cd2626 25 Jun 2021 Adjust component names
+2c49b84 25 Jun 2021 Rename EntityWorldManager -> EntityManager
+83dcb44 25 Jun 2021 [SOL-73] Improve actor AI gizmos. Add navigation tool.
+3ab4e56 25 Jun 2021 Fix SpaceDebug window is not active on start. Remove time from value storage.
+c1427d8 25 Jun 2021 [SOL-73] Improve AI ship stability by adding radial thruster.
+0e178a5 24 Jun 2021 [SOL-73] Make AI ship use backward thrusters. Make AI keep distance offset.
+bc3257c 24 Jun 2021 [SOL-73] Improve AI ship dynamics
+475fe2a 23 Jun 2021 [SOL-73] Improve AI ship dynamics
+ddfa613 23 Jun 2021 [SOL-125] Add ActorControlSystem
+8323107 23 Jun 2021 [SOL-32] Replace entity rotations from normal to radians
+8221845 23 Jun 2021 [SOL-119] Add playground tool dummy for AI control
+5e2f171 22 Jun 2021 [SOL-118] Rework SpawnPointTool to concept of CaptureTool
+ef3ae6f 22 Jun 2021 [SOL-115] Move tool icons & names config to single storage
+e089378 22 Jun 2021 [SOL-116] Create TypeReference. Update GameCycle asset
+8f779ca 22 Jun 2021 [SOL-117] Simplify gizmos by storing colors inside handles
+d29a48d 22 Jun 2021 [SOL-113] Integrate CaptureTool into VelocityChangeTool
+1459683 22 Jun 2021 [SOL-113] Integrate CaptureTool into PositionChangeTool
+ceb514b 22 Jun 2021 [SOL-113] Remove gizmos drawing from CaptureTool
+57d453c 22 Jun 2021 [SOL-113] Add CaptureTool & integrate into Eraser tool
+46643e8 21 Jun 2021 [SOL-101] Add tool to change entity velocity
+7863dbc 21 Jun 2021 [SOL-106] Add tool to change entities position
+60610a6 21 Jun 2021 [SOL-88] Add eraser mode to destroy entities in radius
+c12049a 21 Jun 2021 [SOL-88] Add screen squares gizmos drawing
+db3ed24 21 Jun 2021 [SOL-88] Refactor GizmosManager
+21b9f52 21 Jun 2021 [SOL-88] Move entity search by position system to separate installer
+85c4724 21 Jun 2021 [SOL-89] Make spawn tools show where items will be placed
+64a9069 21 Jun 2021 [SOL-100] Add tool value sharing between spawn tools
+97b7562 21 Jun 2021 [SOL-108] Make spawn tools show used components
+7f35e6f 21 Jun 2021 [SOL-105] Refactor tool window handling
+66f3add 21 Jun 2021 Rename GameCycle level controllers methods
+92f72d2 21 Jun 2021 [SOL-105] Simply playground tool interface
+7a7b9e6 21 Jun 2021 Adjust namespaces
+6d2bfc4 21 Jun 2021 [SOL-104] Remove indexPower from atlas chunks
+18467fc 21 Jun 2021 [SOL-104] Simplify atlas configs
+eef10cb 18 Jun 2021 [SOL-34] Make atlas 2D sectors join once chunks released
+fa26b30 18 Jun 2021 [SOL-34] Add garbage collector for sprite atlas
+9cc144a 18 Jun 2021 [SOL-19] Make health atlas system use int mask for occupied chunks
+be3710e 18 Jun 2021 [SOL-34] Make health atlas sectors join when released
+a92c795 18 Jun 2021 [SOL-64] Create health atlas garbage collector
+5db8f9e 18 Jun 2021 [SOL-19] Make 1D atlas use mask to store free indices
+bb001e0 17 Jun 2021 Move BritishPalette to UIElements folder
+82b5193 17 Jun 2021 Remove materials folder with unused materials
+50ad5e6 17 Jun 2021 [SOL-31] Replace references to math with FloatMath & System.Math
+c716cb8 17 Jun 2021 [SOL-52] Exclude UIElements assets from project validation
+adeddce 17 Jun 2021 [SOL-95] Add structures to store project directory & files paths, with validators & drawers.
+9b45b84 17 Jun 2021 [SOL-11] Add EditorPath util
+4669b83 17 Jun 2021 [SOL-66] Add editor drawer for Regex structures
+96ce302 17 Jun 2021 [SOL-62] Add separate structures for Regex
+9b417c7 17 Jun 2021 [SOL-55] Adjust installers names
+0e1ad20 16 Jun 2021 Remove space in project name. Update version
+6e0d90c 16 Jun 2021 [SOL-65, SOL-72] Make particle emitter velocity & rate be tweakable
+f8240b3 16 Jun 2021 [SOL-71] Add radius & spawn count to SpawnPointTool
+d301638 16 Jun 2021 [SOL-71] Gizmos, add polygon drawing
+dce0035 16 Jun 2021 [SOL-71] Add SpawnPointTool
+e0de340 16 Jun 2021 AssetFactoryWindow - fix new asset can not be created if any asset is already selected.
+0a3f2b1 16 Jun 2021 [SOL-71] Add UI StringField
+0ab112e 16 Jun 2021 [SOL-70] Playground eraser delete all button logic
+77f02f9 16 Jun 2021 Update LiberationSans.asset
+c0e9c4c 16 Jun 2021 [SOL-59] Add UIEventManager. Make events be executed with respect to game cycle order.
+d9a0a33 16 Jun 2021 [SOL-59] Make AssemblyValidatorFactory search for private constructors. Add error report if no constructor is found.
+faf12dc 16 Jun 2021 Update application info
+60a6fe9 16 Jun 2021 Fix GameCycleController is broken if controller group refers to not binded controllers
+a45e852 15 Jun 2021 [SOL-82] Fix components names are not shown properly in build
+6ebc2f0 15 Jun 2021 Remove redundant code in GizmosManager.GL_Line()
+de16c03 15 Jun 2021 [SOL-54] Make gizmos drawing via GL to support gizmos in build
+64e510f 15 Jun 2021 [SOL-54] Make GizmosManager work via GameCycle
+1a974e7 15 Jun 2021 Update Unity project version to 2020.3.11f1
+141de8b 14 Jun 2021 Update project's about
+7259ffc 14 Jun 2021 [SOL-67, SOL-51, SOL-18] Refactor GameCycle: separate initialization & update orders. Remove enum, make controllers be binded by name
+2fd78b5 14 Jun 2021 Merge branch 'T14-UIElements-Playground' into main
+9628d68 14 Jun 2021 [t-14] Add delete all button to eraser tool window
+4e475c8 14 Jun 2021 [T-14] Improve UI
+c55558e 14 Jun 2021 [T-14] Update UI style
+245eb1e 14 Jun 2021 [T-14] Move UI resources to correct folder
+d3d9bda 14 Jun 2021 [T-14] Update UI icons
+690ac20 14 Jun 2021 [T-14] Remove initialization from ComponentFilterFactory
+f504432 12 Jun 2021 [T-14] Refactor component filter
+eac5b47 11 Jun 2021 [T-14] Move component filter to separate class
+b742726 11 Jun 2021 [T-14] Implement eraser component filtering
+6e7087e 11 Jun 2021 [T-14] Add tag label lock icon. Refactor UI sheets
+25e1006 11 Jun 2021 [T-14] Make eraser filter tags interactable
+f597124 11 Jun 2021 [T-14] Add real components to eraser filter
+b34ff6b 10 Jun 2021 [T-14] Add test component labels to eraser filter window
+2168541 10 Jun 2021 [T-14] Integrate grid layout to playground core window
+01627cb 10 Jun 2021 [T-14] Add LayoutGrid
+f106c0d 10 Jun 2021 [T-14] Add EraserToolWindow
+b817ee2 10 Jun 2021 [T-14] Add tool window title. Add tool names.
+c0259a8 10 Jun 2021 [T-14] Add InspectorDataValidator attribute. Improve UIPrefab validation. Improve UI query.
+5cf7726 10 Jun 2021 [T-14] Separate playground UI factory & elements
+5dba550 09 Jun 2021 [T-14] Update installers' names
+28d75df 09 Jun 2021 [T-14] Remove legacy textures
+47d4a23 09 Jun 2021 [T-14] Fix installers' names
+343194d 09 Jun 2021 [T-14] Remove legacy playground. Fix scripts location & namespaces.
+879e2e9 09 Jun 2021 [T-14] Add EmitterSpawnTool
+a95af86 09 Jun 2021 Add DSPGraph to project' About.txt
+eb43ae7 09 Jun 2021 [T-14] Add EraserTool
+c93889c 09 Jun 2021 [T-14] Add ship spawn tool logic
+d99a1c4 09 Jun 2021 [T-14] Improve tool button style
+ea57b79 09 Jun 2021 [T-14] Add frame for ship spawn tool
+9d09f8a 09 Jun 2021 [T-14] Improve tool icons
+d9a7c81 08 Jun 2021 [T-14] Add tool icons
+0b24847 08 Jun 2021 [T-14] Add playground tool ui selection logic
+85b8560 08 Jun 2021 [T-14] Add camera motion blocking when mouse is over UI
+58cf8ed 08 Jun 2021 [T-14] Add tool buttons selection
+4b49a38 08 Jun 2021 [T-14] Make tool window uxml & uss clearer
+3bbe0ec 08 Jun 2021 [T-14] Add ToolWindowView
+30166db 08 Jun 2021 [T-14] Improve UI handling
+16d6d9d 07 Jun 2021 [T-14] UIManager prototyping
+5042462 07 Jun 2021 [T-14] Fix tool window style
+1300ecb 07 Jun 2021 [T-14] Move tool window styles to style sheet
+cb85a65 07 Jun 2021 [T-14] Add template for playground tool selection tab
+2603840 07 Jun 2021 [T-36] Remove InlineEditor for SceneContext (Unreadable)
+9c5c6f6 07 Jun 2021 [T-14] Add UI manager & root container
+53b42a9 04 Jun 2021 Update resume scripts structure
+587c147 04 Jun 2021 Fix time format in resume FileWriter
+ad5d9de 04 Jun 2021 Update project resume
+49cf3a0 03 Jun 2021 [T-14] Update UITookit resources
+82ff9a5 02 Jun 2021 [T-14] Add UIElements toolkit and builder
+f1d2a0d 01 Jun 2021 [T-13] Optimize colliders data query in BulletsCommandSystem
+9bc6a3a 01 Jun 2021 [T-13] Fix raycasters archetype indices array size maintenance
+dbfb371 01 Jun 2021 [T-13] Add auto spawn to ShipSpawnManager
+a6b4a89 01 Jun 2021 [T-13] Fix AtlasMath provides invalid offsets
+36e4699 01 Jun 2021 [T-13] Make bullets destroy sprite pixels
+c8f7042 01 Jun 2021 [T-13] Fix invalid counts array passed to BulletCastJob
+e2e85e0 01 Jun 2021 [T-13] Fix raycaster archetype array was resized causing reset
+1941a84 31 May 2021 [T-13] Add bullet raycast to sprite pixels
+f342672 31 May 2021 [T-13] Make sprite shader use black pixels for transparency
+1abc6d7 28 May 2021 [T-13] Implement bullet system physics filtering
+59453d9 28 May 2021 [T-13] Reduce atlas items max size
+c10ee51 28 May 2021 [T-13] Add base for bullet system
+c18a69c 27 May 2021 [T-13] Add archetypes to collider & raycast systems
+acc1cd2 27 May 2021 [T-13] Add HealthAtlasSystem
+3b6ab1d 27 May 2021 [T-13] Add linear atlas config
+1512e40 26 May 2021 [T-13] Add manager to spawn ships in playground
+ea4f1ce 26 May 2021 [T-13] Move collider gizmo drawing to separate system
+fe554c8 26 May 2021 [T-13, T-20, T-26] Create single dimension atlases. Refactor.
+536d01f 25 May 2021 [T-13] Integrate collider rotation to raycast system
+1471d46 24 May 2021 Tweak playground installer for collider spawn
+7cb0f12 24 May 2021 [T-13] Integrate rotation into collider bounds compute job.
+b9584d7 24 May 2021 [T-13] Add class for gizmo drawing
+e047429 24 May 2021 Remove unused directives in solution
+4bebe3b 24 May 2021 [T-13] Integrate size component into collider bake system
+ced041b 21 May 2021 [T-23] Create code annotations for existing tasks
+50f3202 20 May 2021 Merge remote-tracking branch 'origin/main' into main
+ae7851a 20 May 2021 [T-22] Remove assemblies due to the maintenance cost
+8e35063 20 May 2021 [T-17] Replace NativeArray[0] with NativeReference
+20da1d3 20 May 2021 [T-24] Return to assembly split method, automate process
+b3794ee 19 May 2021 [C-17] Replace NativeArray[0] with NativeReference
+568acc2 19 May 2021 Remove int2 from Profiling, link Unity.Mathematics
+913f9c7 19 May 2021 Update dotSettings
+a7b853b 19 May 2021 Rename Zenject/Source -> Zenject/Scripts
+0e1c14e 19 May 2021 Rename FuchaTools/Source -> FuchaTools/Scripts
+185f15e 19 May 2021 Move validators folders to data folders
+69581de 19 May 2021 Update about
+abe3f79 16 May 2021 Update project tech stack & description
+70bfadb 15 May 2021 Replace 2021-05-15.zip with 2021-05-15.7z
+8c8475a 15 May 2021 Move resume to root. Add build.
+67cda3d 15 May 2021 Add utc time to project structure output. Update scripts structure in resume.
+fa61f9d 15 May 2021 Add project resume
+155a6bd 15 May 2021 Rename tools -> automation
+46a8c53 15 May 2021 Move ProjectStructureTool to separate library
+4d53c73 15 May 2021 Move console util to separate library
+50333f2 15 May 2021 Make AtlasMath be static
+e32d74c 15 May 2021 Add project structure scanning tool
+779cf7a 14 May 2021 Update DotSettings
+2c3f6b3 14 May 2021 Fix NamespaceTool not removes old DotSettings
+9503e93 14 May 2021 Make NamespaceTool take into account assembly folders ownership
+b08b549 14 May 2021 Fix ParticleEmitterCommandSystem after assemblies separation
+515def7 13 May 2021 Update unity version
+041a771 13 May 2021 Fix profiling tests assembly platforms.
+695ccdc 13 May 2021 Move Playground to separate assembly
+eaf6057 13 May 2021 Remove LegacyNativeArrayUtil
+350c39a 13 May 2021 Move components to separate assembly
+7d12738 13 May 2021 Move sprites to separate assembly
+3f9761a 13 May 2021 Move pixels to separate assembly
+f62e8ac 13 May 2021 Move rendering common to Utilities
+7dc335e 13 May 2021 Move atlases to separate assembly
+2e69dbb 13 May 2021 Move FloatBounds to SolidSpace.Mathematics
+b05f68d 13 May 2021 Move SingleBufferedDataCollectJob to JobUtilities
+5309e2c 13 May 2021 Rename Utilities -> JobUtilities
+690527d 13 May 2021 Adjust namespaces
+bf63343 13 May 2021 Move raycast to separate assembly
+6217317 13 May 2021 Move velocity to separate assembly
+6308d6f 13 May 2021 Move Colliders to separate assembly
+955f475 13 May 2021 Move ParticleEmitters to separate assembly
+a295591 13 May 2021 Update DotSettings
+d7860d7 13 May 2021 Remove repeating methods of NativeArrayUtil
+aa9c810 13 May 2021 Create SolidSpace.Utilities assembly
+d954b1a 13 May 2021 Move Randomization to separate assembly
+8165903 13 May 2021 Move RepeatTimer to separate assembly
+649cd54 13 May 2021 Move despawn to separate assembly
+d2f6318 13 May 2021 Move entity world to separate assembly
+4f69db9 13 May 2021 Rename controller methods
+d9589c4 13 May 2021 Remove EntityCycleController, make entity systems use game cycle instead
+c79a1df 13 May 2021 Add IApplicationBootstrapper to remove Zenject reference in GameCycle
+d522a8f 12 May 2021 Fix GameCycle invocation order
+c543bd4 12 May 2021 Fix profiling is broken after moving to assembly
+500fb88 12 May 2021 Move GameCycle to separate assembly
+50637a5 12 May 2021 Move DiContainer to separate assemblies
+5953cc2 12 May 2021 Move Profiling to separate assembly
+87f1d8a 12 May 2021 Move debugging to separate assembly
+1d93350 11 May 2021 Move AssetNameTool to separate assembly
+9d051ea 11 May 2021 Switch backend to Mono
+d87cc1e 11 May 2021 Move NamespaceTool to separate assembly
+33af691 11 May 2021 Fix AssemblyValidatorFactory not scans additional assemblies for validators
+40bbc4f 11 May 2021 Update csproj.DotSettings
+89e5248 11 May 2021 Adjust namespaces
+788dedd 11 May 2021 Replace "Odin Inspector" with "OdinInspector" in static SirenixAssetPaths()
+ce042a1 11 May 2021 Fix assembly definitions
+0b7bda0 11 May 2021 Fix fuchatools.asmdef root namespace
+c7ff713 11 May 2021 Fix space in Odin folders
+24ec0b9 11 May 2021 Fix namespaces in SolidSpace.DataValidation assembly definitions
+d97af56 11 May 2021 Make NamespaceTool work with multiple assemblies
+2fd46f4 11 May 2021 Fix Zenject.asmdef.meta is missing
+31a89b9 11 May 2021 Fix assembly definition names
+f7d34dc 11 May 2021 Add Runtime folder to NamespaceTool
+59e08e0 11 May 2021 Update application identifier
+e64b3e0 11 May 2021 Fix product & company name
+bd7b553 11 May 2021 Move data validation core to separate assembly
+ddbeb44 11 May 2021 Fix FuchaTools fails build; Make all classes internal
+6422270 11 May 2021 Profiling add time measurement test
+2f764b3 11 May 2021 Fix invalid paths in profiler exceptions
+0f7c437 11 May 2021 Make GameCycleController stop updating after exception thrown
+391e556 11 May 2021 Profiling. Add check for sample begin/end names match
+da11a61 10 May 2021 Make ProfilingManager throw exception when EndSample() called without StartSample()
+fac5c96 10 May 2021 Profiling move stack size to config. Add stack overflow exception
+cba562d 10 May 2021 Profiling. Add exception if stack is not empty after tree is built.
+7066ec5 10 May 2021 Make profiling record count be set in the config. Move processor code to the main class.
+bd83a44 10 May 2021 Add basic tests to ProfilingManager. Fix issues.
+1f9e018 29 Apr 2021 Improve opened windows titles from window opener
+9652658 26 Apr 2021 Fix game camera is zooming when mouse outside screen bounds
+5df09c0 26 Apr 2021 Make entity systems use new profiler, fix samples name, add name requirement to EndSample()
+af59333 26 Apr 2021 Add profiling time samples display
+0495f71 25 Apr 2021 Remove ProfilingManager.Instance, add ContextUtil for editor
+42db042 25 Apr 2021 Move NativeArrayUtil to SolidSpace.Common
+563384b 25 Apr 2021 Union update & finalize & initialize controllers into GameCycleController
+61ecd47 25 Apr 2021 Fix namespaces
+406840c 25 Apr 2021 Integrate profiler into EntityCycleController & UpdatingController
+bd22280 25 Apr 2021 Add jobs for profiling tree building & reading. Update editor window
+8430a7a 25 Apr 2021 Profiling, work in progress
+4780abd 24 Apr 2021 Add profiling prototype
+b5cd5d1 24 Apr 2021 Increase priority for editor factory window
+4eb71c7 24 Apr 2021 Add rotation to sprites
+7362f62 24 Apr 2021 Add rotation component
+1564c1f 24 Apr 2021 Fix PixelRenderComponent is not struct
+3c7a236 24 Apr 2021 Rename project to SolidSpace
+95819ef 24 Apr 2021 Disable domain & scene reload when entering playmode
+29539d1 24 Apr 2021 Rename installer assets
+79e2cc7 24 Apr 2021 Fix AssetNameTool not renaming assets
+06e4899 24 Apr 2021 Remove unused namespaces
+0ef3a2a 24 Apr 2021 Fix camera motion namespaces
+39a8148 24 Apr 2021 Implement AssetNameTool
+76685f8 24 Apr 2021 Add asset naming util prototype
+6050a44 23 Apr 2021 Improve camera zooming
+ab9ad6f 22 Apr 2021 Add camera motion controller
+577e02e 22 Apr 2021 Rename particles to pixels
+92f3f48 22 Apr 2021 Add size component
+0086a7c 22 Apr 2021 Add ParticleSpawnManager for tests
+67eb770 21 Apr 2021 Remove com.unity.rendering.hybrid package
+f53e0d8 21 Apr 2021 Remove TODO.txt, moved to web
+f108074 21 Apr 2021 Rename Nammy -> NamespaceTool
+61676ca 21 Apr 2021 Add texture support to sprite rendering
+63ab9a9 20 Apr 2021 Move mesh rendering shared code to Common
+288ff54 20 Apr 2021 Move Particles to Rendering. Rename Particles.Emission To ParticleEmitters
+262b727 20 Apr 2021 Move EntityWorld to Common
+dad38c3 20 Apr 2021 Fix NativeArrayUtil fields names
+df9e7c1 20 Apr 2021 Move NativeArrayUtil to Entities.Common.Utils
+e3fe074 20 Apr 2021 Add sprite mesh rendering system prototype
+829af4a 20 Apr 2021 Add TODO list
+54b2c1e 20 Apr 2021 Move atlases to separate folder
+7ea096a 20 Apr 2021 Make Nammy work with slashes for folder paths
+b50bc8d 19 Apr 2021 Fix namespaces with Nammy help
+12a8a1f 19 Apr 2021 Simplify Nammy by removing editor folder flags
+a92104e 19 Apr 2021 Fix scripts folder is missing in Nammy filters
+c4feb52 19 Apr 2021 Move FuchaTools to plugins, add assembly definition
+5341f5d 19 Apr 2021 Update Nummy filters
+42c55ef 19 Apr 2021 Add NummyExporter for folders to skip automation
+a8c47ed 19 Apr 2021 Add Nammy tool for folders scanning with regex matching
+e6a8b25 19 Apr 2021 Drop Odin serialization support. Reimport all assets.
+8ab90c3 18 Apr 2021 Fix shader reference, fix particles spawn settings
+073a132 18 Apr 2021 Switch back to Unity native serialization
+79a209c 18 Apr 2021 Fix serialized assets are broken after namespace change
+06b974c 18 Apr 2021 Add missing .meta for scripts
+54ca49b 18 Apr 2021 Remove Runtime folder. Move all scripts up. Adjust namespaces.
+c1913a5 18 Apr 2021 Add general purpose enum validation
+c650522 18 Apr 2021 Simplify validators
+a4fa45e 18 Apr 2021 Fix GameCycle invokation order
+e60c1f6 18 Apr 2021 Integrate sprite color system to entities
+0553377 17 Apr 2021 Improve serialized data validation
+765a38f 17 Apr 2021 Move particle render shader to own config. Fix repeat timer installer is missing
+e512bc7 17 Apr 2021 Add null reference & config validation
+643c44a 17 Apr 2021 I know what I am about, son.
+a8a9e87 17 Apr 2021 Integrate Odin serialization
+8f922e4 17 Apr 2021 Remove velocity namespace
+a131001 17 Apr 2021 Remove self binding
+3179e84 17 Apr 2021 Add DiContainer interface & wrapper
+ae5fe17 17 Apr 2021 Refactor ScriptableObjectInstaller
+fe22ba3 17 Apr 2021 Move SceneContext to SpaceSimulator, refactoring.
+a465001 17 Apr 2021 Simplify scene context
+c8d2923 17 Apr 2021 Remove ProjectContext and DecoratorContext
+0601628 17 Apr 2021 Remove RunnableContext. Remove factories
+3140a4c 17 Apr 2021 Simplify scene context
+bc666fc 17 Apr 2021 Simplify scene context
+00de4f0 17 Apr 2021 Simplify scene context
+b0f70a9 16 Apr 2021 Wrap entity manager
+5741db0 16 Apr 2021 Move world time to separate class
+c71f131 16 Apr 2021 Bring entities to life again. Simplify installers.
+159191d 15 Apr 2021 Integrate all system to DI Container
+99084db 14 Apr 2021 Move Zenject to plugins folder
+4b4b5b4 14 Apr 2021 Add Odin validation config
+c8a1a72 14 Apr 2021 Add Odin inspector & validator
+2e179ac 13 Apr 2021 Add DI based game cycle framework
+5a87f0f 12 Apr 2021 Add tools to open windows & create scriptable objects
+8c22d3d 12 Apr 2021 Move scripts to correct folder
+2190d3e 12 Apr 2021 Add Extenject DI Container
+d885b0c 11 Apr 2021 Move sprite indexing to separate class. Add chunk item count variation.
+88036e6 10 Apr 2021 Add SpriteCommandSystem and CopyTexture command
+50a1758 10 Apr 2021 Add Heap Explorer package
+11f7e46 09 Apr 2021 Add indexing for sprite rendering system.
+4faeebb 08 Apr 2021 Improve SystemBaseUtil.MaintainPersistentArrayLength
+2396595 02 Apr 2021 Rename TriangleParticleRenderComponent
+1af2f73 02 Apr 2021 Fix raycasters ignore neighbour cells
+c411e06 01 Apr 2021 Partial integration baking to raycasting. Fix issues.
+74845c8 01 Apr 2021 Move collider debug drawing to separate class
+baf47eb 01 Apr 2021 Add collider to chunk baking
+219fc26 29 Mar 2021 Improve collider world grid
+3d491cc 29 Mar 2021 Collider mapping prototyping
+ecb7de1 28 Mar 2021 Refactor & improve collider world grid computation
+c669257 27 Mar 2021 Improve collider world sizes computation
+9c276a6 27 Mar 2021 Move collider baking to separate system
+dcc8d2e 27 Mar 2021 Add world size & max collider size computation
+58530d0 24 Mar 2021 Add SpaceDebugWindow to display state values in Editor
+28dd2cc 24 Mar 2021 Remove old particle mesh code. Add mesh count log.
+a36babd 24 Mar 2021 Make particle mesh write directly to gpu
+b63c8ca 22 Mar 2021 Add ability to set particle velocity
+07141a5 22 Mar 2021 Refactor repeat timer system
+3632045 22 Mar 2021 Refactor random value system
+2367d42 22 Mar 2021 Refactor particle mesh render systems
+eaa6c34 22 Mar 2021 Refactor particle emission system
+d5ba203 22 Mar 2021 Refactor despawn system
+01ea4dd 21 Mar 2021 Add raycast system
+e72b83b 20 Mar 2021 Add simulation deltaTime logging
+33e2a34 20 Mar 2021 Remove EntitiesUtil
+f9827b8 20 Mar 2021 Improve particle emission system
+f69d2d6 20 Mar 2021 Fix particle rendering
+51d3a42 20 Mar 2021 Simplify particle rendering
+b0c7a79 20 Mar 2021 Implement square particles via double buffering
+e7ece0f 20 Mar 2021 Improve particle mesh drawing
+4d93187 19 Mar 2021 Fix debug reports not correct
+8d1a54a 19 Mar 2021 Make command sub systems stop work when main system is not working
+9f9b2c2 19 Mar 2021 Update some ECS stuff
+8c454b0 19 Mar 2021 Make particle mesh rendering via Unity.Graphics API
+be10f5f 19 Mar 2021 Add debug utils
+273db7d 18 Mar 2021 Despawn system. Increase iteration cycle.
+b620634 18 Mar 2021 Fix particle build mesh job is not burst compiled
+c4d458a 18 Mar 2021 Fix particle render system vertex offsets
+29ad875 18 Mar 2021 Fix despawn system ignores per chunk entity count
+2c50aef 18 Mar 2021 Fix particle mesh rendering ignores chunk capacities
+226aed2 18 Mar 2021 Add despawn system
+af2d435 16 Mar 2021 Mower timer to separate system
+3d4c838 16 Mar 2021 Move random values generation to separate system
+eef5189 16 Mar 2021 Simplify root namespace
+0ac9185 16 Mar 2021 Separate particle mesh rendering & building systems.
+076b0dd 16 Mar 2021 Move particles render & emitter to separate folders
+e5df1af 16 Mar 2021 Make jobs run instantly to make system more stable and profile friendly.
+b6c1d6a 16 Mar 2021 Particle renderer. Optimize memory allocation
+bde2c51 16 Mar 2021 Add particle emitters
+bf2561f 14 Mar 2021 Make particle rendering work via ECS Hybrid Renderer
+2aa9109 14 Mar 2021 Refactor TriangleParticleRenderSystem
+acc63ea 14 Mar 2021 Optimize particle reset mesh job
+a335a72 14 Mar 2021 Create components & system for physics. Switch to 2D.
+f17e029 14 Mar 2021 Move & rename particle render system
+26c9473 13 Mar 2021 Initial commit
+95a6ee5 13 Mar 2021 Initial commit
