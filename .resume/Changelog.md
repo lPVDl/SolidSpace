@@ -1,0 +1,52 @@
+# v0.2.0-alpha
+- Created a prototype AI
+- Created a prototype collision system
+- Created a AI control system
+- Created a tool for ship AI control
+- Reworked spawn point tool to concept of Capture Tool
+- Simplified gizmos by storing colors inside handles
+- Created TypeReference to store & validate type references
+- Moved tool icons & names config to single storage
+- Simplified eraser, movement & velocity change tools by creating shared tool
+- Added radius to positioning tool
+- Made spawn tools show used components
+- Added tool to change entities position
+- Made point spawn tool be child of spawn tools window
+- Made atlas chunks always contain 16 elements
+- Added tool to change entity velocity
+- Implemented support to share values between tools
+- Added structures to store project directory & files paths, with validators & drawers
+- Made spawn tools show where items will be placed
+- Added eraser mode to destroy entities in radius
+- Added editor drawer for Regex structures
+- Created garbage collector for unused atlas indexes
+- Added separate structures for Regex
+- Made installers naming tool to remove installer name from output, leaving namespace only
+- Excluded UIElements assets from project validation
+- Fixed raycast system can not handle raycast of multiple colliders per ray
+- Made collider baking & raycast be customizable with query for components
+- Made atlas restore & join sectors  when chunks are released
+- Replaced entity rotations from normal to radians
+- Replaced references to math with FloatMath & System.Math
+- Made atlas chunks use int mask to store free indices
+- Added EditorPath util to remove repeating code
+
+# v0.1.0-alpha
+- Fixed components names are not shown properly in build
+- Added support to configure playground emitter before spawn
+- Added support for playground mass spawn
+- Added Playground eraser delete all button logic
+- Moved InitializeController, UpdateController, FinalizeController to separate interfaces
+- Added configuration for emitters in game editor
+- Made UI events be procced with GameCycle order
+- Added support for Gizmos drawing inside game build
+- Made controller order be defined via class names & groups instead of enums
+- Created code annotations for existing tasks
+- Removed assemblies due to the maintenance cost
+- Added BinaryMath for binary operations
+- Removed NativeList in AtlasIndexManager
+- Separated initialization and execution order in GameCycle
+- Replaced NativeArray\[0\] with NativeReference
+- integrated UIElements
+- Implemented bullet->ship pixel destruction
+- Added ValidationUtil, separate common methods
