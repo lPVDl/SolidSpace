@@ -48,8 +48,17 @@ namespace SolidSpace.Entities.Physics.Rigidbody.Editor
 
             if (CollisionResolver.ResolveIntersection(convertedA, convertedB, out var motionA, out var motionB))
             {
-                HandlesDrawLine(convertedA.center, convertedA.center + motionA * 2f, Color.cyan);
-                HandlesDrawLine(convertedB.center, convertedB.center + motionB * 2f, Color.cyan);
+                var pointsA = CollisionResolver.GetShapePointsClockwise(convertedA);
+                HandlesDrawLine(pointsA.p0, pointsA.p0 + motionA * 2f, Color.cyan);
+                HandlesDrawLine(pointsA.p1, pointsA.p1 + motionA * 2f, Color.cyan);
+                HandlesDrawLine(pointsA.p2, pointsA.p2 + motionA * 2f, Color.cyan);
+                HandlesDrawLine(pointsA.p3, pointsA.p3 + motionA * 2f, Color.cyan);
+                
+                var pointsB = CollisionResolver.GetShapePointsClockwise(convertedB);
+                HandlesDrawLine(pointsB.p0, pointsB.p0 + motionB * 2f, Color.cyan);
+                HandlesDrawLine(pointsB.p1, pointsB.p1 + motionB * 2f, Color.cyan);
+                HandlesDrawLine(pointsB.p2, pointsB.p2 + motionB * 2f, Color.cyan);
+                HandlesDrawLine(pointsB.p3, pointsB.p3 + motionB * 2f, Color.cyan);
             }
 
             Repaint();
