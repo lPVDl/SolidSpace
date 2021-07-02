@@ -16,7 +16,7 @@ MonoBehaviour:
     _scanPath:
       path: Assets/SolidSpace/Scripts
     _exportPath:
-      path: .resume/Scripts/Scripts.txt
+      path: .resume/Scripts.txt
     _blacklist:
     - enabled: 1
       filter:
