@@ -1,4 +1,3 @@
-using System.Threading;
 using Unity.Collections;
 using Unity.Entities;
 

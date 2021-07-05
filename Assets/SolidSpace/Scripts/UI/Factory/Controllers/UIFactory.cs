@@ -1,5 +1,4 @@
 using SolidSpace.UI.Core;
-using SolidSpace.UI.Factory.Intefaces;
 
 namespace SolidSpace.UI.Factory
 {

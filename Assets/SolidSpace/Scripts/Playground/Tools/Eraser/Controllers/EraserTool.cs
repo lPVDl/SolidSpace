@@ -4,7 +4,7 @@ using SolidSpace.Entities.World;
 using SolidSpace.Gizmos;
 using SolidSpace.Playground.Core;
 using SolidSpace.Playground.Tools.Capture;
-using SolidSpace.UI.Factory.Intefaces;
+using SolidSpace.UI.Factory;
 using Unity.Mathematics;
 using UnityEngine;
 

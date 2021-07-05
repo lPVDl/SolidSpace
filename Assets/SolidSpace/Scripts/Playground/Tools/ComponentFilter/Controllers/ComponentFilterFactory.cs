@@ -1,15 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using SolidSpace.GameCycle;
-using SolidSpace.UI;
 using SolidSpace.UI.Core;
 using SolidSpace.UI.Factory;
-using SolidSpace.UI.Factory.Intefaces;
 using Unity.Entities;
 using UnityEngine.UIElements;
-using IUIFactory = SolidSpace.UI.Factory.Intefaces.IUIFactory;
+
 
 namespace SolidSpace.Playground.Tools.ComponentFilter
 {

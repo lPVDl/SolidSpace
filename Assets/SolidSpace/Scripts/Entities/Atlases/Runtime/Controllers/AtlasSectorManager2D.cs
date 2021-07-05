@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using SolidSpace.Mathematics;
 using Unity.Mathematics;
-using UnityEngine;
 
 namespace SolidSpace.Entities.Atlases
 {

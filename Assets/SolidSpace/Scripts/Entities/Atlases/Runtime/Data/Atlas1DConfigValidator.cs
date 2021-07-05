@@ -1,5 +1,4 @@
 using SolidSpace.DataValidation;
-using SolidSpace.Entities.Health.Atlases;
 using SolidSpace.Mathematics;
 
 namespace SolidSpace.Entities.Atlases

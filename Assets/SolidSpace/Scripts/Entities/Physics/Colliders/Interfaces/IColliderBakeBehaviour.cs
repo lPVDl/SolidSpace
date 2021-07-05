@@ -1,5 +1,3 @@
-using System;
-using SolidSpace.Entities.World;
 using Unity.Entities;
 
 namespace SolidSpace.Entities.Physics.Colliders

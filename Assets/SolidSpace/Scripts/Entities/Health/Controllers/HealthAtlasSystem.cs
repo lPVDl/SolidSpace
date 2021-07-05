@@ -1,6 +1,5 @@
 using System;
 using SolidSpace.Entities.Atlases;
-using SolidSpace.Entities.Health.Atlases;
 using SolidSpace.GameCycle;
 using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;

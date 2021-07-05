@@ -1,6 +1,6 @@
 using SolidSpace.UI.Core;
 
-namespace SolidSpace.UI.Factory.Intefaces
+namespace SolidSpace.UI.Factory
 {
     public interface IToolWindow : IUIElement
     {

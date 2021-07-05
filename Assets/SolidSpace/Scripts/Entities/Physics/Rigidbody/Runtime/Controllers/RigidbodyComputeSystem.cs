@@ -1,4 +1,3 @@
-using System;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Physics.Colliders;
 using SolidSpace.Entities.World;

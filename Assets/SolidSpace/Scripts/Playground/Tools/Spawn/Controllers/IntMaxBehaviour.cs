@@ -1,4 +1,4 @@
-using SolidSpace.UI.Factory.Intefaces;
+using SolidSpace.UI.Factory;
 
 namespace SolidSpace.Playground.Tools.Spawn
 {

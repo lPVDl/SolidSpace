@@ -1,5 +1,4 @@
 using SolidSpace.Profiling;
-using Unity.Entities;
 
 namespace SolidSpace.Entities.Physics.Raycast
 {

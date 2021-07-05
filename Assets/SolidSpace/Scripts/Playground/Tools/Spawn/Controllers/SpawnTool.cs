@@ -1,13 +1,7 @@
 using System;
-using System.Collections.Generic;
-using SolidSpace.Gizmos;
 using SolidSpace.Playground.Core;
-using SolidSpace.UI;
 using SolidSpace.UI.Core;
-using SolidSpace.UI.Factory.Intefaces;
-using Unity.Mathematics;
-using UnityEngine;
-using UnityEngine.UIElements;
+using SolidSpace.UI.Factory;
 
 namespace SolidSpace.Playground.Tools.Spawn
 {

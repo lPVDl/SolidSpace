@@ -1,6 +1,5 @@
 using System;
 using SolidSpace.Entities.Components;
-using SolidSpace.Entities.Physics.Raycast;
 using SolidSpace.Entities.World;
 using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;

@@ -1,8 +1,6 @@
 using System;
-using SolidSpace.Entities.Bullets;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Health;
-using SolidSpace.Entities.Physics.Colliders;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
 using SolidSpace.JobUtilities;

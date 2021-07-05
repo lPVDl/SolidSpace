@@ -4,7 +4,6 @@ using System.Reflection;
 using Sirenix.OdinInspector.Editor;
 using Sirenix.OdinInspector.Editor.Validation;
 using SolidSpace.DataValidation.Editor;
-using Unity.Mathematics;
 using UnityEngine;
 
 [assembly: RegisterValidator(typeof(SerializeAttributeValidator))]

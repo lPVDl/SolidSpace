@@ -1,6 +1,5 @@
 using SolidSpace.DependencyInjection;
 using SolidSpace.Entities.Atlases;
-using SolidSpace.Entities.Health.Atlases;
 using UnityEngine;
 
 namespace SolidSpace.Entities.Health

@@ -4,11 +4,10 @@ using SolidSpace.Playground.Core;
 using SolidSpace.Playground.Tools.ComponentFilter;
 using SolidSpace.Playground.Tools.EntitySearch;
 using SolidSpace.Playground.Tools.Spawn;
-using SolidSpace.UI;
 using SolidSpace.UI.Core;
+using SolidSpace.UI.Factory;
 using Unity.Entities;
 using Unity.Mathematics;
-using IUIFactory = SolidSpace.UI.Factory.Intefaces.IUIFactory;
 
 namespace SolidSpace.Playground.Tools.Capture
 {

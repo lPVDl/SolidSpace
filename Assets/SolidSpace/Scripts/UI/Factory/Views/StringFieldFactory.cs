@@ -1,6 +1,5 @@
 using SolidSpace.DataValidation;
 using SolidSpace.UI.Core;
-using SolidSpace.UI.Factory.Intefaces;
 using UnityEngine.UIElements;
 
 namespace SolidSpace.UI.Factory

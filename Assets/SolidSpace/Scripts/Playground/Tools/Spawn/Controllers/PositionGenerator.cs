@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Unity.Mathematics;
-using UnityEngine;
 
 namespace SolidSpace.Playground.Tools.Spawn
 {

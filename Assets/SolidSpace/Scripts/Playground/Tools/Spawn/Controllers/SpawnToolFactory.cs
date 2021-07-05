@@ -1,9 +1,6 @@
-using SolidSpace.Gizmos;
 using SolidSpace.Playground.Core;
-using SolidSpace.UI;
 using SolidSpace.UI.Core;
-using UnityEngine;
-using IUIFactory = SolidSpace.UI.Factory.Intefaces.IUIFactory;
+using SolidSpace.UI.Factory;
 
 namespace SolidSpace.Playground.Tools.Spawn
 {

@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using SolidSpace.Mathematics;
-using UnityEngine;
 
 namespace SolidSpace.Debugging
 {

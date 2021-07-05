@@ -1,7 +1,7 @@
 using SolidSpace.UI.Core;
 using UnityEngine.UIElements;
 
-namespace SolidSpace.UI.Factory.Intefaces
+namespace SolidSpace.UI.Factory
 {
     public interface ILayoutGrid : IUIElement
     {

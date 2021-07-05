@@ -1,5 +1,5 @@
 using System.Globalization;
-using SolidSpace.UI.Factory.Intefaces;
+using SolidSpace.UI.Factory;
 
 namespace SolidSpace.Playground.Tools.EmitterSpawn
 {

@@ -1,6 +1,4 @@
 using SolidSpace.DependencyInjection;
-using SolidSpace.Playground.Core;
-using UnityEngine;
 
 namespace SolidSpace.Playground.Tools.EmitterSpawn
 {

@@ -8,7 +8,6 @@ using SolidSpace.Mathematics;
 using SolidSpace.Playground.Core;
 using SolidSpace.Playground.Tools.ComponentFilter;
 using SolidSpace.Playground.Tools.Spawn;
-using SolidSpace.UI;
 using SolidSpace.UI.Core;
 using Unity.Entities;
 using Unity.Mathematics;

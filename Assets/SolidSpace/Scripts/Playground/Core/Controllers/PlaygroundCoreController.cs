@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SolidSpace.GameCycle;
-using SolidSpace.UI;
 using SolidSpace.UI.Core;
-using SolidSpace.UI.Factory.Intefaces;
+using SolidSpace.UI.Factory;
 using UnityEngine;
 using UnityEngine.UIElements;
-using IUIFactory = SolidSpace.UI.Factory.Intefaces.IUIFactory;
 
 namespace SolidSpace.Playground.Core
 {

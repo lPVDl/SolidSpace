@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using SolidSpace.Entities.Health.Atlases;
 using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
 using Unity.Collections;
-using Unity.Mathematics;
 
 namespace SolidSpace.Entities.Atlases
 {

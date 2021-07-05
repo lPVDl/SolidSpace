@@ -2,7 +2,7 @@ using System;
 using SolidSpace.UI.Core;
 using UnityEngine;
 
-namespace SolidSpace.UI.Factory.Intefaces
+namespace SolidSpace.UI.Factory
 {
     public interface IToolButton : IUIElement
     {

@@ -1,5 +1,4 @@
 using SolidSpace.DependencyInjection;
-using UnityEngine;
 
 namespace SolidSpace.Entities.Physics.Colliders
 {
