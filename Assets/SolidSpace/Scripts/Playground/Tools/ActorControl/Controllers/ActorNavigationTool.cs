@@ -2,6 +2,7 @@ using SolidSpace.Entities.Actors;
 using SolidSpace.Entities.Components;
 using SolidSpace.Playground.Core;
 using SolidSpace.UI;
+using SolidSpace.UI.Core;
 using Unity.Entities;
 using Unity.Mathematics;
 

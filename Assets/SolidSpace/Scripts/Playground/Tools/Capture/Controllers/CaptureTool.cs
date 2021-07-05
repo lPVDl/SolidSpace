@@ -5,8 +5,10 @@ using SolidSpace.Entities.World;
 using SolidSpace.Playground.Core;
 using SolidSpace.Playground.Tools.ComponentFilter;
 using SolidSpace.Playground.Tools.EntitySearch;
-using SolidSpace.Playground.UI;
 using SolidSpace.UI;
+using SolidSpace.UI.Core;
+using SolidSpace.UI.Factory;
+using SolidSpace.UI.Factory.Intefaces;
 using Unity.Entities;
 using Unity.Mathematics;
 

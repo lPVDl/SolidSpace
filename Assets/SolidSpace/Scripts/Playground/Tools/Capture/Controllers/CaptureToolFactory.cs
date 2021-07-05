@@ -4,10 +4,11 @@ using SolidSpace.Playground.Core;
 using SolidSpace.Playground.Tools.ComponentFilter;
 using SolidSpace.Playground.Tools.EntitySearch;
 using SolidSpace.Playground.Tools.Spawn;
-using SolidSpace.Playground.UI;
 using SolidSpace.UI;
+using SolidSpace.UI.Core;
 using Unity.Entities;
 using Unity.Mathematics;
+using IUIFactory = SolidSpace.UI.Factory.Intefaces.IUIFactory;
 
 namespace SolidSpace.Playground.Tools.Capture
 {
@@ -18,12 +19,12 @@ namespace SolidSpace.Playground.Tools.Capture
         private readonly IPlaygroundUIManager _playgroundUI;
         private readonly IUIManager _uiManager;
         private readonly IPointerTracker _pointer;
-        private readonly IPlaygroundUIFactory _uiFactory;
+        private readonly IUIFactory _uiFactory;
         private readonly IEntityManager _entityManager;
         private readonly IPlaygroundToolValueStorage _valueStorage;
 
         public CaptureToolFactory(IComponentFilterFactory filterFactory, IEntitySearchSystem searchSystem, 
-            IPlaygroundUIManager playgroundUI, IUIManager uiManager, IPointerTracker pointer, IPlaygroundUIFactory uiFactory, 
+            IPlaygroundUIManager playgroundUI, IUIManager uiManager, IPointerTracker pointer, IUIFactory uiFactory, 
             IEntityManager entityManager, IPlaygroundToolValueStorage valueStorage)
         {
             _filterFactory = filterFactory;

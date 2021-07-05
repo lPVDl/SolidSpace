@@ -5,11 +5,13 @@ using SolidSpace.Gizmos;
 using SolidSpace.Playground.Core;
 using SolidSpace.Playground.Tools.ComponentFilter;
 using SolidSpace.Playground.Tools.Spawn;
-using SolidSpace.Playground.UI;
 using SolidSpace.UI;
+using SolidSpace.UI.Core;
+using SolidSpace.UI.Factory.Intefaces;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+using IUIFactory = SolidSpace.UI.Factory.Intefaces.IUIFactory;
 
 namespace SolidSpace.Playground.Tools.EmitterSpawn
 {
@@ -18,7 +20,7 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
         private readonly IEntityManager _entityManager;
         private readonly ISpawnToolFactory _spawnToolFactory;
         private readonly IPlaygroundUIManager _uiManager;
-        private readonly IPlaygroundUIFactory _uiFactory;
+        private readonly IUIFactory _uiFactory;
         private readonly IComponentFilterFactory _filterFactory;
         private readonly IGizmosManager _gizmosManager;
 
@@ -34,7 +36,7 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
         private float _particleVelocity;
 
         public EmitterSpawnTool(IEntityManager entityManager, IPlaygroundUIManager uiManager,
-            ISpawnToolFactory spawnToolFactory, IPlaygroundUIFactory uiFactory, IComponentFilterFactory filterFactory,
+            ISpawnToolFactory spawnToolFactory, IUIFactory uiFactory, IComponentFilterFactory filterFactory,
             IGizmosManager gizmosManager)
         {
             _entityManager = entityManager;

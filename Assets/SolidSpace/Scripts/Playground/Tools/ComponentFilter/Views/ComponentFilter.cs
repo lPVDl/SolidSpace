@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-using SolidSpace.Playground.UI;
+using SolidSpace.UI.Factory;
+using SolidSpace.UI.Factory.Intefaces;
 using Unity.Entities;
 using UnityEngine.UIElements;
 

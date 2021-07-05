@@ -36,8 +36,8 @@ MonoBehaviour:
       - _name: Managed
         _controllers:
         - typeName: SolidSpace.Gizmos.GizmosManager
-        - typeName: SolidSpace.UI.UIEventManager
-        - typeName: SolidSpace.UI.UIManager
+        - typeName: SolidSpace.UI.Core.UIEventManager
+        - typeName: SolidSpace.UI.Core.UIManager
         - typeName: SolidSpace.CameraMotion.CameraMotionController
         - typeName: SolidSpace.Playground.Core.PlaygroundToolValueStorage
         - typeName: SolidSpace.Playground.Tools.ComponentFilter.ComponentFilterFactory
@@ -68,7 +68,7 @@ MonoBehaviour:
         - typeName: SolidSpace.CameraMotion.CameraMotionController
         - typeName: SolidSpace.Playground.Core.MouseTracker
         - typeName: SolidSpace.Playground.Core.PlaygroundCoreController
-        - typeName: SolidSpace.UI.UIEventManager
+        - typeName: SolidSpace.UI.Core.UIEventManager
       - _name: Render
         _controllers:
         - typeName: SolidSpace.Entities.Rendering.Pixels.PixelMeshSystem

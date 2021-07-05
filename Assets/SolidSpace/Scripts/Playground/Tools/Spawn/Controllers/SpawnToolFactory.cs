@@ -1,8 +1,9 @@
 using SolidSpace.Gizmos;
 using SolidSpace.Playground.Core;
-using SolidSpace.Playground.UI;
 using SolidSpace.UI;
+using SolidSpace.UI.Core;
 using UnityEngine;
+using IUIFactory = SolidSpace.UI.Factory.Intefaces.IUIFactory;
 
 namespace SolidSpace.Playground.Tools.Spawn
 {
@@ -10,11 +11,11 @@ namespace SolidSpace.Playground.Tools.Spawn
     {
         private readonly IUIManager _uiManager;
         private readonly IPointerTracker _pointer;
-        private readonly IPlaygroundUIFactory _uiFactory;
+        private readonly IUIFactory _uiFactory;
         private readonly IPlaygroundToolValueStorage _valueStorage;
         private readonly IPlaygroundUIManager _playgroundUI;
 
-        public SpawnToolFactory(IUIManager uiManager, IPointerTracker pointer, IPlaygroundUIFactory uiFactory,
+        public SpawnToolFactory(IUIManager uiManager, IPointerTracker pointer, IUIFactory uiFactory,
             IPlaygroundToolValueStorage valueStorage, IPlaygroundUIManager playgroundUI)
         {
             _uiManager = uiManager;

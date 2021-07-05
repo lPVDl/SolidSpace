@@ -13,6 +13,8 @@ namespace SolidSpace.Playground.Core
         public override void InstallBindings(IDependencyContainer container)
         {
             container.BindFromComponentInHierarchy<Camera>();
+            
+            container.Bind<PlaygroundUIManager>();
             container.Bind<PlaygroundCoreController>(_config);
             container.Bind<PlaygroundToolValueStorage>();
             container.Bind<MouseTracker>();

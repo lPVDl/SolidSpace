@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SolidSpace.GameCycle;
-using SolidSpace.Playground.UI;
 using SolidSpace.UI;
+using SolidSpace.UI.Core;
+using SolidSpace.UI.Factory.Intefaces;
 using UnityEngine;
 using UnityEngine.UIElements;
+using IUIFactory = SolidSpace.UI.Factory.Intefaces.IUIFactory;
 
 namespace SolidSpace.Playground.Core
 {
@@ -21,7 +23,7 @@ namespace SolidSpace.Playground.Core
         
         private readonly IUIManager _uiManager;
         private readonly List<IPlaygroundTool> _tools;
-        private readonly IPlaygroundUIFactory _uiFactory;
+        private readonly IUIFactory _uiFactory;
         private readonly PlaygroundCoreConfig _config;
 
         private IToolWindow _window;
@@ -29,7 +31,7 @@ namespace SolidSpace.Playground.Core
         private string[] _names;
         private int _toolIndex;
 
-        public PlaygroundCoreController(IUIManager uiManager, List<IPlaygroundTool> tools, IPlaygroundUIFactory uiFactory,
+        public PlaygroundCoreController(IUIManager uiManager, List<IPlaygroundTool> tools, IUIFactory uiFactory,
             PlaygroundCoreConfig config)
         {
             _uiManager = uiManager;

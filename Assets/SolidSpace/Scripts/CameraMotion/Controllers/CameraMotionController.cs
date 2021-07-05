@@ -1,5 +1,6 @@
 using SolidSpace.GameCycle;
 using SolidSpace.UI;
+using SolidSpace.UI.Core;
 using UnityEngine;
 
 namespace SolidSpace.CameraMotion

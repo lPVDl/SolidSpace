@@ -3,21 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using SolidSpace.GameCycle;
-using SolidSpace.Playground.UI;
 using SolidSpace.UI;
+using SolidSpace.UI.Core;
+using SolidSpace.UI.Factory;
+using SolidSpace.UI.Factory.Intefaces;
 using Unity.Entities;
 using UnityEngine.UIElements;
+using IUIFactory = SolidSpace.UI.Factory.Intefaces.IUIFactory;
 
 namespace SolidSpace.Playground.Tools.ComponentFilter
 {
     public class ComponentFilterFactory : IComponentFilterFactory, IInitializable
     {
-        private readonly IPlaygroundUIFactory _uiFactory;
+        private readonly IUIFactory _uiFactory;
         private readonly ComponentFilterFactoryConfig _config;
 
         private Dictionary<ComponentType, string> _componentToName;
 
-        public ComponentFilterFactory(IPlaygroundUIFactory uiFactory, ComponentFilterFactoryConfig config)
+        public ComponentFilterFactory(IUIFactory uiFactory, ComponentFilterFactoryConfig config)
         {
             _uiFactory = uiFactory;
             _config = config;

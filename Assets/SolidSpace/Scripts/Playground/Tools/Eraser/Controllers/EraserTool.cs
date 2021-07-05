@@ -4,7 +4,7 @@ using SolidSpace.Entities.World;
 using SolidSpace.Gizmos;
 using SolidSpace.Playground.Core;
 using SolidSpace.Playground.Tools.Capture;
-using SolidSpace.Playground.UI;
+using SolidSpace.UI.Factory.Intefaces;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -14,7 +14,7 @@ namespace SolidSpace.Playground.Tools.Eraser
     {
         private readonly IEntityManager _entityManager;
         private readonly IPlaygroundUIManager _playgroundUIManager;
-        private readonly IPlaygroundUIFactory _uiFactory;
+        private readonly IUIFactory _uiFactory;
         private readonly ICaptureToolFactory _captureToolFactory;
         private readonly IGizmosManager _gizmosManager;
 
@@ -23,7 +23,7 @@ namespace SolidSpace.Playground.Tools.Eraser
         private GizmosHandle _gizmos;
 
         public EraserTool(IEntityManager entityManager, IPlaygroundUIManager playgroundUIManager, 
-            IPlaygroundUIFactory uiFactory, ICaptureToolFactory captureToolFactory, IGizmosManager gizmosManager)
+            IUIFactory uiFactory, ICaptureToolFactory captureToolFactory, IGizmosManager gizmosManager)
         {
             _entityManager = entityManager;
             _playgroundUIManager = playgroundUIManager;
