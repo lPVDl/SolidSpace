@@ -15,6 +15,13 @@ MonoBehaviour:
   _gameCycleConfig:
     _initializationOrder:
       _groups:
+      - _name: UI & Gizmos
+        _controllers:
+        - typeName: SolidSpace.UI.Core.UIEventManager
+        - typeName: SolidSpace.UI.Core.UIManager
+        - typeName: SolidSpace.Gizmos.GizmosStateStorage
+        - typeName: SolidSpace.Gizmos.GizmosManager
+        - typeName: SolidSpace.Gizmos.GizmosDrawerManager
       - _name: Entities
         _controllers:
         - typeName: SolidSpace.Entities.Physics.Velocity.VelocitySystem
@@ -35,9 +42,6 @@ MonoBehaviour:
         - typeName: SolidSpace.Entities.Physics.Rigidbody.RigidbodyComputeSystem
       - _name: Managed
         _controllers:
-        - typeName: SolidSpace.Gizmos.GizmosManager
-        - typeName: SolidSpace.UI.Core.UIEventManager
-        - typeName: SolidSpace.UI.Core.UIManager
         - typeName: SolidSpace.CameraMotion.CameraMotionController
         - typeName: SolidSpace.Playground.Core.PlaygroundToolValueStorage
         - typeName: SolidSpace.Playground.Tools.ComponentFilter.ComponentFilterFactory
@@ -71,5 +75,6 @@ MonoBehaviour:
         - typeName: SolidSpace.UI.Core.UIEventManager
       - _name: Render
         _controllers:
+        - typeName: SolidSpace.Gizmos.GizmosDrawerManager
         - typeName: SolidSpace.Entities.Rendering.Pixels.PixelMeshSystem
         - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteMeshSystem

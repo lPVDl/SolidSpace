@@ -10,6 +10,8 @@ namespace SolidSpace.Gizmos
         public override void InstallBindings(IDependencyContainer container)
         {
             container.Bind<GizmosManager>(_config);
+            container.Bind<GizmosDrawerManager>();
+            container.Bind<GizmosStateStorage>();
         }
     }
 }

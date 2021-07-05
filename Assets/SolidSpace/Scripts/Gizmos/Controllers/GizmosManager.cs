@@ -1,6 +1,7 @@
 using SolidSpace.GameCycle;
 using SolidSpace.Gizmos.Shapes;
 using UnityEngine;
+
 using Rect = SolidSpace.Gizmos.Shapes.Rect;
 
 namespace SolidSpace.Gizmos
@@ -8,9 +9,12 @@ namespace SolidSpace.Gizmos
     // TODO [T-27]: Move debug related classes to one folder, create facade.
     internal class GizmosManager : IInitializable, IGizmosManager
     {
+        public int RenderVersion { get; private set; }
+        
         private const int BufferSize = 256;
         
         private readonly GizmosConfig _config;
+        private readonly IGizmosStateStorage _storage;
 
         private Material _material;
         private ShapeStorage<Line> _wireLines;
@@ -19,9 +23,10 @@ namespace SolidSpace.Gizmos
         private ShapeStorage<Square> _wireSquares;
         private ShapeStorage<Square> _screenSquares;
 
-        public GizmosManager(GizmosConfig config)
+        public GizmosManager(GizmosConfig config, IGizmosStateStorage storage)
         {
             _config = config;
+            _storage = storage;
         }
         
         public void OnInitialize()
@@ -32,10 +37,24 @@ namespace SolidSpace.Gizmos
             _wireSquares = new ShapeStorage<Square>(BufferSize);
             _screenSquares = new ShapeStorage<Square>(BufferSize);
             _material = new Material(_config.Shader);
-            
+
             Camera.onPostRender += OnRender;
         }
         
+        public GizmosHandle GetHandle(object owner, string name, Color defaultColor)
+        {
+            var id = _storage.GetOrCreateHandleId(owner.GetType().FullName + ":" + name, defaultColor);
+            
+            return new GizmosHandle(id, this, _storage);
+        }
+
+        public GizmosHandle GetHandle(object owner, Color defaultColor)
+        {
+            var id = _storage.GetOrCreateHandleId(owner.GetType().FullName, defaultColor);
+            
+            return new GizmosHandle(id, this, _storage);
+        }
+
         private void OnRender(Camera camera)
         {
             _material.SetPass(0);
@@ -57,6 +76,8 @@ namespace SolidSpace.Gizmos
             _wireRects.Clear();
             _wirePolygons.Clear();
             _wireSquares.Clear();
+
+            RenderVersion++;
         }
 
         internal void ScheduleLineDraw(Line line) => _wireLines.Add(line);
@@ -64,16 +85,6 @@ namespace SolidSpace.Gizmos
         internal void ScheduleWirePolygonDraw(Polygon polygon) => _wirePolygons.Add(polygon);
         internal void ScheduleWireSquareDraw(Square square) => _wireSquares.Add(square);
         internal void ScheduleScreenSquareDraw(Square square) => _screenSquares.Add(square);
-
-        public GizmosHandle GetHandle(object owner, string name, Color defaultColor)
-        {
-            return new GizmosHandle(this, defaultColor);
-        }
-
-        public GizmosHandle GetHandle(object owner, Color defaultColor)
-        {
-            return new GizmosHandle(this, defaultColor);
-        }
 
         public void OnFinalize()
         {
