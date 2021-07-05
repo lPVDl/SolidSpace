@@ -13,10 +13,7 @@ namespace SolidSpace.UI.Factory
             _prefabs = prefabs;
         }
         
-        public IToolWindow CreateToolWindow()
-        {
-            return _uiManager.Instantiate(_prefabs.ToolWindow);
-        }
+        public IToolWindow CreateToolWindow() => _uiManager.Instantiate(_prefabs.ToolWindow);
 
         public IToolButton CreateToolButton() => _uiManager.Instantiate(_prefabs.ToolButton);
 
@@ -27,5 +24,7 @@ namespace SolidSpace.UI.Factory
         public IGeneralButton CreateGeneralButton() => _uiManager.Instantiate(_prefabs.GeneralButton);
 
         public IStringField CreateStringField() => _uiManager.Instantiate(_prefabs.StringField);
+        
+        public IVerticalFixedItemList CreateVerticalList() => _uiManager.Instantiate(_prefabs.VerticalFixedItemList);
     }
 }

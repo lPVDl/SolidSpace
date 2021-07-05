@@ -8,5 +8,6 @@ namespace SolidSpace.UI.Factory
         ILayoutGrid CreateLayoutGrid();
         IGeneralButton CreateGeneralButton();
         IStringField CreateStringField();
+        IVerticalFixedItemList CreateVerticalList();
     }
 }

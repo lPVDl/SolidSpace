@@ -12,6 +12,7 @@ namespace SolidSpace.UI.Factory
         public UIPrefab<LayoutGrid> LayoutGrid => _layoutGrid;
         public UIPrefab<GeneralButton> GeneralButton => _generalButton;
         public UIPrefab<StringField> StringField => _stringField;
+        public UIPrefab<VerticalFixedItemList> VerticalFixedItemList => _verticalFixedItemList;
         
         [SerializeField] private UIPrefab<ToolButton> _toolButton;
         [SerializeField] private UIPrefab<ToolWindow> _toolWindow;
@@ -19,5 +20,6 @@ namespace SolidSpace.UI.Factory
         [SerializeField] private UIPrefab<LayoutGrid> _layoutGrid;
         [SerializeField] private UIPrefab<GeneralButton> _generalButton;
         [SerializeField] private UIPrefab<StringField> _stringField;
+        [SerializeField] private UIPrefab<VerticalFixedItemList> _verticalFixedItemList;
     }
 }

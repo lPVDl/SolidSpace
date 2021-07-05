@@ -12,6 +12,7 @@ namespace SolidSpace.Gizmos
             container.Bind<GizmosManager>(_config);
             container.Bind<GizmosDrawerManager>();
             container.Bind<GizmosStateStorage>();
+            container.Bind<GizmosWindow>();
         }
     }
 }

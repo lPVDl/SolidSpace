@@ -22,6 +22,7 @@ MonoBehaviour:
         - typeName: SolidSpace.Gizmos.GizmosStateStorage
         - typeName: SolidSpace.Gizmos.GizmosManager
         - typeName: SolidSpace.Gizmos.GizmosDrawerManager
+        - typeName: SolidSpace.Gizmos.GizmosWindow
       - _name: Entities
         _controllers:
         - typeName: SolidSpace.Entities.Physics.Velocity.VelocitySystem
@@ -73,6 +74,7 @@ MonoBehaviour:
         - typeName: SolidSpace.Playground.Core.MouseTracker
         - typeName: SolidSpace.Playground.Core.PlaygroundCoreController
         - typeName: SolidSpace.UI.Core.UIEventManager
+        - typeName: SolidSpace.Gizmos.GizmosWindow
       - _name: Render
         _controllers:
         - typeName: SolidSpace.Gizmos.GizmosDrawerManager

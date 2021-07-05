@@ -17,6 +17,7 @@ namespace SolidSpace.UI.Factory
             container.Bind<LayoutGridFactory>();
             container.Bind<GeneralButtonFactory>();
             container.Bind<StringFieldFactory>();
+            container.Bind<VerticalFixedItemListFactory>();
         }
     }
 }
