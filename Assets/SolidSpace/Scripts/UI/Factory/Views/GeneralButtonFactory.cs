@@ -7,7 +7,7 @@ namespace SolidSpace.UI.Factory
     [InspectorDataValidator]
     public class GeneralButtonFactory : AUIViewFactory<GeneralButton>, IDataValidator<UIPrefab<GeneralButton>>
     {
-        private readonly IUIEventManager _events;
+        private readonly IUIEventDispatcher _eventDispatcher;
         private readonly UITreeAssetValidator _treeValidator;
         
         private GeneralButtonFactory()
@@ -15,9 +15,9 @@ namespace SolidSpace.UI.Factory
             _treeValidator = new UITreeAssetValidator();
         }
 
-        public GeneralButtonFactory(IUIEventManager events)
+        public GeneralButtonFactory(IUIEventDispatcher eventDispatcher)
         {
-            _events = events;
+            _eventDispatcher = eventDispatcher;
         }
         
         protected override GeneralButton Create(VisualElement root)
@@ -28,11 +28,12 @@ namespace SolidSpace.UI.Factory
                 Button = UIQuery.Child<VisualElement>(root, "Button"),
                 Label = UIQuery.Child<Label>(root, "Label"),
                 IsMouseDown = false,
+                EventDispatcher = _eventDispatcher
             };
             
-            _events.Register<MouseDownEvent>(view.Button, view.OnMouseDown);
-            _events.Register<MouseUpEvent>(view.Button, view.OnMouseUp);
-            _events.Register<MouseLeaveEvent>(view.Button, view.OnMouseLeave);
+            view.Button.RegisterCallback<MouseDownEvent>(view.OnMouseDown);
+            view.Button.RegisterCallback<MouseUpEvent>(view.OnMouseUp);
+            view.Button.RegisterCallback<MouseLeaveEvent>(view.OnMouseLeave);
 
             return view;
         }

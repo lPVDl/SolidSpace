@@ -15,6 +15,8 @@ namespace SolidSpace.UI.Factory
         public VisualElement SliderStart { get; set; }
         public VisualElement SliderMiddle { get; set; }
         public VisualElement SliderEnd { get; set; }
+        
+        public IUIEventDispatcher EventDispatcher { get; set; }
 
         public void AttachItem(IUIElement item)
         {
@@ -30,7 +32,8 @@ namespace SolidSpace.UI.Factory
 
         public void OnWheelEvent(WheelEvent data)
         {
-            Debug.LogError(data.delta);
+            var axis = Math.Sign(data.delta.y);
+            EventDispatcher.ScheduleOrSkip(() => Scrolled?.Invoke(axis));
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using SolidSpace.UI.Core;
 using UnityEngine.UIElements;
 
 namespace SolidSpace.UI.Factory
@@ -13,6 +14,7 @@ namespace SolidSpace.UI.Factory
         public VisualElement Lock { get; set; }
         public ETagLabelState State { get; set; }
         public bool IsLocked { get; set; }
+        public IUIEventDispatcher EventDispatcher { get; set; }
 
         public void SetState(ETagLabelState newState)
         {
@@ -79,7 +81,7 @@ namespace SolidSpace.UI.Factory
         {
             e.StopPropagation();
             
-            Clicked?.Invoke();
+            EventDispatcher.ScheduleOrSkip(Clicked);
         }
     }
 }

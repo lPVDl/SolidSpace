@@ -17,7 +17,7 @@ MonoBehaviour:
       _groups:
       - _name: UI & Gizmos
         _controllers:
-        - typeName: SolidSpace.UI.Core.UIEventManager
+        - typeName: SolidSpace.UI.Core.UIEventDispatcher
         - typeName: SolidSpace.UI.Core.UIManager
         - typeName: SolidSpace.Gizmos.GizmosStateStorage
         - typeName: SolidSpace.Gizmos.GizmosManager
@@ -73,7 +73,7 @@ MonoBehaviour:
         - typeName: SolidSpace.CameraMotion.CameraMotionController
         - typeName: SolidSpace.Playground.Core.MouseTracker
         - typeName: SolidSpace.Playground.Core.PlaygroundCoreController
-        - typeName: SolidSpace.UI.Core.UIEventManager
+        - typeName: SolidSpace.UI.Core.UIEventDispatcher
         - typeName: SolidSpace.Gizmos.GizmosWindow
       - _name: Render
         _controllers:

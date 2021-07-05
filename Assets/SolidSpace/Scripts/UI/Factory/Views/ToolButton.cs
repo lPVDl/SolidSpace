@@ -1,4 +1,5 @@
 using System;
+using SolidSpace.UI.Core;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -10,6 +11,7 @@ namespace SolidSpace.UI.Factory
         public VisualElement Root { get; set; }
         public VisualElement Button { get; set; }
         public VisualElement Image { get; set; }
+        public IUIEventDispatcher EventDispatcher { get; set; }
 
         private bool _isSelected;
         
@@ -17,7 +19,7 @@ namespace SolidSpace.UI.Factory
         {
             e.StopPropagation();
             
-            Clicked?.Invoke();
+            EventDispatcher.ScheduleOrSkip(Clicked);
         }
 
         public void SetSelected(bool isSelected)

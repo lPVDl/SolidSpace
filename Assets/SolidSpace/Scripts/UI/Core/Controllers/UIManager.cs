@@ -12,18 +12,16 @@ namespace SolidSpace.UI.Core
         
         private readonly UIConfig _config;
         private readonly List<IUIViewFactory> _factories;
-        private readonly IUIEventManager _events;
 
         private Dictionary<Type, IUIViewFactory> _factoryStorage;
         private Dictionary<string, VisualElement> _rootContainers;
         private VisualElement _rootElement;
         private int _hoveredElements;
 
-        public UIManager(UIConfig config, List<IUIViewFactory> factories, IUIEventManager events)
+        public UIManager(UIConfig config, List<IUIViewFactory> factories)
         {
             _config = config;
             _factories = factories;
-            _events = events;
         }
         
         public void OnInitialize()
@@ -84,8 +82,8 @@ namespace SolidSpace.UI.Core
         {
             if (view is null) throw new ArgumentNullException(nameof(view));
 
-            _events.Register<MouseEnterEvent>(view.Root, OnMouseEnter);
-            _events.Register<MouseLeaveEvent>(view.Root, OnMouseLeave);
+            view.Root.RegisterCallback<MouseEnterEvent>(OnMouseEnter);
+            view.Root.RegisterCallback<MouseLeaveEvent>(OnMouseLeave);
 
             var container = GetRootContainer(rootContainerName);
             container.Add(view.Root);
@@ -95,9 +93,9 @@ namespace SolidSpace.UI.Core
         {
             if (view is null) throw new ArgumentNullException(nameof(view));
 
-            _events.Unregister<MouseEnterEvent>(view.Root, OnMouseEnter);
-            _events.Unregister<MouseLeaveEvent>(view.Root, OnMouseLeave);
-            
+            view.Root.UnregisterCallback<MouseEnterEvent>(OnMouseEnter);
+            view.Root.UnregisterCallback<MouseLeaveEvent>(OnMouseLeave);
+
             var container = GetRootContainer(rootContainerName);
             container.Remove(view.Root);
         }

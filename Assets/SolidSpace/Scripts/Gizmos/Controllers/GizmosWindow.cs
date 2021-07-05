@@ -2,6 +2,7 @@ using SolidSpace.GameCycle;
 using SolidSpace.UI.Core;
 using SolidSpace.UI.Factory;
 using Unity.Mathematics;
+using UnityEngine;
 
 namespace SolidSpace.Gizmos
 {
@@ -24,6 +25,7 @@ namespace SolidSpace.Gizmos
             _uiManager.AttachToRoot(_window, "ContainerB");
 
             var list = _uiFactory.CreateVerticalList();
+            list.Scrolled += OnListScroll;
             _window.AttachChild(list);
 
             for (var i = 10; i < 20; i++)
@@ -34,6 +36,11 @@ namespace SolidSpace.Gizmos
             }
             
             list.SetSliderState(new int2(0, 100), new int2(10, 20));
+        }
+
+        private void OnListScroll(int delta)
+        {
+            Debug.LogError("Scrolled " + delta);
         }
         
         public void OnUpdate()

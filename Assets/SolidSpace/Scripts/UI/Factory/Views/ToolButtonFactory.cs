@@ -7,7 +7,7 @@ namespace SolidSpace.UI.Factory
     [InspectorDataValidator]
     internal class ToolButtonFactory : AUIViewFactory<ToolButton>, IDataValidator<UIPrefab<ToolButton>>
     {
-        private readonly IUIEventManager _events;
+        private readonly IUIEventDispatcher _eventDispatcher;
         private readonly UITreeAssetValidator _treeValidator;
         
         private ToolButtonFactory()
@@ -15,9 +15,9 @@ namespace SolidSpace.UI.Factory
             _treeValidator = new UITreeAssetValidator();
         }
         
-        public ToolButtonFactory(IUIEventManager events)
+        public ToolButtonFactory(IUIEventDispatcher eventDispatcher)
         {
-            _events = events;
+            _eventDispatcher = eventDispatcher;
         }
 
         protected override ToolButton Create(VisualElement root)
@@ -27,9 +27,10 @@ namespace SolidSpace.UI.Factory
                 Root = root,
                 Button = UIQuery.Child<VisualElement>(root, "Button"),
                 Image = UIQuery.Child<VisualElement>(root, "Image"),
+                EventDispatcher = _eventDispatcher
             };
 
-            _events.Register<MouseDownEvent>(view.Button, view.OnMouseDownEvent);
+            view.Button.RegisterCallback<MouseDownEvent>(view.OnMouseDownEvent);
 
             return view;
         }

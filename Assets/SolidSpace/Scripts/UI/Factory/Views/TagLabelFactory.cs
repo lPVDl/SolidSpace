@@ -7,7 +7,7 @@ namespace SolidSpace.UI.Factory
     [InspectorDataValidator]
     internal class TagLabelFactory : AUIViewFactory<TagLabel>, IDataValidator<UIPrefab<TagLabel>>
     {
-        private readonly IUIEventManager _events;
+        private readonly IUIEventDispatcher _eventDispatcher;
         private readonly UITreeAssetValidator _treeValidator;
 
         private TagLabelFactory()
@@ -15,9 +15,9 @@ namespace SolidSpace.UI.Factory
             _treeValidator = new UITreeAssetValidator();
         }
         
-        public TagLabelFactory(IUIEventManager events)
+        public TagLabelFactory(IUIEventDispatcher eventDispatcher)
         {
-            _events = events;
+            _eventDispatcher = eventDispatcher;
         }
 
         protected override TagLabel Create(VisualElement root)
@@ -29,13 +29,14 @@ namespace SolidSpace.UI.Factory
                 Label = UIQuery.Child<Label>(root, "Label"),
                 Lock = UIQuery.Child<VisualElement>(root, "Lock"),
                 State = ETagLabelState.Neutral,
-                IsLocked = false
+                IsLocked = false,
+                EventDispatcher = _eventDispatcher
             };
             
             view.AddToClassList(TagLabel.StateToName(ETagLabelState.Neutral));
             view.AddToClassList("unlocked");
             
-            _events.Register<MouseDownEvent>(view.Button, view.OnMouseDownEvent);
+            view.Button.RegisterCallback<MouseDownEvent>(view.OnMouseDownEvent);
 
             return view;
         }

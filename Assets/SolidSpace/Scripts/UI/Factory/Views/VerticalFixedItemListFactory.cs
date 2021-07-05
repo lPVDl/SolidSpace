@@ -8,7 +8,7 @@ namespace SolidSpace.UI.Factory
     [InspectorDataValidator]
     public class VerticalFixedItemListFactory : AUIViewFactory<VerticalFixedItemList>, IDataValidator<UIPrefab<VerticalFixedItemList>>
     {
-        private readonly IUIEventManager _events;
+        private readonly IUIEventDispatcher _eventDispatcher;
         private readonly UITreeAssetValidator _treeValidator;
         
         private VerticalFixedItemListFactory()
@@ -16,9 +16,9 @@ namespace SolidSpace.UI.Factory
             _treeValidator = new UITreeAssetValidator();
         }
 
-        public VerticalFixedItemListFactory(IUIEventManager events)
+        public VerticalFixedItemListFactory(IUIEventDispatcher eventDispatcher)
         {
-            _events = events;
+            _eventDispatcher = eventDispatcher;
         }
         
         protected override VerticalFixedItemList Create(VisualElement root)
@@ -29,11 +29,12 @@ namespace SolidSpace.UI.Factory
                 AttachPoint = UIQuery.Child<VisualElement>(root, "AttachPoint"),
                 SliderStart = UIQuery.Child<VisualElement>(root, "SliderStart"),
                 SliderMiddle = UIQuery.Child<VisualElement>(root, "SliderMiddle"),
-                SliderEnd = UIQuery.Child<VisualElement>(root, "SliderEnd")
+                SliderEnd = UIQuery.Child<VisualElement>(root, "SliderEnd"),
+                EventDispatcher = _eventDispatcher
             };
             
-            _events.Register<WheelEvent>(view.Root, view.OnWheelEvent);
-
+            view.Root.RegisterCallback<WheelEvent>(view.OnWheelEvent);
+            
             return view;
         }
 

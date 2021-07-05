@@ -1,4 +1,5 @@
 using System;
+using SolidSpace.UI.Core;
 using UnityEngine.UIElements;
 
 namespace SolidSpace.UI.Factory
@@ -11,6 +12,8 @@ namespace SolidSpace.UI.Factory
         public VisualElement Button { get; set; }
         public Label Label { get; set; }
         public bool IsMouseDown { get; set; }
+        
+        public IUIEventDispatcher EventDispatcher { get; set; }
 
         public void SetLabel(string text)
         {
@@ -43,7 +46,7 @@ namespace SolidSpace.UI.Factory
                 
                 RemoveFromClassList("pressed");
                 
-                Clicked?.Invoke();
+                EventDispatcher.ScheduleOrSkip(Clicked);
             }
         }
 

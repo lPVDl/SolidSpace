@@ -8,7 +8,7 @@ namespace SolidSpace.UI.Factory
     public class StringFieldFactory : AUIViewFactory<StringField>, IDataValidator<UIPrefab<StringField>>, 
         IStringFieldCorrectionBehaviour
     {
-        private readonly IUIEventManager _events;
+        private readonly IUIEventDispatcher _eventDispatcher;
         private readonly UITreeAssetValidator _assetValidator;
         
         private StringFieldFactory()
@@ -16,9 +16,9 @@ namespace SolidSpace.UI.Factory
             _assetValidator = new UITreeAssetValidator();
         }
 
-        public StringFieldFactory(IUIEventManager events)
+        public StringFieldFactory(IUIEventDispatcher eventDispatcher)
         {
-            _events = events;
+            _eventDispatcher = eventDispatcher;
         }
         
         protected override StringField Create(VisualElement root)
@@ -28,11 +28,12 @@ namespace SolidSpace.UI.Factory
                 Root = root,
                 TextField = UIQuery.Child<TextField>(root, ""),
                 IsValueChanged = false,
-                CorrectionBehaviour = this
+                CorrectionBehaviour = this,
+                EventDispatcher = _eventDispatcher
             };
             
-            _events.Register<ChangeEvent<string>>(view.TextField, view.OnValueChanged);
-            _events.Register<FocusOutEvent>(view.TextField, view.OnFocusOut);
+            view.TextField.RegisterCallback<ChangeEvent<string>>(view.OnValueChanged);
+            view.TextField.RegisterCallback<FocusOutEvent>(view.OnFocusOut);
 
             return view;
         }

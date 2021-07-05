@@ -1,4 +1,5 @@
 using System;
+using SolidSpace.UI.Core;
 using UnityEngine.UIElements;
 
 namespace SolidSpace.UI.Factory
@@ -13,6 +14,8 @@ namespace SolidSpace.UI.Factory
         public TextField TextField { get; set; }
         
         public bool IsValueChanged { get; set; }
+        
+        public IUIEventDispatcher EventDispatcher { get; set; }
         
         public IStringFieldCorrectionBehaviour CorrectionBehaviour { get; set; }
 
@@ -52,7 +55,7 @@ namespace SolidSpace.UI.Factory
                 TextField.SetValueWithoutNotify(Value);
             }
 
-            ValueChanged?.Invoke();
+            EventDispatcher.ScheduleOrSkip(ValueChanged);
         }
     }
 }
