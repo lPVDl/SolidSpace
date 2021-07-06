@@ -10,11 +10,13 @@ namespace SolidSpace.Gizmos
     public class GizmosStateStorage : IInitializable, IGizmosStateStorage
     {
         public int Version { get; private set; }
+        public int HandleCount => _lastHandleId;
 
         private Dictionary<string, ushort> _handleToId;
         private ushort _lastHandleId;
         private NativeArray<int> _activityChunks;
         private NativeArray<Color> _colors;
+        private List<string> _names;
 
         public void OnInitialize()
         {
@@ -22,6 +24,7 @@ namespace SolidSpace.Gizmos
             _lastHandleId = 0;
             _activityChunks = NativeMemory.CreatePersistentArray<int>(0);
             _colors = NativeMemory.CreatePersistentArray<Color>(0);
+            _names = new List<string>();
         }
 
         public ushort GetOrCreateHandleId(string name, Color defaultColor)
@@ -51,7 +54,9 @@ namespace SolidSpace.Gizmos
             };
             NativeMemory.MaintainPersistentArrayLength(ref _activityChunks, rule);
             NativeMemory.MaintainPersistentArrayLength(ref _colors, rule);
-            SetChunkActivityBit(handleId, true);
+            var enabled = PlayerPrefs.GetInt(name, 1) > 0;
+            SetChunkActivityBit(handleId, enabled);
+            _names.Add(name);
             _colors[handleId] = defaultColor;
             Version++;
 
@@ -64,7 +69,7 @@ namespace SolidSpace.Gizmos
             {
                 throw new ArgumentException($"{nameof(handleId)} is not created");
             }
-            
+
             return GetChunkActivityBit(handleId);
         }
 
@@ -79,7 +84,8 @@ namespace SolidSpace.Gizmos
             {
                 return;
             }
-            
+
+            PlayerPrefs.SetInt(_names[handleId], enabled ? 1 : 0);
             SetChunkActivityBit(handleId, enabled);
             Version++;
         }
@@ -108,6 +114,16 @@ namespace SolidSpace.Gizmos
 
             _colors[handleId] = color;
             Version++;
+        }
+
+        public string GetHandleName(ushort handleId)
+        {
+            if (handleId >= _lastHandleId)
+            {
+                throw new ArgumentException($"{nameof(handleId)} is not created");
+            }
+
+            return _names[handleId];
         }
 
         private void SetChunkActivityBit(ushort handleId, bool active)

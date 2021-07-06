@@ -14,3 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _config:
     _shader: {fileID: 4800000, guid: 915ba2d50572446cbe22f892c9652771, type: 3}
+    _windowItemCount: 8
+    _windowScrollDelta: 1
+    _handleNameConverter:
+      pattern: (.*)\.(.*$)
+      substitution: $2

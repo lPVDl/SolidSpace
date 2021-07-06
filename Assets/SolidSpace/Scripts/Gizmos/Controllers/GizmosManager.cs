@@ -43,7 +43,7 @@ namespace SolidSpace.Gizmos
         
         public GizmosHandle GetHandle(object owner, string name, Color defaultColor)
         {
-            var id = _storage.GetOrCreateHandleId(owner.GetType().FullName + ":" + name, defaultColor);
+            var id = _storage.GetOrCreateHandleId(owner.GetType().FullName + "(" + name + ")", defaultColor);
             
             return new GizmosHandle(id, this, _storage);
         }
