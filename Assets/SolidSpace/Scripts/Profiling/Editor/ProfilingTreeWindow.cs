@@ -14,8 +14,7 @@ namespace SolidSpace.Profiling.Editor
 
         private int _offset;
         private int _yScroll;
-        private string[] _fractionText;
-        private string[] _exponentText;
+        private ProfilingNodesView _view;
 
         private void OnGUI()
         {
@@ -32,23 +31,7 @@ namespace SolidSpace.Profiling.Editor
                 return;
             }
 
-            if (_fractionText == null)
-            {
-                _fractionText = new string[100];
-                for (var i = 0; i < 100; i++)
-                {
-                    _fractionText[i] = "." + i.ToString("D2");
-                }
-            }
-
-            if (_exponentText == null)
-            {
-                _exponentText = new string[100];
-                for (var i = 0; i < 100; i++)
-                {
-                    _exponentText[i] = i.ToString("D2");
-                }
-            }
+            _view ??= new ProfilingNodesView();
 
             _stopwatch ??= new Stopwatch();
             _stopwatch.Reset();
@@ -78,39 +61,9 @@ namespace SolidSpace.Profiling.Editor
                 _yScroll = 0;
             }
 
-            var labelRect = EditorGUILayout.GetControlRect(false);
-
-            labelRect.height = 20;
+            var rect = EditorGUILayout.GetControlRect(false);
             
-            var timeRectLeft = new Rect(labelRect.width - 32, labelRect.y, 20, 20);
-            var timeRectRight = new Rect(labelRect.width - 19, labelRect.y, 25, 20);
-            
-            for (var i = 0; i < _nodes.Count; i++)
-            {
-                var node = _nodes[i];
-
-                labelRect.x = 20 * node.deep + 3;
-
-                GUI.Label(labelRect, node.name);
-                
-                TimeToString(node.time, out var timeTextLeft, out var timeTextRight);
-                if ((int) node.time > 0)
-                {
-                    GUI.Label(timeRectLeft, timeTextLeft);
-                }
-                
-                GUI.Label(timeRectRight, timeTextRight);
-
-                labelRect.y += 20;
-                timeRectRight.y += 20;
-                timeRectLeft.y += 20;
-            }
-        }
-
-        private void TimeToString(float time, out string left, out string right)
-        {
-            left = _exponentText[Math.Min(99, (int) time)];
-            right = _fractionText[(int) (time % 1 * 100)];
+            _view.OnGUI(rect, _nodes);
         }
     }
 }
