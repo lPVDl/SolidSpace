@@ -61,12 +61,12 @@ namespace SolidSpace.Playground.Tools.PositionChange
                     break;
                 
                 case ECaptureEventType.SelectionSingle:
-                    _gizmos.DrawScreenSquare(eventData.entityPosition, 6);
+                    _gizmos.DrawScreenDot(eventData.entityPosition);
                     _gizmos.DrawLine(eventData.currentPointer, eventData.entityPosition);
                     break;
                 
                 case ECaptureEventType.SelectionMultiple:
-                    _gizmos.DrawScreenSquare(eventData.entityPosition, 6);
+                    _gizmos.DrawScreenDot(eventData.entityPosition);
                     break;
                 
                 default:
@@ -76,7 +76,7 @@ namespace SolidSpace.Playground.Tools.PositionChange
 
         public void OnDrawSelectionCircle(float2 position, float radius)
         {
-            _gizmos.DrawWirePolygon(position, radius, 48);
+            _gizmos.DrawScreenCircle(position, radius);
         }
 
         public void OnFinalize()

@@ -99,7 +99,7 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
             switch (eventData.eventType)
             {
                 case ESpawnEventType.Preview:
-                    _gizmos.DrawScreenSquare(eventData.position, 6);
+                    _gizmos.DrawScreenDot(eventData.position);
                     break;
                 
                 case ESpawnEventType.Place:
@@ -113,7 +113,7 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
 
         public void OnDrawSpawnCircle(float2 position, float radius)
         {
-            _gizmos.DrawWirePolygon(position, radius, 48);
+            _gizmos.DrawScreenCircle(position, radius);
         }
 
         private void Spawn(float2 position, float spawnRate, float particleVelocity)

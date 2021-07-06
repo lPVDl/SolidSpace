@@ -1,5 +1,7 @@
+using System;
 using System.Runtime.CompilerServices;
 using SolidSpace.Gizmos.Shapes;
+using SolidSpace.Mathematics;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -9,19 +11,18 @@ namespace SolidSpace.Gizmos
 {
     public struct GizmosHandle
     {
-        internal readonly ushort id;
-        
-        private readonly GizmosManager _handleFactory;
+        private readonly ushort _id;
+        private readonly GizmosManager _gizmos;
         private readonly IGizmosStateStorage _storage;
 
         private int _cashVersion;
         private bool _enabled;
         private Color _color;
         
-        internal GizmosHandle(ushort id, GizmosManager handleFactory, IGizmosStateStorage storage)
+        internal GizmosHandle(ushort id, GizmosManager gizmos, IGizmosStateStorage storage)
         {
-            this.id = id;
-            _handleFactory = handleFactory;
+            _id = id;
+            _gizmos = gizmos;
             _storage = storage;
             _cashVersion = -1;
             _enabled = false;
@@ -36,7 +37,7 @@ namespace SolidSpace.Gizmos
                 return;
             }
             
-            _handleFactory.ScheduleLineDraw(new Line
+            _gizmos.ScheduleLineDraw(new Line
             {
                 start = start,
                 end = end,
@@ -52,7 +53,7 @@ namespace SolidSpace.Gizmos
                 return;
             }
             
-            _handleFactory.ScheduleLineDraw(new Line
+            _gizmos.ScheduleLineDraw(new Line
             {
                 start = new float2(x0, y0),
                 end = new float2(x1, y1),
@@ -68,7 +69,7 @@ namespace SolidSpace.Gizmos
                 return;
             }
             
-            _handleFactory.ScheduleWireRectDraw(new Rect
+            _gizmos.ScheduleWireRectDraw(new Rect
             {
                 center = center,
                 size = new half2((half) size.x, (half) size.y),
@@ -85,7 +86,7 @@ namespace SolidSpace.Gizmos
                 return;
             }
             
-            _handleFactory.ScheduleWireSquareDraw(new Square
+            _gizmos.ScheduleWireSquareDraw(new Square
             {
                 center = center,
                 size = (half) size,
@@ -101,11 +102,31 @@ namespace SolidSpace.Gizmos
                 return;
             }
             
-            _handleFactory.ScheduleScreenSquareDraw(new Square
+            _gizmos.ScheduleScreenSquareDraw(new Square
             {
                 center = center,
                 size = (half) size,
                 color = _color
+            });
+        }
+
+        public void DrawScreenDot(float2 center) => DrawScreenSquare(center, 6);
+
+        public void DrawScreenCircle(float2 center, float radius)
+        {
+            UpdateCash();
+            if (!_enabled)
+            {
+                return;
+            }
+
+            var topology = (byte) Math.Min(255, Math.Max(32, 2 * FloatMath.PI * radius * 0.125f));
+            _gizmos.ScheduleWirePolygonDraw(new Polygon
+            {
+                center = center,
+                topology = topology,
+                color = _color,
+                radius = (half) radius
             });
         }
 
@@ -117,7 +138,7 @@ namespace SolidSpace.Gizmos
                 return;
             }
             
-            _handleFactory.ScheduleWirePolygonDraw(new Polygon
+            _gizmos.ScheduleWirePolygonDraw(new Polygon
             {
                 center = center,
                 topology = (byte) topology,
@@ -129,15 +150,15 @@ namespace SolidSpace.Gizmos
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void UpdateCash()
         {
-            var managerVersion = _handleFactory.RenderVersion;
+            var managerVersion = _gizmos.RenderVersion;
             if (managerVersion == _cashVersion)
             {
                 return;
             }
 
             _cashVersion = managerVersion;
-            _enabled = _storage.GetHandleEnabled(id);
-            _color = _storage.GetHandleColor(id);
+            _enabled = _storage.GetHandleEnabled(_id);
+            _color = _storage.GetHandleColor(_id);
         }
     }
 }

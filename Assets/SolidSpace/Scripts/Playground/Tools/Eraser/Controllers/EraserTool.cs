@@ -63,12 +63,12 @@ namespace SolidSpace.Playground.Tools.Eraser
             switch (eventData.eventType)
             {
                 case ECaptureEventType.SelectionSingle:
-                    _gizmos.DrawScreenSquare(eventData.entityPosition, 6);
+                    _gizmos.DrawScreenDot(eventData.entityPosition);
                     _gizmos.DrawLine(eventData.currentPointer, eventData.entityPosition);
                     break;
                 
                 case ECaptureEventType.SelectionMultiple:
-                    _gizmos.DrawScreenSquare(eventData.entityPosition, 6);
+                    _gizmos.DrawScreenDot(eventData.entityPosition);
                     break;
                 
                 case ECaptureEventType.CaptureStart:
@@ -88,7 +88,7 @@ namespace SolidSpace.Playground.Tools.Eraser
 
         public void OnDrawSelectionCircle(float2 position, float radius)
         {
-            _gizmos.DrawWirePolygon(position, radius, 48);
+            _gizmos.DrawScreenCircle(position, radius);
         }
 
         private void OnDestroyClicked()

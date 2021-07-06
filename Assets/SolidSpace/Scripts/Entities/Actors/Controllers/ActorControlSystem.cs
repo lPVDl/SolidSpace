@@ -103,7 +103,7 @@ namespace SolidSpace.Entities.Actors
             _profiler.EndSample("Gizmos collect result");
             
             _profiler.BeginSample("Draw gizmos");
-            _gizmos.DrawWirePolygon(_targetPosition, 100f, 48);
+            _gizmos.DrawScreenCircle(_targetPosition, 100f);
             var count = countReference.Value;
             for (var i = 0; i < count; i++)
             {
