@@ -11,14 +11,14 @@ namespace SolidSpace.UI.Core
         public bool IsMouseOver => _hoveredElements > 0;
         
         private readonly UIConfig _config;
-        private readonly List<IUIViewFactory> _factories;
+        private readonly List<IUIViewBuilder> _factories;
 
-        private Dictionary<Type, IUIViewFactory> _factoryStorage;
+        private Dictionary<Type, IUIViewBuilder> _factoryStorage;
         private Dictionary<string, VisualElement> _rootContainers;
         private VisualElement _rootElement;
         private int _hoveredElements;
 
-        public UIManager(UIConfig config, List<IUIViewFactory> factories)
+        public UIManager(UIConfig config, List<IUIViewBuilder> factories)
         {
             _config = config;
             _factories = factories;
@@ -26,7 +26,7 @@ namespace SolidSpace.UI.Core
         
         public void OnInitialize()
         {
-            _factoryStorage = new Dictionary<Type, IUIViewFactory>();
+            _factoryStorage = new Dictionary<Type, IUIViewBuilder>();
             foreach (var factory in _factories)
             {
                 var elementType = factory.ViewType;
@@ -65,14 +65,14 @@ namespace SolidSpace.UI.Core
             _hoveredElements--;
         }
 
-        public T Instantiate<T>(UIPrefab<T> prefab) where T : class, IUIElement
+        public T Build<T>(UIPrefab<T> prefab) where T : class, IUIElement
         {
             if (prefab is null) throw new ArgumentNullException(nameof(prefab));
             if (prefab.Asset is null) throw new ArgumentNullException($"{nameof(prefab)}.{nameof(prefab.Asset)} is null");
             
             if (!_factoryStorage.TryGetValue(typeof(T), out var factory))
             {
-                throw new InvalidOperationException($"{nameof(IUIViewFactory)} for type {typeof(T)} was not found");
+                throw new InvalidOperationException($"{nameof(IUIViewBuilder)} for type {typeof(T)} was not found");
             }
 
             return (T) factory.Create(prefab.Asset.CloneTree());

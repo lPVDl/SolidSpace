@@ -3,11 +3,11 @@ using UnityEngine.UIElements;
 
 namespace SolidSpace.UI.Core
 {
-    public abstract class AUIViewFactory<T> : IUIViewFactory where T : class, IUIElement
+    public abstract class AUIViewBuilder<T> : IUIViewBuilder where T : class, IUIElement
     {
         public Type ViewType => typeof(T);
 
-        object IUIViewFactory.Create(VisualElement root)
+        object IUIViewBuilder.Create(VisualElement root)
         {
             return Create(root);
         }

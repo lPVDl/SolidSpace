@@ -13,18 +13,18 @@ namespace SolidSpace.UI.Factory
             _prefabs = prefabs;
         }
         
-        public IToolWindow CreateToolWindow() => _uiManager.Instantiate(_prefabs.ToolWindow);
+        public IToolWindow CreateToolWindow() => _uiManager.Build(_prefabs.ToolWindow);
 
-        public IToolButton CreateToolButton() => _uiManager.Instantiate(_prefabs.ToolButton);
+        public IToolButton CreateToolButton() => _uiManager.Build(_prefabs.ToolButton);
 
-        public ITagLabel CreateTagLabel() => _uiManager.Instantiate(_prefabs.TagLabel);
+        public ITagLabel CreateTagLabel() => _uiManager.Build(_prefabs.TagLabel);
 
-        public ILayoutGrid CreateLayoutGrid() => _uiManager.Instantiate(_prefabs.LayoutGrid);
+        public ILayoutGrid CreateLayoutGrid() => _uiManager.Build(_prefabs.LayoutGrid);
 
-        public IGeneralButton CreateGeneralButton() => _uiManager.Instantiate(_prefabs.GeneralButton);
+        public IGeneralButton CreateGeneralButton() => _uiManager.Build(_prefabs.GeneralButton);
 
-        public IStringField CreateStringField() => _uiManager.Instantiate(_prefabs.StringField);
+        public IStringField CreateStringField() => _uiManager.Build(_prefabs.StringField);
         
-        public IVerticalFixedItemList CreateVerticalList() => _uiManager.Instantiate(_prefabs.VerticalFixedItemList);
+        public IVerticalFixedItemList CreateVerticalList() => _uiManager.Build(_prefabs.VerticalFixedItemList);
     }
 }

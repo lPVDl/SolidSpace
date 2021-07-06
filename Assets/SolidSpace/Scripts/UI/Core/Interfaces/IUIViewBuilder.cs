@@ -3,7 +3,7 @@ using UnityEngine.UIElements;
 
 namespace SolidSpace.UI.Core
 {
-    public interface IUIViewFactory
+    public interface IUIViewBuilder
     {
         public Type ViewType { get; }
 

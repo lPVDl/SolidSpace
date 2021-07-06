@@ -5,25 +5,15 @@ using UnityEngine.UIElements;
 namespace SolidSpace.UI.Factory
 {
     [InspectorDataValidator]
-    internal class ToolWindowFactory : AUIViewFactory<ToolWindow>, IDataValidator<UIPrefab<ToolWindow>>
+    internal class ToolWindowValidator : IDataValidator<UIPrefab<ToolWindow>>
     {
         private readonly UITreeAssetValidator _treeValidator;
         
-        public ToolWindowFactory()
+        public ToolWindowValidator()
         {
             _treeValidator = new UITreeAssetValidator();
         }
         
-        protected override ToolWindow Create(VisualElement root)
-        {
-            return new ToolWindow
-            {
-                Root = root,
-                AttachPoint = UIQuery.Child<VisualElement>(root, "AttachPoint"),
-                Label = UIQuery.Child<Label>(root, "Label")
-            };
-        }
-
         public string Validate(UIPrefab<ToolWindow> data)
         {
             if (data.Asset is null)

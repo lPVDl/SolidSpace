@@ -1,7 +1,6 @@
 using System;
 using SolidSpace.UI.Core;
 using Unity.Mathematics;
-using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace SolidSpace.UI.Factory

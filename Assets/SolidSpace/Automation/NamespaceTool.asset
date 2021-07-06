@@ -42,6 +42,9 @@ MonoBehaviour:
         pattern: \/(?i)SolidSpace\/.*\/Views$
     - enabled: 1
       filter:
+        pattern: \/(?i)SolidSpace\/.*\/Views\/.*$
+    - enabled: 1
+      filter:
         pattern: \/(?i)SolidSpace\/.*\/Installers$
     - enabled: 1
       filter:

@@ -3,7 +3,7 @@ using UnityEngine.UIElements;
 
 namespace SolidSpace.UI.Factory
 {
-    internal class LayoutGridFactory : AUIViewFactory<LayoutGrid>
+    internal class LayoutGridBuilder : AUIViewBuilder<LayoutGrid>
     {
         protected override LayoutGrid Create(VisualElement root)
         {

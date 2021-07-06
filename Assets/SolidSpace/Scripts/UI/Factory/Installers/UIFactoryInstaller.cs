@@ -11,13 +11,13 @@ namespace SolidSpace.UI.Factory
         {
             container.Bind<UIFactory>(_prefabs);
 
-            container.Bind<ToolButtonFactory>();
-            container.Bind<ToolWindowFactory>();
-            container.Bind<TagLabelFactory>();
-            container.Bind<LayoutGridFactory>();
-            container.Bind<GeneralButtonFactory>();
-            container.Bind<StringFieldFactory>();
-            container.Bind<VerticalFixedItemListFactory>();
+            container.Bind<ToolButtonBuilder>();
+            container.Bind<ToolWindowBuilder>();
+            container.Bind<TagLabelBuilder>();
+            container.Bind<LayoutGridBuilder>();
+            container.Bind<GeneralButtonBuilder>();
+            container.Bind<StringFieldBuilder>();
+            container.Bind<VerticalFixedItemListBuilder>();
         }
     }
 }
