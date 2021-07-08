@@ -25,8 +25,9 @@ MonoBehaviour:
         - typeName: SolidSpace.Gizmos.GizmosWindow
       - _name: Entities
         _controllers:
+        - typeName: SolidSpace.Entities.World.EntityManager
         - typeName: SolidSpace.Entities.Physics.Velocity.VelocitySystem
-        - typeName: SolidSpace.Entities.Despawn.DespawnComputeSystem
+        - typeName: SolidSpace.Entities.Despawn.TimeDespawnComputeSystem
         - typeName: SolidSpace.Entities.ParticleEmitters.ParticleEmitterComputeSystem
         - typeName: SolidSpace.Entities.ParticleEmitters.ParticleEmitterCommandSystem
         - typeName: SolidSpace.Entities.Rendering.Pixels.PixelMeshSystem
@@ -41,6 +42,7 @@ MonoBehaviour:
         - typeName: SolidSpace.Entities.Actors.ActorControlSystem
         - typeName: SolidSpace.Entities.Bullets.BulletComputeSystem
         - typeName: SolidSpace.Entities.Physics.Rigidbody.RigidbodyComputeSystem
+        - typeName: SolidSpace.Entities.Despawn.EntityDestructionBuffer
       - _name: Managed
         _controllers:
         - typeName: SolidSpace.CameraMotion.CameraMotionController
@@ -59,15 +61,14 @@ MonoBehaviour:
         - typeName: SolidSpace.Entities.Physics.Velocity.VelocitySystem
         - typeName: SolidSpace.Entities.Physics.Rigidbody.RigidbodyComputeSystem
         - typeName: SolidSpace.Entities.ParticleEmitters.ParticleEmitterComputeSystem
-        - typeName: SolidSpace.Entities.Despawn.DespawnComputeSystem
+        - typeName: SolidSpace.Entities.Despawn.TimeDespawnComputeSystem
         - typeName: SolidSpace.Playground.Tools.EntitySearch.EntitySearchSystem
         - typeName: SolidSpace.Entities.Health.HealthAtlasGarbageCollector
         - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteGarbageCollectorSystem
       - _name: EntityCommand
         _controllers:
-        - typeName: SolidSpace.Entities.Bullets.BulletCommandSystem
         - typeName: SolidSpace.Entities.ParticleEmitters.ParticleEmitterCommandSystem
-        - typeName: SolidSpace.Entities.Despawn.DespawnCommandSystem
+        - typeName: SolidSpace.Entities.Despawn.EntityDestructionBuffer
       - _name: Managed
         _controllers:
         - typeName: SolidSpace.CameraMotion.CameraMotionController

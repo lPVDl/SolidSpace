@@ -1,13 +1,14 @@
+using SolidSpace.GameCycle;
 using Unity.Collections;
 using Unity.Entities;
 
 namespace SolidSpace.Entities.World
 {
-    internal class EntityManager : IEntityManager
+    internal class EntityManager : IEntityManager, IInitializable
     {
-        private readonly Unity.Entities.World _world;
+        private Unity.Entities.World _world;
 
-        public EntityManager()
+        public void OnInitialize()
         {
             _world = new Unity.Entities.World("SolidSpace");
         }
@@ -90,6 +91,11 @@ namespace SolidSpace.Entities.World
         public T GetComponentData<T>(Entity entity) where T : struct, IComponentData
         {
             return _world.EntityManager.GetComponentData<T>(entity);
+        }
+
+        public void OnFinalize()
+        {
+            
         }
     }
 }

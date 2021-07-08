@@ -7,12 +7,12 @@ using Unity.Jobs;
 namespace SolidSpace.Entities.Despawn
 {
     [BurstCompile] 
-    internal struct DespawnComputeJob : IJobParallelFor
+    internal struct TimeDespawnComputeJob : IJobParallelFor
     {
         [ReadOnly] public NativeArray<ArchetypeChunk> inChunks;
         [ReadOnly] public NativeArray<int> inWriteOffsets;
         
-        [ReadOnly] public ComponentTypeHandle<DespawnComponent> despawnHandle;
+        [ReadOnly] public ComponentTypeHandle<TimeDespawnComponent> despawnHandle;
         [ReadOnly] public EntityTypeHandle entityHandle;
         [ReadOnly] public float time;
         

@@ -10,36 +10,35 @@ using UnityEngine;
 
 namespace SolidSpace.Entities.Despawn
 {
-    public class DespawnComputeSystem : IInitializable, IUpdatable, IDespawnComputeSystem
+    public class TimeDespawnComputeSystem : IInitializable, IUpdatable
     {
         private const int IterationCycle = 8;
-        public NativeArray<Entity> ResultBuffer => _entities;
-        public int ResultCount => _entityCount.Value;
         
         private readonly IEntityManager _entityManager;
         private readonly IEntityWorldTime _time;
         private readonly IProfilingManager _profilingManager;
+        private readonly IEntityDestructionBuffer _destructionBuffer;
 
         private EntityQuery _query;
-        private NativeReference<int> _entityCount;
         private NativeArray<Entity> _entities;
         private int _lastOffset;
         private ProfilingHandle _profiler;
 
-        public DespawnComputeSystem(IEntityManager entityManager, IEntityWorldTime time, IProfilingManager profilingManager)
+        public TimeDespawnComputeSystem(IEntityManager entityManager, IEntityWorldTime time, IProfilingManager profilingManager,
+            IEntityDestructionBuffer destructionBuffer)
         {
             _entityManager = entityManager;
             _time = time;
             _profilingManager = profilingManager;
+            _destructionBuffer = destructionBuffer;
         }
         
         public void OnInitialize()
         {
             _profiler = _profilingManager.GetHandle(this);
-            _query = _entityManager.CreateEntityQuery(typeof(DespawnComponent));
+            _query = _entityManager.CreateEntityQuery(typeof(TimeDespawnComponent));
             _lastOffset = -1;
             _entities = NativeMemory.CreatePersistentArray<Entity>(4096);
-            _entityCount = NativeMemory.CreatePersistentReference(0);
         }
 
         public void OnUpdate()
@@ -77,10 +76,10 @@ namespace SolidSpace.Entities.Despawn
             _profiler.EndSample("Update Entity Buffer");
 
             _profiler.BeginSample("Compute & Collect");
-            var computeJob = new DespawnComputeJob
+            var computeJob = new TimeDespawnComputeJob
             {
                 inChunks = computeChunks,
-                despawnHandle = _entityManager.GetComponentTypeHandle<DespawnComponent>(true),
+                despawnHandle = _entityManager.GetComponentTypeHandle<TimeDespawnComponent>(true),
                 entityHandle = _entityManager.GetEntityTypeHandle(),
                 outEntityCounts = countsBuffer, 
                 inWriteOffsets = computeOffsets,
@@ -94,22 +93,26 @@ namespace SolidSpace.Entities.Despawn
                 inCounts = countsBuffer,
                 inOffsets = computeOffsets,
                 inOutData = _entities,
-                outCount = _entityCount
+                outCount = NativeMemory.CreateTempJobReference<int>()
             };
             var collectJobHandle = collectJob.Schedule(computeJobHandle);
             collectJobHandle.Complete();
             _profiler.EndSample("Compute & Collect");
 
+            _destructionBuffer.ScheduleDestroy(new NativeSlice<Entity>(_entities, 0, collectJob.outCount.Value));
+            
+            _profiler.BeginSample("Dispose arrays");
             countsBuffer.Dispose();
             rawChunks.Dispose();
             computeChunks.Dispose();
             computeOffsets.Dispose();
+            collectJob.outCount.Dispose();
+            _profiler.EndSample("Dispose arrays");
         }
 
         public void OnFinalize()
         {
             _entities.Dispose();
-            _entityCount.Dispose();
         }
     }
 }

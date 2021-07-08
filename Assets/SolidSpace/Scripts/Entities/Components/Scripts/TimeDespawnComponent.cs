@@ -2,7 +2,7 @@ using Unity.Entities;
 
 namespace SolidSpace.Entities.Components
 {
-    public struct DespawnComponent : IComponentData
+    public struct TimeDespawnComponent : IComponentData
     {
         public float despawnTime;
     }

@@ -1,4 +1,5 @@
 using SolidSpace.Entities.Components;
+using SolidSpace.Entities.Despawn;
 using SolidSpace.Entities.Health;
 using SolidSpace.Entities.Physics.Colliders;
 using SolidSpace.Entities.Physics.Raycast;
@@ -14,10 +15,8 @@ using UnityEngine;
 
 namespace SolidSpace.Entities.Bullets
 {
-    public class BulletComputeSystem : IInitializable, IUpdatable, IBulletComputeSystem
+    public class BulletComputeSystem : IInitializable, IUpdatable
     {
-        public NativeArray<Entity> EntitiesToDestroy { get; private set; }
-        
         private readonly IColliderBakeSystemFactory _colliderBakeSystemFactory;
         private readonly IRaycastSystemFactory _raycastSystemFactory;
         private readonly IProfilingManager _profilingManager;
@@ -26,9 +25,11 @@ namespace SolidSpace.Entities.Bullets
         private readonly ISpriteColorSystem _spriteSystem;
         private readonly IHealthAtlasSystem _healthSystem;
         private readonly IGizmosManager _gizmosManager;
+        private readonly IEntityDestructionBuffer _destructionBuffer;
 
         private ProfilingHandle _profiler;
         private IColliderBakeSystem<BulletColliderBakeBehaviour> _colliderBakeSystem;
+        private NativeArray<Entity> _entitiesToDestroy;
         private IRaycastSystem<BulletRaycastBehaviour> _raycastSystem;
         private GizmosHandle _gridGizmos;
         private GizmosHandle _colliderGizmos;
@@ -37,7 +38,8 @@ namespace SolidSpace.Entities.Bullets
 
         public BulletComputeSystem(IColliderBakeSystemFactory colliderBakeSystemFactory, IEntityWorldTime worldTime, 
             IProfilingManager profilingManager, IEntityManager entityManager, IRaycastSystemFactory raycastSystemFactory,
-            ISpriteColorSystem spriteSystem, IHealthAtlasSystem healthSystem, IGizmosManager gizmosManager)
+            ISpriteColorSystem spriteSystem, IHealthAtlasSystem healthSystem, IGizmosManager gizmosManager,
+            IEntityDestructionBuffer destructionBuffer)
         {
             _colliderBakeSystemFactory = colliderBakeSystemFactory;
             _raycastSystemFactory = raycastSystemFactory;
@@ -47,12 +49,11 @@ namespace SolidSpace.Entities.Bullets
             _spriteSystem = spriteSystem;
             _healthSystem = healthSystem;
             _gizmosManager = gizmosManager;
+            _destructionBuffer = destructionBuffer;
         }
         
         public void OnInitialize()
         {
-            EntitiesToDestroy = NativeMemory.CreateTempJobArray<Entity>(0);
-
             _gridGizmos = _gizmosManager.GetHandle(this, "Grid", Color.gray);
             _colliderGizmos = _gizmosManager.GetHandle(this, "Collider", Color.green);
             _profiler = _profilingManager.GetHandle(this);
@@ -71,6 +72,7 @@ namespace SolidSpace.Entities.Bullets
                 typeof(BulletComponent)
             });
             _raycastSystem = _raycastSystemFactory.Create<BulletRaycastBehaviour>(_profiler);
+            _entitiesToDestroy = NativeMemory.CreateTempJobArray<Entity>(0);
         }
         
         public void OnUpdate()
@@ -117,25 +119,24 @@ namespace SolidSpace.Entities.Bullets
             var healthAtlas = _healthSystem.Data;
             var spriteTexture = _spriteSystem.Texture;
             
-            EntitiesToDestroy.Dispose();
-            var entitiesToDestroy = NativeMemory.CreateTempJobArray<Entity>(hitCount);
-            EntitiesToDestroy = entitiesToDestroy;
-            
+            _entitiesToDestroy.Dispose();
+            _entitiesToDestroy = NativeMemory.CreateTempJobArray<Entity>(hitCount);
+
             for (var i = 0; i < hitCount; i++)
             {
                 var hit = hits[i];
-                entitiesToDestroy[i] = hit.bulletEntity;
+                _entitiesToDestroy[i] = hit.bulletEntity;
                 healthAtlas[hit.healthOffset] = 0;
                 spriteTexture.SetPixel(hit.spriteOffset.x, hit.spriteOffset.y, Color.black);
             }
             spriteTexture.Apply();
+            _destructionBuffer.ScheduleDestroy(new NativeSlice<Entity>(_entitiesToDestroy, 0, hitCount));
             _profiler.EndSample("Apply damage");
             
             _profiler.BeginSample("Gizmos");
             ColliderGizmosUtil.DrawGrid(_gridGizmos, colliders.grid);
             ColliderGizmosUtil.DrawColliders(_colliderGizmos, colliders);
             _profiler.EndSample("Gizmos");
-            
             
             _profiler.BeginSample("Dispose arrays");
             colliderArchetypeChunks.Dispose();
@@ -148,7 +149,7 @@ namespace SolidSpace.Entities.Bullets
 
         public void OnFinalize()
         {
-            EntitiesToDestroy.Dispose();
+            _entitiesToDestroy.Dispose();
         }
     }
 }

@@ -26,7 +26,7 @@ namespace SolidSpace.Entities.ParticleEmitters
             {
                 typeof(PositionComponent),
                 typeof(VelocityComponent),
-                typeof(DespawnComponent),
+                typeof(TimeDespawnComponent),
                 typeof(BulletComponent),
                 typeof(PixelRenderComponent)
             });
@@ -50,7 +50,7 @@ namespace SolidSpace.Entities.ParticleEmitters
                 {
                     value = particle.velocity
                 });
-                _entityManager.SetComponentData(entity, new DespawnComponent
+                _entityManager.SetComponentData(entity, new TimeDespawnComponent
                 {
                     despawnTime = particle.despawnTime
                 });
