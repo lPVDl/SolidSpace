@@ -32,6 +32,7 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
         private EntityArchetype _shipArchetype;
         private IUIElement _componentsWindow;
         private GizmosHandle _gizmos;
+        private float2 _textureSize;
 
         public ShipSpawnTool(ShipSpawnToolConfig config, IEntityManager entityManager, IHealthAtlasSystem healthSystem,
             ISpriteColorSystem spriteSystem, ISpawnToolFactory spawnToolFactory, IPlaygroundUIManager uiManager,
@@ -61,6 +62,7 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
                 typeof(ActorComponent),
                 typeof(RigidbodyComponent)
             };
+            _textureSize = new float2(_config.ShipTexture.width, _config.ShipTexture.height);
             _shipArchetype = _entityManager.CreateArchetype(shipComponents);
             _componentsWindow = _filterFactory.CreateReadonly(shipComponents);
             _spawnTool = _spawnToolFactory.Create(this);
@@ -85,8 +87,9 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
             switch (eventData.eventType)
             {
                 case ESpawnEventType.Preview:
-                    _gizmos.DrawScreenDot(origin.position);
-                    _gizmos.DrawLine(origin.position, origin.position + FloatMath.Rotate(8f, origin.rotation));
+                    _gizmos.DrawWireRect(origin.position, _textureSize, origin.rotation);
+                    var xAxis = FloatMath.Rotate(_textureSize.x * 0.5f, origin.rotation);
+                    _gizmos.DrawLine(origin.position, origin.position + xAxis);
                     break;
                 
                 case ESpawnEventType.Place:

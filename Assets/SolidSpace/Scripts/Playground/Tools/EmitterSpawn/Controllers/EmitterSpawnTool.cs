@@ -99,6 +99,7 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
             switch (eventData.eventType)
             {
                 case ESpawnEventType.Preview:
+                    _gizmos.DrawWirePolygon(eventData.origin.position, _particleVelocity * 5f, 8);
                     _gizmos.DrawScreenDot(eventData.origin.position);
                     break;
                 
