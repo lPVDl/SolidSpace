@@ -7,6 +7,7 @@ using SolidSpace.Playground.Core;
 using SolidSpace.UI.Core;
 using SolidSpace.UI.Factory;
 using Unity.Mathematics;
+using UnityEngine;
 
 namespace SolidSpace.Playground.Tools.Spawn
 {
@@ -26,37 +27,39 @@ namespace SolidSpace.Playground.Tools.Spawn
         public IPlaygroundUIManager PlaygroundUI { get; set; }
         public bool RotationIsRandom { get; set; }
         public ITagLabel RotationLabel { get; set; }
-        public bool PointerWasClicked { get; set; }
         public float2 PointerClickPosition { get; set; }
         public float PreviousPointerAngle { get; set; }
+        public bool IsPlacingMode { get; set; }
         
         public void OnUpdate()
         {
-            if (PointerWasClicked && !Pointer.IsHeldThisFrame)
+            if (IsPlacingMode)
             {
-                PointerWasClicked = false;
-                SendEvent(ESpawnEventType.Place);
+                Handler.OnDrawSpawnCircle(PointerClickPosition, SpawnRadius);
+                SendEvent(ESpawnEventType.Preview);
+                
+                if (!Pointer.IsHeldThisFrame)
+                {
+                    IsPlacingMode = false;
+                    SendEvent(ESpawnEventType.Place);
+                }
+                
                 return;
             }
             
-            if (UIManager.IsMouseOver && !PointerWasClicked)
+            if (UIManager.IsMouseOver)
             {
                 return;
             }
 
+            PointerClickPosition = Pointer.Position;
+            Handler.OnDrawSpawnCircle(PointerClickPosition, SpawnRadius);
+            SendEvent(ESpawnEventType.Preview);
+
             if (Pointer.ClickedThisFrame)
             {
-                PointerWasClicked = true;
+                IsPlacingMode = true;
             }
-            
-            if (!Pointer.IsHeldThisFrame)
-            {
-                PointerClickPosition = Pointer.Position;
-            }
-            
-            Handler.OnDrawSpawnCircle(PointerClickPosition, SpawnRadius);
-            
-            SendEvent(ESpawnEventType.Preview);
         }
 
         private void SendEvent(ESpawnEventType eventType)

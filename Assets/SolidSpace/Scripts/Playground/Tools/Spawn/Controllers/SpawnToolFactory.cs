@@ -62,7 +62,7 @@ namespace SolidSpace.Playground.Tools.Spawn
                 RotationIsRandom = false,
                 RotationLabel = randomRotationTag,
                 PointerClickPosition = float2.zero,
-                PointerWasClicked = false,
+                IsPlacingMode = false,
                 PreviousPointerAngle = 0
             };
 
