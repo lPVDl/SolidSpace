@@ -1,4 +1,5 @@
 using System;
+using System.Configuration;
 using System.Runtime.CompilerServices;
 using Unity.Mathematics;
 
@@ -19,6 +20,13 @@ namespace SolidSpace.Mathematics
                 x = x * cos - y * sin,
                 y = x * sin + y * cos
             };
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float2 Rotate(float x, float angle)
+        {
+            SinCos(angle, out var sin, out var cos);
+            return new float2(x * cos, x * sin);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

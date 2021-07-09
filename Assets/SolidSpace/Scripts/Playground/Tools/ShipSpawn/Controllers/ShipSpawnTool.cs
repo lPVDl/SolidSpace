@@ -80,16 +80,19 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
         
         public void OnSpawnEvent(SpawnEventData eventData)
         {
+            var origin = eventData.origin;
+            
             switch (eventData.eventType)
             {
                 case ESpawnEventType.Preview:
-                    _gizmos.DrawScreenDot(eventData.position);
+                    _gizmos.DrawScreenDot(origin.position);
+                    _gizmos.DrawLine(origin.position, origin.position + FloatMath.Rotate(8f, origin.rotation));
                     break;
                 
                 case ESpawnEventType.Place:
                     if (_spriteSystem.AllocatedIndexCount < 1024)
                     {
-                        SpawnShip(eventData.position);
+                        SpawnShip(origin.position, origin.rotation);
                     }
    
                     break;
@@ -104,7 +107,7 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
             _gizmos.DrawScreenCircle(position, radius);
         }
 
-        private void SpawnShip(float2 position)
+        private void SpawnShip(float2 position, float rotation)
         {
             var texture = _config.ShipTexture;
             var size = new int2(texture.width, texture.height);
@@ -122,7 +125,7 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
             });
             _entityManager.SetComponentData(entity, new RotationComponent
             {
-                value = Random.value * FloatMath.TwoPI
+                value = rotation
             });
             _entityManager.SetComponentData(entity, new SpriteRenderComponent
             {

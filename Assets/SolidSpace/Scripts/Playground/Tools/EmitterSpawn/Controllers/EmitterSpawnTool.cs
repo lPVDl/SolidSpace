@@ -99,11 +99,11 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
             switch (eventData.eventType)
             {
                 case ESpawnEventType.Preview:
-                    _gizmos.DrawScreenDot(eventData.position);
+                    _gizmos.DrawScreenDot(eventData.origin.position);
                     break;
                 
                 case ESpawnEventType.Place:
-                    Spawn(eventData.position, _spawnRate, _particleVelocity);
+                    Spawn(eventData.origin.position, _spawnRate, _particleVelocity);
                     break;
                 
                 default:

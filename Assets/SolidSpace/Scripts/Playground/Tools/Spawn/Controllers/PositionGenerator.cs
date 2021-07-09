@@ -14,7 +14,7 @@ namespace SolidSpace.Playground.Tools.Spawn
             _positions = new float2[0];
         }
 
-        public IEnumerable<float2> IteratePositions(float2 center, int radius, int amount)
+        public IReadOnlyList<float2> IteratePositions(int radius, int amount)
         {
             if ((_amount != amount) || (radius != _radius))
             {
@@ -24,10 +24,7 @@ namespace SolidSpace.Playground.Tools.Spawn
                 GeneratePositions(radius, amount);
             }
 
-            for (var i = 0; i < amount; i++)
-            {
-                yield return center + _positions[i];
-            }
+            return _positions;
         }
 
         private void GeneratePositions(float radius, int amount)

@@ -1,6 +1,7 @@
 using SolidSpace.Playground.Core;
 using SolidSpace.UI.Core;
 using SolidSpace.UI.Factory;
+using Unity.Mathematics;
 
 namespace SolidSpace.Playground.Tools.Spawn
 {
@@ -39,6 +40,11 @@ namespace SolidSpace.Playground.Tools.Spawn
             amountField.SetValueCorrectionBehaviour(new IntMaxBehaviour(1));
             window.AttachChild(amountField);
 
+            var randomRotationTag = _uiFactory.CreateTagLabel();
+            randomRotationTag.SetLabel("Random rotation");
+            randomRotationTag.SetState(ETagLabelState.Negative);
+            window.AttachChild(randomRotationTag);
+
             var tool = new SpawnTool
             {
                 UIManager = _uiManager,
@@ -50,12 +56,23 @@ namespace SolidSpace.Playground.Tools.Spawn
                 SpawnRadius = 0,
                 ValueStorage = _valueStorage,
                 PositionGenerator = new PositionGenerator(),
+                RotationGenerator = new RotationGenerator(),
                 Handler = handler,
-                PlaygroundUI = _playgroundUI
+                PlaygroundUI = _playgroundUI,
+                RotationIsRandom = false,
+                RotationLabel = randomRotationTag,
+                PointerClickPosition = float2.zero,
+                PointerWasClicked = false,
+                PreviousPointerAngle = 0
             };
 
             radiusField.ValueChanged += () => tool.SpawnRadius = int.Parse(tool.SpawnRadiusField.Value);
             amountField.ValueChanged += () => tool.SpawnAmount = int.Parse(tool.SpawnAmountField.Value);
+            randomRotationTag.Clicked += () =>
+            {
+                tool.RotationIsRandom = !tool.RotationIsRandom;
+                randomRotationTag.SetState(tool.RotationIsRandom ? ETagLabelState.Positive : ETagLabelState.Negative);
+            };
 
             return tool;
         }

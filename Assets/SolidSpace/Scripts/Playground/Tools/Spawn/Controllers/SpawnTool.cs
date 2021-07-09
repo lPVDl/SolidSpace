@@ -1,7 +1,12 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using SolidSpace.Mathematics;
 using SolidSpace.Playground.Core;
 using SolidSpace.UI.Core;
 using SolidSpace.UI.Factory;
+using Unity.Mathematics;
 
 namespace SolidSpace.Playground.Tools.Spawn
 {
@@ -17,42 +22,82 @@ namespace SolidSpace.Playground.Tools.Spawn
         public int SpawnAmount { get; set; }
         public ISpawnToolHandler Handler { get; set; }
         public PositionGenerator PositionGenerator { get; set; }
-        
+        public RotationGenerator RotationGenerator { get; set; }
         public IPlaygroundUIManager PlaygroundUI { get; set; }
-
+        public bool RotationIsRandom { get; set; }
+        public ITagLabel RotationLabel { get; set; }
+        public bool PointerWasClicked { get; set; }
+        public float2 PointerClickPosition { get; set; }
+        public float PreviousPointerAngle { get; set; }
+        
         public void OnUpdate()
         {
-            var pointerPosition = Pointer.Position;
-
-            if (UIManager.IsMouseOver)
+            if (PointerWasClicked && !Pointer.IsHeldThisFrame)
             {
+                PointerWasClicked = false;
+                SendEvent(ESpawnEventType.Place);
                 return;
             }
             
-            Handler.OnDrawSpawnCircle(pointerPosition, SpawnRadius);
-
-            var positions = PositionGenerator.IteratePositions(pointerPosition, SpawnRadius, SpawnAmount);
-            
-            foreach (var pos in positions)
-            {
-                Handler.OnSpawnEvent(new SpawnEventData
-                {
-                    eventType = ESpawnEventType.Preview,
-                    position = pos
-                });
-            }
-            
-            if (!Pointer.ClickedThisFrame)
+            if (UIManager.IsMouseOver && !PointerWasClicked)
             {
                 return;
             }
+
+            if (Pointer.ClickedThisFrame)
+            {
+                PointerWasClicked = true;
+            }
             
-            foreach (var pos in positions)
+            if (!Pointer.IsHeldThisFrame)
+            {
+                PointerClickPosition = Pointer.Position;
+            }
+            
+            Handler.OnDrawSpawnCircle(PointerClickPosition, SpawnRadius);
+            
+            SendEvent(ESpawnEventType.Preview);
+        }
+
+        private void SendEvent(ESpawnEventType eventType)
+        {
+            var positions = PositionGenerator.IteratePositions(SpawnRadius, SpawnAmount);
+            
+            if (RotationIsRandom)
+            {
+                var rotations = RotationGenerator.IterateRotations(SpawnRadius, SpawnAmount);
+                for (var i = 0; i < SpawnAmount; i++)
+                {
+                    Handler.OnSpawnEvent(new SpawnEventData
+                    {
+                        eventType = eventType,
+                        origin = new SpawnOrigin
+                        {
+                            position = PointerClickPosition + positions[i],
+                            rotation = rotations[i]
+                        }
+                    });
+                }
+                
+                return;
+            }
+            
+            var mouseDirection = Pointer.Position - PointerClickPosition;
+            if (Math.Abs(mouseDirection.x) > float.Epsilon || Math.Abs(mouseDirection.y) > float.Epsilon)
+            {
+                PreviousPointerAngle = FloatMath.Atan2(mouseDirection);
+            }
+
+            for (var i = 0; i < SpawnAmount; i++)
             {
                 Handler.OnSpawnEvent(new SpawnEventData
                 {
-                    eventType = ESpawnEventType.Place,
-                    position = pos
+                    eventType = eventType,
+                    origin = new SpawnOrigin
+                    {
+                        position = PointerClickPosition + positions[i],
+                        rotation = PreviousPointerAngle
+                    }
                 });
             }
         }
@@ -63,17 +108,20 @@ namespace SolidSpace.Playground.Tools.Spawn
             {
                 SpawnRadius = (int) ValueStorage.GetValueOrDefault("InteractionRange");
                 SpawnAmount = (int) ValueStorage.GetValueOrDefault("SpawnAmount");
+                RotationIsRandom = ValueStorage.GetValueOrDefault("SpawnRotationIsRandom") > 0;
 
                 SpawnRadius = Math.Max(0, SpawnRadius);
                 SpawnAmount = Math.Max(1, SpawnAmount);
                 
                 SpawnRadiusField.SetValue(SpawnRadius.ToString());
                 SpawnAmountField.SetValue(SpawnAmount.ToString());
+                RotationLabel.SetState(RotationIsRandom ? ETagLabelState.Positive : ETagLabelState.Negative);
             }
             else
             {
                 ValueStorage.SetValue("InteractionRange", SpawnRadius);
                 ValueStorage.SetValue("SpawnAmount", SpawnAmount);
+                ValueStorage.SetValue("SpawnRotationIsRandom", RotationIsRandom ? 1 : 0);
             }
             
             PlaygroundUI.SetElementVisible(Window, isActive);
