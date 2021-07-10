@@ -16,6 +16,7 @@ namespace SolidSpace.Entities.ParticleEmitters
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
         [ReadOnly] public ComponentTypeHandle<RandomValueComponent> randomHandle;
         [ReadOnly] public ComponentTypeHandle<ParticleEmitterComponent> emitterHandle;
+        [ReadOnly] public ComponentTypeHandle<RotationComponent> rotationHandle;
         [ReadOnly] public float inTime;
 
         public ComponentTypeHandle<RepeatTimerComponent> timerHandle;
@@ -33,6 +34,13 @@ namespace SolidSpace.Entities.ParticleEmitters
             var timers = chunk.GetNativeArray(timerHandle);
             var randoms = chunk.GetNativeArray(randomHandle);
 
+            NativeArray<RotationComponent> rotations = default;
+            var hasRotation = chunk.Has(rotationHandle);
+            if (hasRotation)
+            {
+                rotations = chunk.GetNativeArray(rotationHandle);
+            }
+
             ParticleEmitterData emitterData;
             emitterData.despawnTime = inTime + 5;
             
@@ -45,15 +53,16 @@ namespace SolidSpace.Entities.ParticleEmitters
                     continue;
                 }
 
+                var forwardAngle = hasRotation ? rotations[i].value : 0;
+
                 timer.counter = 0;
                 timers[i] = timer;
 
+                var randomValue = randoms[i].value;
                 var emitter = emitters[i];
-                var angle = FloatMath.TwoPI * randoms[i].value;
+                var particleAngle = forwardAngle + emitter.spreadAngle * (0.5f - randomValue);
+                emitterData.velocity = FloatMath.Rotate(emitter.particleVelocity, particleAngle);
                 emitterData.position = positions[i].value;
-                var velocity = emitter.particleVelocity;
-                FloatMath.SinCos(angle, out var sin, out var cos);
-                emitterData.velocity = new float2(velocity * cos, velocity * sin);
 
                 outParticles[writeOffset + emitCount] = emitterData;
                 emitCount++;

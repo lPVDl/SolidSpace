@@ -2,6 +2,7 @@ using System;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.World;
 using SolidSpace.Gizmos;
+using SolidSpace.Mathematics;
 using SolidSpace.Playground.Core;
 using SolidSpace.Playground.Tools.ComponentFilter;
 using SolidSpace.Playground.Tools.Spawn;
@@ -28,10 +29,12 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
         private IUIElement _componentsWindow;
         private IStringField _spawnRateField;
         private IStringField _particleVelocityField;
+        private IStringField _spreadAngleField;
         private GizmosHandle _gizmos;
 
         private float _spawnRate;
         private float _particleVelocity;
+        private float _spreadAngle;
 
         public EmitterSpawnTool(IEntityManager entityManager, IPlaygroundUIManager uiManager,
             ISpawnToolFactory spawnToolFactory, IUIFactory uiFactory, IComponentFilterFactory filterFactory,
@@ -52,6 +55,7 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
             var emitterComponents = new ComponentType[]
             {
                 typeof(PositionComponent),
+                typeof(RotationComponent),
                 typeof(ParticleEmitterComponent),
                 typeof(RandomValueComponent),
                 typeof(RepeatTimerComponent),
@@ -80,6 +84,14 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
             _particleVelocityField.SetValueCorrectionBehaviour(new FloatMinMaxBehaviour(0, 1000));
             _particleVelocityField.ValueChanged += () => _particleVelocity = float.Parse(_particleVelocityField.Value);
             _emitterWindow.AttachChild(_particleVelocityField);
+
+            _spreadAngle = 360;
+            _spreadAngleField = _uiFactory.CreateStringField();
+            _spreadAngleField.SetValue("360");
+            _spreadAngleField.SetLabel("Spread Angle");
+            _spreadAngleField.SetValueCorrectionBehaviour(new FloatMinMaxBehaviour(0, 360));
+            _spreadAngleField.ValueChanged += () => _spreadAngle = float.Parse(_spreadAngleField.Value);
+            _emitterWindow.AttachChild(_spreadAngleField);
         }
         
         public void OnActivate(bool isActive)
@@ -96,15 +108,17 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
         
         public void OnSpawnEvent(SpawnEventData eventData)
         {
+            var origin = eventData.origin;
+            
             switch (eventData.eventType)
             {
                 case ESpawnEventType.Preview:
-                    _gizmos.DrawWirePolygon(eventData.origin.position, _particleVelocity * 5f, 8);
-                    _gizmos.DrawScreenDot(eventData.origin.position);
+                    DrawEmitterDirectionAxis(origin.position, origin.rotation);
+                    _gizmos.DrawScreenDot(origin.position);
                     break;
                 
                 case ESpawnEventType.Place:
-                    Spawn(eventData.origin.position, _spawnRate, _particleVelocity);
+                    Spawn(origin.position, origin.rotation, _spawnRate, _particleVelocity, _spreadAngle * FloatMath.Deg2Rad);
                     break;
                 
                 default:
@@ -112,12 +126,44 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
             }
         }
 
+        private void DrawEmitterDirectionAxis(float2 position, float rotation)
+        {
+            var distance = _particleVelocity * 5f;
+            
+            if (_spreadAngle < 360)
+            {
+                var forward = FloatMath.Rotate(distance, rotation);
+                _gizmos.DrawLine(position, position + forward);
+                DrawArc(position, rotation, _spreadAngle * FloatMath.Deg2Rad, distance, 8);
+            }
+            else
+            {
+                _gizmos.DrawWirePolygon(position, distance, 8);
+            }
+        }
+
+        private void DrawArc(float2 position, float rotation, float arcAngle, float distance, int topology)
+        {
+            var delta = arcAngle / topology;
+            var previousPosition = position;
+            var startAngle = rotation - arcAngle * 0.5f;
+            for (var i = 0; i <= topology; i++)
+            {
+                var axis = FloatMath.Rotate(distance, startAngle + delta * i);
+                var newPosition = position + axis;
+                _gizmos.DrawLine(previousPosition, newPosition);
+                previousPosition = newPosition;
+            }
+            
+            _gizmos.DrawLine(previousPosition, position);
+        }
+
         public void OnDrawSpawnCircle(float2 position, float radius)
         {
             _gizmos.DrawScreenCircle(position, radius);
         }
 
-        private void Spawn(float2 position, float spawnRate, float particleVelocity)
+        private void Spawn(float2 position, float rotation, float spawnRate, float particleVelocity, float spreadAngle)
         {
             var entity = _entityManager.CreateEntity(_emitterArchetype);
             _entityManager.SetComponentData(entity, new PositionComponent
@@ -128,9 +174,14 @@ namespace SolidSpace.Playground.Tools.EmitterSpawn
             {
                 delay = 1f / spawnRate
             });
+            _entityManager.SetComponentData(entity, new RotationComponent
+            {
+                value = rotation
+            });
             _entityManager.SetComponentData(entity, new ParticleEmitterComponent
             {
-                particleVelocity = particleVelocity
+                particleVelocity = particleVelocity,
+                spreadAngle = spreadAngle
             });
         }
 

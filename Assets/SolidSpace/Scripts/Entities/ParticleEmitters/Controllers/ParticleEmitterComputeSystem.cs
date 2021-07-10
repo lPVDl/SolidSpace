@@ -79,6 +79,7 @@ namespace SolidSpace.Entities.ParticleEmitters
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
                 randomHandle = _entityManager.GetComponentTypeHandle<RandomValueComponent>(true),
                 emitterHandle = _entityManager.GetComponentTypeHandle<ParticleEmitterComponent>(true),
+                rotationHandle = _entityManager.GetComponentTypeHandle<RotationComponent>(true),
                 inTime = (float) _time.ElapsedTime,
                 outParticles = _particles, 
                 inWriteOffsets = offsets,
