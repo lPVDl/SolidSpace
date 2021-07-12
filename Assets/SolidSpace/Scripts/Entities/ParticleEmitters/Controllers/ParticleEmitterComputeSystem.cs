@@ -1,4 +1,5 @@
 using SolidSpace.Entities.Components;
+using SolidSpace.Entities.Utilities;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
 using SolidSpace.JobUtilities;
@@ -49,24 +50,12 @@ namespace SolidSpace.Entities.ParticleEmitters
         public void OnUpdate()
         {
             _profiler.BeginSample("Query Chunks");
-            var chunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
+            var chunks = EntityQueryUtil.QueryWithOffsetsForJob(_query);
             _profiler.EndSample("Query Chunks");
 
-            _profiler.BeginSample("Entity Offsets");
-            var chunkCount = chunks.Length;
-            var offsets = NativeMemory.CreateTempJobArray<int>(chunkCount);
-            var counts = NativeMemory.CreateTempJobArray<int>(chunkCount);
-            var maxEntityCount = 0;
-            for (var i = 0; i < chunkCount; i++)
-            {
-                offsets[i] = maxEntityCount;
-                maxEntityCount += chunks[i].Count;
-            }
-            _profiler.EndSample("Entity Offsets");
-            
             NativeMemory.MaintainPersistentArrayLength(ref _particles, new ArrayMaintenanceData
             {
-                requiredCapacity = maxEntityCount,
+                requiredCapacity = chunks.entityCount,
                 itemPerAllocation = BufferChunkSize,
                 copyOnResize = false
             });
@@ -74,7 +63,8 @@ namespace SolidSpace.Entities.ParticleEmitters
             _profiler.BeginSample("Compute & Collect");
             var computeJob = new ParticleEmitterComputeJob
             {
-                inChunks = chunks,
+                inChunks = chunks.archetypeChunks,
+                inWriteOffsets = chunks.chunkOffsets,
                 timerHandle = _entityManager.GetComponentTypeHandle<RepeatTimerComponent>(false),
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
                 randomHandle = _entityManager.GetComponentTypeHandle<RandomValueComponent>(true),
@@ -82,25 +72,23 @@ namespace SolidSpace.Entities.ParticleEmitters
                 rotationHandle = _entityManager.GetComponentTypeHandle<RotationComponent>(true),
                 inTime = (float) _time.ElapsedTime,
                 outParticles = _particles, 
-                inWriteOffsets = offsets,
-                outParticleCounts = counts,
+                outParticleCounts = NativeMemory.CreateTempJobArray<int>(chunks.chunkCount),
             };
-            var computeHandle = computeJob.Schedule(chunks.Length, 32);
+            var computeHandle = computeJob.Schedule(chunks.chunkCount, 32);
 
-            var collectJob = new DataCollectJobWithOffsets<ParticleEmitterData>
+            new DataCollectJobWithOffsets<ParticleEmitterData>
             {
-                inCounts = counts,
-                inOffsets = offsets,
+                inCounts = computeJob.outParticleCounts,
+                inOffsets = chunks.chunkOffsets,
                 inOutData = _particles,
                 outCount = _particleCount
-            };
-            var collectHandle = collectJob.Schedule(computeHandle);
-            collectHandle.Complete();
+            }.Schedule(computeHandle).Complete();
             _profiler.EndSample("Compute & Collect");
 
+            _profiler.BeginSample("Disposal");
             chunks.Dispose();
-            offsets.Dispose();
-            counts.Dispose();
+            computeJob.outParticleCounts.Dispose();
+            _profiler.EndSample("Disposal");
         }
 
         public void OnFinalize()
