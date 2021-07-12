@@ -1,5 +1,6 @@
 using System;
 using SolidSpace.Entities.Components;
+using SolidSpace.Entities.Utilities;
 using SolidSpace.Entities.World;
 using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
@@ -14,38 +15,33 @@ namespace SolidSpace.Entities.Physics.Colliders
     {
         public ProfilingHandle Profiler { get; set; }
         public IEntityManager EntityManager { get; set; }
-
+        
         public BakedColliders Bake(NativeArray<ArchetypeChunk> archetypeChunks, ref T behaviour)
         {
             Profiler.BeginSample("Compute offsets");
-            var archetypeChunkCount = archetypeChunks.Length;
-            var archetypeChunkOffsets = NativeMemory.CreateTempJobArray<int>(archetypeChunkCount);
-            var colliderCount = 0;
+            var chunkOffsets = EntityQueryForJobUtil.ComputeOffsets(archetypeChunks);
+            Profiler.EndSample("Compute offsets");
+
+            var colliderCount = chunkOffsets.entityCount;
             if (colliderCount > ushort.MaxValue)
             {
                 throw new InvalidOperationException($"Collider count exceeded max value ({ushort.MaxValue})");
             }
-            for (var i = 0; i < archetypeChunkCount; i++)
-            {
-                archetypeChunkOffsets[i] = colliderCount;
-                colliderCount += archetypeChunks[i].Count;
-            }
-            Profiler.EndSample("Compute offsets");
             
             Profiler.BeginSample("Collect data");
-            behaviour.OnInitialize(colliderCount);
-            var dataCollectJob = new KovacDataCollectJob<T>
+            behaviour.OnInitialize(chunkOffsets.entityCount);
+            var dataCollectJob = new ColliderDataCollectJob<T>
             {
                 behaviour = behaviour,
                 inArchetypeChunks = archetypeChunks,
-                inWriteOffsets = archetypeChunkOffsets,
+                inWriteOffsets = chunkOffsets.chunkOffsets,
                 positionHandle = EntityManager.GetComponentTypeHandle<PositionComponent>(true),
                 rotationHandle = EntityManager.GetComponentTypeHandle<RotationComponent>(true),
                 rectSizeHandle = EntityManager.GetComponentTypeHandle<RectSizeComponent>(true),
                 outShapes = NativeMemory.CreateTempJobArray<ColliderShape>(colliderCount),
                 outBounds = NativeMemory.CreateTempJobArray<FloatBounds>(colliderCount),
             };
-            dataCollectJob.Schedule(archetypeChunkCount, 8).Complete();
+            dataCollectJob.Schedule(chunkOffsets.chunkCount, 8).Complete();
             Profiler.EndSample("Collect data");
             
             Profiler.BeginSample("Construct grid");
@@ -108,11 +104,11 @@ namespace SolidSpace.Entities.Physics.Colliders
             listsFillJob.Schedule().Complete();
             Profiler.EndSample("Lists fill");
 
-            Profiler.BeginSample("Dispose arrays");
-            archetypeChunkOffsets.Dispose();
+            Profiler.BeginSample("Disposal");
+            chunkOffsets.chunkOffsets.Dispose();
             bakingJob.outColliders.Dispose();
             bakingJob.outColliderCounts.Dispose();
-            Profiler.EndSample("Dispose arrays");
+            Profiler.EndSample("Disposal");
 
             return new BakedColliders
             {

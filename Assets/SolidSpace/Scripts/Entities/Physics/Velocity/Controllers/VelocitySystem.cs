@@ -32,15 +32,13 @@ namespace SolidSpace.Entities.Physics.Velocity
         public void OnUpdate()
         {
             var chunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
-            var job = new VelocityJob
+            new VelocityJob
             {
                 deltaTime = _time.DeltaTime,
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(false),
                 velocityHandle = _entityManager.GetComponentTypeHandle<VelocityComponent>(true),
                 chunks = chunks
-            };
-            
-            job.Schedule(chunks.Length, 32).Complete();
+            }.Schedule(chunks.Length, 32).Complete();
 
             chunks.Dispose();
         }

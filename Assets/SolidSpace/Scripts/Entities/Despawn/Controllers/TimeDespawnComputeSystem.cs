@@ -23,7 +23,7 @@ namespace SolidSpace.Entities.Despawn
         private NativeArray<Entity> _entities;
         private int _cycleIndex;
         private ProfilingHandle _profiler;
-        private NativeMemoryForJobAllocator _jobMemory;
+        private JobMemoryAllocator _jobMemory;
 
         public TimeDespawnComputeSystem(IEntityManager entityManager, IEntityWorldTime time, IProfilingManager profilingManager,
             IEntityDestructionBuffer destructionBuffer)
@@ -36,7 +36,7 @@ namespace SolidSpace.Entities.Despawn
         
         public void OnInitialize()
         {
-            _jobMemory = new NativeMemoryForJobAllocator();
+            _jobMemory = new JobMemoryAllocator();
             _profiler = _profilingManager.GetHandle(this);
             _query = _entityManager.CreateEntityQuery(typeof(TimeDespawnComponent));
             _cycleIndex = 0;
@@ -86,7 +86,7 @@ namespace SolidSpace.Entities.Despawn
             
             _profiler.BeginSample("Disposal");
             chunks.Dispose();
-            _jobMemory.ReleaseAllocations();
+            _jobMemory.DisposeAllocations();
             _profiler.EndSample("Disposal");
         }
 

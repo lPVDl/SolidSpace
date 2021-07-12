@@ -11,6 +11,12 @@ namespace SolidSpace.Entities.Utilities
         public static ArchetypeChunksWithOffsets QueryWithOffsets(EntityQuery entityQuery)
         {
             var chunks = entityQuery.CreateArchetypeChunkArray(Allocator.TempJob);
+            return ComputeOffsets(chunks);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ArchetypeChunksWithOffsets ComputeOffsets(NativeArray<ArchetypeChunk> chunks)
+        {
             var offsets = NativeMemory.CreateTempJobArray<int>(chunks.Length);
             var chunkCount = chunks.Length;
             var entityCount = 0;

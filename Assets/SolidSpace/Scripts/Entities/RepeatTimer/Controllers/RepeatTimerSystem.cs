@@ -29,19 +29,17 @@ namespace SolidSpace.Entities.RepeatTimer
         public void OnUpdate()
         {
             var chunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
-            var job = new RepeatTimerJob
+            
+            new RepeatTimerJob
             {
                 chunks = chunks,
                 deltaTime = _time.DeltaTime,
                 timerHandle = _entityManager.GetComponentTypeHandle<RepeatTimerComponent>(false)
-            };
-            
-            SpaceDebug.LogState("deltaTime", _time.DeltaTime);
-            
-            var handle = job.Schedule(chunks.Length, 32);
-            handle.Complete();
+            }.Schedule(chunks.Length, 32).Complete();
 
             chunks.Dispose();
+            
+            SpaceDebug.LogState("deltaTime", _time.DeltaTime);
         }
 
         public void OnFinalize()

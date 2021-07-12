@@ -9,7 +9,7 @@ using Unity.Mathematics;
 namespace SolidSpace.Entities.Physics.Colliders
 {
     [BurstCompile]
-    public struct KovacDataCollectJob<T> : IJobParallelFor where T : struct, IColliderBakeBehaviour
+    public struct ColliderDataCollectJob<T> : IJobParallelFor where T : struct, IColliderBakeBehaviour
     {
         private struct ColliderInfo
         {

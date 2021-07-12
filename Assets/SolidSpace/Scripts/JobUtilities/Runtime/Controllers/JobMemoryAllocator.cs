@@ -4,11 +4,11 @@ using Unity.Collections;
 
 namespace SolidSpace.JobUtilities
 {
-    public class NativeMemoryForJobAllocator
+    public class JobMemoryAllocator
     {
         private List<IDisposable> _allocations;
         
-        public NativeMemoryForJobAllocator()
+        public JobMemoryAllocator()
         {
             _allocations = new List<IDisposable>();
         }
@@ -27,7 +27,7 @@ namespace SolidSpace.JobUtilities
             return reference;
         }
 
-        public void ReleaseAllocations()
+        public void DisposeAllocations()
         {
             for (var i = 0; i < _allocations.Count; i++)
             {

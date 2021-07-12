@@ -1,4 +1,5 @@
 using SolidSpace.Entities.Components;
+using SolidSpace.Entities.Utilities;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
 using SolidSpace.Gizmos;
@@ -19,6 +20,7 @@ namespace SolidSpace.Entities.Actors
         private readonly IEntityWorldTime _worldTime;
         private readonly IGizmosManager _gizmosManager;
 
+        private JobMemoryAllocator _jobMemory;
         private EntityQuery _query;
         private float2 _targetPosition;
         private ProfilingHandle _profiler;
@@ -35,6 +37,7 @@ namespace SolidSpace.Entities.Actors
         
         public void OnInitialize()
         {
+            _jobMemory = new JobMemoryAllocator();
             _gizmos = _gizmosManager.GetHandle(this, Color.magenta);
             _profiler = _profilingManager.GetHandle(this);
             _query = _entityManager.CreateEntityQuery(new ComponentType[]
@@ -49,13 +52,13 @@ namespace SolidSpace.Entities.Actors
         public void OnUpdate()
         {
             _profiler.BeginSample("Query chunks");
-            var archetypeChunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
+            var chunks = EntityQueryForJobUtil.QueryWithOffsets(_query);
             _profiler.EndSample("Query chunks");
             
             _profiler.BeginSample("Control Job");
             new ActorControlJob
             {
-                inArchetypeChunks = archetypeChunks,
+                inArchetypeChunks = chunks.chunks,
                 inDeltaTime = _worldTime.DeltaTime,
                 inSeekPosition = _targetPosition,
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
@@ -63,62 +66,46 @@ namespace SolidSpace.Entities.Actors
                 actorHandle = _entityManager.GetComponentTypeHandle<ActorComponent>(true),
                 rotationHandle = _entityManager.GetComponentTypeHandle<RotationComponent>(false)
                 
-            }.Schedule(archetypeChunks.Length, 4).Complete();
+            }.Schedule(chunks.chunkCount, 4).Complete();
             _profiler.EndSample("Control Job");
-            
-            _profiler.BeginSample("Gizmos offsets");
-            var chunkCount = archetypeChunks.Length;
-            var offsets = NativeMemory.CreateTempJobArray<int>(chunkCount);
-            var counts = NativeMemory.CreateTempJobArray<int>(chunkCount);
-            var maxEntityCount = 0;
-            for (var i = 0; i < chunkCount; i++)
-            {
-                offsets[i] = maxEntityCount;
-                maxEntityCount += archetypeChunks[i].Count;
-            }
-            var positions = NativeMemory.CreateTempJobArray<float2>(maxEntityCount);
-            _profiler.EndSample("Gizmos offsets");
-            
+
             _profiler.BeginSample("Gizmos filter");
-            new FilterActivateActorsJob
+            var filterJob = new FilterActivateActorsJob
             {
-                inArchetypeChunks = archetypeChunks,
-                inWriteOffsets = offsets,
+                inArchetypeChunks = chunks.chunks,
+                inWriteOffsets = chunks.chunkOffsets,
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
                 actorHandle = _entityManager.GetComponentTypeHandle<ActorComponent>(true),
-                outPositions = positions,
-                outCounts = counts
-            }.Schedule(chunkCount, 4).Complete();
+                outPositions = _jobMemory.CreateNativeArray<float2>(chunks.entityCount),
+                outCounts = _jobMemory.CreateNativeArray<int>(chunks.chunkCount)
+            };
+            filterJob.Schedule(chunks.chunkCount, 4).Complete();
             _profiler.EndSample("Gizmos filter");
             
             _profiler.BeginSample("Gizmos collect result");
-            var countReference = NativeMemory.CreateTempJobReference<int>();
-            new DataCollectJobWithOffsets<float2>
+            var positionCollectJob = new DataCollectJobWithOffsets<float2>
             {
-                // TODO: Refer to chunks.chunkCount when refactored.
-                inDataCount = counts.Length,
-                inCounts = counts,
-                inOffsets = offsets,
-                inOutData = positions,
-                outCount = countReference
-            }.Schedule().Complete();
+                inDataCount = chunks.chunkCount,
+                inCounts = filterJob.outCounts,
+                inOutData = filterJob.outPositions,
+                inOffsets = chunks.chunkOffsets,
+                outCount = _jobMemory.CreateNativeReference<int>()
+            };
+            positionCollectJob.Schedule().Complete();
             _profiler.EndSample("Gizmos collect result");
             
             _profiler.BeginSample("Draw gizmos");
             _gizmos.DrawScreenCircle(_targetPosition, 100f);
-            var count = countReference.Value;
+            var count = positionCollectJob.outCount.Value;
             for (var i = 0; i < count; i++)
             {
-                _gizmos.DrawLine(positions[i], _targetPosition);
+                _gizmos.DrawLine(positionCollectJob.inOutData[i], _targetPosition);
             }
             _profiler.EndSample("Draw gizmos");
 
             _profiler.BeginSample("Dispose arrays");
-            archetypeChunks.Dispose();
-            offsets.Dispose();
-            counts.Dispose();
-            positions.Dispose();
-            countReference.Dispose();
+            chunks.Dispose();
+            _jobMemory.DisposeAllocations();
             _profiler.EndSample("Dispose arrays");
         }
 
