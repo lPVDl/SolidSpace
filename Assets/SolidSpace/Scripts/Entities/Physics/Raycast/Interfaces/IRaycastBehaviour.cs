@@ -10,6 +10,6 @@ namespace SolidSpace.Entities.Physics.Raycast
         void ReadChunk(ArchetypeChunk chunk);
         FloatRay GetRay(int rayIndex);
         bool TryRegisterHit(RayHit hit);
-        void CollectResult(NativeArray<int> offsets, NativeArray<int> counts);
+        void CollectResult(int dataCount, NativeArray<int> offsets, NativeArray<int> counts);
     }
 }

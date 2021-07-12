@@ -95,6 +95,8 @@ namespace SolidSpace.Entities.Actors
             var countReference = NativeMemory.CreateTempJobReference<int>();
             new DataCollectJobWithOffsets<float2>
             {
+                // TODO: Refer to chunks.chunkCount when refactored.
+                inDataCount = counts.Length,
                 inCounts = counts,
                 inOffsets = offsets,
                 inOutData = positions,

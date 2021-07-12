@@ -52,7 +52,7 @@ namespace SolidSpace.Entities.ParticleEmitters
         public void OnUpdate()
         {
             _profiler.BeginSample("Query Chunks");
-            var chunks = EntityQueryUtil.QueryWithOffsetsForJob(_query);
+            var chunks = EntityQueryForJobUtil.QueryWithOffsets(_query);
             _profiler.EndSample("Query Chunks");
 
             NativeMemory.MaintainPersistentArrayLength(ref _particles, new ArrayMaintenanceData
@@ -65,7 +65,7 @@ namespace SolidSpace.Entities.ParticleEmitters
             _profiler.BeginSample("Compute & Collect");
             var computeJob = new ParticleEmitterComputeJob
             {
-                inChunks = chunks.archetypeChunks,
+                inChunks = chunks.chunks,
                 inWriteOffsets = chunks.chunkOffsets,
                 timerHandle = _entityManager.GetComponentTypeHandle<RepeatTimerComponent>(false),
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
@@ -74,12 +74,13 @@ namespace SolidSpace.Entities.ParticleEmitters
                 rotationHandle = _entityManager.GetComponentTypeHandle<RotationComponent>(true),
                 inTime = (float) _time.ElapsedTime,
                 outParticles = _particles, 
-                outParticleCounts = _jobMemory.CreateArray<int>(chunks.chunkCount),
+                outParticleCounts = _jobMemory.CreateNativeArray<int>(chunks.chunkCount),
             };
             var computeHandle = computeJob.Schedule(chunks.chunkCount, 32);
 
             new DataCollectJobWithOffsets<ParticleEmitterData>
             {
+                inDataCount = chunks.chunkCount,
                 inCounts = computeJob.outParticleCounts,
                 inOffsets = chunks.chunkOffsets,
                 inOutData = _particles,

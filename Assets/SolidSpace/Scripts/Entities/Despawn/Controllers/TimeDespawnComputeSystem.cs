@@ -1,4 +1,5 @@
 using SolidSpace.Entities.Components;
+using SolidSpace.Entities.Utilities;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
 using SolidSpace.JobUtilities;
@@ -6,13 +7,12 @@ using SolidSpace.Profiling;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
-using UnityEngine;
 
 namespace SolidSpace.Entities.Despawn
 {
     public class TimeDespawnComputeSystem : IInitializable, IUpdatable
     {
-        private const int IterationCycle = 8;
+        private const int CycleLength = 8;
         
         private readonly IEntityManager _entityManager;
         private readonly IEntityWorldTime _time;
@@ -21,8 +21,9 @@ namespace SolidSpace.Entities.Despawn
 
         private EntityQuery _query;
         private NativeArray<Entity> _entities;
-        private int _lastOffset;
+        private int _cycleIndex;
         private ProfilingHandle _profiler;
+        private NativeMemoryForJobAllocator _jobMemory;
 
         public TimeDespawnComputeSystem(IEntityManager entityManager, IEntityWorldTime time, IProfilingManager profilingManager,
             IEntityDestructionBuffer destructionBuffer)
@@ -35,65 +36,47 @@ namespace SolidSpace.Entities.Despawn
         
         public void OnInitialize()
         {
+            _jobMemory = new NativeMemoryForJobAllocator();
             _profiler = _profilingManager.GetHandle(this);
             _query = _entityManager.CreateEntityQuery(typeof(TimeDespawnComponent));
-            _lastOffset = -1;
+            _cycleIndex = 0;
             _entities = NativeMemory.CreatePersistentArray<Entity>(4096);
         }
 
         public void OnUpdate()
         {
-            _profiler.BeginSample("Compute Chunk Count");
-            var chunkCount = _query.CalculateChunkCount();
-            _profiler.EndSample("Compute Chunk Count");
-            
-            _profiler.BeginSample("Create Compute Buffer");
-            _lastOffset = (_lastOffset + 1) % IterationCycle;
-            var rawChunks = _query.CreateArchetypeChunkArray(Allocator.Temp);
-            var computeChunkCount = Mathf.CeilToInt((chunkCount - _lastOffset) / (float) IterationCycle);
-            var computeChunks = NativeMemory.CreateTempJobArray<ArchetypeChunk>(computeChunkCount);
-            var computeOffsets = NativeMemory.CreateTempJobArray<int>(computeChunkCount);
-            var countsBuffer = NativeMemory.CreateTempJobArray<int>(computeChunkCount);
-            var entityCount = 0;
-            var chunkIndex = 0;
-
-            for (var offset = _lastOffset; offset < chunkCount; offset += IterationCycle)
-            {
-                var rawChunk = rawChunks[offset];
-                computeOffsets[chunkIndex] = entityCount;
-                computeChunks[chunkIndex] = rawChunk;
-                entityCount += rawChunk.Count;
-                chunkIndex++;
-            }
-            _profiler.EndSample("Create Compute Buffer");
+            _profiler.BeginSample("Query chunks");
+            var chunks = EntityQueryForJobUtil.PartialQueryWithOffsets(_query, CycleLength, ref _cycleIndex);
+            _profiler.EndSample("Query chunks");
 
             _profiler.BeginSample("Update Entity Buffer");
-            if (_entities.Length < entityCount)
+            if (_entities.Length < chunks.entityCount)
             {
                 _entities.Dispose();
-                _entities = NativeMemory.CreatePersistentArray<Entity>(entityCount * 2);
+                _entities = NativeMemory.CreatePersistentArray<Entity>(chunks.entityCount * 2);
             }
             _profiler.EndSample("Update Entity Buffer");
 
             _profiler.BeginSample("Compute & Collect");
             var computeJob = new TimeDespawnComputeJob
             {
-                inChunks = computeChunks,
+                inChunks = chunks.chunks,
+                inWriteOffsets = chunks.chunkOffsets,
                 despawnHandle = _entityManager.GetComponentTypeHandle<TimeDespawnComponent>(true),
                 entityHandle = _entityManager.GetEntityTypeHandle(),
-                outEntityCounts = countsBuffer, 
-                inWriteOffsets = computeOffsets,
+                outEntityCounts = _jobMemory.CreateNativeArray<int>(chunks.chunkCount), 
                 outEntities = _entities,
                 time = (float) _time.ElapsedTime
             };
-            var computeJobHandle = computeJob.Schedule(computeChunkCount, 32);
+            var computeJobHandle = computeJob.Schedule(chunks.chunkCount, 32);
 
             var collectJob = new DataCollectJobWithOffsets<Entity>
             {
-                inCounts = countsBuffer,
-                inOffsets = computeOffsets,
+                inDataCount = chunks.chunkCount,
+                inCounts = computeJob.outEntityCounts,
+                inOffsets = chunks.chunkOffsets,
                 inOutData = _entities,
-                outCount = NativeMemory.CreateTempJobReference<int>()
+                outCount = _jobMemory.CreateNativeReference<int>()
             };
             var collectJobHandle = collectJob.Schedule(computeJobHandle);
             collectJobHandle.Complete();
@@ -101,13 +84,10 @@ namespace SolidSpace.Entities.Despawn
 
             _destructionBuffer.ScheduleDestroy(new NativeSlice<Entity>(_entities, 0, collectJob.outCount.Value));
             
-            _profiler.BeginSample("Dispose arrays");
-            countsBuffer.Dispose();
-            rawChunks.Dispose();
-            computeChunks.Dispose();
-            computeOffsets.Dispose();
-            collectJob.outCount.Dispose();
-            _profiler.EndSample("Dispose arrays");
+            _profiler.BeginSample("Disposal");
+            chunks.Dispose();
+            _jobMemory.ReleaseAllocations();
+            _profiler.EndSample("Disposal");
         }
 
         public void OnFinalize()

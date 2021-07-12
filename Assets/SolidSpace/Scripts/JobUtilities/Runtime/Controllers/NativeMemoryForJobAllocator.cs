@@ -13,14 +13,14 @@ namespace SolidSpace.JobUtilities
             _allocations = new List<IDisposable>();
         }
 
-        public NativeArray<T> CreateArray<T>(int length) where T : unmanaged
+        public NativeArray<T> CreateNativeArray<T>(int length) where T : unmanaged
         {
             var array = new NativeArray<T>(length, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
             _allocations.Add(array);
             return array;
         }
 
-        public NativeReference<T> CreateReference<T>() where T : unmanaged
+        public NativeReference<T> CreateNativeReference<T>() where T : unmanaged
         {
             var reference = new NativeReference<T>(Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
             _allocations.Add(reference);

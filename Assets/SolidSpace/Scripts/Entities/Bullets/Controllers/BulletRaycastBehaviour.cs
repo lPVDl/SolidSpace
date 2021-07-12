@@ -140,10 +140,11 @@ namespace SolidSpace.Entities.Bullets
             return false;
         }
 
-        public void CollectResult(NativeArray<int> offsets, NativeArray<int> counts)
+        public void CollectResult(int dataCount, NativeArray<int> offsets, NativeArray<int> counts)
         {
             new DataCollectJobWithOffsets<BulletHit>
             {
+                inDataCount = dataCount,
                 inOffsets = offsets,
                 inCounts = counts,
                 inOutData = outHits,

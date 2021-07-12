@@ -9,7 +9,8 @@ namespace SolidSpace.JobUtilities
         where T : struct
     {
         public NativeArray<T> inOutData;
-        
+
+        [ReadOnly] public int inDataCount;
         [ReadOnly] public NativeArray<int> inOffsets;
         [ReadOnly] public NativeArray<int> inCounts;
 
@@ -18,8 +19,7 @@ namespace SolidSpace.JobUtilities
         public void Execute()
         {
             var resultCount = 0;
-            var offsetCount = inOffsets.Length;
-            for (var i = 0; i < offsetCount; i++)
+            for (var i = 0; i < inDataCount; i++)
             {
                 var localCount = inCounts[i];
                 if (localCount == 0)
@@ -46,6 +46,7 @@ namespace SolidSpace.JobUtilities
         public NativeArray<T0> inOutData0;
         public NativeArray<T1> inOutData1;
 
+        [ReadOnly] public int inDataCount;
         [ReadOnly] public NativeArray<int> inOffsets;
         [ReadOnly] public NativeArray<int> inCounts;
 
@@ -54,8 +55,7 @@ namespace SolidSpace.JobUtilities
         public void Execute()
         {
             var resultCount = 0;
-            var offsetCount = inOffsets.Length;
-            for (var i = 0; i < offsetCount; i++)
+            for (var i = 0; i < inDataCount; i++)
             {
                 var localCount = inCounts[i];
                 if (localCount == 0)
@@ -84,6 +84,7 @@ namespace SolidSpace.JobUtilities
         public NativeArray<T1> inOutData1;
         public NativeArray<T2> inOutData2;
         
+        [ReadOnly] public int inDataCount;
         [ReadOnly] public NativeArray<int> inOffsets;
         [ReadOnly] public NativeArray<int> inCounts;
 
@@ -92,8 +93,7 @@ namespace SolidSpace.JobUtilities
         public void Execute()
         {
             var resultCount = 0;
-            var offsetCount = inOffsets.Length;
-            for (var i = 0; i < offsetCount; i++)
+            for (var i = 0; i < inDataCount; i++)
             {
                 var localCount = inCounts[i];
                 if (localCount == 0)
@@ -124,6 +124,7 @@ namespace SolidSpace.JobUtilities
         public NativeArray<T2> inOutData2;
         public NativeArray<T3> inOutData3;
         
+        [ReadOnly] public int inDataCount;
         [ReadOnly] public NativeArray<int> inOffsets;
         [ReadOnly] public NativeArray<int> inCounts;
 
@@ -132,8 +133,7 @@ namespace SolidSpace.JobUtilities
         public void Execute()
         {
             var resultCount = 0;
-            var offsetCount = inOffsets.Length;
-            for (var i = 0; i < offsetCount; i++)
+            for (var i = 0; i < inDataCount; i++)
             {
                 var localCount = inCounts[i];
                 if (localCount == 0)

@@ -42,7 +42,7 @@ namespace SolidSpace.Entities.Physics.Raycast
             Profiler.EndSample("Raycast");
             
             Profiler.BeginSample("Collect results");
-            behaviour.CollectResult(archetypeChunkOffsets, raycastJob.outCounts);
+            behaviour.CollectResult(archetypeChunkCount, archetypeChunkOffsets, raycastJob.outCounts);
             Profiler.EndSample("Collect results");
 
             Profiler.BeginSample("Dispose arrays");
