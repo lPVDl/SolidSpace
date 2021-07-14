@@ -69,31 +69,56 @@ namespace SolidSpace.Entities.Splitting.Editor
 
             var textureWidth = _inputTexture.width;
             var textureHeight = _inputTexture.height;
-
-            var job = new ShapeFillJob
+            
+            var seedJob = new ShapeSeedJob
             {
                 _inFrameBits = textureBits,
                 _inFrameSize = new int2(textureWidth, textureHeight),
                 _outResultCode = _jobMemory.CreateNativeReference<EShapeFillResult>(),
-                _outShapeConnections = _jobMemory.CreateNativeArray<byte>(256),
-                _outShapeConnectionCount = _jobMemory.CreateNativeReference<int>(),
-                _outShapesInfo = _jobMemory.CreateNativeArray<ShapeInfo>(256),
-                _outShapeCount = _jobMemory.CreateNativeReference<int>(),
-                _outShapesMask = _jobMemory.CreateNativeArray<byte>(_inputTexture.width * _inputTexture.height)
+                _outConnections = _jobMemory.CreateNativeArray<byte2>(256),
+                _outConnectionCount = _jobMemory.CreateNativeReference<int>(),
+                _outSeedBounds = _jobMemory.CreateNativeArray<ByteBounds>(256),
+                _outSeedCount = _jobMemory.CreateNativeReference<int>(),
+                _outSeedMask = _jobMemory.CreateNativeArray<byte>(textureWidth * textureHeight)
             };
             
             TimerBegin();
-            job.Schedule().Complete();
+            seedJob.Schedule().Complete();
             TimerEnd("ShapeFillJob");
 
-            if (job._outResultCode.Value != EShapeFillResult.Normal)
+            if (seedJob._outResultCode.Value != EShapeFillResult.Normal)
             {
-                Debug.LogError($"ShapeFillJob ended with '{job._outResultCode.Value}'");
+                Debug.LogError($"ShapeFillJob ended with '{seedJob._outResultCode.Value}'");
                 return;
             }
             
-            Debug.Log("ShapeCount: " + job._outShapeCount.Value);
-            Debug.Log("ConnectionCount: " + job._outShapeConnectionCount.Value);
+            Debug.Log("Seed count: " + seedJob._outSeedCount.Value);
+            Debug.Log("Connection count: " + seedJob._outConnectionCount.Value);
+
+            var shapeReadJob = new ShapeReadJob
+            {
+                _inConnections = seedJob._outConnections,
+                _inOutBounds = seedJob._outSeedBounds,
+                inConnectionCount = seedJob._outConnectionCount.Value,
+                inSeedCount = seedJob._outSeedCount.Value,
+                _outShapeCount = _jobMemory.CreateNativeReference<int>(),
+                _outShapeRootSeeds = _jobMemory.CreateNativeArray<byte>(256),
+            };
+            
+            TimerBegin();
+            shapeReadJob.Schedule().Complete();
+            TimerEnd("ShapeReadJob");
+
+            var shapeCount = shapeReadJob._outShapeCount.Value;
+            Debug.Log("Shape count: " + shapeCount);
+            for (var i = 0; i < shapeCount; i++)
+            {
+                var bounds = shapeReadJob._inOutBounds[i];
+                var pos = bounds.min;
+                var width = bounds.max.x - bounds.min.x + 1;
+                var height = bounds.max.y - bounds.min.y + 1;
+                Debug.Log($"Shape at ({pos.x}, {pos.y}) with size ({width}, {height})");
+            }
 
             var exportTexture = new Texture2D(textureWidth, textureHeight, TextureFormat.RGB24, false);
             var textureSize = textureWidth * textureHeight;
@@ -110,7 +135,7 @@ namespace SolidSpace.Entities.Splitting.Editor
             };
             for (var i = 0; i < textureSize; i++)
             {
-                var maskColor = job._outShapesMask[i];
+                var maskColor = seedJob._outSeedMask[i];
                 exportTextureRaw[i] = maskColor == 0 ? default : colors[maskColor % colors.Length];
             }
             exportTexture.Apply();
