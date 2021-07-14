@@ -1,10 +1,10 @@
 namespace SolidSpace.Entities.Splitting.Enums
 {
-    public enum EShapeFillResult
+    public enum EShapeSeedResult
     {
         Normal = 1,
         Unknown = 2,
-        TooManyShapeConnections = 3,
-        TooManyShapes = 4,
+        TooManyConnections = 3,
+        TooManySeeds = 4,
     }
 }

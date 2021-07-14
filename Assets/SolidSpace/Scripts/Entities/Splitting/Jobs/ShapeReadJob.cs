@@ -10,14 +10,14 @@ namespace SolidSpace.Entities.Splitting
     [BurstCompile]
     public struct ShapeReadJob : IJob
     {
-        [ReadOnly] public NativeSlice<byte2> _inConnections;
+        [ReadOnly] public NativeSlice<byte2> inConnections;
         [ReadOnly] public int inSeedCount;
         [ReadOnly] public int inConnectionCount;
         
-        public NativeSlice<ByteBounds> _inOutBounds;
+        public NativeSlice<ByteBounds> inOutBounds;
         
-        [WriteOnly] public NativeSlice<byte> _outShapeRootSeeds;
-        [WriteOnly] public NativeReference<int> _outShapeCount;
+        [WriteOnly] public NativeSlice<byte> outShapeRootSeeds;
+        [WriteOnly] public NativeReference<int> outShapeCount;
 
         private Mask256 _connectionUsageMask;
         private Mask256 _seedUsageMask;
@@ -33,8 +33,8 @@ namespace SolidSpace.Entities.Splitting
                     continue;
                 }
 
-                _outShapeRootSeeds[shapeCount] = (byte) seed;
-                var shapeBounds = _inOutBounds[seed];
+                outShapeRootSeeds[shapeCount] = (byte) seed;
+                var shapeBounds = inOutBounds[seed];
 
                 for (var connectionIndex = 0; connectionIndex < inConnectionCount; connectionIndex++)
                 {
@@ -43,7 +43,7 @@ namespace SolidSpace.Entities.Splitting
                         continue;
                     }
 
-                    var connection = _inConnections[connectionIndex];
+                    var connection = inConnections[connectionIndex];
                     IntMath.MinMax(connection.x, connection.y, out var seedMin, out var seedMax);
                     if (seedMin != seed)
                     {
@@ -53,13 +53,13 @@ namespace SolidSpace.Entities.Splitting
                     _connectionUsageMask.SetBitTrue((byte) connectionIndex);
                     _seedUsageMask.SetBitTrue((byte) (seedMax - 1));
 
-                    shapeBounds = JoinBounds(shapeBounds, _inOutBounds[seedMax]);
+                    shapeBounds = JoinBounds(shapeBounds, inOutBounds[seedMax]);
                 }
 
-                _inOutBounds[shapeCount++] = shapeBounds;
+                inOutBounds[shapeCount++] = shapeBounds;
             }
 
-            _outShapeCount.Value = shapeCount;
+            outShapeCount.Value = shapeCount;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

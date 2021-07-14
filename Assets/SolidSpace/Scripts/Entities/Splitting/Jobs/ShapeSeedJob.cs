@@ -12,63 +12,63 @@ namespace SolidSpace.Entities.Splitting
     [BurstCompile]
     public struct ShapeSeedJob : IJob
     {
-        [ReadOnly] public NativeSlice<byte> _inFrameBits;
-        [ReadOnly] public int2 _inFrameSize;
+        [ReadOnly] public NativeSlice<byte> inFrameBits;
+        [ReadOnly] public int2 inFrameSize;
         
-        public NativeSlice<byte> _outSeedMask;
-        public NativeSlice<ByteBounds> _outSeedBounds;
+        public NativeSlice<byte> outSeedMask;
+        public NativeSlice<ByteBounds> outSeedBounds;
         
-        [WriteOnly] public NativeReference<int>  _outSeedCount;
-        [WriteOnly] public NativeSlice<byte2> _outConnections;
-        [WriteOnly] public NativeReference<int> _outConnectionCount;
-        [WriteOnly] public NativeReference<EShapeFillResult> _outResultCode;
+        [WriteOnly] public NativeReference<int>  outSeedCount;
+        [WriteOnly] public NativeSlice<byte2> outConnections;
+        [WriteOnly] public NativeReference<int> outConnectionCount;
+        [WriteOnly] public NativeReference<EShapeSeedResult> outResultCode;
 
-        private EShapeFillResult _resultCode;
+        private EShapeSeedResult _resultCode;
         private int _seedCount;
         private int _connectionCount;
         
         public void Execute()
         {
-            var bytesPerLine = (int) Math.Ceiling(_inFrameSize.x / 8f);
+            var bytesPerLine = (int) Math.Ceiling(inFrameSize.x / 8f);
             Mask256 previousFill = default;
             
-            _resultCode = EShapeFillResult.Unknown;
-            _outResultCode.Value = EShapeFillResult.Unknown;
+            _resultCode = EShapeSeedResult.Unknown;
+            outResultCode.Value = EShapeSeedResult.Unknown;
             _connectionCount = 0;
             _seedCount = 0;
             
-            for (var lineIndex = 0; lineIndex < _inFrameSize.y; lineIndex++)
+            for (var lineIndex = 0; lineIndex < inFrameSize.y; lineIndex++)
             {
-                var frame = ReadMask(_inFrameBits, lineIndex * bytesPerLine, bytesPerLine);
-                var frameOffset = lineIndex * _inFrameSize.x;
-                for (var i = 0; i < _inFrameSize.x; i++)
+                var frame = ReadMask(inFrameBits, lineIndex * bytesPerLine, bytesPerLine);
+                var frameOffset = lineIndex * inFrameSize.x;
+                for (var i = 0; i < inFrameSize.x; i++)
                 {
                     if (!frame.HasBit((byte) i))
                     {
-                        _outSeedMask[frameOffset + i] = 0;
+                        outSeedMask[frameOffset + i] = 0;
                     }
                 }
                 
                 var newFill = ProjectPreviousFillOnFrame(frame, previousFill, lineIndex, lineIndex - 1);
-                if (_resultCode != EShapeFillResult.Unknown)
+                if (_resultCode != EShapeSeedResult.Unknown)
                 {
-                    _outResultCode.Value = _resultCode;
+                    outResultCode.Value = _resultCode;
                     return;
                 }
 
                 ProcessSeeds(frame, newFill, lineIndex);
-                if (_resultCode != EShapeFillResult.Unknown)
+                if (_resultCode != EShapeSeedResult.Unknown)
                 {
-                    _outResultCode.Value = _resultCode;
+                    outResultCode.Value = _resultCode;
                     return;
                 }
 
                 previousFill = frame;
             }
 
-            _outResultCode.Value = EShapeFillResult.Normal; 
-            _outConnectionCount.Value = _connectionCount;
-            _outSeedCount.Value = _seedCount;
+            outResultCode.Value = EShapeSeedResult.Normal; 
+            outConnectionCount.Value = _connectionCount;
+            outSeedCount.Value = _seedCount;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -80,17 +80,17 @@ namespace SolidSpace.Entities.Splitting
                 return;
             }
             
-            var offset = frameY * _inFrameSize.x;
-            for (var i = 0; i < _inFrameSize.x; i++)
+            var offset = frameY * inFrameSize.x;
+            for (var i = 0; i < inFrameSize.x; i++)
             {
                 if (!seeds.HasBit((byte) i))
                 {
                     continue;
                 }
 
-                if (_seedCount >= _outSeedBounds.Length - 1)
+                if (_seedCount >= outSeedBounds.Length - 1)
                 {
-                    _resultCode = EShapeFillResult.TooManyShapes;
+                    _resultCode = EShapeSeedResult.TooManySeeds;
                     return;
                 }
 
@@ -99,16 +99,16 @@ namespace SolidSpace.Entities.Splitting
                 shape.min.x = (byte) i;
                 shape.min.y = (byte) frameY;
                 shape.max.y = (byte) frameY;
-                _outSeedMask[offset + i] = (byte) shapeId;
+                outSeedMask[offset + i] = (byte) shapeId;
                 i++;
-                while (i < _inFrameSize.x && seeds.HasBit((byte) i))
+                while (i < inFrameSize.x && seeds.HasBit((byte) i))
                 {
-                    _outSeedMask[offset + i] = (byte) shapeId;
+                    outSeedMask[offset + i] = (byte) shapeId;
                     i++;
                 }
 
                 shape.max.x = (byte) (i - 1);
-                _outSeedBounds[shapeId] = shape;
+                outSeedBounds[shapeId] = shape;
             }
         }
 
@@ -123,31 +123,31 @@ namespace SolidSpace.Entities.Splitting
                 return newFill;
             }
 
-            var currentFillOffset = frameY * _inFrameSize.x;
-            var previousLineOffset = previousFillY * _inFrameSize.x;
+            var currentFillOffset = frameY * inFrameSize.x;
+            var previousLineOffset = previousFillY * inFrameSize.x;
             var lastCreatedLineBounds = new byte2(-1, -1);
             var lastCreatedLineId = -1;
 
-            for (var i = 0; i < _inFrameSize.x; i++)
+            for (var i = 0; i < inFrameSize.x; i++)
             {
                 if (!frameAndPreviousFill.HasBit((byte) i))
                 {
                     continue;
                 }
 
-                var shapeId = _outSeedMask[previousLineOffset + i];
+                var shapeId = outSeedMask[previousLineOffset + i];
                 
                 if (i >= lastCreatedLineBounds.x && i <= lastCreatedLineBounds.y)
                 {
                     if (shapeId != lastCreatedLineId)
                     {
-                        if (_connectionCount >= _outConnections.Length)
+                        if (_connectionCount >= outConnections.Length)
                         {
-                            _resultCode = EShapeFillResult.TooManyShapeConnections;
+                            _resultCode = EShapeSeedResult.TooManyConnections;
                             return default;
                         }
                         
-                        _outConnections[_connectionCount++] = new byte2(shapeId, lastCreatedLineId);
+                        outConnections[_connectionCount++] = new byte2(shapeId, lastCreatedLineId);
                     }
 
                     i++;
@@ -159,28 +159,28 @@ namespace SolidSpace.Entities.Splitting
                     continue;
                 }
                 
-                var shapeInfo = _outSeedBounds[shapeId];
+                var shapeInfo = outSeedBounds[shapeId];
                 shapeInfo.max.y = (byte) Math.Max(shapeInfo.max.y, frameY);
-                _outSeedMask[currentFillOffset + i] = shapeId;
+                outSeedMask[currentFillOffset + i] = shapeId;
                 newFill.SetBitTrue((byte) i);
                         
                 var toStart = i - 1;
                 for (; toStart >= 0 && frame.HasBit((byte) toStart); toStart--)
                 {
-                    _outSeedMask[currentFillOffset + toStart] = shapeId;
+                    outSeedMask[currentFillOffset + toStart] = shapeId;
                     newFill.SetBitTrue((byte) toStart);
                 }
                 shapeInfo.min.x = (byte) Math.Min(shapeInfo.min.x, ++toStart);
 
                 var toEnd = i + 1;
-                for (; toEnd < _inFrameSize.x && frame.HasBit((byte) toEnd); toEnd++)
+                for (; toEnd < inFrameSize.x && frame.HasBit((byte) toEnd); toEnd++)
                 {
-                    _outSeedMask[currentFillOffset + toEnd] = shapeId;
+                    outSeedMask[currentFillOffset + toEnd] = shapeId;
                     newFill.SetBitTrue((byte) toEnd);
                 }
                 shapeInfo.max.x = (byte) Math.Max(shapeInfo.max.x, --toEnd);
 
-                _outSeedBounds[shapeId] = shapeInfo;
+                outSeedBounds[shapeId] = shapeInfo;
                 lastCreatedLineBounds = new byte2(toStart, toEnd);
                 lastCreatedLineId = shapeId;
 

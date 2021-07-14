@@ -72,48 +72,48 @@ namespace SolidSpace.Entities.Splitting.Editor
             
             var seedJob = new ShapeSeedJob
             {
-                _inFrameBits = textureBits,
-                _inFrameSize = new int2(textureWidth, textureHeight),
-                _outResultCode = _jobMemory.CreateNativeReference<EShapeFillResult>(),
-                _outConnections = _jobMemory.CreateNativeArray<byte2>(256),
-                _outConnectionCount = _jobMemory.CreateNativeReference<int>(),
-                _outSeedBounds = _jobMemory.CreateNativeArray<ByteBounds>(256),
-                _outSeedCount = _jobMemory.CreateNativeReference<int>(),
-                _outSeedMask = _jobMemory.CreateNativeArray<byte>(textureWidth * textureHeight)
+                inFrameBits = textureBits,
+                inFrameSize = new int2(textureWidth, textureHeight),
+                outResultCode = _jobMemory.CreateNativeReference<EShapeSeedResult>(),
+                outConnections = _jobMemory.CreateNativeArray<byte2>(256),
+                outConnectionCount = _jobMemory.CreateNativeReference<int>(),
+                outSeedBounds = _jobMemory.CreateNativeArray<ByteBounds>(256),
+                outSeedCount = _jobMemory.CreateNativeReference<int>(),
+                outSeedMask = _jobMemory.CreateNativeArray<byte>(textureWidth * textureHeight)
             };
             
             TimerBegin();
             seedJob.Schedule().Complete();
             TimerEnd("ShapeFillJob");
 
-            if (seedJob._outResultCode.Value != EShapeFillResult.Normal)
+            if (seedJob.outResultCode.Value != EShapeSeedResult.Normal)
             {
-                Debug.LogError($"ShapeFillJob ended with '{seedJob._outResultCode.Value}'");
+                Debug.LogError($"ShapeFillJob ended with '{seedJob.outResultCode.Value}'");
                 return;
             }
             
-            Debug.Log("Seed count: " + seedJob._outSeedCount.Value);
-            Debug.Log("Connection count: " + seedJob._outConnectionCount.Value);
+            Debug.Log("Seed count: " + seedJob.outSeedCount.Value);
+            Debug.Log("Connection count: " + seedJob.outConnectionCount.Value);
 
             var shapeReadJob = new ShapeReadJob
             {
-                _inConnections = seedJob._outConnections,
-                _inOutBounds = seedJob._outSeedBounds,
-                inConnectionCount = seedJob._outConnectionCount.Value,
-                inSeedCount = seedJob._outSeedCount.Value,
-                _outShapeCount = _jobMemory.CreateNativeReference<int>(),
-                _outShapeRootSeeds = _jobMemory.CreateNativeArray<byte>(256),
+                inConnections = seedJob.outConnections,
+                inOutBounds = seedJob.outSeedBounds,
+                inConnectionCount = seedJob.outConnectionCount.Value,
+                inSeedCount = seedJob.outSeedCount.Value,
+                outShapeCount = _jobMemory.CreateNativeReference<int>(),
+                outShapeRootSeeds = _jobMemory.CreateNativeArray<byte>(256),
             };
             
             TimerBegin();
             shapeReadJob.Schedule().Complete();
             TimerEnd("ShapeReadJob");
 
-            var shapeCount = shapeReadJob._outShapeCount.Value;
+            var shapeCount = shapeReadJob.outShapeCount.Value;
             Debug.Log("Shape count: " + shapeCount);
             for (var i = 0; i < shapeCount; i++)
             {
-                var bounds = shapeReadJob._inOutBounds[i];
+                var bounds = shapeReadJob.inOutBounds[i];
                 var pos = bounds.min;
                 var width = bounds.max.x - bounds.min.x + 1;
                 var height = bounds.max.y - bounds.min.y + 1;
@@ -135,7 +135,7 @@ namespace SolidSpace.Entities.Splitting.Editor
             };
             for (var i = 0; i < textureSize; i++)
             {
-                var maskColor = seedJob._outSeedMask[i];
+                var maskColor = seedJob.outSeedMask[i];
                 exportTextureRaw[i] = maskColor == 0 ? default : colors[maskColor % colors.Length];
             }
             exportTexture.Apply();
