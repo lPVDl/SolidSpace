@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using SolidSpace.Entities.Atlases;
 using SolidSpace.Entities.Components;
@@ -10,7 +9,6 @@ using SolidSpace.Entities.World;
 using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
 using SolidSpace.Playground.Core;
-using SolidSpace.Profiling;
 using SolidSpace.UI.Core;
 using SolidSpace.UI.Factory;
 using Unity.Collections;
@@ -148,6 +146,7 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
             
             var spriteSystemTextureSize = new int2(_spriteSystem.Texture.width, _spriteSystem.Texture.height);
             var spriteSystemTexturePtr = _spriteSystem.Texture.GetRawTextureData<ColorRGB24>();
+            var healthSystemAtlasPtr = _healthSystem.Data;
             
             for (var i = 0; i < shapeCount; i++)
             {
@@ -168,7 +167,6 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
                 SpawnEntity(new float2(posX, posY), new float2(width, height), spriteIndex, healthIndex);
 
                 var spriteOffset = AtlasMath.ComputeOffset(_spriteSystem.Chunks[spriteIndex.chunkId], spriteIndex);
-                
                 handles[handleCount++] = new BlitShapeSpriteJob
                 {
                     inConnections = seedJob.outConnections,
@@ -182,6 +180,20 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
                     inBlitShapeSeed = readJob.outShapeRootSeeds[i],
                     outTargetTexture = spriteSystemTexturePtr,
                     inSourceSeedMask = seedJob.outSeedMask
+                }.Schedule();
+
+                var healthOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks[healthIndex.chunkId], healthIndex);
+                handles[handleCount++] = new BuildShapeHealthJob
+                {
+                    inConnections = seedJob.outConnections,
+                    inConnectionCount = seedJob.outConnectionCount.Value,
+                    inSourceOffset = new int2(bounds.min.x, bounds.min.y),
+                    inBlitSize = new int2(width, height),
+                    inSourceSize = new int2(texture.width, texture.height),
+                    inTargetOffset = healthOffset,
+                    inBlitShapeSeed = readJob.outShapeRootSeeds[i],
+                    inSourceSeedMask = seedJob.outSeedMask,
+                    outTargetHealth = healthSystemAtlasPtr
                 }.Schedule();
             }
 
