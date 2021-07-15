@@ -44,16 +44,15 @@ namespace SolidSpace.Entities.Splitting
                     }
 
                     var connection = inConnections[connectionIndex];
-                    IntMath.MinMax(connection.x, connection.y, out var seedMin, out var seedMax);
-                    if (seedMin != seed)
+                    if (connection.x != seed)
                     {
                         continue;
                     }
                     
                     _connectionUsageMask.SetBitTrue((byte) connectionIndex);
-                    _seedUsageMask.SetBitTrue((byte) (seedMax - 1));
+                    _seedUsageMask.SetBitTrue((byte) (connection.y - 1));
 
-                    shapeBounds = JoinBounds(shapeBounds, inOutBounds[seedMax]);
+                    shapeBounds = JoinBounds(shapeBounds, inOutBounds[connection.y]);
                 }
 
                 inOutBounds[shapeCount++] = shapeBounds;

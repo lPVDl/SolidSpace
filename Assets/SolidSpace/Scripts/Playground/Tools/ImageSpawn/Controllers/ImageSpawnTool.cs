@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using SolidSpace.Entities.Atlases;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Health;
 using SolidSpace.Entities.Rendering.Sprites;
@@ -31,7 +32,6 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
         private readonly ISpriteColorSystem _spriteSystem;
         private readonly IHealthAtlasSystem _healthSystem;
         private readonly IEntityManager _entityManager;
-        private readonly IProfilingManager _profilingManager;
 
         private IToolWindow _window;
         private IStringField _pathField;
@@ -105,7 +105,10 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
             }
 
             var pixels = new NativeArray<Color32>(texture.GetPixels32(), Allocator.TempJob);
-            var frameArray = ConvertToBitArray(pixels, texture.width, texture.height);
+            _jobMemory.AddAllocation(pixels);
+            
+            var frameArray = FrameBitUtil.ConvertToBitArray(pixels, texture.width, texture.height);
+            _jobMemory.AddAllocation(frameArray);
 
             var seedJob = new ShapeSeedJob
             {
@@ -143,6 +146,9 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
             var handles = _jobMemory.CreateNativeArray<JobHandle>(shapeCount * 2);
             var handleCount = 0;
             
+            var spriteSystemTextureSize = new int2(_spriteSystem.Texture.width, _spriteSystem.Texture.height);
+            var spriteSystemTexturePtr = _spriteSystem.Texture.GetRawTextureData<ColorRGB24>();
+            
             for (var i = 0; i < shapeCount; i++)
             {
                 var bounds = readJob.inOutBounds[i];
@@ -160,9 +166,26 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
                 var posY = (bounds.max.y + bounds.min.y) / 2f - texture.height * 0.5f + _pointer.Position.y;
 
                 SpawnEntity(new float2(posX, posY), new float2(width, height), spriteIndex, healthIndex);
+
+                var spriteOffset = AtlasMath.ComputeOffset(_spriteSystem.Chunks[spriteIndex.chunkId], spriteIndex);
+                
+                handles[handleCount++] = new BlitShapeSpriteJob
+                {
+                    inConnections = seedJob.outConnections,
+                    inConnectionCount = seedJob.outConnectionCount.Value,
+                    inSourceOffset = new int2(bounds.min.x, bounds.min.y),
+                    inBlitSize = new int2(width, height),
+                    inSourceSize = new int2(texture.width, texture.height),
+                    inSourceTexture = pixels,
+                    inTargetOffset = spriteOffset,
+                    inTargetSize = spriteSystemTextureSize,
+                    inBlitShapeSeed = readJob.outShapeRootSeeds[i],
+                    outTargetTexture = spriteSystemTexturePtr,
+                    inSourceSeedMask = seedJob.outSeedMask
+                }.Schedule();
             }
 
-            pixels.Dispose();
+            JobHandle.CombineDependencies(new NativeSlice<JobHandle>(handles, 0, handleCount)).Complete();
         }
 
         private void SpawnEntity(float2 position, float2 size, AtlasIndex spriteIndex, AtlasIndex healthIndex)
@@ -204,7 +227,7 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
                 Debug.LogError($"File '{path}' does not exist");
                 return false;
             }
-            
+
             var bytes = File.ReadAllBytes(path);
             texture = new Texture2D(1, 1, TextureFormat.RGBA32, false);
             Object.Destroy(texture);
@@ -217,34 +240,6 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
             Debug.LogError("Failed to load image into texture");
 
             return false;
-        }
-        
-        private NativeArray<byte> ConvertToBitArray(NativeArray<Color32> pixels, int textureWidth, int textureHeight)
-        {
-            var bytesPerLine = (int) Math.Ceiling(textureWidth / 8f);
-            var bits = _jobMemory.CreateNativeArray<byte>(bytesPerLine * textureHeight);
-
-            for (var y = 0; y < textureHeight; y++)
-            {
-                var textureOffset = textureWidth * y;
-                var bitsOffset = bytesPerLine * y;
-                
-                for (var x = 0; x < textureWidth; x += 8)
-                {
-                    var value = 0;
-
-                    for (var j = 0; j < 8 && (x + j < textureWidth); j++)
-                    {
-                        var color = pixels[textureOffset + x + j];
-                        var colorSum = Math.Min(1, color.r + color.g + color.b);
-                        value |= colorSum << j;
-                    }
-
-                    bits[bitsOffset + x / 8] = (byte) value;
-                }
-            }
-
-            return bits;
         }
 
         public void OnActivate(bool isActive)

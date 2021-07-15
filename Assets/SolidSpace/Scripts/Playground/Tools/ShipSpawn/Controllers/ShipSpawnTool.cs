@@ -138,7 +138,7 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
             {
                 index = healthIndex
             });
-            _entityManager.SetComponentData(entity, new ActorComponent()
+            _entityManager.SetComponentData(entity, new ActorComponent
             {
                 isActive = false
             });

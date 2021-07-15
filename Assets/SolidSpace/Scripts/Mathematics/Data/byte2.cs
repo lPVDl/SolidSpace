@@ -12,5 +12,10 @@ namespace SolidSpace.Mathematics
             this.x = (byte) x;
             this.y = (byte) y;
         }
+
+        public override string ToString()
+        {
+            return $"({x}, {y})";
+        }
     }
 }

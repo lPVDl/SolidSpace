@@ -64,7 +64,11 @@ namespace SolidSpace.Entities.Splitting.Editor
             ConsoleUtil.ClearLog();
             
             TimerBegin();
-            var textureBits = ConvertToBitArray(_inputTexture);
+            var pixels = new NativeArray<Color32>(_inputTexture.GetPixels32(), Allocator.TempJob);
+            _jobMemory.AddAllocation(pixels);
+            
+            var frameBits = FrameBitUtil.ConvertToBitArray(pixels, _inputTexture.width, _inputTexture.height);
+            _jobMemory.AddAllocation(frameBits);
             TimerEnd("Convert to bit array");
 
             var textureWidth = _inputTexture.width;
@@ -72,7 +76,7 @@ namespace SolidSpace.Entities.Splitting.Editor
             
             var seedJob = new ShapeSeedJob
             {
-                inFrameBits = textureBits,
+                inFrameBits = frameBits,
                 inFrameSize = new int2(textureWidth, textureHeight),
                 outResultCode = _jobMemory.CreateNativeReference<EShapeSeedResult>(),
                 outConnections = _jobMemory.CreateNativeArray<byte2>(256),
@@ -143,37 +147,6 @@ namespace SolidSpace.Entities.Splitting.Editor
             File.WriteAllBytes(_outputTexturePath, exportTexture.EncodeToPNG());
 
             DestroyImmediate(exportTexture);
-        }
-
-        private NativeArray<byte> ConvertToBitArray(Texture2D texture)
-        {
-            var textureHeight = texture.height;
-            var textureWidth = texture.width;
-            var bytesPerLine = (int) Math.Ceiling(textureWidth / 8f);
-            var textureRaw = texture.GetRawTextureData<ColorRGB24>();
-            var bits = _jobMemory.CreateNativeArray<byte>(bytesPerLine * textureHeight);
-
-            for (var y = 0; y < textureHeight; y++)
-            {
-                var textureOffset = textureWidth * y;
-                var bitsOffset = bytesPerLine * y;
-                
-                for (var x = 0; x < textureWidth; x += 8)
-                {
-                    var value = 0;
-
-                    for (var j = 0; j < 8 && (x + j < textureWidth); j++)
-                    {
-                        var color = textureRaw[textureOffset + x + j];
-                        var colorSum = Math.Min(1, color.r + color.g + color.b);
-                        value |= colorSum << j;
-                    }
-
-                    bits[bitsOffset + x / 8] = (byte) value;
-                }
-            }
-
-            return bits;
         }
     }
 }
