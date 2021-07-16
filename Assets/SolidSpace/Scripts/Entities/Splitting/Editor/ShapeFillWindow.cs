@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using SolidSpace.Editor.Utilities;
+using SolidSpace.Entities.Health;
 using SolidSpace.Entities.Splitting.Enums;
 using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
@@ -67,13 +68,14 @@ namespace SolidSpace.Entities.Splitting.Editor
             var pixels = new NativeArray<Color32>(_inputTexture.GetPixels32(), Allocator.TempJob);
             _jobMemory.AddAllocation(pixels);
             
-            var frameBits = FrameBitUtil.ConvertToBitArray(pixels, _inputTexture.width, _inputTexture.height);
+            var textureWidth = _inputTexture.width;
+            var textureHeight = _inputTexture.height;
+
+            var frameBits = _jobMemory.CreateNativeArray<byte>(HealthFrameBitsUtil.GetRequiredByteCount(textureWidth, textureHeight));
+            HealthFrameBitsUtil.TextureToFrameBits(pixels, textureWidth, textureHeight, frameBits);
             _jobMemory.AddAllocation(frameBits);
             TimerEnd("Convert to bit array");
 
-            var textureWidth = _inputTexture.width;
-            var textureHeight = _inputTexture.height;
-            
             var seedJob = new ShapeSeedJob
             {
                 inFrameBits = frameBits,

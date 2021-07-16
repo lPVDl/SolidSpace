@@ -2,8 +2,10 @@ using System;
 using System.Runtime.CompilerServices;
 using SolidSpace.Entities.Atlases;
 using SolidSpace.Entities.Components;
+using SolidSpace.Entities.Health;
 using SolidSpace.Entities.Physics.Colliders;
 using SolidSpace.Entities.Physics.Raycast;
+using SolidSpace.Entities.Splitting;
 using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
 using Unity.Collections;
@@ -24,7 +26,6 @@ namespace SolidSpace.Entities.Bullets
         [ReadOnly] public NativeArray<byte> inHealthAtlas;
 
         [ReadOnly] public NativeArray<SpriteRenderComponent> inColliderSprites;
-        [ReadOnly] public NativeSlice<AtlasChunk2D> inSpriteChunks;
         
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
         [ReadOnly] public ComponentTypeHandle<VelocityComponent> velocityHandle;
@@ -87,21 +88,19 @@ namespace SolidSpace.Entities.Bullets
                     return false;
                 }
                     
-                var offset = healthOffset + p0Int.y * spriteSize.x + p0Int.x;
-                if (inHealthAtlas[offset] == 0)
+                if (!HealthFrameBitsUtil.HasBit(inHealthAtlas, healthOffset, spriteSize.x, p0Int))
                 {
                     return false;
                 }
                 
                 var spriteIndex = inColliderSprites[hit.colliderIndex].index;
-                var spriteOffset = AtlasMath.ComputeOffset(inSpriteChunks[spriteIndex.chunkId], spriteIndex);
-                spriteOffset += p0Int;
-                    
                 outHits[hit.writeOffset] = new BulletHit
                 {
                     bulletEntity = _chunkEntities[hit.rayIndex],
-                    spriteOffset = new ushort2(spriteOffset.x, spriteOffset.y),
-                    healthOffset = offset
+                    hitPixel = p0Int,
+                    colliderSprite = spriteIndex,
+                    colliderHealth = healthIndex,
+                    colliderSize = colliderShape.size
                 };
                     
                 return true;
@@ -117,21 +116,20 @@ namespace SolidSpace.Entities.Bullets
                     continue;
                 }
 
-                var offset = healthOffset + point.y * spriteSize.x + point.x;
-                if (inHealthAtlas[offset] == 0)
+                if (!HealthFrameBitsUtil.HasBit(inHealthAtlas, healthOffset, spriteSize.x, point))
                 {
                     continue;
                 }
 
                 var spriteIndex = inColliderSprites[hit.colliderIndex].index;
-                var spriteOffset = AtlasMath.ComputeOffset(inSpriteChunks[spriteIndex.chunkId], spriteIndex);
-                spriteOffset += point;
                     
                 outHits[hit.writeOffset] = new BulletHit
                 {
                     bulletEntity = _chunkEntities[hit.rayIndex],
-                    spriteOffset = new ushort2(spriteOffset.x, spriteOffset.y),
-                    healthOffset = offset
+                    colliderSprite = spriteIndex,
+                    colliderHealth = healthIndex,
+                    hitPixel = point,
+                    colliderSize = colliderShape.size
                 };
                     
                 return true;

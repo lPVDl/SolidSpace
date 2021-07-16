@@ -2,13 +2,16 @@ using System;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Health;
 using SolidSpace.Entities.Rendering.Sprites;
+using SolidSpace.Entities.Splitting;
 using SolidSpace.Entities.World;
 using SolidSpace.Gizmos;
+using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
 using SolidSpace.Playground.Core;
 using SolidSpace.Playground.Tools.ComponentFilter;
 using SolidSpace.Playground.Tools.Spawn;
 using SolidSpace.UI.Core;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -115,7 +118,7 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
             var texture = _config.ShipTexture;
             var size = new int2(texture.width, texture.height);
             var colorIndex = _spriteSystem.Allocate(size.x, size.y);
-            var healthIndex = _healthSystem.Allocate(size.x * size.y);
+            var healthIndex = _healthSystem.Allocate(size.x, size.y);
             
             var entity = _entityManager.CreateEntity(_shipArchetype);
             _entityManager.SetComponentData(entity, new PositionComponent

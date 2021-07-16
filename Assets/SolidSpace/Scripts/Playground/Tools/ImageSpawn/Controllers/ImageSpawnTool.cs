@@ -105,8 +105,8 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
             var pixels = new NativeArray<Color32>(texture.GetPixels32(), Allocator.TempJob);
             _jobMemory.AddAllocation(pixels);
             
-            var frameArray = FrameBitUtil.ConvertToBitArray(pixels, texture.width, texture.height);
-            _jobMemory.AddAllocation(frameArray);
+            var frameArray = _jobMemory.CreateNativeArray<byte>(HealthFrameBitsUtil.GetRequiredByteCount(texture.width, texture.height));
+            HealthFrameBitsUtil.TextureToFrameBits(pixels, texture.width, texture.height, frameArray);
 
             var seedJob = new ShapeSeedJob
             {
@@ -159,7 +159,7 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
                 }
 
                 var spriteIndex = _spriteSystem.Allocate(width, height);
-                var healthIndex = _healthSystem.Allocate(width * height);
+                var healthIndex = _healthSystem.Allocate(width, height);
 
                 var posX = (bounds.max.x + bounds.min.x) / 2f - texture.width * 0.5f + _pointer.Position.x;
                 var posY = (bounds.max.y + bounds.min.y) / 2f - texture.height * 0.5f + _pointer.Position.y;

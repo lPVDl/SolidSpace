@@ -1,9 +1,11 @@
 using System;
 using SolidSpace.Entities.Atlases;
+using SolidSpace.Entities.Splitting;
 using SolidSpace.GameCycle;
 using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
 using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace SolidSpace.Entities.Health
@@ -40,24 +42,24 @@ namespace SolidSpace.Entities.Health
             
             var chunk = _indexManager.Chunks[target.chunkId];
             var itemMaxSize = 1 << chunk.itemPower;
-            var textureSize = source.width * source.height;
-            if (textureSize > itemMaxSize)
+            var textureSize = new int2(source.width, source.height);
+            var requiredByteCount = HealthFrameBitsUtil.GetRequiredByteCount(textureSize.x, textureSize.y);
+            
+            if (requiredByteCount > itemMaxSize)
             {
-                var message = $"Expected texture with size less than {itemMaxSize}, but got {textureSize}";
+                var message = $"Given texture {textureSize} requires {requiredByteCount} bytes, but {itemMaxSize} is available";
                 throw new InvalidOperationException(message);
             }
 
             var offset = AtlasMath.ComputeOffset(chunk, target);
             var textureRaw = source.GetRawTextureData<ColorRGB24>();
-            for (var i = 0; i < textureSize; i++)
-            {
-                var color = textureRaw[i];
-                _data[offset + i] = (byte) Math.Min(1, color.r + color.g + color.b);
-            }
+            var atlasSlice = new NativeSlice<byte>(_data, offset, itemMaxSize);
+            HealthFrameBitsUtil.TextureToFrameBits(textureRaw, textureSize.x, textureSize.y, atlasSlice);
         }
-        
-        public AtlasIndex Allocate(int size)
+
+        public AtlasIndex Allocate(int width, int height)
         {
+            var size = HealthFrameBitsUtil.GetRequiredByteCount(width, height);
             return _indexManager.Allocate(size);
         }
 

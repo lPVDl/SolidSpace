@@ -1,12 +1,15 @@
 using SolidSpace.Mathematics;
 using Unity.Entities;
+using Unity.Mathematics;
 
 namespace SolidSpace.Entities.Bullets
 {
     internal struct BulletHit
     {
         public Entity bulletEntity;
-        public int healthOffset;
-        public ushort2 spriteOffset;
+        public int2 hitPixel;
+        public AtlasIndex colliderSprite;
+        public AtlasIndex colliderHealth;
+        public half2 colliderSize;
     }
 }

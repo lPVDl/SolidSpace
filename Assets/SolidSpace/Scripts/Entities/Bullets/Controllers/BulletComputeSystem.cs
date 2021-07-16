@@ -1,3 +1,4 @@
+using SolidSpace.Entities.Atlases;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Despawn;
 using SolidSpace.Entities.Health;
@@ -8,6 +9,7 @@ using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
 using SolidSpace.Gizmos;
 using SolidSpace.JobUtilities;
+using SolidSpace.Mathematics;
 using SolidSpace.Profiling;
 using Unity.Collections;
 using Unity.Entities;
@@ -106,7 +108,6 @@ namespace SolidSpace.Entities.Bullets
                 velocityHandle = _entityManager.GetComponentTypeHandle<VelocityComponent>(true),
                 inHealthAtlas = _healthSystem.Data,
                 inHealthChunks = _healthSystem.Chunks,
-                inSpriteChunks = _spriteSystem.Chunks,
             };
             
             _profiler.BeginSample("Raycast");
@@ -126,8 +127,14 @@ namespace SolidSpace.Entities.Bullets
             {
                 var hit = hits[i];
                 _entitiesToDestroy[i] = hit.bulletEntity;
-                healthAtlas[hit.healthOffset] = 0;
-                spriteTexture.SetPixel(hit.spriteOffset.x, hit.spriteOffset.y, Color.black);
+
+                var spriteChunk = _spriteSystem.Chunks[hit.colliderSprite.chunkId];
+                var spriteOffset = AtlasMath.ComputeOffset(spriteChunk, hit.colliderSprite) + hit.hitPixel;
+                spriteTexture.SetPixel(spriteOffset.x, spriteOffset.y, Color.black);
+                
+                var healthChunk = _healthSystem.Chunks[hit.colliderHealth.chunkId];
+                var healthOffset = AtlasMath.ComputeOffset(healthChunk, hit.colliderHealth);
+                HealthFrameBitsUtil.ClearBit(healthAtlas, healthOffset, (int) hit.colliderSize.x, hit.hitPixel);
             }
             spriteTexture.Apply();
             _destructionBuffer.ScheduleDestroy(new NativeSlice<Entity>(_entitiesToDestroy, 0, hitCount));
