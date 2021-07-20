@@ -1,4 +1,4 @@
-namespace SolidSpace.Entities.Splitting.Enums
+namespace SolidSpace.Entities.Splitting
 {
     public enum EShapeSeedResult
     {

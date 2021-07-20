@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.IO;
 using SolidSpace.Editor.Utilities;
 using SolidSpace.Entities.Health;
-using SolidSpace.Entities.Splitting.Enums;
 using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
 using Unity.Collections;

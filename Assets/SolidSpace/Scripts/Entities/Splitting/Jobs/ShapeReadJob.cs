@@ -13,7 +13,7 @@ namespace SolidSpace.Entities.Splitting
         [ReadOnly] public NativeSlice<byte2> inConnections;
         [ReadOnly] public int inSeedCount;
         [ReadOnly] public int inConnectionCount;
-        
+
         public NativeSlice<ByteBounds> inOutBounds;
         
         [WriteOnly] public NativeSlice<byte> outShapeRootSeeds;

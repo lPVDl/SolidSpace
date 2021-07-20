@@ -5,14 +5,15 @@ using SolidSpace.Entities.Health;
 using SolidSpace.Entities.Physics.Colliders;
 using SolidSpace.Entities.Physics.Raycast;
 using SolidSpace.Entities.Rendering.Sprites;
+using SolidSpace.Entities.Splitting;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
 using SolidSpace.Gizmos;
 using SolidSpace.JobUtilities;
-using SolidSpace.Mathematics;
 using SolidSpace.Profiling;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace SolidSpace.Entities.Bullets
@@ -28,6 +29,7 @@ namespace SolidSpace.Entities.Bullets
         private readonly IHealthAtlasSystem _healthSystem;
         private readonly IGizmosManager _gizmosManager;
         private readonly IEntityDestructionBuffer _destructionBuffer;
+        private readonly ISplittingCommandSystem _splittingSystem;
 
         private ProfilingHandle _profiler;
         private IColliderBakeSystem<BulletColliderBakeBehaviour> _colliderBakeSystem;
@@ -37,11 +39,12 @@ namespace SolidSpace.Entities.Bullets
         private GizmosHandle _colliderGizmos;
         private EntityQuery _colliderQuery;
         private EntityQuery _bulletQuery;
+        private Mask256 _pixelConnectionMask;
 
         public BulletComputeSystem(IColliderBakeSystemFactory colliderBakeSystemFactory, IEntityWorldTime worldTime, 
             IProfilingManager profilingManager, IEntityManager entityManager, IRaycastSystemFactory raycastSystemFactory,
             ISpriteColorSystem spriteSystem, IHealthAtlasSystem healthSystem, IGizmosManager gizmosManager,
-            IEntityDestructionBuffer destructionBuffer)
+            IEntityDestructionBuffer destructionBuffer, ISplittingCommandSystem splittingSystem)
         {
             _colliderBakeSystemFactory = colliderBakeSystemFactory;
             _raycastSystemFactory = raycastSystemFactory;
@@ -52,6 +55,7 @@ namespace SolidSpace.Entities.Bullets
             _healthSystem = healthSystem;
             _gizmosManager = gizmosManager;
             _destructionBuffer = destructionBuffer;
+            _splittingSystem = splittingSystem;
         }
         
         public void OnInitialize()
@@ -75,6 +79,7 @@ namespace SolidSpace.Entities.Bullets
             });
             _raycastSystem = _raycastSystemFactory.Create<BulletRaycastBehaviour>(_profiler);
             _entitiesToDestroy = NativeMemory.CreateTempJobArray<Entity>(0);
+            _pixelConnectionMask = SplittingUtil.Bake4NeighbourPixelConnectionMask();
         }
         
         public void OnUpdate()
@@ -83,6 +88,7 @@ namespace SolidSpace.Entities.Bullets
             {
                 healthHandle = _entityManager.GetComponentTypeHandle<HealthComponent>(true),
                 spriteHandle = _entityManager.GetComponentTypeHandle<SpriteRenderComponent>(true),
+                entityHandle = _entityManager.GetEntityTypeHandle(),
             };
             
             _profiler.BeginSample("Query colliders");
@@ -102,6 +108,7 @@ namespace SolidSpace.Entities.Bullets
                 inColliders = colliders,
                 inColliderHealths = bakeBehaviour.outHealthComponents,
                 inColliderSprites = bakeBehaviour.outSpriteComponents,
+                inColliderEntities = bakeBehaviour.outEntities,
                 inDeltaTime = _worldTime.DeltaTime,
                 entityHandle = _entityManager.GetEntityTypeHandle(),
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
@@ -131,10 +138,17 @@ namespace SolidSpace.Entities.Bullets
                 var spriteChunk = _spriteSystem.Chunks[hit.colliderSprite.chunkId];
                 var spriteOffset = AtlasMath.ComputeOffset(spriteChunk, hit.colliderSprite) + hit.hitPixel;
                 spriteTexture.SetPixel(spriteOffset.x, spriteOffset.y, Color.black);
-                
+
+                var colliderSize = new int2((int) hit.colliderSize.x, (int) hit.colliderSize.y);
                 var healthChunk = _healthSystem.Chunks[hit.colliderHealth.chunkId];
                 var healthOffset = AtlasMath.ComputeOffset(healthChunk, hit.colliderHealth);
-                HealthFrameBitsUtil.ClearBit(healthAtlas, healthOffset, (int) hit.colliderSize.x, hit.hitPixel);
+                HealthFrameBitsUtil.ClearBit(healthAtlas, healthOffset, colliderSize.x, hit.hitPixel);
+
+                var neighbourPixels = SplittingUtil.ReadNeighbourPixels(healthAtlas, healthOffset, colliderSize, hit.hitPixel);
+                if (!_pixelConnectionMask.HasBit(neighbourPixels))
+                {
+                    _splittingSystem.ScheduleSplittingCheck(hit.colliderEntity);   
+                }
             }
             spriteTexture.Apply();
             _destructionBuffer.ScheduleDestroy(new NativeSlice<Entity>(_entitiesToDestroy, 0, hitCount));

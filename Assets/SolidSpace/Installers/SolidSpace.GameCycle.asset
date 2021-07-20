@@ -43,6 +43,7 @@ MonoBehaviour:
         - typeName: SolidSpace.Entities.Bullets.BulletComputeSystem
         - typeName: SolidSpace.Entities.Physics.Rigidbody.RigidbodyComputeSystem
         - typeName: SolidSpace.Entities.Despawn.EntityDestructionBuffer
+        - typeName: SolidSpace.Entities.Splitting.SplittingCommandSystem
       - _name: Managed
         _controllers:
         - typeName: SolidSpace.CameraMotion.CameraMotionController
@@ -67,6 +68,7 @@ MonoBehaviour:
         - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteGarbageCollectorSystem
       - _name: EntityCommand
         _controllers:
+        - typeName: SolidSpace.Entities.Splitting.SplittingCommandSystem
         - typeName: SolidSpace.Entities.ParticleEmitters.ParticleEmitterCommandSystem
         - typeName: SolidSpace.Entities.Despawn.EntityDestructionBuffer
       - _name: Managed

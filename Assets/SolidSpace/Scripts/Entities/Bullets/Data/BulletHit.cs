@@ -11,5 +11,6 @@ namespace SolidSpace.Entities.Bullets
         public AtlasIndex colliderSprite;
         public AtlasIndex colliderHealth;
         public half2 colliderSize;
+        public Entity colliderEntity;
     }
 }

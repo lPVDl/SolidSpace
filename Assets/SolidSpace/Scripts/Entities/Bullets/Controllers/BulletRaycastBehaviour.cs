@@ -23,6 +23,7 @@ namespace SolidSpace.Entities.Bullets
 
         [ReadOnly] public NativeArray<HealthComponent> inColliderHealths;
         [ReadOnly] public NativeSlice<AtlasChunk1D> inHealthChunks;
+        [ReadOnly] public NativeArray<Entity> inColliderEntities;
         [ReadOnly] public NativeArray<byte> inHealthAtlas;
 
         [ReadOnly] public NativeArray<SpriteRenderComponent> inColliderSprites;
@@ -100,7 +101,8 @@ namespace SolidSpace.Entities.Bullets
                     hitPixel = p0Int,
                     colliderSprite = spriteIndex,
                     colliderHealth = healthIndex,
-                    colliderSize = colliderShape.size
+                    colliderSize = colliderShape.size,
+                    colliderEntity = inColliderEntities[hit.colliderIndex]
                 };
                     
                 return true;
@@ -129,7 +131,8 @@ namespace SolidSpace.Entities.Bullets
                     colliderSprite = spriteIndex,
                     colliderHealth = healthIndex,
                     hitPixel = point,
-                    colliderSize = colliderShape.size
+                    colliderSize = colliderShape.size,
+                    colliderEntity = inColliderEntities[hit.colliderIndex]
                 };
                     
                 return true;

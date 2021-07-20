@@ -1,6 +1,5 @@
 using System;
 using System.Runtime.CompilerServices;
-using SolidSpace.Entities.Splitting.Enums;
 using SolidSpace.Mathematics;
 using Unity.Burst;
 using Unity.Collections;

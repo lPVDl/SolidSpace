@@ -33,6 +33,11 @@ namespace SolidSpace.Entities.World
             _world.EntityManager.DestroyEntity(entity);
         }
 
+        public Entity Instantiate(Entity source)
+        {
+            return _world.EntityManager.Instantiate(source);
+        }
+
         public NativeArray<Entity> GetAllEntities(Allocator allocator)
         {
             return _world.EntityManager.GetAllEntities(allocator);
