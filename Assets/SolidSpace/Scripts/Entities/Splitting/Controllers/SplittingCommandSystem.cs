@@ -1,18 +1,11 @@
 using System.Collections.Generic;
-using SolidSpace.Entities.Atlases;
-using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Health;
 using SolidSpace.Entities.Rendering.Sprites;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
 using SolidSpace.JobUtilities;
-using SolidSpace.Mathematics;
-using SolidSpace.Playground.Tools.ImageSpawn;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
-using Unity.Mathematics;
-using UnityEngine;
 
 namespace SolidSpace.Entities.Splitting
 {
@@ -23,7 +16,9 @@ namespace SolidSpace.Entities.Splitting
         private readonly ISpriteColorSystem _spriteSystem;
 
         private HashSet<Entity> _checkingQueue;
-        private JobMemoryAllocator _jobMemory;
+        private SplittingController _splittingController;
+        private List<JobMemoryAllocator> _jobMemoryPool;
+        private List<SplittingContext> _splittingContext;
 
         public SplittingCommandSystem(IEntityManager entityManager, IHealthAtlasSystem healthSystem, 
             ISpriteColorSystem spriteSystem)
@@ -35,8 +30,10 @@ namespace SolidSpace.Entities.Splitting
         
         public void OnInitialize()
         {
+            _splittingController = new SplittingController(_entityManager, _healthSystem, _spriteSystem);
             _checkingQueue = new HashSet<Entity>();
-            _jobMemory = new JobMemoryAllocator();
+            _jobMemoryPool = new List<JobMemoryAllocator>();
+            _splittingContext = new List<SplittingContext>();
         }
         
         public void ScheduleSplittingCheck(Entity entity)
@@ -48,144 +45,65 @@ namespace SolidSpace.Entities.Splitting
         {
             foreach (var entity in _checkingQueue)
             {
-                TrySplitEntity(entity);
-            }
-
-            _jobMemory.DisposeAllocations();
-            _checkingQueue.Clear();
-        }
-
-        private void TrySplitEntity(Entity parentEntity)
-        {
-            var parentSize = _entityManager.GetComponentData<RectSizeComponent>(parentEntity).value;
-            var parentSizeInt = new int2((int) parentSize.x, (int) parentSize.y);
-            var parentHealthIndex = _entityManager.GetComponentData<HealthComponent>(parentEntity).index;
-            var parentHealthOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks[parentHealthIndex.chunkId], parentHealthIndex);
-            var parentFrameLength = HealthFrameBitsUtil.GetRequiredByteCount(parentSizeInt.x, parentSizeInt.y);
-
-            var seedJob = new ShapeSeedJob
-            {
-                inFrameBits = new NativeSlice<byte>(_healthSystem.Data, parentHealthOffset, parentFrameLength),
-                inFrameSize = parentSizeInt,
-                outConnections = _jobMemory.CreateNativeArray<byte2>(256),
-                outConnectionCount = _jobMemory.CreateNativeReference<int>(),
-                outResultCode = _jobMemory.CreateNativeReference<EShapeSeedResult>(),
-                outSeedBounds = _jobMemory.CreateNativeArray<ByteBounds>(256),
-                outSeedCount = _jobMemory.CreateNativeReference<int>(),
-                outSeedMask = _jobMemory.CreateNativeArray<byte>(parentSizeInt.x * parentSizeInt.y)
-            };
-            seedJob.Schedule().Complete();
-
-            var readJob = new ShapeReadJob
-            {
-                inConnections = seedJob.outConnections,
-                inConnectionCount = seedJob.outConnectionCount.Value,
-                inOutBounds = seedJob.outSeedBounds,
-                inSeedCount = seedJob.outSeedCount.Value,
-                outShapeCount = _jobMemory.CreateNativeReference<int>(),
-                outShapeRootSeeds = _jobMemory.CreateNativeArray<byte>(256)
-            };
-            readJob.Schedule().Complete();
-            
-            var resultCode = seedJob.outResultCode.Value;
-            if (resultCode != EShapeSeedResult.Normal)
-            {
-                Debug.LogError($"Seed job ended with code '{resultCode}'");
-                return;
-            }
-
-            var childCount = readJob.outShapeCount.Value;
-            if (childCount <= 1)
-            {
-                return;
-            }
-            
-            var handleCount = 0;
-            var handles = _jobMemory.CreateNativeArray<JobHandle>(childCount * 2);
-            var parentPosition = _entityManager.GetComponentData<PositionComponent>(parentEntity).value;
-            var parentRotation = _entityManager.GetComponentData<RotationComponent>(parentEntity).value;
-            var parentSprite = _entityManager.GetComponentData<SpriteRenderComponent>(parentEntity).index;
-            var parentSpriteOffset = AtlasMath.ComputeOffset(_spriteSystem.Chunks[parentSprite.chunkId], parentSprite);
-            var spriteSystemTexture = _spriteSystem.Texture;
-            var spriteSystemTextureSize = new int2(spriteSystemTexture.width, spriteSystemTexture.height);
-            var spriteSystemTexturePtr = _spriteSystem.Texture.GetRawTextureData<ColorRGB24>();
-            
-            for (var i = 0; i < childCount; i++)
-            {
-                var childBounds = readJob.inOutBounds[i];
-                var childWidth = childBounds.max.x - childBounds.min.x + 1;
-                var childHeight = childBounds.max.y - childBounds.min.y + 1;
-                if (childWidth > 32 || childHeight > 32)
+                _splittingContext.Add(new SplittingContext
                 {
-                    continue;
+                    state = ESplittingState.NotStarted,
+                    entity = entity,
+                    jobMemory = GetItemFromPoolOrCreate(_jobMemoryPool)
+                });
+            }
+            _checkingQueue.Clear();
+
+            while (true)
+            {
+                for (var i = _splittingContext.Count - 1; i >= 0; i--)
+                {
+                    var context = _splittingController.UpdateState(_splittingContext[i]);
+                    if (context.state == ESplittingState.Completed)
+                    {
+                        context.jobMemory.DisposeAllocations();
+                        _jobMemoryPool.Add(context.jobMemory);
+                        _splittingContext.RemoveAt(i);
+                        
+                        continue;
+                    }
+
+                    _splittingContext[i] = context;
                 }
 
-                var childEntity = _entityManager.Instantiate(parentEntity);
-                _entityManager.SetComponentData(childEntity, new RectSizeComponent
+                if (_splittingContext.Count == 0)
                 {
-                    value = new half2((half) childWidth, (half) childHeight)
-                });
+                    break;
+                }
+
+                JobHandle simplestJob = default;
+                var minDifficulty = int.MaxValue;
+                for (var i = 0; i < _splittingContext.Count; i++)
+                {
+                    var context = _splittingContext[i];
+                    if (context.jobDifficulty <= minDifficulty)
+                    {
+                        minDifficulty = context.jobDifficulty;
+                        simplestJob = context.jobHandle;
+                    }
+                }
                 
-                var childLocalPosX = (childBounds.max.x + childBounds.min.x + 1) * 0.5f - parentSize.x * 0.5f;
-                var childLocalPosY = (childBounds.max.y + childBounds.min.y + 1) * 0.5f - parentSize.y * 0.5f;
-                FloatMath.SinCos(parentRotation, out var childSin, out var childCos);
-                _entityManager.SetComponentData(childEntity, new PositionComponent
-                {
-                    value = FloatMath.Rotate(childLocalPosX, childLocalPosY, childSin, childCos) + parentPosition
-                });
-                
-                _entityManager.SetComponentData(childEntity, new RotationComponent
-                {
-                    value = parentRotation
-                });
-                
-                var childSprite = _spriteSystem.Allocate(childWidth, childHeight);
-                _entityManager.SetComponentData(childEntity, new SpriteRenderComponent
-                {
-                    index = childSprite
-                });
-                var childSpriteOffset = AtlasMath.ComputeOffset(_spriteSystem.Chunks[childSprite.chunkId], childSprite);
-                handles[handleCount++] = new BlitShapeLinear24Job
-                {
-                    inConnections = seedJob.outConnections,
-                    inConnectionCount = seedJob.outConnectionCount.Value,
-                    inSourceTextureOffset = parentSpriteOffset + new int2(childBounds.min.x, childBounds.min.y),
-                    inSourceTextureSize = spriteSystemTextureSize,
-                    inSourceSeedMaskOffset = new int2(childBounds.min.x, childBounds.min.y),
-                    inSourceSeedMaskSize = parentSizeInt,
-                    inBlitSize = new int2(childWidth, childHeight),
-                    inSourceTexture = spriteSystemTexturePtr,
-                    inTargetOffset = childSpriteOffset,
-                    inTargetSize = spriteSystemTextureSize,
-                    inBlitShapeSeed = readJob.outShapeRootSeeds[i],
-                    inSourceSeedMask = seedJob.outSeedMask,
-                    outTargetTexture = spriteSystemTexturePtr
-                }.Schedule();
-                
-                var childHealth = _healthSystem.Allocate(childWidth, childHeight);
-                _entityManager.SetComponentData(childEntity, new HealthComponent
-                {
-                    index = childHealth
-                });
-                var childHealthOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks[childHealth.chunkId], childHealth);
-                handles[handleCount++] = new BuildShapeHealthJob
-                {
-                    inConnections = seedJob.outConnections,
-                    inConnectionCount = seedJob.outConnectionCount.Value,
-                    inSourceOffset = new int2(childBounds.min.x, childBounds.min.y),
-                    inBlitSize = new int2(childWidth, childHeight),
-                    inSourceSize = parentSizeInt,
-                    inTargetOffset = childHealthOffset,
-                    inBlitShapeSeed = readJob.outShapeRootSeeds[i],
-                    inSourceSeedMask = seedJob.outSeedMask,
-                    outTargetHealth = _healthSystem.Data
-                    
-                }.Schedule();
+                simplestJob.Complete();
             }
+        }
+        
+        private static T GetItemFromPoolOrCreate<T>(IList<T> pool) where T : new()
+        {
+            var itemCount = pool.Count;
+            if (itemCount == 0)
+            {
+                return new T();
+            }
+
+            var item = pool[itemCount - 1];
+            pool.RemoveAt(itemCount - 1);
             
-            _entityManager.DestroyEntity(parentEntity);
-            
-            JobHandle.CombineDependencies(new NativeSlice<JobHandle>(handles, 0, handleCount)).Complete();
+            return item;
         }
 
         public void OnFinalize()
