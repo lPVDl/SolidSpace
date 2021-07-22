@@ -90,6 +90,8 @@ namespace SolidSpace.Entities.Splitting
                 
                 simplestJob.Complete();
             }
+            
+            _spriteSystem.Texture.Apply();
         }
         
         private static T GetItemFromPoolOrCreate<T>(IList<T> pool) where T : new()
