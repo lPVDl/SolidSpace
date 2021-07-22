@@ -40,6 +40,7 @@ namespace SolidSpace.Entities.Bullets
         private EntityQuery _colliderQuery;
         private EntityQuery _bulletQuery;
         private Mask256 _pixelConnectionMask;
+        private Mask256 _aloneBorderPixelMask;
 
         public BulletComputeSystem(IColliderBakeSystemFactory colliderBakeSystemFactory, IEntityWorldTime worldTime, 
             IProfilingManager profilingManager, IEntityManager entityManager, IRaycastSystemFactory raycastSystemFactory,
@@ -80,6 +81,7 @@ namespace SolidSpace.Entities.Bullets
             _raycastSystem = _raycastSystemFactory.Create<BulletRaycastBehaviour>(_profiler);
             _entitiesToDestroy = NativeMemory.CreateTempJobArray<Entity>(0);
             _pixelConnectionMask = SplittingUtil.Bake4NeighbourPixelConnectionMask();
+            _aloneBorderPixelMask = SplittingUtil.BakeAloneBorderPixelMask();
         }
         
         public void OnUpdate()
@@ -145,7 +147,7 @@ namespace SolidSpace.Entities.Bullets
                 HealthFrameBitsUtil.ClearBit(healthAtlas, healthOffset, colliderSize.x, hit.hitPixel);
 
                 var neighbourPixels = SplittingUtil.ReadNeighbourPixels(healthAtlas, healthOffset, colliderSize, hit.hitPixel);
-                if (!_pixelConnectionMask.HasBit(neighbourPixels) || neighbourPixels == 0)
+                if (!_pixelConnectionMask.HasBit(neighbourPixels) || IsAloneBorderPixel(hit.hitPixel, colliderSize, neighbourPixels))
                 {
                     _splittingSystem.ScheduleSplittingCheck(hit.colliderEntity);   
                 }
@@ -166,6 +168,17 @@ namespace SolidSpace.Entities.Bullets
             raycastBehaviour.Dispose();
             colliders.Dispose();
             _profiler.EndSample("Dispose arrays");
+        }
+        
+        private bool IsAloneBorderPixel(int2 pixelPosition, int2 frameSize, byte neighbourPixels)
+        {
+            if (pixelPosition.x == 0 || pixelPosition.x == frameSize.x - 1
+                                     || pixelPosition.y == 0 || pixelPosition.y == frameSize.y - 1)
+            {
+                return _aloneBorderPixelMask.HasBit(neighbourPixels);
+            }
+
+            return false;
         }
 
         public void OnFinalize()

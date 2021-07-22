@@ -39,6 +39,65 @@ namespace SolidSpace.Entities.Splitting
 
             return HealthFrameBitsUtil.HasBit(frame, frameOffset, spriteSize.x, spritePoint) ? 1 : 0;
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mask256 BakeAloneBorderPixelMask()
+        {
+            var left = new int2(-1, 0);
+            var up = new int2(0, 1);
+            var down = new int2(0, -1);
+            
+            // ? - -
+            // ? x -
+            // ? - -
+            return BakePattern(left, left + up, left + down);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static Mask256 BakePattern(params int2[] invariantPixels)
+        {
+            Mask256 resultMask = default;
+            var invariantTotalCount = 1 << invariantPixels.Length;
+
+            for (var rotation = 0; rotation < 4; rotation++)
+            {
+                for (var i = 0; i < invariantTotalCount; i++)
+                {
+                    var invariantState = 0;
+                    for (var j = 0; j < invariantPixels.Length; j++)
+                    {
+                        if ((i & (1 << j)) != 0)
+                        {
+                            invariantState |= 1 << ToNormalizedIndex(Rotate90(invariantPixels[j], rotation));
+                        }
+                    }
+                    
+                    resultMask.SetBitTrue((byte) invariantState);
+                }
+            }
+
+            return resultMask;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int2 Rotate90(int2 direction, int rotation)
+        {
+            return rotation switch
+            {
+                0 => direction,
+                1 => new int2(-direction.y, direction.x),
+                2 => -direction,
+                3 => new int2(direction.y, -direction.x),
+                _ => throw new IndexOutOfRangeException()
+            };
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int ToNormalizedIndex(int2 direction)
+        {
+            var index = (direction.y + 1) * 3 + direction.x + 1;
+            return index >= 5 ? index - 1 : index;
+        }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Mask256 Bake4NeighbourPixelConnectionMask()

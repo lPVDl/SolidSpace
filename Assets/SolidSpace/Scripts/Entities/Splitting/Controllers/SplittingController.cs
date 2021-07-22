@@ -109,22 +109,29 @@ namespace SolidSpace.Entities.Splitting
             context.jobHandle.Complete();
 
             var childCount = context.readJob.outShapeCount.Value;
-            if (childCount <= 1)
+            if (childCount == 0)
             {
                 context.state = ESplittingState.Completed;
-                
-                if (childCount == 0)
-                {
-                    _entityManager.DestroyEntity(context.entity);
-                }
-                
+                _entityManager.DestroyEntity(context.entity);
                 return context;
+            }
+            
+            var parentSize = _entityManager.GetComponentData<RectSizeComponent>(context.entity).value;
+            var parentSizeInt = new int2((int) parentSize.x, (int) parentSize.y);
+            if (childCount == 1)
+            {
+                var childBounds = context.readJob.inOutBounds[0];
+                var childWidth = childBounds.max.x - childBounds.min.x + 1;
+                var childHeight = childBounds.max.y - childBounds.min.y + 1;
+                if ((childWidth == parentSizeInt.x) && (childHeight == parentSizeInt.y))
+                {
+                    context.state = ESplittingState.Completed;
+                    return context;
+                }
             }
             
             var handleCount = 0;
             var handles = context.jobMemory.CreateNativeArray<JobHandle>(childCount * 2);
-            var parentSize = _entityManager.GetComponentData<RectSizeComponent>(context.entity).value;
-            var parentSizeInt = new int2((int) parentSize.x, (int) parentSize.y);
             var parentPosition = _entityManager.GetComponentData<PositionComponent>(context.entity).value;
             var parentRotation = _entityManager.GetComponentData<RotationComponent>(context.entity).value;
             var parentSprite = _entityManager.GetComponentData<SpriteRenderComponent>(context.entity).index;

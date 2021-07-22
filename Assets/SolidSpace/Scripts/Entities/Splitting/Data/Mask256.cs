@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.CompilerServices;
 
 namespace SolidSpace.Entities.Splitting
@@ -74,6 +75,17 @@ namespace SolidSpace.Entities.Splitting
                 v1 = a.v1 ^ b.v1,
                 v2 = a.v2 ^ b.v2,
                 v3 = a.v3 ^ b.v3,
+            };
+        }
+
+        public static Mask256 operator |(Mask256 a, Mask256 b)
+        {
+            return new Mask256
+            {
+                v0 = a.v0 | b.v0,
+                v1 = a.v1 | b.v1,
+                v2 = a.v2 | b.v2,
+                v3 = a.v3 | b.v3
             };
         }
 
