@@ -72,7 +72,6 @@ namespace SolidSpace.Entities.Splitting.Editor
 
             var frameBits = _jobMemory.CreateNativeArray<byte>(HealthFrameBitsUtil.GetRequiredByteCount(textureWidth, textureHeight));
             HealthFrameBitsUtil.TextureToFrameBits(pixels, textureWidth, textureHeight, frameBits);
-            _jobMemory.AddAllocation(frameBits);
             TimerEnd("Convert to bit array");
 
             var seedJob = new ShapeSeedJob
