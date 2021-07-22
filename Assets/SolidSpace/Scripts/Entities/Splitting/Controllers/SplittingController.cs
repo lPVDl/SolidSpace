@@ -112,6 +112,12 @@ namespace SolidSpace.Entities.Splitting
             if (childCount <= 1)
             {
                 context.state = ESplittingState.Completed;
+                
+                if (childCount == 0)
+                {
+                    _entityManager.DestroyEntity(context.entity);
+                }
+                
                 return context;
             }
             

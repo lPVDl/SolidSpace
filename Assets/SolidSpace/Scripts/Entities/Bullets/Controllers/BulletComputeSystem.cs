@@ -145,7 +145,7 @@ namespace SolidSpace.Entities.Bullets
                 HealthFrameBitsUtil.ClearBit(healthAtlas, healthOffset, colliderSize.x, hit.hitPixel);
 
                 var neighbourPixels = SplittingUtil.ReadNeighbourPixels(healthAtlas, healthOffset, colliderSize, hit.hitPixel);
-                if (!_pixelConnectionMask.HasBit(neighbourPixels))
+                if (!_pixelConnectionMask.HasBit(neighbourPixels) || neighbourPixels == 0)
                 {
                     _splittingSystem.ScheduleSplittingCheck(hit.colliderEntity);   
                 }
