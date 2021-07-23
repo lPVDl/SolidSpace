@@ -67,6 +67,11 @@ namespace SolidSpace.Entities.Physics.Rigidbody
                             var otherShape = inColliders.shapes[otherIndex];
                             var shapeA = new CenterRotationSize(thisCenter, thisShape.rotation, thisShape.size);
                             var shapeB = new CenterRotationSize(otherCenter, otherShape.rotation, otherShape.size);
+
+                            var centerEpsilon = new float2(thisIndex > otherIndex ? 0.01f : -0.01f, 0);
+                            shapeA.center += centerEpsilon;
+                            shapeB.center -= centerEpsilon;
+                            
                             if (!CollisionResolver.ResolveIntersection(shapeA, shapeB, out var motionA, out _))
                             {
                                 continue;
@@ -122,6 +127,11 @@ namespace SolidSpace.Entities.Physics.Rigidbody
                                 var otherShape = inColliders.shapes[otherIndex];
                                 var shapeA = new CenterRotationSize(thisCenter, thisShape.rotation, thisShape.size);
                                 var shapeB = new CenterRotationSize(otherCenter, otherShape.rotation, otherShape.size);
+                                
+                                var centerEpsilon = new float2(thisIndex > otherIndex ? 0.01f : -0.01f, 0);
+                                shapeA.center += centerEpsilon;
+                                shapeB.center -= centerEpsilon;
+                                
                                 if (!CollisionResolver.ResolveIntersection(shapeA, shapeB, out var motionA, out _))
                                 {
                                     continue;
