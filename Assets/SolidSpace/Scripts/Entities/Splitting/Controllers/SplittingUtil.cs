@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using SolidSpace.Entities.Health;
+using SolidSpace.Mathematics;
 using Unity.Collections;
 using Unity.Mathematics;
 
@@ -9,17 +10,35 @@ namespace SolidSpace.Entities.Splitting
     public static class SplittingUtil
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mask256 BuildShapeMask(byte rootSeed, NativeSlice<byte2> connections, int connectionCount)
+        {
+            Mask256 resultMask = default;
+            
+            resultMask.SetBitTrue((byte) (rootSeed - 1));
+            for (var i = 0; i < connectionCount; i++)
+            {
+                var connection = connections[i];
+                if (rootSeed == connection.x)
+                {
+                    resultMask.SetBitTrue((byte) (connection.y - 1));
+                }
+            }
+
+            return resultMask;
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static byte ReadNeighbourPixels(NativeArray<byte> frame, int frameOffset, int2 spriteSize, int2 center)
         {
             var resultBits = 0;
             resultBits |= GetBit(frame, frameOffset, spriteSize, center + new int2(-1, -1)) << 0;
-            resultBits |= GetBit(frame, frameOffset, spriteSize, center + new int2(0, -1)) << 1;
-            resultBits |= GetBit(frame, frameOffset, spriteSize, center + new int2(1, -1)) << 2;
-            resultBits |= GetBit(frame, frameOffset, spriteSize, center + new int2(-1, 0)) << 3;
-            resultBits |= GetBit(frame, frameOffset, spriteSize, center + new int2(1, 0)) << 4;
-            resultBits |= GetBit(frame, frameOffset, spriteSize, center + new int2(-1, 1)) << 5;
-            resultBits |= GetBit(frame, frameOffset, spriteSize, center + new int2(0, 1)) << 6;
-            resultBits |= GetBit(frame, frameOffset, spriteSize, center + new int2(1, 1)) << 7;
+            resultBits |= GetBit(frame, frameOffset, spriteSize, center + new int2(+0, -1)) << 1;
+            resultBits |= GetBit(frame, frameOffset, spriteSize, center + new int2(+1, -1)) << 2;
+            resultBits |= GetBit(frame, frameOffset, spriteSize, center + new int2(-1, +0)) << 3;
+            resultBits |= GetBit(frame, frameOffset, spriteSize, center + new int2(+1, +0)) << 4;
+            resultBits |= GetBit(frame, frameOffset, spriteSize, center + new int2(-1, +1)) << 5;
+            resultBits |= GetBit(frame, frameOffset, spriteSize, center + new int2(+0, +1)) << 6;
+            resultBits |= GetBit(frame, frameOffset, spriteSize, center + new int2(+1, +1)) << 7;
 
             return (byte) resultBits;
         }
@@ -54,25 +73,25 @@ namespace SolidSpace.Entities.Splitting
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Mask256 BakePattern(params int2[] invariantPixels)
+        private static Mask256 BakePattern(params int2[] variantPixels)
         {
             Mask256 resultMask = default;
-            var invariantTotalCount = 1 << invariantPixels.Length;
+            var variantTotalCount = 1 << variantPixels.Length;
 
             for (var rotation = 0; rotation < 4; rotation++)
             {
-                for (var i = 0; i < invariantTotalCount; i++)
+                for (var i = 0; i < variantTotalCount; i++)
                 {
-                    var invariantState = 0;
-                    for (var j = 0; j < invariantPixels.Length; j++)
+                    var state = 0;
+                    for (var j = 0; j < variantPixels.Length; j++)
                     {
                         if ((i & (1 << j)) != 0)
                         {
-                            invariantState |= 1 << ToNormalizedIndex(Rotate90(invariantPixels[j], rotation));
+                            state |= 1 << ToNormalizedIndex(Rotate90(variantPixels[j], rotation));
                         }
                     }
                     
-                    resultMask.SetBitTrue((byte) invariantState);
+                    resultMask.SetBitTrue((byte) state);
                 }
             }
 

@@ -31,16 +31,8 @@ namespace SolidSpace.Entities.Splitting
         
         public void Execute()
         {
-            _shapeMask.SetBitTrue((byte) (inBlitShapeSeed - 1));
-            for (var i = 0; i < inConnectionCount; i++)
-            {
-                var connection = inConnections[i];
-                if (inBlitShapeSeed == connection.x)
-                {
-                    _shapeMask.SetBitTrue((byte) (connection.y - 1));
-                }
-            }
-            
+            _shapeMask = SplittingUtil.BuildShapeMask(inBlitShapeSeed, inConnections, inConnectionCount);
+
             var sourceSeedMaskOffset = inSourceSeedMaskOffset.y * inSourceSeedMaskSize.x + inSourceSeedMaskOffset.x;
             var sourceTextureOffset = inSourceTextureOffset.y * inSourceTextureSize.x + inSourceTextureOffset.x;
             var targetOffset = inTargetOffset.y * inTargetSize.x + inTargetOffset.x;

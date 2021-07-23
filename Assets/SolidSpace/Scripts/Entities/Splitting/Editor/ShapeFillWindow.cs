@@ -101,7 +101,7 @@ namespace SolidSpace.Entities.Splitting.Editor
 
             var shapeReadJob = new ShapeReadJob
             {
-                inConnections = seedJob.outConnections,
+                inOutConnections = seedJob.outConnections,
                 inOutBounds = seedJob.outSeedBounds,
                 inConnectionCount = seedJob.outConnectionCount.Value,
                 inSeedCount = seedJob.outSeedCount.Value,

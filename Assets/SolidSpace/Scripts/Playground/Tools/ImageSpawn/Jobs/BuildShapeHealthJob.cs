@@ -29,15 +29,7 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
         
         public void Execute()
         {
-            _shapeMask.SetBitTrue((byte) (inBlitShapeSeed - 1));
-            for (var i = 0; i < inConnectionCount; i++)
-            {
-                var connection = inConnections[i];
-                if (inBlitShapeSeed == connection.x)
-                {
-                    _shapeMask.SetBitTrue((byte) (connection.y - 1));
-                }
-            }
+            _shapeMask = SplittingUtil.BuildShapeMask(inBlitShapeSeed, inConnections, inConnectionCount);
 
             var sourceOffset = inSourceOffset.y * inSourceSize.x + inSourceOffset.x;
             var targetOffset = inTargetOffset;

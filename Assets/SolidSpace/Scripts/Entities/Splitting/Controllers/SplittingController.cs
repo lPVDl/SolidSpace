@@ -85,7 +85,7 @@ namespace SolidSpace.Entities.Splitting
 
             context.readJob = new ShapeReadJob
             {
-                inConnections = context.seedJob.outConnections,
+                inOutConnections = context.seedJob.outConnections,
                 inConnectionCount = context.seedJob.outConnectionCount.Value,
                 inOutBounds = context.seedJob.outSeedBounds,
                 inSeedCount = context.seedJob.outSeedCount.Value,

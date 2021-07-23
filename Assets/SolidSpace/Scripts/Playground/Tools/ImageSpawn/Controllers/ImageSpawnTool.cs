@@ -130,7 +130,7 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
             
             var readJob = new ShapeReadJob
             {
-                inConnections = seedJob.outConnections,
+                inOutConnections = seedJob.outConnections,
                 inConnectionCount = seedJob.outConnectionCount.Value,
                 inOutBounds = seedJob.outSeedBounds,
                 inSeedCount = seedJob.outSeedCount.Value,

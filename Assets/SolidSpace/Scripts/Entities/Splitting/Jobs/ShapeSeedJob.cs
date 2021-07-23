@@ -146,8 +146,7 @@ namespace SolidSpace.Entities.Splitting
                             return default;
                         }
                         
-                        IntMath.MinMax(shapeId, lastCreatedLineId, out var minSeed, out var maxSeed);
-                        outConnections[_connectionCount++] = new byte2(minSeed, maxSeed);
+                        outConnections[_connectionCount++] = new byte2(shapeId, lastCreatedLineId);
                     }
 
                     i++;
