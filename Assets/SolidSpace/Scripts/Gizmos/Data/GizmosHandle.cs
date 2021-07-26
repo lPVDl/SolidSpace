@@ -61,6 +61,13 @@ namespace SolidSpace.Gizmos
             });
         }
 
+        public bool CheckEnabled()
+        {
+            UpdateCash();
+
+            return _enabled;
+        }
+
         public void DrawWireRect(float2 center, float2 size, float angleRad)
         {
             UpdateCash();

@@ -7,6 +7,11 @@ namespace SolidSpace.Entities.Physics.Colliders
     {
         public static void DrawColliders(GizmosHandle gizmos, BakedColliders colliders)
         {
+            if (gizmos.CheckEnabled())
+            {
+                return;
+            }
+            
             for (var i = 0; i < colliders.bounds.Length; i++)
             {
                 var bounds = colliders.bounds[i];
@@ -20,6 +25,11 @@ namespace SolidSpace.Entities.Physics.Colliders
         
         public static void DrawGrid(GizmosHandle gizmos, ColliderGrid worldGrid)
         {
+            if (!gizmos.CheckEnabled())
+            {
+                return;
+            }
+            
             var cellSize = 1 << worldGrid.power;
             var cellCountX = worldGrid.size.x;
             var cellCountY = worldGrid.size.y;
