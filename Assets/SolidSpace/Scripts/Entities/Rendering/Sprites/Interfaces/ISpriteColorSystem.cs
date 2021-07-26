@@ -7,8 +7,6 @@ namespace SolidSpace.Entities.Rendering.Sprites
 {
     public interface ISpriteColorSystem
     {
-        public int AllocatedIndexCount { get; }
-        
         public Texture2D Texture { get; }
         
         public NativeSlice<AtlasChunk2D> Chunks { get; }

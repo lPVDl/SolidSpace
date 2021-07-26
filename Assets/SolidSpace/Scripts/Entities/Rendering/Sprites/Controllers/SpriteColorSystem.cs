@@ -10,8 +10,6 @@ namespace SolidSpace.Entities.Rendering.Sprites
 {
     internal class SpriteColorSystem : ISpriteColorSystem, IInitializable
     {
-        public int AllocatedIndexCount { get; private set; }
-        
         public Texture2D Texture { get; private set; }
         public NativeSlice<AtlasChunk2D> Chunks => _indexManager.Chunks;
         public NativeSlice<ushort> ChunksOccupation => _indexManager.ChunksOccupation;
@@ -38,13 +36,11 @@ namespace SolidSpace.Entities.Rendering.Sprites
 
         public AtlasIndex Allocate(int width, int height)
         {
-            AllocatedIndexCount++;
             return _indexManager.Allocate(width, height);
         }
 
         public void Release(AtlasIndex index)
         {
-            AllocatedIndexCount--;
             _indexManager.Release(index);
         }
 

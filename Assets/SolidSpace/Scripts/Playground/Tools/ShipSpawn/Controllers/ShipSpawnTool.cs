@@ -96,11 +96,8 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
                     break;
                 
                 case ESpawnEventType.Place:
-                    if (_spriteSystem.AllocatedIndexCount < 1024)
-                    {
-                        SpawnShip(origin.position, origin.rotation);
-                    }
-   
+                    SpawnShip(origin.position, origin.rotation);
+
                     break;
                 
                 default:
