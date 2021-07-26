@@ -23,6 +23,7 @@ MonoBehaviour:
         - typeName: SolidSpace.Gizmos.GizmosManager
         - typeName: SolidSpace.Gizmos.GizmosDrawerManager
         - typeName: SolidSpace.Gizmos.GizmosWindow
+        - typeName: SolidSpace.Profiling.ProfilingWindow
       - _name: Entities
         _controllers:
         - typeName: SolidSpace.Entities.World.EntityManager
@@ -78,6 +79,7 @@ MonoBehaviour:
         - typeName: SolidSpace.Playground.Core.PlaygroundCoreController
         - typeName: SolidSpace.UI.Core.UIEventDispatcher
         - typeName: SolidSpace.Gizmos.GizmosWindow
+        - typeName: SolidSpace.Profiling.ProfilingWindow
       - _name: Render
         _controllers:
         - typeName: SolidSpace.Gizmos.GizmosDrawerManager

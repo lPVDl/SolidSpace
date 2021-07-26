@@ -17,3 +17,5 @@ MonoBehaviour:
     _enableUnityProfiling: 1
     _maxRecordCount: 1024
     _stackSize: 16
+    _windowItemCount: 20
+    _windowScrollMultiplier: 3

@@ -64,7 +64,7 @@ namespace SolidSpace.Gizmos
 
         private void OnListScroll(int delta)
         {
-            _offset += delta * _config.WindowScrollDelta;
+            _offset += delta;
             _version--;
         }
         
