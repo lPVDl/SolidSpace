@@ -6,40 +6,47 @@ namespace SolidSpace.Playground.Tools.Spawn
 {
     public class RotationGenerator
     {
-        private float[] _rotations;
+        private float[] _bakedRotations;
+        private int _bakedSeed;
+        
         private int _seed;
         private int _amount;
 
         public RotationGenerator()
         {
-            _rotations = new float[0];
+            _bakedRotations = new float[0];
         }
 
-        public IReadOnlyList<float> IterateRotations(int seed, int amount)
+        public void SetSeed(int seed)
         {
-            if ((_amount != amount) || (_seed != seed))
+            _seed = seed;
+        }
+
+        public IReadOnlyList<float> IterateRotations(int amount)
+        {
+            if ((_amount != amount) || (_bakedSeed != _seed))
             {
                 _amount = amount;
-                _seed = seed;
+                _bakedSeed = _seed;
 
                 GenerateRotations(_seed, _amount);
             }
 
-            return _rotations;
+            return _bakedRotations;
         }
 
         private void GenerateRotations(int seed, int amount)
         {
-            if (_rotations.Length < amount)
+            if (_bakedRotations.Length < amount)
             {
-                _rotations = new float[amount];
+                _bakedRotations = new float[amount];
             }
 
             UnityEngine.Random.InitState(seed);
             
             for (var i = 0; i < amount; i++)
             {
-                _rotations[i] = UnityEngine.Random.value * FloatMath.TwoPI;
+                _bakedRotations[i] = UnityEngine.Random.value * FloatMath.TwoPI;
             }
         }
     }

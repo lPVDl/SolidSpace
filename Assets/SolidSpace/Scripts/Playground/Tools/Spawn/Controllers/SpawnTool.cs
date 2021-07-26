@@ -1,7 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using SolidSpace.Mathematics;
 using SolidSpace.Playground.Core;
 using SolidSpace.UI.Core;
@@ -42,6 +39,10 @@ namespace SolidSpace.Playground.Tools.Spawn
                 {
                     IsPlacingMode = false;
                     SendEvent(ESpawnEventType.Place);
+
+                    var seed = Time.frameCount;
+                    PositionGenerator.SetSeed(seed);
+                    RotationGenerator.SetSeed(seed);
                 }
                 
                 return;
@@ -68,7 +69,7 @@ namespace SolidSpace.Playground.Tools.Spawn
             
             if (RotationIsRandom)
             {
-                var rotations = RotationGenerator.IterateRotations(SpawnRadius, SpawnAmount);
+                var rotations = RotationGenerator.IterateRotations(SpawnAmount);
                 for (var i = 0; i < SpawnAmount; i++)
                 {
                     Handler.OnSpawnEvent(new SpawnEventData
