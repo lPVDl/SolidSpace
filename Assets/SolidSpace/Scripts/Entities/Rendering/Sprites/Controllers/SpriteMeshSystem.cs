@@ -25,7 +25,6 @@ namespace SolidSpace.Entities.Rendering.Sprites
         private readonly IProfilingManager _profilingManager;
 
         private EntityQuery _query;
-        private MeshRenderingUtil _meshUtil;
         private VertexAttributeDescriptor[] _meshLayout;
         private List<Mesh> _meshes;
         private List<Mesh> _meshesForMeshArray;
@@ -81,7 +80,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             var chunkIndex = 0;
             while (chunkIndex < chunkTotal)
             {
-                _meshUtil.FillMesh(chunks, chunkIndex, out var spriteCount, out var chunkCount);
+                MeshRenderingUtil.FillMesh(chunks, chunkIndex, out var spriteCount, out var chunkCount);
                 chunkPerMesh[meshCount] = chunkCount;
                 spritePerMesh[meshCount] = spriteCount;
                 totalSpriteCount += spriteCount;
@@ -138,7 +137,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             for (var i = _meshes.Count; i < meshCount; i++)
             {
                 var name = nameof(SpriteMeshSystem) + "_" + i;
-                _meshes.Add(_meshUtil.CreateMesh(name));
+                _meshes.Add(MeshRenderingUtil.CreateMesh(name));
             }
             _meshesForMeshArray.Clear();
             for (var i = 0; i < meshCount; i++)
@@ -155,7 +154,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             _material.SetTexture(MainTexturePropertyId, _colorSystem.Texture);
             for (var i = 0; i < meshCount; i++)
             {
-                _meshUtil.DrawMesh(new MeshDrawingData
+                MeshRenderingUtil.DrawMesh(new MeshDrawingData
                 {
                     mesh = _meshes[i],
                     material = _material,

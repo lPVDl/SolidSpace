@@ -23,7 +23,6 @@ namespace SolidSpace.Entities.Rendering.Pixels
 
         private EntityQuery _query;
         private SquareVertices _square;
-        private MeshRenderingUtil _meshUtil;
         private VertexAttributeDescriptor[] _meshLayout;
         private List<Mesh> _meshes;
         private List<Mesh> _meshesForMeshArray;
@@ -82,7 +81,7 @@ namespace SolidSpace.Entities.Rendering.Pixels
             var chunkIndex = 0;
             while (chunkIndex < chunkTotal)
             {
-                _meshUtil.FillMesh(chunks, chunkIndex, out var particleCount, out var chunkCount);
+                MeshRenderingUtil.FillMesh(chunks, chunkIndex, out var particleCount, out var chunkCount);
                 chunkPerMesh[meshCount] = chunkCount;
                 particlePerMesh[meshCount] = particleCount;
                 totalParticleCount += particleCount;
@@ -130,7 +129,7 @@ namespace SolidSpace.Entities.Rendering.Pixels
             for (var i = _meshes.Count; i < meshCount; i++)
             {
                 var name = nameof(PixelMeshSystem) + "_" + i;
-                _meshes.Add( _meshUtil.CreateMesh(name));
+                _meshes.Add( MeshRenderingUtil.CreateMesh(name));
             }
             _meshesForMeshArray.Clear();
             for (var i = 0; i < meshCount; i++)
@@ -146,7 +145,7 @@ namespace SolidSpace.Entities.Rendering.Pixels
             _profiler.BeginSample("Draw Mesh");
             for (var i = 0; i < meshCount; i++)
             {
-                _meshUtil.DrawMesh(new MeshDrawingData
+                MeshRenderingUtil.DrawMesh(new MeshDrawingData
                 {
                     mesh = _meshes[i],
                     material = _material,
