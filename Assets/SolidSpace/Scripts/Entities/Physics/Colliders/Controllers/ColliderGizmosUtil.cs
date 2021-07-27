@@ -7,7 +7,7 @@ namespace SolidSpace.Entities.Physics.Colliders
     {
         public static void DrawColliders(GizmosHandle gizmos, BakedColliders colliders)
         {
-            if (gizmos.CheckEnabled())
+            if (!gizmos.CheckEnabled())
             {
                 return;
             }
