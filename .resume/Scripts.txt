@@ -2,11 +2,12 @@ Scripts
 |   CameraMotion
 |   |   Controllers
 |   |   |   CameraMotionController.cs (3.1kb)
+|   |   |   FrustumCullingDisableBehaviour.cs (690b)
 |   |   Installers
 |   |   |   CameraMotionInstaller.cs (317b)
 |   DataValidation
 |   |   Editor
-|   |   |   AssemblyValidatorFactory.cs (4.7kb)
+|   |   |   AssemblyValidatorFactory.cs (4.9kb)
 |   |   |   SerializeAttributeValidator.cs (3.8kb)
 |   |   |   ValidationMethod.cs (197b)
 |   |   Runtime
@@ -15,15 +16,15 @@ Scripts
 |   |   |   ValidationUtil.cs (604b)
 |   Debugging
 |   |   Editor
-|   |   |   SolidSpaceDebugWindow.cs (572b)
+|   |   |   SolidSpaceDebugWindow.cs (552b)
 |   |   Runtime
 |   |   |   Controllers
-|   |   |   |   SpaceDebug.cs (1.0kb)
+|   |   |   |   SpaceDebug.cs (952b)
 |   |   |   Data
 |   |   |   |   SpaceDebugValue.cs (144b)
 |   DependencyInjection
 |   |   Controllers
-|   |   |   SceneContext.cs (1.9kb)
+|   |   |   SceneContext.cs (1.8kb)
 |   |   |   ScriptableObjectInstaller.cs (233b)
 |   |   |   ZenjectContainerWrapper.cs (738b)
 |   |   |   ZenjectInitializationWrapper.cs (459b)
@@ -41,6 +42,10 @@ Scripts
 |   |   |   |   |   Config.cs (317b)
 |   |   |   |   |   FileInfo.cs (245b)
 |   |   |   |   |   FilterInfo.cs (380b)
+|   |   |   ChangelogTool
+|   |   |   |   ChangelogToolAsset.cs (278b)
+|   |   |   |   ChangelogToolConfig.cs (589b)
+|   |   |   |   ChangeLogToolEditor.cs (1.8kb)
 |   |   |   NamespaceTool
 |   |   |   |   Controllers
 |   |   |   |   |   AssemblyUtil.cs (3.6kb)
@@ -77,7 +82,7 @@ Scripts
 |   Entities
 |   |   Actors
 |   |   |   Controllers
-|   |   |   |   ActorControlSystem.cs (5.2kb)
+|   |   |   |   ActorControlSystem.cs (4.8kb)
 |   |   |   Installers
 |   |   |   |   ActorsInstaller.cs (312b)
 |   |   |   Interfaces
@@ -88,13 +93,13 @@ Scripts
 |   |   Atlases
 |   |   |   Runtime
 |   |   |   |   Controllers
-|   |   |   |   |   AtlasIndexManager1D.cs (5.7kb)
+|   |   |   |   |   AtlasIndexManager1D.cs (5.6kb)
 |   |   |   |   |   AtlasIndexManager2D.cs (5.7kb)
 |   |   |   |   |   AtlasSectorManager1D.cs (2.9kb)
 |   |   |   |   |   AtlasSectorManager2D.cs (5.1kb)
 |   |   |   |   Data
 |   |   |   |   |   Atlas1DConfig.cs (445b)
-|   |   |   |   |   Atlas1DConfigValidator.cs (1.5kb)
+|   |   |   |   |   Atlas1DConfigValidator.cs (1.4kb)
 |   |   |   |   |   Atlas2DConfig.cs (445b)
 |   |   |   |   |   Atlas2DConfigValidator.cs (1.4kb)
 |   |   |   |   |   AtlasChunk1D.cs (152b)
@@ -103,23 +108,19 @@ Scripts
 |   |   |   |   |   AtlasMath.cs (1.0kb)
 |   |   Bullets
 |   |   |   Controllers
-|   |   |   |   BulletColliderBakeBehaviour.cs (1.8kb)
-|   |   |   |   BulletCommandSystem.cs (652b)
-|   |   |   |   BulletComputeSystem.cs (6.8kb)
+|   |   |   |   BulletColliderBakeBehaviour.cs (2.3kb)
+|   |   |   |   BulletComputeSystem.cs (8.9kb)
 |   |   |   |   BulletRaycastBehaviour.cs (6.7kb)
 |   |   |   Data
-|   |   |   |   BulletHit.cs (253b)
+|   |   |   |   BulletHit.cs (399b)
 |   |   |   Installers
-|   |   |   |   BulletsInstaller.cs (367b)
-|   |   |   Interfaces
-|   |   |   |   IBulletComputeSystem.cs (216b)
+|   |   |   |   BulletsInstaller.cs (315b)
 |   |   Components
 |   |   |   Scripts
 |   |   |   |   ActorComponent.cs (167b)
 |   |   |   |   BulletComponent.cs (147b)
-|   |   |   |   DespawnComponent.cs (173b)
 |   |   |   |   HealthComponent.cs (202b)
-|   |   |   |   ParticleEmitterComponent.cs (186b)
+|   |   |   |   ParticleEmitterComponent.cs (221b)
 |   |   |   |   PixelRenderComponent.cs (152b)
 |   |   |   |   PositionComponent.cs (195b)
 |   |   |   |   RandomValueComponent.cs (171b)
@@ -127,37 +128,36 @@ Scripts
 |   |   |   |   RectSizeComponent.cs (194b)
 |   |   |   |   RepeatTimerComponent.cs (230b)
 |   |   |   |   RigidbodyComponent.cs (178b)
-|   |   |   |   RotationComponent.cs (194b)
+|   |   |   |   RotationComponent.cs (168b)
 |   |   |   |   SpriteRenderComponent.cs (208b)
+|   |   |   |   TimeDespawnComponent.cs (177b)
 |   |   |   |   VelocityComponent.cs (195b)
 |   |   Despawn
 |   |   |   Controllers
-|   |   |   |   DespawnCommandSystem.cs (915b)
-|   |   |   |   DespawnComputeSystem.cs (4.5kb)
+|   |   |   |   EntityDestructionBuffer.cs (1.2kb)
+|   |   |   |   TimeDespawnComputeSystem.cs (3.8kb)
 |   |   |   Installers
-|   |   |   |   DespawnInstaller.cs (369b)
+|   |   |   |   DespawnInstaller.cs (376b)
 |   |   |   Interfaces
-|   |   |   |   IDespawnComputeSystem.cs (263b)
+|   |   |   |   IEntityDestructionBuffer.cs (216b)
 |   |   |   Jobs
-|   |   |   |   DespawnComputeJob.cs (1.5kb)
+|   |   |   |   TimeDespawnComputeJob.cs (1.5kb)
 |   |   Health
-|   |   |   Atlases
-|   |   |   |   Interfaces
-|   |   |   |   |   ILinearAtlas.cs (498b)
 |   |   |   Controllers
-|   |   |   |   HealthAtlasGarbageCollector.cs (4.3kb)
-|   |   |   |   HealthAtlasSystem.cs (2.5kb)
+|   |   |   |   HealthAtlasGarbageCollector.cs (4.2kb)
+|   |   |   |   HealthAtlasSystem.cs (2.7kb)
+|   |   |   |   HealthFrameBitsUtil.cs (4.1kb)
 |   |   |   Installers
-|   |   |   |   HealthInstaller.cs (566b)
+|   |   |   |   HealthInstaller.cs (523b)
 |   |   |   Interfaces
-|   |   |   |   IHealthAtlasSystem.cs (278b)
+|   |   |   |   IHealthAtlasSystem.cs (586b)
 |   |   |   Jobs
 |   |   |   |   CompareAtlasMaskJob.cs (1.3kb)
 |   |   |   |   FillByteMaskJob.cs (961b)
 |   |   ParticleEmitters
 |   |   |   Controllers
 |   |   |   |   ParticleEmitterCommandSystem.cs (2.2kb)
-|   |   |   |   ParticleEmitterComputeSystem.cs (4.3kb)
+|   |   |   |   ParticleEmitterComputeSystem.cs (4.1kb)
 |   |   |   Data
 |   |   |   |   ParticleEmitterData.cs (236b)
 |   |   |   Installers
@@ -165,13 +165,13 @@ Scripts
 |   |   |   Interfaces
 |   |   |   |   IParticleEmitterComputeSystem.cs (245b)
 |   |   |   Jobs
-|   |   |   |   ParticleEmitterComputeJob.cs (2.4kb)
+|   |   |   |   ParticleEmitterComputeJob.cs (2.8kb)
 |   |   Physics
 |   |   |   Colliders
 |   |   |   |   Controllers
-|   |   |   |   |   ColliderBakeSystem.cs (5.6kb)
-|   |   |   |   |   ColliderBakeSystemFactory.cs (737b)
-|   |   |   |   |   ColliderGizmosUtil.cs (1.9kb)
+|   |   |   |   |   ColliderBakeSystem.cs (5.3kb)
+|   |   |   |   |   ColliderBakeSystemFactory.cs (714b)
+|   |   |   |   |   ColliderGizmosUtil.cs (2.1kb)
 |   |   |   |   |   ColliderUtil.cs (6.8kb)
 |   |   |   |   Data
 |   |   |   |   |   BakedColliders.cs (604b)
@@ -180,9 +180,9 @@ Scripts
 |   |   |   |   |   ColliderListPointer.cs (199b)
 |   |   |   |   |   ColliderShape.cs (187b)
 |   |   |   |   Installers
-|   |   |   |   |   CollidersInstaller.cs (353b)
+|   |   |   |   |   CollidersInstaller.cs (333b)
 |   |   |   |   Interfaces
-|   |   |   |   |   IColliderBakeBehaviour.cs (366b)
+|   |   |   |   |   IColliderBakeBehaviour.cs (317b)
 |   |   |   |   |   IColliderBakeSystem.cs (296b)
 |   |   |   |   |   IColliderBakeSystemFactory.cs (257b)
 |   |   |   |   Jobs
@@ -196,16 +196,16 @@ Scripts
 |   |   |   |   |   JoinBoundsJob.cs (1.7kb)
 |   |   |   Raycast
 |   |   |   |   Controllers
-|   |   |   |   |   RaycastSystem.cs (2.2kb)
-|   |   |   |   |   RaycastSystemFactory.cs (656b)
+|   |   |   |   |   RaycastSystem.cs (2.0kb)
+|   |   |   |   |   RaycastSystemFactory.cs (633b)
 |   |   |   |   Data
 |   |   |   |   |   RayHit.cs (255b)
 |   |   |   |   Installers
 |   |   |   |   |   RaycastInstaller.cs (324b)
 |   |   |   |   Interfaces
-|   |   |   |   |   IRaycastBehaviour.cs (439b)
+|   |   |   |   |   IRaycastBehaviour.cs (454b)
 |   |   |   |   |   IRaycastSystem.cs (349b)
-|   |   |   |   |   IRaycastSystemFactory.cs (270b)
+|   |   |   |   |   IRaycastSystemFactory.cs (247b)
 |   |   |   |   Jobs
 |   |   |   |   |   RaycastJob.cs (7.7kb)
 |   |   |   Rigidbody
@@ -224,7 +224,7 @@ Scripts
 |   |   |   |   |   Installers
 |   |   |   |   |   |   RigidbodyInstaller.cs (328b)
 |   |   |   |   |   Jobs
-|   |   |   |   |   |   RigidbodyCollisionJob.cs (7.7kb)
+|   |   |   |   |   |   RigidbodyCollisionJob.cs (8.3kb)
 |   |   |   |   |   |   RigidbodyMotionJob.cs (1.2kb)
 |   |   |   Velocity
 |   |   |   |   Controllers
@@ -256,8 +256,8 @@ Scripts
 |   |   |   |   |   PixelSystem20.shader (935b)
 |   |   |   Sprites
 |   |   |   |   Controllers
-|   |   |   |   |   SpriteColorSystem.cs (2.8kb)
-|   |   |   |   |   SpriteGarbageCollectorSystem.cs (4.4kb)
+|   |   |   |   |   SpriteColorSystem.cs (2.6kb)
+|   |   |   |   |   SpriteGarbageCollectorSystem.cs (4.3kb)
 |   |   |   |   |   SpriteMeshSystem.cs (7.9kb)
 |   |   |   |   Data
 |   |   |   |   |   SpriteColorSystemConfig.cs (444b)
@@ -266,18 +266,15 @@ Scripts
 |   |   |   |   Installers
 |   |   |   |   |   SpriteRenderingInstaller.cs (658b)
 |   |   |   |   Interfaces
-|   |   |   |   |   ISpriteColorSystem.cs (241b)
-|   |   |   |   |   ITextureAtlas.cs (572b)
+|   |   |   |   |   ISpriteColorSystem.cs (592b)
 |   |   |   |   Jobs
 |   |   |   |   |   FillByteMaskJob.cs (978b)
 |   |   |   |   |   SpriteMeshComputeJob.cs (5.1kb)
 |   |   |   |   Shaders
 |   |   |   |   |   SpriteSystem20.shader (1.2kb)
 |   |   |   Utilities
-|   |   |   |   Data
-|   |   |   |   |   MeshDrawingData.cs (472b)
-|   |   |   |   Utils
-|   |   |   |   |   MeshRenderingUtil.cs (1.7kb)
+|   |   |   |   MeshDrawingData.cs (472b)
+|   |   |   |   MeshRenderingUtil.cs (1.6kb)
 |   |   RepeatTimer
 |   |   |   Controllers
 |   |   |   |   RepeatTimerSystem.cs (1.4kb)
@@ -285,14 +282,40 @@ Scripts
 |   |   |   |   RepeatTimerInstaller.cs (319b)
 |   |   |   Jobs
 |   |   |   |   RepeatTimerJob.cs (1.1kb)
+|   |   Splitting
+|   |   |   Controllers
+|   |   |   |   SplittingCommandSystem.cs (3.8kb)
+|   |   |   |   SplittingController.cs (11.0kb)
+|   |   |   |   SplittingUtil.cs (7.8kb)
+|   |   |   Data
+|   |   |   |   ByteBounds.cs (176b)
+|   |   |   |   Mask256.cs (2.4kb)
+|   |   |   |   SplittingContext.cs (437b)
+|   |   |   Editor
+|   |   |   |   ShapeFillWindow.cs (5.8kb)
+|   |   |   |   SplittingWindow.cs (2.7kb)
+|   |   |   Enums
+|   |   |   |   EShapeSeedResult.cs (196b)
+|   |   |   |   ESplittingState.cs (207b)
+|   |   |   Installers
+|   |   |   |   SplittingInstaller.cs (320b)
+|   |   |   Interfaces
+|   |   |   |   ISplittingCommandSystem.cs (183b)
+|   |   |   Jobs
+|   |   |   |   BlitShapeLinear24Job.cs (2.3kb)
+|   |   |   |   ShapeReadJob.cs (3.7kb)
+|   |   |   |   ShapeSeedJob.cs (8.0kb)
+|   |   Utilities
+|   |   |   ArchetypeChunksWithOffsets.cs (472b)
+|   |   |   EntityQueryForJobUtil.cs (2.5kb)
 |   |   World
 |   |   |   Controllers
-|   |   |   |   EntityWorldManager.cs (2.9kb)
+|   |   |   |   EntityManager.cs (3.1kb)
 |   |   |   |   EntityWorldTime.cs (470b)
 |   |   |   Installers
 |   |   |   |   EntityWorldInstaller.cs (359b)
 |   |   |   Interfaces
-|   |   |   |   IEntityWorldManager.cs (1.2kb)
+|   |   |   |   IEntityManager.cs (1.2kb)
 |   |   |   |   IEntityWorldTime.cs (189b)
 |   GameCycle
 |   |   Controllers
@@ -313,8 +336,11 @@ Scripts
 |   |   |   IUpdatable.cs (109b)
 |   Gizmos
 |   |   Controllers
-|   |   |   GizmosManager.cs (3.2kb)
+|   |   |   GizmosDrawerManager.cs (2.5kb)
+|   |   |   GizmosManager.cs (3.6kb)
 |   |   |   GizmosScreenDrawer.cs (1.7kb)
+|   |   |   GizmosStateStorage.cs (4.5kb)
+|   |   |   GizmosWindow.cs (3.6kb)
 |   |   |   GizmosWireDrawer.cs (4.0kb)
 |   |   Data
 |   |   |   Shapes
@@ -322,13 +348,16 @@ Scripts
 |   |   |   |   Polygon.cs (249b)
 |   |   |   |   Rect.cs (250b)
 |   |   |   |   Square.cs (215b)
-|   |   |   GizmosConfig.cs (229b)
-|   |   |   GizmosHandle.cs (2.2kb)
+|   |   |   GizmosConfig.cs (547b)
+|   |   |   GizmosHandle.cs (4.5kb)
 |   |   |   ShapeStorage.cs (1.2kb)
 |   |   Installers
-|   |   |   GizmosInstaller.cs (391b)
+|   |   |   GizmosInstaller.cs (546b)
 |   |   Interfaces
+|   |   |   IGizmosDrawer.cs (191b)
+|   |   |   IGizmosDrawerManager.cs (189b)
 |   |   |   IGizmosManager.cs (253b)
+|   |   |   IGizmosStateStorage.cs (513b)
 |   |   Shaders
 |   |   |   Gizmos.shader (1.0kb)
 |   IO
@@ -342,45 +371,49 @@ Scripts
 |   |   |   EditorPath.cs (615b)
 |   JobUtilities
 |   |   Runtime
+|   |   |   Controllers
+|   |   |   |   JobMemoryAllocator.cs (1.3kb)
+|   |   |   |   NativeMemory.cs (2.2kb)
 |   |   |   Data
 |   |   |   |   ArrayMaintenanceData.cs (205b)
 |   |   |   Jobs
 |   |   |   |   DataCollectJob.cs (1.0kb)
-|   |   |   |   DataCollectJobWithOffsets.cs (4.9kb)
+|   |   |   |   DataCollectJobWithOffsets.cs (4.8kb)
 |   |   |   |   FillNativeArrayJob.cs (799b)
-|   |   |   Utils
-|   |   |   |   NativeMemory.cs (2.2kb)
 |   Mathematics
 |   |   Data
 |   |   |   AtlasIndex.cs (269b)
-|   |   |   byte2.cs (321b)
+|   |   |   byte2.cs (423b)
 |   |   |   ColorRGB24.cs (154b)
-|   |   |   FloatBounds.cs (237b)
+|   |   |   FloatBounds.cs (195b)
 |   |   |   FloatRay.cs (303b)
 |   |   |   ushort2.cs (261b)
 |   |   Utils
 |   |   |   BinaryMath.cs (2.3kb)
-|   |   |   FloatMath.cs (7.1kb)
+|   |   |   FloatMath.cs (7.3kb)
+|   |   |   IntMath.cs (490b)
 |   Playground
 |   |   Core
 |   |   |   Controllers
 |   |   |   |   MouseTracker.cs (1.3kb)
 |   |   |   |   PlaygroundCoreController.cs (4.3kb)
 |   |   |   |   PlaygroundToolValueStorage.cs (762b)
+|   |   |   |   PlaygroundUIManager.cs (665b)
 |   |   |   Data
 |   |   |   |   PlaygroundCoreConfig.cs (636b)
 |   |   |   |   PlaygroundCoreConfigValidator.cs (1.1kb)
 |   |   |   |   ToolIcon.cs (274b)
 |   |   |   Installers
-|   |   |   |   PlaygroundCoreInstaller.cs (891b)
+|   |   |   |   PlaygroundCoreInstaller.cs (957b)
 |   |   |   Interfaces
 |   |   |   |   IPlaygroundTool.cs (219b)
 |   |   |   |   IPlaygroundToolValueStorage.cs (205b)
+|   |   |   |   IPlaygroundUIManager.cs (199b)
 |   |   |   |   IPointerTracker.cs (268b)
 |   |   Tools
 |   |   |   ActorControl
 |   |   |   |   Controllers
-|   |   |   |   |   ActorActivationTool.cs (2.8kb)
+|   |   |   |   |   ActorActivationTool.cs (2.7kb)
 |   |   |   |   |   ActorNavigationTool.cs (1.5kb)
 |   |   |   |   Installers
 |   |   |   |   |   ActorControlInstaller.cs (385b)
@@ -396,30 +429,30 @@ Scripts
 |   |   |   |   |   CaptureToolInstaller.cs (326b)
 |   |   |   |   Interfaces
 |   |   |   |   |   ICaptureTool.cs (249b)
-|   |   |   |   |   ICaptureToolFactory.cs (254b)
+|   |   |   |   |   ICaptureToolFactory.cs (234b)
 |   |   |   |   |   ICaptureToolHandler.cs (263b)
 |   |   |   ComponentFilter
 |   |   |   |   Controllers
-|   |   |   |   |   ComponentFilterFactory.cs (4.7kb)
+|   |   |   |   |   ComponentFilterFactory.cs (4.6kb)
 |   |   |   |   Data
 |   |   |   |   |   ComponentFilterFactoryConfig.cs (470b)
-|   |   |   |   |   FilterState.cs (208b)
+|   |   |   |   |   FilterState.cs (205b)
 |   |   |   |   Installers
 |   |   |   |   |   ComponentFilterToolInstaller.cs (467b)
 |   |   |   |   Interfaces
-|   |   |   |   |   IComponentFilter.cs (371b)
-|   |   |   |   |   IComponentFilterFactory.cs (321b)
+|   |   |   |   |   IComponentFilter.cs (373b)
+|   |   |   |   |   IComponentFilterFactory.cs (326b)
 |   |   |   |   Views
 |   |   |   |   |   ComponentFilter.cs (2.3kb)
 |   |   |   EmitterSpawn
 |   |   |   |   Controllers
-|   |   |   |   |   EmitterSpawnTool.cs (5.2kb)
+|   |   |   |   |   EmitterSpawnTool.cs (7.4kb)
 |   |   |   |   |   FloatMinMaxBehaviour.cs (1.0kb)
 |   |   |   |   Installers
-|   |   |   |   |   EmitterSpawnToolInstaller.cs (387b)
+|   |   |   |   |   EmitterSpawnToolInstaller.cs (332b)
 |   |   |   EntitySearch
 |   |   |   |   Controllers
-|   |   |   |   |   EntitySearchSystem.cs (6.6kb)
+|   |   |   |   |   EntitySearchSystem.cs (6.8kb)
 |   |   |   |   Data
 |   |   |   |   |   EntitySearchResult.cs (437b)
 |   |   |   |   Installers
@@ -432,7 +465,15 @@ Scripts
 |   |   |   |   Controllers
 |   |   |   |   |   EraserTool.cs (3.5kb)
 |   |   |   |   Installers
-|   |   |   |   |   EraserToolInstaller.cs (334b)
+|   |   |   |   |   EraserToolInstaller.cs (314b)
+|   |   |   ImageSpawn
+|   |   |   |   Controllers
+|   |   |   |   |   ImageSpawnTool.cs (10.4kb)
+|   |   |   |   Installers
+|   |   |   |   |   ImageSpawnInstaller.cs (322b)
+|   |   |   |   Jobs
+|   |   |   |   |   BlitShapeGamma32Job.cs (2.6kb)
+|   |   |   |   |   BuildShapeHealthJob.cs (2.0kb)
 |   |   |   PositionChange
 |   |   |   |   Controllers
 |   |   |   |   |   PositionChangeTool.cs (2.9kb)
@@ -440,19 +481,21 @@ Scripts
 |   |   |   |   |   PositionChangeToolInstaller.cs (338b)
 |   |   |   ShipSpawn
 |   |   |   |   Controllers
-|   |   |   |   |   ShipSpawnTool.cs (5.3kb)
+|   |   |   |   |   ShipSpawnTool.cs (5.6kb)
 |   |   |   |   Data
-|   |   |   |   |   ShipSpawnToolConfig.cs (320b)
+|   |   |   |   |   ShipSpawnToolConfig.cs (285b)
 |   |   |   |   Installers
 |   |   |   |   |   ShipSpawnToolInstaller.cs (425b)
 |   |   |   Spawn
 |   |   |   |   Controllers
-|   |   |   |   |   IntMaxBehaviour.cs (738b)
-|   |   |   |   |   PositionGenerator.cs (1.3kb)
-|   |   |   |   |   SpawnTool.cs (2.8kb)
-|   |   |   |   |   SpawnToolFactory.cs (2.4kb)
+|   |   |   |   |   IntMaxBehaviour.cs (735b)
+|   |   |   |   |   PositionGenerator.cs (1.5kb)
+|   |   |   |   |   RotationGenerator.cs (1.3kb)
+|   |   |   |   |   SpawnTool.cs (4.9kb)
+|   |   |   |   |   SpawnToolFactory.cs (3.2kb)
 |   |   |   |   Data
-|   |   |   |   |   SpawnEventData.cs (201b)
+|   |   |   |   |   SpawnEventData.cs (176b)
+|   |   |   |   |   SpawnOrigin.cs (187b)
 |   |   |   |   Enums
 |   |   |   |   |   ESpawnEventType.cs (138b)
 |   |   |   |   Installers
@@ -466,49 +509,17 @@ Scripts
 |   |   |   |   |   VelocityChangeTool.cs (3.2kb)
 |   |   |   |   Installers
 |   |   |   |   |   VelocityChangeToolInstaller.cs (338b)
-|   |   UI
-|   |   |   Controllers
-|   |   |   |   PlaygroundUIFactory.cs (1.0kb)
-|   |   |   |   PlaygroundUIManager.cs (658b)
-|   |   |   Data
-|   |   |   |   PlaygroundUIPrefabs.cs (977b)
-|   |   |   Enums
-|   |   |   |   ETagLabelState.cs (154b)
-|   |   |   Installers
-|   |   |   |   PlaygroundUIFactoryInstaller.cs (794b)
-|   |   |   Interfaces
-|   |   |   |   IGeneralButton.cs (220b)
-|   |   |   |   ILayoutGrid.cs (388b)
-|   |   |   |   IPlaygroundUIFactory.cs (347b)
-|   |   |   |   IPlaygroundUIManager.cs (192b)
-|   |   |   |   IStringField.cs (406b)
-|   |   |   |   IStringFieldCorrectionBehaviour.cs (178b)
-|   |   |   |   ITagLabel.cs (300b)
-|   |   |   |   IToolButton.cs (290b)
-|   |   |   |   IToolWindow.cs (216b)
-|   |   |   Views
-|   |   |   |   GeneralButton.cs (1.6kb)
-|   |   |   |   GeneralButtonFactory.cs (1.9kb)
-|   |   |   |   LayoutGrid.cs (806b)
-|   |   |   |   LayoutGridFactory.cs (355b)
-|   |   |   |   StringField.cs (1.5kb)
-|   |   |   |   StringFieldFactory.cs (1.8kb)
-|   |   |   |   TagLabel.cs (2.3kb)
-|   |   |   |   TagLabelFactory.cs (2.1kb)
-|   |   |   |   ToolButton.cs (1.3kb)
-|   |   |   |   ToolButtonFactory.cs (1.7kb)
-|   |   |   |   ToolWindow.cs (650b)
-|   |   |   |   ToolWindowFactory.cs (1.4kb)
 |   Profiling
 |   |   Editor
 |   |   |   Tests
 |   |   |   |   ProfilingManagerTests.cs (6.0kb)
-|   |   |   ProfilingTreeWindow.cs (3.6kb)
+|   |   |   ProfilingTreeWindow.cs (2.1kb)
 |   |   |   SceneContextUtil.cs (923b)
 |   |   Runtime
 |   |   |   Controllers
 |   |   |   |   ProfilingManager.cs (6.9kb)
 |   |   |   |   ProfilingManager.ExceptionHandler.cs (2.0kb)
+|   |   |   |   ProfilingNodesView.cs (1.8kb)
 |   |   |   |   ProfilingTreeReader.cs (2.0kb)
 |   |   |   Data
 |   |   |   |   NativeNode.cs (162b)
@@ -545,28 +556,78 @@ Scripts
 |   |   |   RegexPatternSubstitutionValidator.cs (778b)
 |   |   |   RegexPatternValidator.cs (600b)
 |   UI
-|   |   Controllers
-|   |   |   AUIFactory.cs (389b)
-|   |   |   UIEventManager.cs (3.0kb)
-|   |   |   UIManager.cs (4.3kb)
-|   |   |   UIQuery.cs (493b)
-|   |   |   UITreeAssetValidator.cs (1.1kb)
-|   |   Data
-|   |   |   IUICallbackHandler.cs (477b)
-|   |   |   UIConfig.cs (580b)
-|   |   |   UIConfigValidator.cs (1.6kb)
-|   |   |   UIPrefab.cs (298b)
-|   |   Installers
-|   |   |   UIInstaller.cs (422b)
-|   |   Interfaces
-|   |   |   IUICallbackHandler.cs (124b)
-|   |   |   IUIElement.cs (153b)
-|   |   |   IUIEventManager.cs (331b)
-|   |   |   IUIFactory.cs (211b)
-|   |   |   IUIManager.cs (347b)
+|   |   Core
+|   |   |   Controllers
+|   |   |   |   AUIViewBuilder.cs (406b)
+|   |   |   |   UIEventDispatcher.cs (869b)
+|   |   |   |   UIManager.cs (4.2kb)
+|   |   |   |   UIQuery.cs (498b)
+|   |   |   |   UITreeAssetValidator.cs (1.1kb)
+|   |   |   Data
+|   |   |   |   IUICallbackHandler.cs (482b)
+|   |   |   |   UIConfig.cs (585b)
+|   |   |   |   UIConfigValidator.cs (1.6kb)
+|   |   |   |   UIPrefab.cs (303b)
+|   |   |   Editor
+|   |   |   |   UIPrefabDrawer.cs (411b)
+|   |   |   Installers
+|   |   |   |   UIInstaller.cs (430b)
+|   |   |   Interfaces
+|   |   |   |   IUICallbackHandler.cs (129b)
+|   |   |   |   IUIElement.cs (158b)
+|   |   |   |   IUIEventDispatcher.cs (151b)
+|   |   |   |   IUIManager.cs (346b)
+|   |   |   |   IUIViewBuilder.cs (220b)
+|   |   Factory
+|   |   |   Controllers
+|   |   |   |   UIFactory.cs (1.0kb)
+|   |   |   Data
+|   |   |   |   UIPrefabs.cs (1.1kb)
+|   |   |   Enums
+|   |   |   |   ETagLabelState.cs (151b)
+|   |   |   Installers
+|   |   |   |   UIFactoryInstaller.cs (758b)
+|   |   |   Interfaces
+|   |   |   |   IGeneralButton.cs (222b)
+|   |   |   |   ILayoutGrid.cs (390b)
+|   |   |   |   IStringField.cs (408b)
+|   |   |   |   IStringFieldCorrectionBehaviour.cs (175b)
+|   |   |   |   ITagLabel.cs (302b)
+|   |   |   |   IToolButton.cs (292b)
+|   |   |   |   IToolWindow.cs (218b)
+|   |   |   |   IUIFactory.cs (388b)
+|   |   |   |   IVerticalFixedItemList.cs (326b)
+|   |   |   Views
+|   |   |   |   GeneralButton
+|   |   |   |   |   GeneralButton.cs (1.7kb)
+|   |   |   |   |   GeneralButtonBuilder.cs (1.1kb)
+|   |   |   |   |   GeneralButtonValidator.cs (1.0kb)
+|   |   |   |   LayoutGrid
+|   |   |   |   |   LayoutGrid.cs (808b)
+|   |   |   |   |   LayoutGridBuilder.cs (361b)
+|   |   |   |   StringField
+|   |   |   |   |   StringField.cs (1.7kb)
+|   |   |   |   |   StringFieldBuilder.cs (1.2kb)
+|   |   |   |   |   StringFieldValidator.cs (912b)
+|   |   |   |   TagLabel
+|   |   |   |   |   TagLabel.cs (2.4kb)
+|   |   |   |   |   TagLabelBuilder.cs (1.1kb)
+|   |   |   |   |   TagLabelValidator.cs (1.2kb)
+|   |   |   |   ToolButton
+|   |   |   |   |   ToolButton.cs (1.4kb)
+|   |   |   |   |   ToolButtonBuilder.cs (888b)
+|   |   |   |   |   ToolButtonValidator.cs (1.0kb)
+|   |   |   |   ToolWindow
+|   |   |   |   |   ToolWindow.cs (652b)
+|   |   |   |   |   ToolWindowBuilder.cs (505b)
+|   |   |   |   |   ToolWindowValidator.cs (1.0kb)
+|   |   |   |   VerticalFixedItemList
+|   |   |   |   |   VerticalFixedItemList.cs (1.3kb)
+|   |   |   |   |   VerticalFixedItemListBuilder.cs (1.1kb)
+|   |   |   |   |   VerticalFixedItemListValidator.cs (1.4kb)
 
 Summary:
-	Time: 02 July 2021 08:17:08
-	Directory count: 220
-	File count: 346
-	Files size total: 466.2kb
+	Time: 27 July 2021 09:32:30
+	Directory count: 238
+	File count: 389
+	Files size total: 569.6kb

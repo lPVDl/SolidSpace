@@ -2,14 +2,16 @@
 	Sandbox top down 2D massive space battle simulator with pixel graphics, pixel physics, ship design editor. Form a fleet, fight, trade, explore.
 	
 # Reference games:
-	** Battle & physics elements:
+	** Battle & physics & ship designer:
 		SPAZ: https://store.steampowered.com/app/107200/Space_Pirates_and_Zombies/
 		Gratuitous Space Battles: https://store.steampowered.com/app/41800/Gratuitous_Space_Battles/
 		Reassembly: https://store.steampowered.com/app/329130/Reassembly/
 		Cosmoteer: https://store.steampowered.com/app/799600/Cosmoteer_Starship_Architect__Commander/
 		Battlefleet Engineer: https://store.steampowered.com/app/685910/Battlefleet_Engineer/
 		Wayward Terran Frontier: Zero Falls: https://store.steampowered.com/app/392080/Wayward_Terran_Frontier_Zero_Falls/
-	
+		Istrolid: https://store.steampowered.com/app/449140/Istrolid/
+		Space Impossible: https://store.steampowered.com/app/416240/Space_Impossible/
+
 	** Sandbox elements:
 		SPAZ 2: https://store.steampowered.com/app/252470/Space_Pirates_And_Zombies_2/
 		Starsector: https://fractalsoftworks.com/

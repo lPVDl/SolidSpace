@@ -1,3 +1,32 @@
+# v0.3.0-alpha
+- Fixed splitting system can sometimes clone ship
+- Fixed ships after splitting can glitch for a frame
+- Fixed colliders can stuck one into other
+- Fixed sprites disappear when camera is far away
+- Created physics splitting system
+- Made sprites recalc bounds when border pixels are destroyed
+- Made sprites be despawned when all pixels are destroyed
+- Made splitting system work on multiple cores
+- Made ship hull health be stored as bits
+- Created a tool to spawn entities from image, based on flood fill algorithm
+- Added support for spread angle in particle emitters
+- Fixed disabled collider gizmos still consuming resources
+- Created a background grid to make camera navigation easier
+- Created a shared system for entity despawn
+- Moved entity query offsets & job allocations to separate utils
+- Created IGizmosDrawer interface
+- Made spawn tools draw bounds before entity is placed
+- Created a drawer for UIPrefab
+- Made gizmos screen dot & circle always have constant arguments
+- Made spawn point tool regenerate seed after spawn
+- Created release notes automation tool
+- Made it possible to control rotation before item is spawned
+- Made Unity project browser window' title contain opened folder name
+- Made validation scan only game assemblies for validators
+- Made despawn system pick chunks by hash
+- Improve project resume automation tool
+- Created window enable / disable specific gizmos
+
 # v0.2.0-alpha
 - Created a prototype AI
 - Created a prototype collision system

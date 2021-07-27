@@ -1,3 +1,53 @@
+280c0bc 27 Jul 2021 Fix sprite collider gizmos is not being drawn
+4383eac 27 Jul 2021 Remove in-game profiling tree window due to being too buggy
+06bea12 27 Jul 2021 Update project version
+13d7a6b 27 Jul 2021 [SOL-57] Make validation scan only game assemblies for validators
+155a805 26 Jul 2021 [SOL-145] Fix disabled collider gizmos still consuming resources
+9d0d7e8 26 Jul 2021 Remove hack handling for spawned sprite count
+e30c8ab 26 Jul 2021 [SOL-80] Create in-game window for home made profiler
+e238ac4 26 Jul 2021 [SOL-142] Add background grid
+d1216cc 26 Jul 2021 [SOL-83] Increase camera frustum culling range. Make MeshRenderingUtil static
+e2c6aa2 26 Jul 2021 [SOL-114] Make spawn point tool regenerate seed after spawn
+4acfeff 23 Jul 2021 [SOL-144] Fix colliders can stuck one into other when multiple ships are spawned at same point in playground
+5a7636c 23 Jul 2021 [SOL-163] Fix invalid shape mask reading cause ship to clone during splitting
+70b48e2 22 Jul 2021 [SOL-75] Fix frameBits deallocated twice in ShapeFillWindow
+653e070 22 Jul 2021 [SOL-156] Fix ships after splitting can glitch for a frame
+2647867 22 Jul 2021 [SOL-159] Make sprites recalc bounds when border pixels are destroyed
+03ff178 22 Jul 2021 [SOL-158] Make sprites be despawned when all pixels are destroyed
+17876c2 21 Jul 2021 [SOL-157] Make splitting system work on multiple cores
+981c518 20 Jul 2021 [SOL-75] Add basic splitting system
+e4e61be 16 Jul 2021 [SOL-154] Make ship hull heath be stored as bits
+bf0ad6f 15 Jul 2021 [SOL-151] Add shape health building for ImageSpawnTool
+d30af11 15 Jul 2021 [SOL-151] Add sprite blit for ImageSpawnTool
+3df5da0 14 Jul 2021 [SOL-151] Add ImageSpawnTool prototype
+79374f2 14 Jul 2021 [SOL-151] Add ShapeReadJob
+ef142f3 13 Jul 2021 [SOL-151] Add shape recognition algo prototype
+9fee55d 12 Jul 2021 [SOL-130] Replace query offsets & job allocations with util methods
+28f45c0 12 Jul 2021 [SOL-47] Make despawn system pick chunks by hash. Move logic to util.
+9414e40 12 Jul 2021 [SOL-130] Create NativeMemoryForJobAllocator to keep track on job allocations. Replace in ParticleEmitterComputeSystem.
+8a37984 12 Jul 2021 [SOL-130] Create EntityQueryUtil to query chunks with offsets. Replace in ParticleEmitterComputeSystem.
+5a6b365 10 Jul 2021 [SOL-75] Add rotation & spread angle support in particle emitters
+3588a6a 09 Jul 2021 [SOL-74] Add algo for checking 4 neighbour pixels connection
+b580e6d 09 Jul 2021 [SOL-124] Make spawn tools draw bounds before entity is placed
+94035e1 09 Jul 2021 [SOL-91] Fix spawn tool locks cursor when mouse leave UI with cursor being held
+af93a14 09 Jul 2021 [SOL-91] Make it possible to control rotation before item is spawned
+d23d662 08 Jul 2021 [SOL-134] Add shared system for entity despawn. Fix EntityManager initializes in cctor. Rename DespawnSystem -> TimeDespawnSystem
+52c7bc2 07 Jul 2021 [SOL-121] Create a drawer for UIPrefab
+e8c3bb7 06 Jul 2021 [SOL-80] Move profiler tree imgui drawing to separate class
+823d781 06 Jul 2021 [SOL-80] Rename view builders. Separate builders & validators.
+f443255 06 Jul 2021 [SOL-120] Add methods DrawScreenDot() DrawScreenCircle() in GizmosHandle
+19145d2 06 Jul 2021 [SOL-29] Implement gizmos window logic
+b673dc3 05 Jul 2021 [SOL-29] Replace UIEventManager with UIEventDispatcher
+fb57b4f 05 Jul 2021 [SOL-29] Add prototype gizmos window
+62e0485 05 Jul 2021 Remove UI.Factory.Interfaces & unused namespaces
+6ffe09d 05 Jul 2021 [SOL-29, SOL-129] Add gizmos storage & drawer manager
+c91a57b 05 Jul 2021 [SOL-29] Move UI factory from Playground
+2d350d9 02 Jul 2021 [SOL-69] Make Unity project browser window' title contain opened folder name
+092cde2 02 Jul 2021 [SOL-44] Fix resume scripts hierarchy output path
+022df61 02 Jul 2021 [SOL-44] Add changelog to resume
+1a0ce4f 02 Jul 2021 [SOL-44] Add tool to automate changelog
+d187e1e 02 Jul 2021 Fix spawn tool installer guid
+fca05f8 02 Jul 2021 [SOL-44] Update project resume
 9ddc85e 02 Jul 2021 [SOL-44] Add tool to copy scripts to examples in resume
 d3bb4c9 02 Jul 2021 Make collision motion vector be drawn on rect points in IntersectionResolverWindow
 fc1a6b4 01 Jul 2021 [SOL-44] Add git command line for history automation

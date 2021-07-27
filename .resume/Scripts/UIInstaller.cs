@@ -1,7 +1,7 @@
 using SolidSpace.DependencyInjection;
 using UnityEngine;
 
-namespace SolidSpace.UI
+namespace SolidSpace.UI.Core
 {
     internal class UIInstaller : ScriptableObjectInstaller
     {
@@ -10,7 +10,7 @@ namespace SolidSpace.UI
         public override void InstallBindings(IDependencyContainer container)
         {
             container.Bind<UIManager>(_config);
-            container.Bind<UIEventManager>();
+            container.Bind<UIEventDispatcher>();
         }
     }
 }
