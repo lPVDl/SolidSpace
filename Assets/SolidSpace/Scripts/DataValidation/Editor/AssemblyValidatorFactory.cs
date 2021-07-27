@@ -2,13 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-
+using System.Text.RegularExpressions;
 using Debug = UnityEngine.Debug;
 
 namespace SolidSpace.DataValidation.Editor
 {
     internal static class AssemblyValidatorFactory
     {
+        private const string AssemblyNameFilter = @"^(Assembly-CSharp)|(SolidSpace.*)";
+        
         private static readonly Dictionary<Type, ValidationMethod> Validators;
         private static readonly Type[] ValidationArgumentTypes;
         private static readonly Type[] ConstructorArgumentTypes;
@@ -31,8 +33,9 @@ namespace SolidSpace.DataValidation.Editor
 
         private static void Initialize()
         {
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            var allTypes = assemblies.SelectMany(a => a.GetTypes()).ToList();
+            var allTypes = AppDomain.CurrentDomain.GetAssemblies()
+                .Where(a => Regex.IsMatch(a.FullName, AssemblyNameFilter))
+                .SelectMany(a => a.GetTypes()).ToList();
 
             foreach (var type in allTypes)
             {
