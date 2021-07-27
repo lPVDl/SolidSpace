@@ -8,7 +8,7 @@
     <VisualElement style="flex-direction: row;">
         <VisualElement name="ContainerA" style="width: 202px"/>
         <VisualElement style="flex-grow: 1"/>
-        <VisualElement name="ContainerB" style="width: 300px"/>
+        <VisualElement name="ContainerB" style="width: 202px"/>
     </VisualElement>
     
 </UXML>

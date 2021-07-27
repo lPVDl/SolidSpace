@@ -10,7 +10,6 @@ namespace SolidSpace.Profiling
         public override void InstallBindings(IDependencyContainer container)
         {
             container.Bind<ProfilingManager>(_config);
-            container.Bind<ProfilingWindow>(_config);
         }
     }
 }
