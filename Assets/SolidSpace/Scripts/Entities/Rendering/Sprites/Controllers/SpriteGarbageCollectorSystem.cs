@@ -41,6 +41,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
         public void OnUpdate()
         {
             var archetypeChunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
+           
             _profiler.BeginSample("Create byte mask");
             var occupiedChunkCount = _spriteAtlas.ChunksOccupation.Length;
             var byteMaskSize = occupiedChunkCount * 16;
@@ -56,7 +57,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             _profiler.EndSample("Create byte mask");
             
             _profiler.BeginSample("Fill byte mask");
-            new FillByteMaskJob
+            new FillByteMaskWithSpriteIndexJob
             {
                 inChunks = archetypeChunks,
                 spriteHandle = _entityManager.GetComponentTypeHandle<SpriteRenderComponent>(true),

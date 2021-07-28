@@ -1,6 +1,7 @@
 using System;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Health;
+using SolidSpace.Entities.Parenting;
 using SolidSpace.Entities.Rendering.Sprites;
 using SolidSpace.Entities.Splitting;
 using SolidSpace.Entities.World;
@@ -29,6 +30,7 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
         private readonly IPlaygroundUIManager _uiManager;
         private readonly IComponentFilterFactory _filterFactory;
         private readonly IGizmosManager _gizmosManager;
+        private readonly IParentHandleManager _parentHandleManager;
         private readonly IHealthAtlasSystem _healthSystem;
 
         private ISpawnTool _spawnTool;
@@ -39,7 +41,7 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
 
         public ShipSpawnTool(ShipSpawnToolConfig config, IEntityManager entityManager, IHealthAtlasSystem healthSystem,
             ISpriteColorSystem spriteSystem, ISpawnToolFactory spawnToolFactory, IPlaygroundUIManager uiManager,
-            IComponentFilterFactory filterFactory, IGizmosManager gizmosManager)
+            IComponentFilterFactory filterFactory, IGizmosManager gizmosManager, IParentHandleManager parentHandleManager)
         {
             _config = config;
             _entityManager = entityManager;
@@ -48,6 +50,7 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
             _uiManager = uiManager;
             _filterFactory = filterFactory;
             _gizmosManager = gizmosManager;
+            _parentHandleManager = parentHandleManager;
             _healthSystem = healthSystem;
         }
 
@@ -63,7 +66,8 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
                 typeof(HealthComponent),
                 typeof(VelocityComponent),
                 typeof(ActorComponent),
-                typeof(RigidbodyComponent)
+                typeof(RigidbodyComponent),
+                typeof(ParentComponent)
             };
             _textureSize = new float2(_config.ShipTexture.width, _config.ShipTexture.height);
             _shipArchetype = _entityManager.CreateArchetype(shipComponents);
@@ -116,6 +120,7 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
             var size = new int2(texture.width, texture.height);
             var colorIndex = _spriteSystem.Allocate(size.x, size.y);
             var healthIndex = _healthSystem.Allocate(size.x, size.y);
+            var parentHandle = _parentHandleManager.AllocateHandle();
             
             var entity = _entityManager.CreateEntity(_shipArchetype);
             _entityManager.SetComponentData(entity, new PositionComponent
@@ -141,6 +146,10 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
             _entityManager.SetComponentData(entity, new ActorComponent
             {
                 isActive = false
+            });
+            _entityManager.SetComponentData(entity, new ParentComponent
+            {
+                handle = parentHandle
             });
             
             _spriteSystem.Copy(texture, colorIndex);
