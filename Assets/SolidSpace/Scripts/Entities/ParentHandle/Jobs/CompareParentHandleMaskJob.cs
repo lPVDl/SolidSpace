@@ -3,7 +3,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 
-namespace SolidSpace.Entities.Parenting
+namespace SolidSpace.Entities.ParentHandle
 {
     [BurstCompile]
     public struct CompareParentHandleMaskJob : IJobParallelFor

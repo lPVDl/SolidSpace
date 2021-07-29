@@ -1,8 +1,8 @@
 using SolidSpace.DependencyInjection;
 
-namespace SolidSpace.Entities.Parenting
+namespace SolidSpace.Entities.ParentHandle
 {
-    public class ParentingInstaller : ScriptableObjectInstaller
+    public class ParentHandleInstaller : ScriptableObjectInstaller
     {
         public override void InstallBindings(IDependencyContainer container)
         {

@@ -4,7 +4,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
-namespace SolidSpace.Entities.Parenting
+namespace SolidSpace.Entities.ParentHandle
 {
     [BurstCompile]
     public struct FillByteMaskWithParentHandleJob : IJobParallelFor

@@ -8,7 +8,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
-namespace SolidSpace.Entities.Parenting
+namespace SolidSpace.Entities.ParentHandle
 {
     public class ParentHandleGarbageCollector : IInitializable, IUpdatable
     {

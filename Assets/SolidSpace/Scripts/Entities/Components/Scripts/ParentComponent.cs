@@ -1,4 +1,4 @@
-using SolidSpace.Entities.Parenting;
+using SolidSpace.Entities.ParentHandle;
 using Unity.Entities;
 
 namespace SolidSpace.Entities.Components

@@ -30,6 +30,13 @@ namespace SolidSpace.Mathematics
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float2 Rotate(float2 vector, float angle)
+        {
+            SinCos(angle, out var sin, out var cos);
+            return Rotate(vector.x, vector.y, sin, cos);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Clamp(float value, float min, float max)
         {
             if (value < min)

@@ -1,10 +1,10 @@
-using SolidSpace.Entities.Parenting;
+using SolidSpace.Entities.ParentHandle;
 using Unity.Entities;
 
 namespace SolidSpace.Entities.Components
 {
     public struct ChildComponent : IComponentData
     {
-        private ParentHandleInfo parentHandle;
+        public ParentHandleInfo parentHandle;
     }
 }

@@ -1,23 +1,18 @@
 using System;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Health;
-using SolidSpace.Entities.Parenting;
+using SolidSpace.Entities.ParentHandle;
 using SolidSpace.Entities.Rendering.Sprites;
-using SolidSpace.Entities.Splitting;
 using SolidSpace.Entities.World;
 using SolidSpace.Gizmos;
-using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
 using SolidSpace.Playground.Core;
 using SolidSpace.Playground.Tools.ComponentFilter;
 using SolidSpace.Playground.Tools.Spawn;
 using SolidSpace.UI.Core;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
-
-using Random = UnityEngine.Random;
 
 namespace SolidSpace.Playground.Tools.ShipSpawn
 {
@@ -35,6 +30,7 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
 
         private ISpawnTool _spawnTool;
         private EntityArchetype _shipArchetype;
+        private EntityArchetype _particleArchetype;
         private IUIElement _componentsWindow;
         private GizmosHandle _gizmos;
         private float2 _textureSize;
@@ -69,8 +65,16 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
                 typeof(RigidbodyComponent),
                 typeof(ParentComponent)
             };
+            var particleComponents = new ComponentType[]
+            {
+                typeof(PositionComponent),
+                typeof(LocalPositionComponent),
+                typeof(PixelRenderComponent),
+                typeof(ChildComponent)
+            };
             _textureSize = new float2(_config.ShipTexture.width, _config.ShipTexture.height);
             _shipArchetype = _entityManager.CreateArchetype(shipComponents);
+            _particleArchetype = _entityManager.CreateArchetype(particleComponents);
             _componentsWindow = _filterFactory.CreateReadonly(shipComponents);
             _spawnTool = _spawnToolFactory.Create(this);
             _gizmos = _gizmosManager.GetHandle(this, Color.yellow);
@@ -154,6 +158,16 @@ namespace SolidSpace.Playground.Tools.ShipSpawn
             
             _spriteSystem.Copy(texture, colorIndex);
             _healthSystem.Copy(texture, healthIndex);
+
+            var childParticle = _entityManager.CreateEntity(_particleArchetype);
+            _entityManager.SetComponentData(childParticle, new LocalPositionComponent
+            {
+                value = new float2(0, -15)
+            });
+            _entityManager.SetComponentData(childParticle, new ChildComponent
+            {
+                parentHandle = parentHandle
+            });
         }
 
         public void OnFinalize() { }

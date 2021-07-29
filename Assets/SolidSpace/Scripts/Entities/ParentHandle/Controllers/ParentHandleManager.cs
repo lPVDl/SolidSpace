@@ -4,7 +4,7 @@ using SolidSpace.GameCycle;
 using SolidSpace.JobUtilities;
 using Unity.Collections;
 
-namespace SolidSpace.Entities.Parenting
+namespace SolidSpace.Entities.ParentHandle
 {
     public class ParentHandleManager : IInitializable, IParentHandleManager
     {

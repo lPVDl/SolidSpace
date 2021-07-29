@@ -44,8 +44,9 @@ MonoBehaviour:
         - typeName: SolidSpace.Entities.Physics.Rigidbody.RigidbodyComputeSystem
         - typeName: SolidSpace.Entities.Despawn.EntityDestructionBuffer
         - typeName: SolidSpace.Entities.Splitting.SplittingCommandSystem
-        - typeName: SolidSpace.Entities.Parenting.ParentHandleManager
-        - typeName: SolidSpace.Entities.Parenting.ParentHandleGarbageCollector
+        - typeName: SolidSpace.Entities.ParentHandle.ParentHandleManager
+        - typeName: SolidSpace.Entities.ParentHandle.ParentHandleGarbageCollector
+        - typeName: SolidSpace.Entities.ParentTransform.ParentTransformSystem
       - _name: Managed
         _controllers:
         - typeName: SolidSpace.CameraMotion.CameraMotionController
@@ -63,12 +64,13 @@ MonoBehaviour:
         - typeName: SolidSpace.Entities.Bullets.BulletComputeSystem
         - typeName: SolidSpace.Entities.Physics.Velocity.VelocitySystem
         - typeName: SolidSpace.Entities.Physics.Rigidbody.RigidbodyComputeSystem
+        - typeName: SolidSpace.Entities.ParentTransform.ParentTransformSystem
         - typeName: SolidSpace.Entities.ParticleEmitters.ParticleEmitterComputeSystem
         - typeName: SolidSpace.Entities.Despawn.TimeDespawnComputeSystem
         - typeName: SolidSpace.Playground.Tools.EntitySearch.EntitySearchSystem
         - typeName: SolidSpace.Entities.Health.HealthAtlasGarbageCollector
         - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteGarbageCollectorSystem
-        - typeName: SolidSpace.Entities.Parenting.ParentHandleGarbageCollector
+        - typeName: SolidSpace.Entities.ParentHandle.ParentHandleGarbageCollector
       - _name: EntityCommand
         _controllers:
         - typeName: SolidSpace.Entities.Splitting.SplittingCommandSystem

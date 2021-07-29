@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Unity.Collections;
+using Unity.Entities;
 
 namespace SolidSpace.JobUtilities
 {
@@ -16,6 +17,13 @@ namespace SolidSpace.JobUtilities
         public void AddAllocation(IDisposable disposable)
         {
             _allocations.Add(disposable);
+        }
+
+        public NativeArray<ArchetypeChunk> CreateArchetypeChunkArrayFromQuery(EntityQuery query)
+        {
+            var array = query.CreateArchetypeChunkArray(Allocator.TempJob);
+            _allocations.Add(array);
+            return array;
         }
 
         public NativeArray<T> CreateNativeArray<T>(int length) where T : unmanaged

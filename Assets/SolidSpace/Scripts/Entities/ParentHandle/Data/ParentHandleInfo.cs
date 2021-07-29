@@ -1,4 +1,4 @@
-namespace SolidSpace.Entities.Parenting
+namespace SolidSpace.Entities.ParentHandle
 {
     public struct ParentHandleInfo
     {
