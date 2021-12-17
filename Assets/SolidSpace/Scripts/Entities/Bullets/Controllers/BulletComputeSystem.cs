@@ -21,7 +21,6 @@ namespace SolidSpace.Entities.Bullets
     public class BulletComputeSystem : IInitializable, IUpdatable
     {
         private readonly IColliderBakeSystemFactory _colliderBakeSystemFactory;
-        private readonly IRaycastSystemFactory _raycastSystemFactory;
         private readonly IProfilingManager _profilingManager;
         private readonly IEntityManager _entityManager;
         private readonly IEntityWorldTime _worldTime;
@@ -34,7 +33,6 @@ namespace SolidSpace.Entities.Bullets
         private ProfilingHandle _profiler;
         private IColliderBakeSystem<BulletColliderBakeBehaviour> _colliderBakeSystem;
         private NativeArray<Entity> _entitiesToDestroy;
-        private IRaycastSystem<BulletRaycastBehaviour> _raycastSystem;
         private GizmosHandle _gridGizmos;
         private GizmosHandle _colliderGizmos;
         private EntityQuery _colliderQuery;
@@ -42,13 +40,18 @@ namespace SolidSpace.Entities.Bullets
         private Mask256 _pixelConnectionMask;
         private Mask256 _aloneBorderPixelMask;
 
-        public BulletComputeSystem(IColliderBakeSystemFactory colliderBakeSystemFactory, IEntityWorldTime worldTime, 
-            IProfilingManager profilingManager, IEntityManager entityManager, IRaycastSystemFactory raycastSystemFactory,
-            ISpriteColorSystem spriteSystem, IHealthAtlasSystem healthSystem, IGizmosManager gizmosManager,
-            IEntityDestructionBuffer destructionBuffer, ISplittingCommandSystem splittingSystem)
+        public BulletComputeSystem(
+            IColliderBakeSystemFactory colliderBakeSystemFactory, 
+            IEntityWorldTime worldTime, 
+            IProfilingManager profilingManager, 
+            IEntityManager entityManager,
+            ISpriteColorSystem spriteSystem, 
+            IHealthAtlasSystem healthSystem, 
+            IGizmosManager gizmosManager,
+            IEntityDestructionBuffer destructionBuffer,
+            ISplittingCommandSystem splittingSystem)
         {
             _colliderBakeSystemFactory = colliderBakeSystemFactory;
-            _raycastSystemFactory = raycastSystemFactory;
             _profilingManager = profilingManager;
             _entityManager = entityManager;
             _worldTime = worldTime;
@@ -78,7 +81,6 @@ namespace SolidSpace.Entities.Bullets
                 typeof(VelocityComponent),
                 typeof(BulletComponent)
             });
-            _raycastSystem = _raycastSystemFactory.Create<BulletRaycastBehaviour>(_profiler);
             _entitiesToDestroy = NativeMemory.CreateTempJobArray<Entity>(0);
             _pixelConnectionMask = SplittingUtil.Bake4NeighbourPixelConnectionMask();
             _aloneBorderPixelMask = SplittingUtil.BakeAloneBorderPixelMask();
@@ -104,7 +106,7 @@ namespace SolidSpace.Entities.Bullets
             _profiler.BeginSample("Query bullets");
             var bulletArchetypeChunks = _bulletQuery.CreateArchetypeChunkArray(Allocator.TempJob);
             _profiler.EndSample("Query bullets");
-            
+
             var raycastBehaviour = new BulletRaycastBehaviour
             {
                 inColliders = colliders,
@@ -118,9 +120,14 @@ namespace SolidSpace.Entities.Bullets
                 inHealthAtlas = _healthSystem.Data,
                 inHealthChunks = _healthSystem.Chunks,
             };
-            
+
             _profiler.BeginSample("Raycast");
-            _raycastSystem.Raycast(colliders, bulletArchetypeChunks, ref raycastBehaviour);
+            new RaycastTask<BulletRaycastBehaviour>
+            {
+                Profiler = _profiler,
+                Colliders = colliders,
+                ArchetypeChunks = bulletArchetypeChunks,
+            }.Raycast(ref raycastBehaviour);
             _profiler.EndSample("Raycast");
 
             _profiler.BeginSample("Apply damage");

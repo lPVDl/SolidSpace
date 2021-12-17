@@ -8,16 +8,20 @@ using Unity.Jobs;
 
 namespace SolidSpace.Entities.Physics.Raycast
 {
-    public class RaycastSystem<T> : IRaycastSystem<T> where T : struct, IRaycastBehaviour
+    public struct RaycastTask<T> where T : struct, IRaycastBehaviour
     {
         private const int HitStackSize = 8;
         
         public ProfilingHandle Profiler { get; set; }
 
-        public void Raycast(BakedColliders colliders, NativeArray<ArchetypeChunk> archetypeChunks, ref T behaviour)
+        public BakedColliders Colliders { get; set; }
+
+        public NativeArray<ArchetypeChunk> ArchetypeChunks { get; set; }
+
+        public void Raycast(ref T behaviour)
         {
             Profiler.BeginSample("Chunk offsets");
-            var chunkOffsets = EntityQueryForJobUtil.ComputeOffsets(archetypeChunks);
+            var chunkOffsets = EntityQueryForJobUtil.ComputeOffsets(ArchetypeChunks);
             Profiler.EndSample("Chunk offsets");
 
             Profiler.BeginSample("Raycast");
@@ -26,8 +30,8 @@ namespace SolidSpace.Entities.Physics.Raycast
             {
                 behaviour = behaviour,
                 hitStackSize = HitStackSize,
-                inArchetypeChunks = archetypeChunks,
-                inColliders = colliders,
+                inArchetypeChunks = ArchetypeChunks,
+                inColliders = Colliders,
                 inWriteOffsets = chunkOffsets.chunkOffsets,
                 hitStack = NativeMemory.CreateTempJobArray<ushort>(chunkOffsets.chunkCount * HitStackSize),
                 outCounts = NativeMemory.CreateTempJobArray<int>(chunkOffsets.chunkCount)
