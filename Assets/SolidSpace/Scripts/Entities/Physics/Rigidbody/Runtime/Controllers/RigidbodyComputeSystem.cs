@@ -15,18 +15,14 @@ namespace SolidSpace.Entities.Physics.Rigidbody
     {
         private const int CollisionStackSize = 32;
         
-        private readonly IColliderBakeSystemFactory _colliderBakeSystemFactory;
         private readonly IProfilingManager _profilingManager;
         private readonly IEntityManager _entityManager;
 
         private ProfilingHandle _profiler;
-        private IColliderBakeSystem<RigidbodyColliderBakeBehaviour> _colliderBakeSystem;
         private EntityQuery _query;
         
-        public RigidbodyComputeSystem(IColliderBakeSystemFactory colliderBakeSystemFactory, IProfilingManager profilingManager,
-            IEntityManager entityManager)
+        public RigidbodyComputeSystem(IProfilingManager profilingManager, IEntityManager entityManager)
         {
-            _colliderBakeSystemFactory = colliderBakeSystemFactory;
             _profilingManager = profilingManager;
             _entityManager = entityManager;
         }
@@ -41,7 +37,6 @@ namespace SolidSpace.Entities.Physics.Rigidbody
                 typeof(RectSizeComponent),
                 typeof(RigidbodyComponent)
             });
-            _colliderBakeSystem = _colliderBakeSystemFactory.Create<RigidbodyColliderBakeBehaviour>(_profiler);
         }
         
         public void OnUpdate()
@@ -56,7 +51,12 @@ namespace SolidSpace.Entities.Physics.Rigidbody
             _profiler.EndSample("Query chunks");
             
             _profiler.BeginSample("Bake colliders");
-            var colliders = _colliderBakeSystem.Bake(archetypeChunks, ref bakeBehaviour);
+            var colliders = new ColliderBakeTask<RigidbodyColliderBakeBehaviour>
+            {
+                archetypeChunks = archetypeChunks,
+                entityManager = _entityManager,
+                profiler = _profiler
+            }.Bake(ref bakeBehaviour);
             _profiler.EndSample("Bake colliders");
             
             _profiler.BeginSample("Collision job");

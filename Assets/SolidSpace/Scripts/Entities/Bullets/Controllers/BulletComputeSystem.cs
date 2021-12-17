@@ -20,7 +20,6 @@ namespace SolidSpace.Entities.Bullets
 {
     public class BulletComputeSystem : IInitializable, IUpdatable
     {
-        private readonly IColliderBakeSystemFactory _colliderBakeSystemFactory;
         private readonly IProfilingManager _profilingManager;
         private readonly IEntityManager _entityManager;
         private readonly IEntityWorldTime _worldTime;
@@ -31,7 +30,6 @@ namespace SolidSpace.Entities.Bullets
         private readonly ISplittingCommandSystem _splittingSystem;
 
         private ProfilingHandle _profiler;
-        private IColliderBakeSystem<BulletColliderBakeBehaviour> _colliderBakeSystem;
         private NativeArray<Entity> _entitiesToDestroy;
         private GizmosHandle _gridGizmos;
         private GizmosHandle _colliderGizmos;
@@ -41,7 +39,6 @@ namespace SolidSpace.Entities.Bullets
         private Mask256 _aloneBorderPixelMask;
 
         public BulletComputeSystem(
-            IColliderBakeSystemFactory colliderBakeSystemFactory, 
             IEntityWorldTime worldTime, 
             IProfilingManager profilingManager, 
             IEntityManager entityManager,
@@ -51,7 +48,6 @@ namespace SolidSpace.Entities.Bullets
             IEntityDestructionBuffer destructionBuffer,
             ISplittingCommandSystem splittingSystem)
         {
-            _colliderBakeSystemFactory = colliderBakeSystemFactory;
             _profilingManager = profilingManager;
             _entityManager = entityManager;
             _worldTime = worldTime;
@@ -74,7 +70,6 @@ namespace SolidSpace.Entities.Bullets
                 typeof(SpriteRenderComponent),
                 typeof(HealthComponent)
             });
-            _colliderBakeSystem = _colliderBakeSystemFactory.Create<BulletColliderBakeBehaviour>(_profiler);
             _bulletQuery = _entityManager.CreateEntityQuery(new ComponentType[]
             {
                 typeof(PositionComponent),
@@ -100,7 +95,12 @@ namespace SolidSpace.Entities.Bullets
             _profiler.EndSample("Query colliders");
             
             _profiler.BeginSample("Bake colliders");
-            var colliders = _colliderBakeSystem.Bake(colliderArchetypeChunks, ref bakeBehaviour);
+            var colliders = new ColliderBakeTask<BulletColliderBakeBehaviour>
+            {
+                profiler = _profiler,
+                entityManager = _entityManager,
+                archetypeChunks = colliderArchetypeChunks
+            }.Bake(ref bakeBehaviour);
             _profiler.EndSample("Bake colliders");
 
             _profiler.BeginSample("Query bullets");
@@ -124,9 +124,9 @@ namespace SolidSpace.Entities.Bullets
             _profiler.BeginSample("Raycast");
             new RaycastTask<BulletRaycastBehaviour>
             {
-                Profiler = _profiler,
-                Colliders = colliders,
-                ArchetypeChunks = bulletArchetypeChunks,
+                profiler = _profiler,
+                colliders = colliders,
+                archetypeChunks = bulletArchetypeChunks,
             }.Raycast(ref raycastBehaviour);
             _profiler.EndSample("Raycast");
 

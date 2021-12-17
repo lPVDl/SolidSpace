@@ -11,43 +11,41 @@ namespace SolidSpace.Entities.Physics.Raycast
     public struct RaycastTask<T> where T : struct, IRaycastBehaviour
     {
         private const int HitStackSize = 8;
-        
-        public ProfilingHandle Profiler { get; set; }
 
-        public BakedColliders Colliders { get; set; }
-
-        public NativeArray<ArchetypeChunk> ArchetypeChunks { get; set; }
+        public ProfilingHandle profiler;
+        public BakedColliders colliders;
+        public NativeArray<ArchetypeChunk> archetypeChunks;
 
         public void Raycast(ref T behaviour)
         {
-            Profiler.BeginSample("Chunk offsets");
-            var chunkOffsets = EntityQueryForJobUtil.ComputeOffsets(ArchetypeChunks);
-            Profiler.EndSample("Chunk offsets");
+            profiler.BeginSample("Chunk offsets");
+            var chunkOffsets = EntityQueryForJobUtil.ComputeOffsets(archetypeChunks);
+            profiler.EndSample("Chunk offsets");
 
-            Profiler.BeginSample("Raycast");
+            profiler.BeginSample("Raycast");
             behaviour.Initialize(chunkOffsets.entityCount);
             var raycastJob = new RaycastJob<T>
             {
                 behaviour = behaviour,
                 hitStackSize = HitStackSize,
-                inArchetypeChunks = ArchetypeChunks,
-                inColliders = Colliders,
+                inArchetypeChunks = archetypeChunks,
+                inColliders = colliders,
                 inWriteOffsets = chunkOffsets.chunkOffsets,
                 hitStack = NativeMemory.CreateTempJobArray<ushort>(chunkOffsets.chunkCount * HitStackSize),
                 outCounts = NativeMemory.CreateTempJobArray<int>(chunkOffsets.chunkCount)
             };
             raycastJob.Schedule(chunkOffsets.chunkCount, 1).Complete();
-            Profiler.EndSample("Raycast");
+            profiler.EndSample("Raycast");
             
-            Profiler.BeginSample("Collect results");
+            profiler.BeginSample("Collect results");
             behaviour.CollectResult(chunkOffsets.chunkCount, chunkOffsets.chunkOffsets, raycastJob.outCounts);
-            Profiler.EndSample("Collect results");
+            profiler.EndSample("Collect results");
 
-            Profiler.BeginSample("Dispose arrays");
+            profiler.BeginSample("Dispose arrays");
             raycastJob.hitStack.Dispose();
             raycastJob.outCounts.Dispose();
             chunkOffsets.chunkOffsets.Dispose();
-            Profiler.EndSample("Dispose arrays");
+            profiler.EndSample("Dispose arrays");
         }
     }
 }

@@ -11,16 +11,17 @@ using Unity.Jobs;
 
 namespace SolidSpace.Entities.Physics.Colliders
 {
-    public class ColliderBakeSystem<T> : IColliderBakeSystem<T> where T : struct, IColliderBakeBehaviour
+    public struct ColliderBakeTask<T> where T : struct, IColliderBakeBehaviour
     {
-        public ProfilingHandle Profiler { get; set; }
-        public IEntityManager EntityManager { get; set; }
-        
-        public BakedColliders Bake(NativeArray<ArchetypeChunk> archetypeChunks, ref T behaviour)
+        public ProfilingHandle profiler;
+        public IEntityManager entityManager;
+        public NativeArray<ArchetypeChunk> archetypeChunks;
+
+        public BakedColliders Bake(ref T behaviour)
         {
-            Profiler.BeginSample("Compute offsets");
+            profiler.BeginSample("Compute offsets");
             var chunkOffsets = EntityQueryForJobUtil.ComputeOffsets(archetypeChunks);
-            Profiler.EndSample("Compute offsets");
+            profiler.EndSample("Compute offsets");
 
             var colliderCount = chunkOffsets.entityCount;
             if (colliderCount > ushort.MaxValue)
@@ -28,27 +29,27 @@ namespace SolidSpace.Entities.Physics.Colliders
                 throw new InvalidOperationException($"Collider count exceeded max value ({ushort.MaxValue})");
             }
             
-            Profiler.BeginSample("Collect data");
+            profiler.BeginSample("Collect data");
             behaviour.OnInitialize(chunkOffsets.entityCount);
             var dataCollectJob = new ColliderDataCollectJob<T>
             {
                 behaviour = behaviour,
                 inArchetypeChunks = archetypeChunks,
                 inWriteOffsets = chunkOffsets.chunkOffsets,
-                positionHandle = EntityManager.GetComponentTypeHandle<PositionComponent>(true),
-                rotationHandle = EntityManager.GetComponentTypeHandle<RotationComponent>(true),
-                rectSizeHandle = EntityManager.GetComponentTypeHandle<RectSizeComponent>(true),
+                positionHandle = entityManager.GetComponentTypeHandle<PositionComponent>(true),
+                rotationHandle = entityManager.GetComponentTypeHandle<RotationComponent>(true),
+                rectSizeHandle = entityManager.GetComponentTypeHandle<RectSizeComponent>(true),
                 outShapes = NativeMemory.CreateTempJobArray<ColliderShape>(colliderCount),
                 outBounds = NativeMemory.CreateTempJobArray<FloatBounds>(colliderCount),
             };
             dataCollectJob.Schedule(chunkOffsets.chunkCount, 8).Complete();
-            Profiler.EndSample("Collect data");
+            profiler.EndSample("Collect data");
             
-            Profiler.BeginSample("Construct grid");
-            var worldGrid = ColliderUtil.ComputeGrid(dataCollectJob.outBounds, colliderCount, Profiler);
-            Profiler.EndSample("Construct grid");
+            profiler.BeginSample("Construct grid");
+            var worldGrid = ColliderUtil.ComputeGrid(dataCollectJob.outBounds, colliderCount, profiler);
+            profiler.EndSample("Construct grid");
             
-            Profiler.BeginSample("Allocate cells");
+            profiler.BeginSample("Allocate cells");
             var worldCellTotal = worldGrid.size.x * worldGrid.size.y;
             var worldCells = NativeMemory.CreateTempJobArray<ColliderListPointer>(worldCellTotal);
             new FillNativeArrayJob<ColliderListPointer>
@@ -58,9 +59,9 @@ namespace SolidSpace.Entities.Physics.Colliders
                 inTotalItem = worldCellTotal,
                 outNativeArray = worldCells
             }.Schedule((int) Math.Ceiling(worldCellTotal / 128f), 8).Complete();
-            Profiler.EndSample("Allocate cells");
+            profiler.EndSample("Allocate cells");
             
-            Profiler.BeginSample("Bake colliders");
+            profiler.BeginSample("Bake colliders");
             var jobCount = (int) Math.Ceiling(colliderCount / 128f);
             var bakingJob = new ChunkCollidersJob
             {
@@ -72,9 +73,9 @@ namespace SolidSpace.Entities.Physics.Colliders
                 outColliderCounts = NativeMemory.CreateTempJobArray<int>(jobCount)
             };
             bakingJob.Schedule(jobCount, 8).Complete();
-            Profiler.EndSample("Bake colliders");
+            profiler.EndSample("Bake colliders");
             
-            Profiler.BeginSample("Lists capacity");
+            profiler.BeginSample("Lists capacity");
             new ChunkListsCapacityJob
             {
                 inColliderBatchCapacity = 128 * 4,
@@ -82,17 +83,17 @@ namespace SolidSpace.Entities.Physics.Colliders
                 inColliderCounts = bakingJob.outColliderCounts,
                 inOutLists = worldCells
             }.Schedule().Complete();
-            Profiler.EndSample("Lists capacity");
+            profiler.EndSample("Lists capacity");
             
-            Profiler.BeginSample("Lists offsets");
+            profiler.BeginSample("Lists offsets");
             new ChunkListsOffsetJob
             {
                 inListCount = worldCellTotal,
                 inOutLists = worldCells
             }.Schedule().Complete();
-            Profiler.EndSample("Lists offsets");
+            profiler.EndSample("Lists offsets");
 
-            Profiler.BeginSample("Lists fill");
+            profiler.BeginSample("Lists fill");
             var listsFillJob = new ChunkListsFillJob
             {
                 inColliderBatchCapacity = 128 * 4,
@@ -102,13 +103,13 @@ namespace SolidSpace.Entities.Physics.Colliders
                 outColliders = NativeMemory.CreateTempJobArray<ushort>(colliderCount * 4)
             };
             listsFillJob.Schedule().Complete();
-            Profiler.EndSample("Lists fill");
+            profiler.EndSample("Lists fill");
 
-            Profiler.BeginSample("Disposal");
+            profiler.BeginSample("Disposal");
             chunkOffsets.chunkOffsets.Dispose();
             bakingJob.outColliders.Dispose();
             bakingJob.outColliderCounts.Dispose();
-            Profiler.EndSample("Disposal");
+            profiler.EndSample("Disposal");
 
             return new BakedColliders
             {
