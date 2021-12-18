@@ -30,7 +30,6 @@ namespace SolidSpace.Entities.Rendering.Pixels
         private MeshUpdateFlags _meshUpdateFlags;
         private Material _material;
         private ProfilingHandle _profiler;
-        private JobMemoryAllocator _jobMemory;
 
         public PixelMeshSystem(IEntityManager entityManager, PixelMeshSystemConfig config, IProfilingManager profilingManager)
         {
@@ -41,7 +40,6 @@ namespace SolidSpace.Entities.Rendering.Pixels
         
         public void OnInitialize()
         {
-            _jobMemory = new JobMemoryAllocator();
             _profiler = _profilingManager.GetHandle(this);
             _material = new Material(_config.Shader);
             _matrixDefault = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, 1, -1));
@@ -74,8 +72,8 @@ namespace SolidSpace.Entities.Rendering.Pixels
             
             _profiler.BeginSample("Compute Offsets");
             var chunkTotal = chunks.Length;
-            var chunkPerMesh = _jobMemory.CreateNativeArray<int>(chunkTotal);
-            var particlePerMesh = _jobMemory.CreateNativeArray<int>(chunkTotal);
+            var chunkPerMesh = NativeMemory.CreateTempJobArray<int>(chunkTotal);
+            var particlePerMesh = NativeMemory.CreateTempJobArray<int>(chunkTotal);
             var totalParticleCount = 0;
             var meshCount = 0;
             var chunkIndex = 0;
@@ -92,7 +90,7 @@ namespace SolidSpace.Entities.Rendering.Pixels
 
             _profiler.BeginSample("Compute Meshes");
             var meshDataArray = Mesh.AllocateWritableMeshData(meshCount);
-            var computeJobHandles = _jobMemory.CreateNativeArray<JobHandle>(meshCount);
+            var computeJobHandles = NativeMemory.CreateTempJobArray<JobHandle>(meshCount);
             var positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true);
             var chunkOffset = 0;
             for (var i = 0; i < meshCount; i++)
@@ -156,7 +154,9 @@ namespace SolidSpace.Entities.Rendering.Pixels
             
             _profiler.BeginSample("Dispose Arrays");
             chunks.Dispose();
-            _jobMemory.DisposeAllocations();
+            chunkPerMesh.Dispose();
+            particlePerMesh.Dispose();
+            computeJobHandles.Dispose();
             _profiler.EndSample("Dispose Arrays");
             
             SpaceDebug.LogState("ParticleCount", totalParticleCount);

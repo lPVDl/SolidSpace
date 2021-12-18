@@ -19,12 +19,10 @@ namespace SolidSpace.Entities.Splitting.Editor
     {
         private Texture2D _inputTexture;
         private string _outputTexturePath;
-        private JobMemoryAllocator _jobMemory;
         private Stopwatch _stopwatch;
         
         private void OnGUI()
         {
-            _jobMemory ??= new JobMemoryAllocator();
             _stopwatch ??= new Stopwatch();
             
             _inputTexture = (Texture2D) EditorGUILayout.ObjectField("Input Texture", _inputTexture, typeof(Texture2D), false);
@@ -39,10 +37,6 @@ namespace SolidSpace.Entities.Splitting.Editor
                 catch (Exception e)
                 {
                     Debug.LogException(e);
-                }
-                finally
-                {
-                    _jobMemory.DisposeAllocations();
                 }
             }
         }
@@ -65,25 +59,29 @@ namespace SolidSpace.Entities.Splitting.Editor
             
             TimerBegin();
             var pixels = new NativeArray<Color32>(_inputTexture.GetPixels32(), Allocator.TempJob);
-            _jobMemory.AddAllocation(pixels);
             
             var textureWidth = _inputTexture.width;
             var textureHeight = _inputTexture.height;
 
-            var frameBits = _jobMemory.CreateNativeArray<byte>(HealthFrameBitsUtil.GetRequiredByteCount(textureWidth, textureHeight));
+            var requiredByteCount = HealthFrameBitsUtil.GetRequiredByteCount(textureWidth, textureHeight);
+            var frameBits = NativeMemory.CreateTempJobArray<byte>(requiredByteCount);
             HealthFrameBitsUtil.TextureToFrameBits(pixels, textureWidth, textureHeight, frameBits);
             TimerEnd("Convert to bit array");
 
+            var seedJobConnections = NativeMemory.CreateTempJobArray<byte2>(256);
+            var seedJobBounds = NativeMemory.CreateTempJobArray<ByteBounds>(256);
+            var seedJobMask = NativeMemory.CreateTempJobArray<byte>(textureWidth * textureHeight);
+            
             var seedJob = new ShapeSeedJob
             {
                 inFrameBits = frameBits,
                 inFrameSize = new int2(textureWidth, textureHeight),
-                outResultCode = _jobMemory.CreateNativeReference<EShapeSeedResult>(),
-                outConnections = _jobMemory.CreateNativeArray<byte2>(256),
-                outConnectionCount = _jobMemory.CreateNativeReference<int>(),
-                outSeedBounds = _jobMemory.CreateNativeArray<ByteBounds>(256),
-                outSeedCount = _jobMemory.CreateNativeReference<int>(),
-                outSeedMask = _jobMemory.CreateNativeArray<byte>(textureWidth * textureHeight)
+                outResultCode = NativeMemory.CreateTempJobReference<EShapeSeedResult>(),
+                outConnections = seedJobConnections,
+                outConnectionCount = NativeMemory.CreateTempJobReference<int>(),
+                outSeedBounds = seedJobBounds,
+                outSeedCount = NativeMemory.CreateTempJobReference<int>(),
+                outSeedMask = seedJobMask
             };
             
             TimerBegin();
@@ -99,14 +97,16 @@ namespace SolidSpace.Entities.Splitting.Editor
             Debug.Log("Seed count: " + seedJob.outSeedCount.Value);
             Debug.Log("Connection count: " + seedJob.outConnectionCount.Value);
 
+            var shapeReadJobRootSeeds = NativeMemory.CreateTempJobArray<byte>(256);
+            
             var shapeReadJob = new ShapeReadJob
             {
                 inOutConnections = seedJob.outConnections,
                 inOutBounds = seedJob.outSeedBounds,
                 inConnectionCount = seedJob.outConnectionCount.Value,
                 inSeedCount = seedJob.outSeedCount.Value,
-                outShapeCount = _jobMemory.CreateNativeReference<int>(),
-                outShapeRootSeeds = _jobMemory.CreateNativeArray<byte>(256),
+                outShapeCount = NativeMemory.CreateTempJobReference<int>(),
+                outShapeRootSeeds = shapeReadJobRootSeeds,
             };
             
             TimerBegin();
@@ -147,6 +147,15 @@ namespace SolidSpace.Entities.Splitting.Editor
             File.WriteAllBytes(_outputTexturePath, exportTexture.EncodeToPNG());
 
             DestroyImmediate(exportTexture);
+            pixels.Dispose();
+            seedJob.outResultCode.Dispose();
+            seedJob.outConnectionCount.Dispose();
+            seedJob.outSeedCount.Dispose();
+            seedJobConnections.Dispose();
+            seedJobBounds.Dispose();
+            seedJobMask.Dispose();
+            shapeReadJob.outShapeCount.Dispose();
+            shapeReadJobRootSeeds.Dispose();
         }
     }
 }

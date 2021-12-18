@@ -23,7 +23,6 @@ namespace SolidSpace.Entities.Despawn
         private NativeArray<Entity> _entities;
         private int _cycleIndex;
         private ProfilingHandle _profiler;
-        private JobMemoryAllocator _jobMemory;
 
         public TimeDespawnComputeSystem(IEntityManager entityManager, IEntityWorldTime time, IProfilingManager profilingManager,
             IEntityDestructionBuffer destructionBuffer)
@@ -36,7 +35,6 @@ namespace SolidSpace.Entities.Despawn
         
         public void OnInitialize()
         {
-            _jobMemory = new JobMemoryAllocator();
             _profiler = _profilingManager.GetHandle(this);
             _query = _entityManager.CreateEntityQuery(typeof(TimeDespawnComponent));
             _cycleIndex = 0;
@@ -64,7 +62,7 @@ namespace SolidSpace.Entities.Despawn
                 inWriteOffsets = chunks.chunkOffsets,
                 despawnHandle = _entityManager.GetComponentTypeHandle<TimeDespawnComponent>(true),
                 entityHandle = _entityManager.GetEntityTypeHandle(),
-                outEntityCounts = _jobMemory.CreateNativeArray<int>(chunks.chunkCount), 
+                outEntityCounts = NativeMemory.CreateTempJobArray<int>(chunks.chunkCount), 
                 outEntities = _entities,
                 time = (float) _time.ElapsedTime
             };
@@ -76,7 +74,7 @@ namespace SolidSpace.Entities.Despawn
                 inCounts = computeJob.outEntityCounts,
                 inOffsets = chunks.chunkOffsets,
                 inOutData = _entities,
-                outCount = _jobMemory.CreateNativeReference<int>()
+                outCount = NativeMemory.CreateTempJobReference<int>()
             };
             var collectJobHandle = collectJob.Schedule(computeJobHandle);
             collectJobHandle.Complete();
@@ -86,7 +84,8 @@ namespace SolidSpace.Entities.Despawn
             
             _profiler.BeginSample("Disposal");
             chunks.Dispose();
-            _jobMemory.DisposeAllocations();
+            computeJob.outEntityCounts.Dispose();
+            collectJob.outCount.Dispose();
             _profiler.EndSample("Disposal");
         }
 

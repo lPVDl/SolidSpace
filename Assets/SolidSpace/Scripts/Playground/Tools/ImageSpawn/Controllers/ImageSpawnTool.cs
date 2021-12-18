@@ -32,12 +32,11 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
 
         private IToolWindow _window;
         private IStringField _pathField;
-        private JobMemoryAllocator _jobMemory;
         private EntityArchetype _shipArchetype;
 
-        public ImageSpawnTool(IPlaygroundUIManager playgroundUI, IUIFactory uiFactory, IUIManager uiManager, 
-            IPointerTracker pointer, ISpriteColorSystem spriteSystem, IHealthAtlasSystem healthSystem, 
-            IEntityManager entityManager)
+        public ImageSpawnTool(IPlaygroundUIManager playgroundUI, IUIFactory uiFactory, IUIManager uiManager,
+                              IPointerTracker pointer, ISpriteColorSystem spriteSystem, IHealthAtlasSystem healthSystem,
+                              IEntityManager entityManager)
         {
             _playgroundUI = playgroundUI;
             _uiFactory = uiFactory;
@@ -64,8 +63,6 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
             };
             _shipArchetype = _entityManager.CreateArchetype(shipComponents);
             
-            _jobMemory = new JobMemoryAllocator();
-            
             _window = _uiFactory.CreateToolWindow();
             _window.SetTitle("Image");
 
@@ -83,8 +80,6 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
             }
 
             ExecuteTool();
-            
-            _jobMemory.DisposeAllocations();
         }
 
         private void ExecuteTool()
@@ -102,21 +97,24 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
             }
 
             var pixels = new NativeArray<Color32>(texture.GetPixels32(), Allocator.TempJob);
-            _jobMemory.AddAllocation(pixels);
             
-            var frameArray = _jobMemory.CreateNativeArray<byte>(HealthFrameBitsUtil.GetRequiredByteCount(texture.width, texture.height));
+            var frameArray = NativeMemory.CreateTempJobArray<byte>(HealthFrameBitsUtil.GetRequiredByteCount(texture.width, texture.height));
             HealthFrameBitsUtil.TextureToFrameBits(pixels, texture.width, texture.height, frameArray);
 
+            var seedJobConnections = NativeMemory.CreateTempJobArray<byte2>(256);
+            var seedJobBounds = NativeMemory.CreateTempJobArray<ByteBounds>(256);
+            var seedJobMask = NativeMemory.CreateTempJobArray<byte>(texture.width * texture.height);
+            
             var seedJob = new ShapeSeedJob
             {
                 inFrameBits = frameArray,
                 inFrameSize = new int2(texture.width, texture.height),
-                outConnections = _jobMemory.CreateNativeArray<byte2>(256),
-                outConnectionCount = _jobMemory.CreateNativeReference<int>(),
-                outResultCode = _jobMemory.CreateNativeReference<EShapeSeedResult>(),
-                outSeedBounds = _jobMemory.CreateNativeArray<ByteBounds>(256),
-                outSeedCount = _jobMemory.CreateNativeReference<int>(),
-                outSeedMask = _jobMemory.CreateNativeArray<byte>(texture.width * texture.height),
+                outConnections = seedJobConnections,
+                outConnectionCount = NativeMemory.CreateTempJobReference<int>(),
+                outResultCode = NativeMemory.CreateTempJobReference<EShapeSeedResult>(),
+                outSeedBounds = seedJobBounds,
+                outSeedCount = NativeMemory.CreateTempJobReference<int>(),
+                outSeedMask = seedJobMask,
             };
             seedJob.Schedule().Complete();
 
@@ -127,6 +125,8 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
                 pixels.Dispose();
                 return;
             }
+
+            var readJobShapeRootSeeds = NativeMemory.CreateTempJobArray<byte>(256);
             
             var readJob = new ShapeReadJob
             {
@@ -134,13 +134,13 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
                 inConnectionCount = seedJob.outConnectionCount.Value,
                 inOutBounds = seedJob.outSeedBounds,
                 inSeedCount = seedJob.outSeedCount.Value,
-                outShapeCount = _jobMemory.CreateNativeReference<int>(),
-                outShapeRootSeeds = _jobMemory.CreateNativeArray<byte>(256),
+                outShapeCount = NativeMemory.CreateTempJobReference<int>(),
+                outShapeRootSeeds = readJobShapeRootSeeds,
             };
             readJob.Schedule().Complete();
 
             var shapeCount = readJob.outShapeCount.Value;
-            var handles = _jobMemory.CreateNativeArray<JobHandle>(shapeCount * 2);
+            var handles = NativeMemory.CreateTempJobArray<JobHandle>(shapeCount * 2);
             var handleCount = 0;
             
             var spriteSystemTextureSize = new int2(_spriteSystem.Texture.width, _spriteSystem.Texture.height);
@@ -196,6 +196,18 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
             }
 
             JobHandle.CombineDependencies(new NativeSlice<JobHandle>(handles, 0, handleCount)).Complete();
+
+            pixels.Dispose();
+            frameArray.Dispose();
+            seedJobConnections.Dispose();
+            seedJob.outConnectionCount.Dispose();
+            seedJob.outResultCode.Dispose();
+            seedJobBounds.Dispose();
+            seedJob.outSeedCount.Dispose();
+            seedJobMask.Dispose();
+            readJob.outShapeCount.Dispose();
+            readJobShapeRootSeeds.Dispose();
+            handles.Dispose();
         }
 
         private void SpawnEntity(float2 position, float2 size, AtlasIndex spriteIndex, AtlasIndex healthIndex)

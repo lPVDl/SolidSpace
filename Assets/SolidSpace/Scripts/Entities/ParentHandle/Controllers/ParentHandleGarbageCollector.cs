@@ -18,7 +18,6 @@ namespace SolidSpace.Entities.ParentHandle
 
         private EntityQuery _query;
         private ProfilingHandle _profiler;
-        private JobMemoryAllocator _jobMemory;
 
         public ParentHandleGarbageCollector(IParentHandleManager handleManager, IEntityManager entityManager, 
             IProfilingManager profilingManager)
@@ -35,7 +34,6 @@ namespace SolidSpace.Entities.ParentHandle
                 typeof(ParentComponent)
             });
             _profiler = _profilingManager.GetHandle(this);
-            _jobMemory = new JobMemoryAllocator();
         }
         
         public void OnUpdate()
@@ -45,7 +43,7 @@ namespace SolidSpace.Entities.ParentHandle
             
             _profiler.BeginSample("Create byte mask");
             var maskSize = handles.Length;
-            var occupationMask = _jobMemory.CreateNativeArray<byte>(handles.Length);
+            var occupationMask = NativeMemory.CreateTempJobArray<byte>(handles.Length);
             var jobCount = (int) Math.Ceiling(maskSize / 128f);
             new FillNativeArrayJob<byte>
             {
@@ -72,8 +70,8 @@ namespace SolidSpace.Entities.ParentHandle
                 inByteMask = occupationMask,
                 inItemPerJob = 32,
                 inParentHandles = _handleManager.Handles,
-                outCounts = _jobMemory.CreateNativeArray<int>(jobCount),
-                outWastedHandles = _jobMemory.CreateNativeArray<ushort>(maskSize)
+                outCounts = NativeMemory.CreateTempJobArray<int>(jobCount),
+                outWastedHandles = NativeMemory.CreateTempJobArray<ushort>(maskSize)
             };
             compareJob.Schedule(jobCount, 4).Complete();
             _profiler.EndSample("Compare mask");
@@ -84,7 +82,7 @@ namespace SolidSpace.Entities.ParentHandle
                 inCounts = compareJob.outCounts,
                 inOffset = 32,
                 inOutData = compareJob.outWastedHandles,
-                outCount = _jobMemory.CreateNativeReference<int>()
+                outCount = NativeMemory.CreateTempJobReference<int>()
             };
             handleCollectJob.Schedule().Complete();
             _profiler.EndSample("Collect results");
@@ -99,7 +97,10 @@ namespace SolidSpace.Entities.ParentHandle
 
             _profiler.BeginSample("Disposal");
             archetypeChunks.Dispose();
-            _jobMemory.DisposeAllocations();
+            occupationMask.Dispose();
+            compareJob.outCounts.Dispose();
+            compareJob.outWastedHandles.Dispose();
+            handleCollectJob.outCount.Dispose();
             _profiler.EndSample("Disposal");
         }
 

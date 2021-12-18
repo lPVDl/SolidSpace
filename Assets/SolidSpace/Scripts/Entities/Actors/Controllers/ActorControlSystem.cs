@@ -20,7 +20,6 @@ namespace SolidSpace.Entities.Actors
         private readonly IEntityWorldTime _worldTime;
         private readonly IGizmosManager _gizmosManager;
 
-        private JobMemoryAllocator _jobMemory;
         private EntityQuery _query;
         private float2 _targetPosition;
         private ProfilingHandle _profiler;
@@ -37,7 +36,6 @@ namespace SolidSpace.Entities.Actors
         
         public void OnInitialize()
         {
-            _jobMemory = new JobMemoryAllocator();
             _gizmos = _gizmosManager.GetHandle(this, Color.magenta);
             _profiler = _profilingManager.GetHandle(this);
             _query = _entityManager.CreateEntityQuery(new ComponentType[]
@@ -76,8 +74,8 @@ namespace SolidSpace.Entities.Actors
                 inWriteOffsets = chunks.chunkOffsets,
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
                 actorHandle = _entityManager.GetComponentTypeHandle<ActorComponent>(true),
-                outPositions = _jobMemory.CreateNativeArray<float2>(chunks.entityCount),
-                outCounts = _jobMemory.CreateNativeArray<int>(chunks.chunkCount)
+                outPositions = NativeMemory.CreateTempJobArray<float2>(chunks.entityCount),
+                outCounts = NativeMemory.CreateTempJobArray<int>(chunks.chunkCount)
             };
             filterJob.Schedule(chunks.chunkCount, 4).Complete();
             _profiler.EndSample("Gizmos filter");
@@ -89,7 +87,7 @@ namespace SolidSpace.Entities.Actors
                 inCounts = filterJob.outCounts,
                 inOutData = filterJob.outPositions,
                 inOffsets = chunks.chunkOffsets,
-                outCount = _jobMemory.CreateNativeReference<int>()
+                outCount = NativeMemory.CreateTempJobReference<int>()
             };
             positionCollectJob.Schedule().Complete();
             _profiler.EndSample("Gizmos collect result");
@@ -105,7 +103,9 @@ namespace SolidSpace.Entities.Actors
 
             _profiler.BeginSample("Dispose arrays");
             chunks.Dispose();
-            _jobMemory.DisposeAllocations();
+            filterJob.outPositions.Dispose();
+            filterJob.outCounts.Dispose();
+            positionCollectJob.outCount.Dispose();
             _profiler.EndSample("Dispose arrays");
         }
 

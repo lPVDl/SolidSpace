@@ -32,7 +32,6 @@ namespace SolidSpace.Entities.Rendering.Sprites
         private MeshUpdateFlags _meshUpdateFlags;
         private Material _material;
         private ProfilingHandle _profiler;
-        private JobMemoryAllocator _jobMemory;
 
         public SpriteMeshSystem(IEntityManager entityManager, SpriteMeshSystemConfig config,
             ISpriteColorSystem colorSystem, IProfilingManager profilingManager)
@@ -45,7 +44,6 @@ namespace SolidSpace.Entities.Rendering.Sprites
         
         public void OnInitialize()
         {
-            _jobMemory = new JobMemoryAllocator();
             _profiler = _profilingManager.GetHandle(this);
             _material = new Material(_config.Shader);
             _matrixDefault = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, 1, -1));
@@ -73,8 +71,8 @@ namespace SolidSpace.Entities.Rendering.Sprites
             
             _profiler.BeginSample("Compute offsets");
             var chunkTotal = chunks.Length;
-            var chunkPerMesh = _jobMemory.CreateNativeArray<int>(chunkTotal);
-            var spritePerMesh = _jobMemory.CreateNativeArray<int>(chunkTotal);
+            var chunkPerMesh = NativeMemory.CreateTempJobArray<int>(chunkTotal);
+            var spritePerMesh = NativeMemory.CreateTempJobArray<int>(chunkTotal);
             var totalSpriteCount = 0;
             var meshCount = 0;
             var chunkIndex = 0;
@@ -91,7 +89,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
 
             _profiler.BeginSample("Compute meshes");
             var meshDataArray = Mesh.AllocateWritableMeshData(meshCount);
-            var computeJobHandles = _jobMemory.CreateNativeArray<JobHandle>(meshCount);
+            var computeJobHandles = NativeMemory.CreateTempJobArray<JobHandle>(meshCount);
             var positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true);
             var spriteHandle = _entityManager.GetComponentTypeHandle<SpriteRenderComponent>(true);
             var rotationHandle = _entityManager.GetComponentTypeHandle<RotationComponent>(true);
@@ -165,7 +163,9 @@ namespace SolidSpace.Entities.Rendering.Sprites
             
             _profiler.BeginSample("Dispose native arrays");
             chunks.Dispose();
-            _jobMemory.DisposeAllocations();
+            chunkPerMesh.Dispose();
+            spritePerMesh.Dispose();
+            computeJobHandles.Dispose();
             _profiler.EndSample("Dispose native arrays");
             
             SpaceDebug.LogState("SpriteCount", totalSpriteCount);

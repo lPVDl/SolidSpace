@@ -4,6 +4,7 @@ using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
 using SolidSpace.JobUtilities;
 using SolidSpace.Profiling;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
@@ -15,7 +16,6 @@ namespace SolidSpace.Entities.ParentTransform
         private readonly IProfilingManager _profilingManager;
         private readonly IParentHandleManager _parentHandleManager;
 
-        private JobMemoryAllocator _jobMemory;
         private ProfilingHandle _profiler;
         private EntityQuery _parentQuery;
         private EntityQuery _childQuery;
@@ -30,7 +30,6 @@ namespace SolidSpace.Entities.ParentTransform
         
         public void OnInitialize()
         {
-            _jobMemory = new JobMemoryAllocator();
             _profiler = _profilingManager.GetHandle(this);
             _parentQuery = _entityManager.CreateEntityQuery(new ComponentType[]
             {
@@ -49,11 +48,11 @@ namespace SolidSpace.Entities.ParentTransform
             _profiler.BeginSample("Parent Collect");
             var parentCollectJob = new CollectParentTransformJob
             {
-                inChunks = _jobMemory.CreateArchetypeChunkArrayFromQuery(_parentQuery),
+                inChunks = _parentQuery.CreateArchetypeChunkArray(Allocator.TempJob),
                 parentHandle = _entityManager.GetComponentTypeHandle<ParentComponent>(true),
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
                 rotationHandle = _entityManager.GetComponentTypeHandle<RotationComponent>(true),
-                outParentData = _jobMemory.CreateNativeArray<ParentData>(_parentHandleManager.Handles.Length)
+                outParentData = NativeMemory.CreateTempJobArray<ParentData>(_parentHandleManager.Handles.Length)
             };
             parentCollectJob.Schedule(parentCollectJob.inChunks.Length, 4).Complete();
             _profiler.EndSample("Parent Collect");
@@ -61,7 +60,7 @@ namespace SolidSpace.Entities.ParentTransform
             _profiler.BeginSample("Transform Job");
             var transformJob = new ChildTransformApplyJob
             {
-                inChildChunks = _jobMemory.CreateArchetypeChunkArrayFromQuery(_childQuery),
+                inChildChunks = _childQuery.CreateArchetypeChunkArray(Allocator.TempJob),
                 inParentData = parentCollectJob.outParentData,
                 childHandle = _entityManager.GetComponentTypeHandle<ChildComponent>(true),
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(false),
@@ -70,8 +69,10 @@ namespace SolidSpace.Entities.ParentTransform
             };
             transformJob.Schedule(transformJob.inChildChunks.Length, 2).Complete();
             _profiler.EndSample("Transform Job");
-            
-            _jobMemory.DisposeAllocations();
+
+            parentCollectJob.inChunks.Dispose();
+            parentCollectJob.outParentData.Dispose();
+            transformJob.inChildChunks.Dispose();
         }
 
         public void OnFinalize()

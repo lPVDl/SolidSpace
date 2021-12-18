@@ -25,7 +25,6 @@ namespace SolidSpace.Entities.ParticleEmitters
         private NativeArray<ParticleEmitterData> _particles;
         private NativeReference<int> _particleCount;
         private ProfilingHandle _profiler;
-        private JobMemoryAllocator _jobMemory;
 
         public ParticleEmitterComputeSystem(IEntityManager entityManager, IEntityWorldTime time, IProfilingManager profilingManager)
         {
@@ -36,7 +35,6 @@ namespace SolidSpace.Entities.ParticleEmitters
 
         public void OnInitialize()
         {
-            _jobMemory = new JobMemoryAllocator();
             _profiler = _profilingManager.GetHandle(this);
             _query = _entityManager.CreateEntityQuery(new ComponentType[]
             {
@@ -74,7 +72,7 @@ namespace SolidSpace.Entities.ParticleEmitters
                 rotationHandle = _entityManager.GetComponentTypeHandle<RotationComponent>(true),
                 inTime = (float) _time.ElapsedTime,
                 outParticles = _particles, 
-                outParticleCounts = _jobMemory.CreateNativeArray<int>(chunks.chunkCount),
+                outParticleCounts = NativeMemory.CreateTempJobArray<int>(chunks.chunkCount),
             };
             var computeHandle = computeJob.Schedule(chunks.chunkCount, 32);
 
@@ -90,7 +88,7 @@ namespace SolidSpace.Entities.ParticleEmitters
 
             _profiler.BeginSample("Disposal");
             chunks.Dispose();
-            _jobMemory.DisposeAllocations();
+            computeJob.outParticleCounts.Dispose();
             _profiler.EndSample("Disposal");
         }
 
