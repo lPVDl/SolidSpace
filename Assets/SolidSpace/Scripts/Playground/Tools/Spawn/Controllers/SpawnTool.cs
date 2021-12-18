@@ -15,7 +15,6 @@ namespace SolidSpace.Playground.Tools.Spawn
         public IPointerTracker Pointer { get; set; }
         public IStringField SpawnRadiusField { get; set; }
         public IStringField SpawnAmountField { get; set; }
-        public IPlaygroundToolValueStorage ValueStorage { get; set; }
         public int SpawnRadius { get; set; }
         public int SpawnAmount { get; set; }
         public ISpawnToolHandler Handler { get; set; }
@@ -108,26 +107,6 @@ namespace SolidSpace.Playground.Tools.Spawn
 
         public void OnActivate(bool isActive)
         {
-            if (isActive)
-            {
-                SpawnRadius = (int) ValueStorage.GetValueOrDefault("InteractionRange");
-                SpawnAmount = (int) ValueStorage.GetValueOrDefault("SpawnAmount");
-                RotationIsRandom = ValueStorage.GetValueOrDefault("SpawnRotationIsRandom") > 0;
-
-                SpawnRadius = Math.Max(0, SpawnRadius);
-                SpawnAmount = Math.Max(1, SpawnAmount);
-                
-                SpawnRadiusField.SetValue(SpawnRadius.ToString());
-                SpawnAmountField.SetValue(SpawnAmount.ToString());
-                RotationLabel.SetState(RotationIsRandom ? ETagLabelState.Positive : ETagLabelState.Negative);
-            }
-            else
-            {
-                ValueStorage.SetValue("InteractionRange", SpawnRadius);
-                ValueStorage.SetValue("SpawnAmount", SpawnAmount);
-                ValueStorage.SetValue("SpawnRotationIsRandom", RotationIsRandom ? 1 : 0);
-            }
-            
             PlaygroundUI.SetElementVisible(Window, isActive);
         }
     }

@@ -26,7 +26,6 @@ namespace SolidSpace.Playground.Tools.Capture
         public IStringField SearchRadiusField { get; set; }
         public IEntityManager EntityManager { get; set; }
         public ICaptureToolHandler Handler { get; set; }
-        public IPlaygroundToolValueStorage ValueStorage { get; set; }
         public IToolWindow Window { get; set; }
 
         public void OnActivate(bool isActive)
@@ -36,16 +35,11 @@ namespace SolidSpace.Playground.Tools.Capture
                 UpdateSearchSystemQuery();
                 CapturedEntities.Clear();
                 CapturedPositions.Clear();
-                SearchRadius = (int) ValueStorage.GetValueOrDefault("InteractionRange");
                 SearchRadius = Math.Max(0, SearchRadius);
                 SearchRadiusField.SetValue(SearchRadius.ToString());
                 SearchSystem.SetSearchRadius(SearchRadius);
             }
-            else
-            {
-                ValueStorage.SetValue("InteractionRange", SearchRadius);
-            }
-            
+
             PlaygroundUI.SetElementVisible(Filter, isActive);
             PlaygroundUI.SetElementVisible(Window, isActive);
             SearchSystem.SetEnabled(isActive);

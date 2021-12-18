@@ -16,7 +16,6 @@ namespace SolidSpace.Playground.Core
             
             container.Bind<PlaygroundUIManager>();
             container.Bind<PlaygroundCoreController>(_config);
-            container.Bind<PlaygroundToolValueStorage>();
             container.Bind<MouseTracker>();
 
             foreach (var installer in _installers)

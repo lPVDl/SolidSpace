@@ -10,16 +10,16 @@ namespace SolidSpace.Playground.Tools.Spawn
         private readonly IUIManager _uiManager;
         private readonly IPointerTracker _pointer;
         private readonly IUIFactory _uiFactory;
-        private readonly IPlaygroundToolValueStorage _valueStorage;
         private readonly IPlaygroundUIManager _playgroundUI;
 
-        public SpawnToolFactory(IUIManager uiManager, IPointerTracker pointer, IUIFactory uiFactory,
-            IPlaygroundToolValueStorage valueStorage, IPlaygroundUIManager playgroundUI)
+        public SpawnToolFactory(IUIManager uiManager,
+                                IPointerTracker pointer,
+                                IUIFactory uiFactory,
+                                IPlaygroundUIManager playgroundUI)
         {
             _uiManager = uiManager;
             _pointer = pointer;
             _uiFactory = uiFactory;
-            _valueStorage = valueStorage;
             _playgroundUI = playgroundUI;
         }
         
@@ -54,7 +54,6 @@ namespace SolidSpace.Playground.Tools.Spawn
                 SpawnAmountField = amountField,
                 SpawnAmount = 1,
                 SpawnRadius = 0,
-                ValueStorage = _valueStorage,
                 PositionGenerator = new PositionGenerator(),
                 RotationGenerator = new RotationGenerator(),
                 Handler = handler,

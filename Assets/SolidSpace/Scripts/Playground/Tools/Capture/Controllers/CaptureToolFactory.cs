@@ -20,11 +20,10 @@ namespace SolidSpace.Playground.Tools.Capture
         private readonly IPointerTracker _pointer;
         private readonly IUIFactory _uiFactory;
         private readonly IEntityManager _entityManager;
-        private readonly IPlaygroundToolValueStorage _valueStorage;
 
         public CaptureToolFactory(IComponentFilterFactory filterFactory, IEntitySearchSystem searchSystem, 
             IPlaygroundUIManager playgroundUI, IUIManager uiManager, IPointerTracker pointer, IUIFactory uiFactory, 
-            IEntityManager entityManager, IPlaygroundToolValueStorage valueStorage)
+            IEntityManager entityManager)
         {
             _filterFactory = filterFactory;
             _searchSystem = searchSystem;
@@ -33,7 +32,6 @@ namespace SolidSpace.Playground.Tools.Capture
             _pointer = pointer;
             _uiFactory = uiFactory;
             _entityManager = entityManager;
-            _valueStorage = valueStorage;
         }
         
         public ICaptureTool Create(ICaptureToolHandler handler, params ComponentType[] requiredComponents)
@@ -61,7 +59,6 @@ namespace SolidSpace.Playground.Tools.Capture
                 Handler = handler,
                 CapturedPointer = float2.zero,
                 EntityManager = _entityManager,
-                ValueStorage = _valueStorage,
                 Window = window
             };
 
