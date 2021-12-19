@@ -17,10 +17,8 @@ namespace SolidSpace.Entities.Splitting
         public NativeSlice<byte> outSeedMask;
         public NativeSlice<ByteBounds> outSeedBounds;
         
-        [WriteOnly] public NativeReference<int>  outSeedCount;
         [WriteOnly] public NativeSlice<byte2> outConnections;
-        [WriteOnly] public NativeReference<int> outConnectionCount;
-        [WriteOnly] public NativeReference<EShapeSeedResult> outResultCode;
+        [WriteOnly] public NativeSlice<ShapeSeedJobResult> outResult;
 
         private EShapeSeedResult _resultCode;
         private int _seedCount;
@@ -31,10 +29,10 @@ namespace SolidSpace.Entities.Splitting
             var bytesPerLine = (int) Math.Ceiling(inFrameSize.x / 8f);
             Mask256 previousFill = default;
             
-            _resultCode = EShapeSeedResult.Unknown;
-            outResultCode.Value = EShapeSeedResult.Unknown;
-            _connectionCount = 0;
-            _seedCount = 0;
+            outResult[0] = new ShapeSeedJobResult
+            {
+                code = EShapeSeedResult.None
+            };
             
             for (var lineIndex = 0; lineIndex < inFrameSize.y; lineIndex++)
             {
@@ -49,25 +47,36 @@ namespace SolidSpace.Entities.Splitting
                 }
                 
                 var newFill = ProjectPreviousFillOnFrame(frame, previousFill, lineIndex, lineIndex - 1);
-                if (_resultCode != EShapeSeedResult.Unknown)
+                if (_resultCode != EShapeSeedResult.None)
                 {
-                    outResultCode.Value = _resultCode;
+                    outResult[0] = new ShapeSeedJobResult
+                    {
+                        code = _resultCode
+                    };
+                    
                     return;
                 }
 
                 ProcessSeeds(frame, newFill, lineIndex);
-                if (_resultCode != EShapeSeedResult.Unknown)
+                if (_resultCode != EShapeSeedResult.None)
                 {
-                    outResultCode.Value = _resultCode;
+                    outResult[0] = new ShapeSeedJobResult
+                    {
+                        code = _resultCode
+                    };
+                    
                     return;
                 }
 
                 previousFill = frame;
             }
 
-            outResultCode.Value = EShapeSeedResult.Normal; 
-            outConnectionCount.Value = _connectionCount;
-            outSeedCount.Value = _seedCount;
+            outResult[0] = new ShapeSeedJobResult
+            {
+                code = EShapeSeedResult.Success,
+                seedCount = _seedCount,
+                connectionCount = _connectionCount,
+            };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

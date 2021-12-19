@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
+using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
 using Unity.Burst;
 using Unity.Collections;
@@ -10,14 +11,13 @@ namespace SolidSpace.Entities.Splitting
     [BurstCompile]
     public struct ShapeReadJob : IJob
     {
-        [ReadOnly] public int inSeedCount;
-        [ReadOnly] public int inConnectionCount;
+        [ReadOnly] public NativeSlice<ShapeSeedJobResult> inSeedJobResult;
 
         public NativeSlice<ByteBounds> inOutBounds;
         public NativeSlice<byte2> inOutConnections;
         
         [WriteOnly] public NativeSlice<byte> outShapeRootSeeds;
-        [WriteOnly] public NativeReference<int> outShapeCount;
+        [WriteOnly] public NativeSlice<int> outShapeCount;
 
         private Mask256 _connectionUsageMask;
         private Mask256 _seedUsageMask;
@@ -25,9 +25,15 @@ namespace SolidSpace.Entities.Splitting
         
         public void Execute()
         {
+            ShapeSeedJobResult seedJobResult = inSeedJobResult[0];
+            if (seedJobResult.code != EShapeSeedResult.Success)
+            {
+                return;
+            }
+            
             var shapeCount = 0;
 
-            for (var seed = 1; seed <= inSeedCount; seed++)
+            for (var seed = 1; seed <= seedJobResult.seedCount; seed++)
             {
                 if (_seedUsageMask.HasBit((byte) (seed - 1)))
                 {
@@ -44,7 +50,7 @@ namespace SolidSpace.Entities.Splitting
                 {
                     connectionFound = false;
                     
-                    for (var connectionIndex = 0; connectionIndex < inConnectionCount; connectionIndex++)
+                    for (var connectionIndex = 0; connectionIndex < seedJobResult.connectionCount; connectionIndex++)
                     {
                         if (_connectionUsageMask.HasBit((byte) connectionIndex))
                         {
@@ -76,7 +82,7 @@ namespace SolidSpace.Entities.Splitting
                 inOutBounds[shapeCount++] = shapeBounds;
             }
 
-            outShapeCount.Value = shapeCount;
+            outShapeCount[0] = shapeCount;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

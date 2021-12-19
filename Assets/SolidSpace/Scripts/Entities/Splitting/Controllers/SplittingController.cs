@@ -1,6 +1,7 @@
 using System;
 using SolidSpace.Entities.Atlases;
 using SolidSpace.Entities.Components;
+using SolidSpace.Entities.Despawn;
 using SolidSpace.Entities.Health;
 using SolidSpace.Entities.Rendering.Sprites;
 using SolidSpace.Entities.World;
@@ -15,18 +16,22 @@ namespace SolidSpace.Entities.Splitting
 {
     public class SplittingController
     {
+        private readonly IEntityDestructionBuffer _destructionBuffer;
         private readonly IEntityManager _entityManager;
         private readonly IHealthAtlasSystem _healthSystem;
         private readonly ISpriteColorSystem _spriteSystem;
 
-        public SplittingController(IEntityManager entityManager, IHealthAtlasSystem healthSystem, 
-            ISpriteColorSystem spriteSystem)
+        public SplittingController(IEntityManager entityManager,
+                                   IHealthAtlasSystem healthSystem,
+                                   ISpriteColorSystem spriteSystem,
+                                   IEntityDestructionBuffer destructionBuffer)
         {
             _entityManager = entityManager;
             _healthSystem = healthSystem;
             _spriteSystem = spriteSystem;
+            _destructionBuffer = destructionBuffer;
         }
-        
+
         public SplittingContext UpdateState(SplittingContext context)
         {
             return context.state switch
@@ -35,7 +40,7 @@ namespace SolidSpace.Entities.Splitting
                 ESplittingState.SeedJob => OnSeedJob(context),
                 ESplittingState.ReadJob => OnReadJob(context),
                 ESplittingState.BlitJob => OnBlitJob(context),
-                
+
                 _ => throw new ArgumentOutOfRangeException($"Could not process state '{context.state}'")
             };
         }
@@ -43,7 +48,7 @@ namespace SolidSpace.Entities.Splitting
         private SplittingContext OnNotStarted(SplittingContext context)
         {
             var entitySize = _entityManager.GetComponentData<RectSizeComponent>(context.entity).value;
-            var entitySizeInt = new int2((int) entitySize.x, (int) entitySize.y);
+            var entitySizeInt = new int2((int)entitySize.x, (int)entitySize.y);
             var healthIndex = _entityManager.GetComponentData<HealthComponent>(context.entity).index;
             var healthOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks[healthIndex.chunkId], healthIndex);
             var frameLength = HealthFrameBitsUtil.GetRequiredByteCount(entitySizeInt.x, entitySizeInt.y);
@@ -53,10 +58,8 @@ namespace SolidSpace.Entities.Splitting
                 inFrameBits = new NativeSlice<byte>(_healthSystem.Data, healthOffset, frameLength),
                 inFrameSize = entitySizeInt,
                 outConnections = context.jobMemory.CreateNativeArray<byte2>(256),
-                outConnectionCount = context.jobMemory.CreateNativeReference<int>(),
-                outResultCode = context.jobMemory.CreateNativeReference<EShapeSeedResult>(),
+                outResult = context.jobMemory.CreateNativeArray<ShapeSeedJobResult>(1),
                 outSeedBounds = context.jobMemory.CreateNativeArray<ByteBounds>(256),
-                outSeedCount = context.jobMemory.CreateNativeReference<int>(),
                 outSeedMask = context.jobMemory.CreateNativeArray<byte>(entitySizeInt.x * entitySizeInt.y)
             };
             context.jobHandle = context.seedJob.Schedule();
@@ -68,15 +71,12 @@ namespace SolidSpace.Entities.Splitting
 
         private SplittingContext OnSeedJob(SplittingContext context)
         {
-            if (!context.jobHandle.IsCompleted)
-            {
-                return context;
-            }
+            if (!context.jobHandle.IsCompleted) return context;
 
             context.jobHandle.Complete();
-            
-            var resultCode = context.seedJob.outResultCode.Value;
-            if (resultCode != EShapeSeedResult.Normal)
+
+            var resultCode = context.seedJob.outResult[0].code;
+            if (resultCode != EShapeSeedResult.Success)
             {
                 Debug.LogError($"Seed job ended with code '{resultCode}'");
                 context.state = ESplittingState.Completed;
@@ -86,10 +86,9 @@ namespace SolidSpace.Entities.Splitting
             context.readJob = new ShapeReadJob
             {
                 inOutConnections = context.seedJob.outConnections,
-                inConnectionCount = context.seedJob.outConnectionCount.Value,
                 inOutBounds = context.seedJob.outSeedBounds,
-                inSeedCount = context.seedJob.outSeedCount.Value,
-                outShapeCount = context.jobMemory.CreateNativeReference<int>(),
+                inSeedJobResult = context.seedJob.outResult,
+                outShapeCount = context.jobMemory.CreateNativeArray<int>(1),
                 outShapeRootSeeds = context.jobMemory.CreateNativeArray<byte>(256)
             };
             context.jobHandle = context.readJob.Schedule();
@@ -108,14 +107,14 @@ namespace SolidSpace.Entities.Splitting
             
             context.jobHandle.Complete();
 
-            var childCount = context.readJob.outShapeCount.Value;
+            var childCount = context.readJob.outShapeCount[0];
             if (childCount == 0)
             {
                 context.state = ESplittingState.Completed;
-                _entityManager.DestroyEntity(context.entity);
+                _destructionBuffer.ScheduleDestroy(context.entity);
                 return context;
             }
-            
+
             var parentSize = _entityManager.GetComponentData<RectSizeComponent>(context.entity).value;
             var parentSizeInt = new int2((int) parentSize.x, (int) parentSize.y);
             if (childCount == 1)
@@ -179,7 +178,7 @@ namespace SolidSpace.Entities.Splitting
                 handles[handleCount++] = new BlitShapeLinear24Job
                 {
                     inConnections = context.seedJob.outConnections,
-                    inConnectionCount = context.seedJob.outConnectionCount.Value,
+                    inConnectionCount = context.seedJob.outResult[0].connectionCount,
                     inSourceTextureOffset = parentSpriteOffset + new int2(childBounds.min.x, childBounds.min.y),
                     inSourceTextureSize = spriteSystemTextureSize,
                     inSourceSeedMaskOffset = new int2(childBounds.min.x, childBounds.min.y),
@@ -202,7 +201,7 @@ namespace SolidSpace.Entities.Splitting
                 handles[handleCount++] = new BuildShapeHealthJob
                 {
                     inConnections = context.seedJob.outConnections,
-                    inConnectionCount = context.seedJob.outConnectionCount.Value,
+                    inConnectionCount = context.seedJob.outResult[0].connectionCount,
                     inSourceOffset = new int2(childBounds.min.x, childBounds.min.y),
                     inBlitSize = new int2(childWidth, childHeight),
                     inSourceSize = parentSizeInt,
@@ -212,8 +211,8 @@ namespace SolidSpace.Entities.Splitting
                     outTargetHealth = _healthSystem.Data
                 }.Schedule();
             }
-            
-            _entityManager.DestroyEntity(context.entity);
+
+            _destructionBuffer.ScheduleDestroy(context.entity);
 
             context.jobHandle = JobHandle.CombineDependencies(new NativeSlice<JobHandle>(handles, 0, handleCount));
             context.state = ESplittingState.BlitJob;

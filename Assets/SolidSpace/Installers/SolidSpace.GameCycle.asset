@@ -50,7 +50,6 @@ MonoBehaviour:
       - _name: Managed
         _controllers:
         - typeName: SolidSpace.CameraMotion.CameraMotionController
-        - typeName: SolidSpace.Playground.Core.PlaygroundToolValueStorage
         - typeName: SolidSpace.Playground.Tools.ComponentFilter.ComponentFilterFactory
         - typeName: SolidSpace.Playground.Core.PlaygroundCoreController
     _updateOrder:

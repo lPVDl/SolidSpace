@@ -68,7 +68,7 @@ namespace SolidSpace.Entities.Bullets
                 typeof(PositionComponent),
                 typeof(RectSizeComponent),
                 typeof(SpriteRenderComponent),
-                typeof(HealthComponent)
+                typeof(HealthComponent),
             });
             _bulletQuery = _entityManager.CreateEntityQuery(new ComponentType[]
             {
@@ -153,8 +153,11 @@ namespace SolidSpace.Entities.Bullets
                 var healthOffset = AtlasMath.ComputeOffset(healthChunk, hit.colliderHealth);
                 HealthFrameBitsUtil.ClearBit(healthAtlas, healthOffset, colliderSize.x, hit.hitPixel);
 
-                var neighbourPixels = SplittingUtil.ReadNeighbourPixels(healthAtlas, healthOffset, colliderSize, hit.hitPixel);
-                if (!_pixelConnectionMask.HasBit(neighbourPixels) || IsAloneBorderPixel(hit.hitPixel, colliderSize, neighbourPixels))
+                var neighbourPixels =
+                    SplittingUtil.ReadNeighbourPixels(healthAtlas, healthOffset, colliderSize, hit.hitPixel);
+                
+                if (!_pixelConnectionMask.HasBit(neighbourPixels) || 
+                    IsAloneBorderPixel(hit.hitPixel, colliderSize, neighbourPixels))
                 {
                     _splittingSystem.ScheduleSplittingCheck(hit.colliderEntity);   
                 }
@@ -179,8 +182,10 @@ namespace SolidSpace.Entities.Bullets
         
         private bool IsAloneBorderPixel(int2 pixelPosition, int2 frameSize, byte neighbourPixels)
         {
-            if (pixelPosition.x == 0 || pixelPosition.x == frameSize.x - 1
-                                     || pixelPosition.y == 0 || pixelPosition.y == frameSize.y - 1)
+            if (pixelPosition.x == 0 || 
+                pixelPosition.x == frameSize.x - 1 || 
+                pixelPosition.y == 0 || 
+                pixelPosition.y == frameSize.y - 1)
             {
                 return _aloneBorderPixelMask.HasBit(neighbourPixels);
             }

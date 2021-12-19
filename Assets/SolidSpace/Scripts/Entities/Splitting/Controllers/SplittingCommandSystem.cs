@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using SolidSpace.Entities.Despawn;
 using SolidSpace.Entities.Health;
 using SolidSpace.Entities.Rendering.Sprites;
 using SolidSpace.Entities.World;
@@ -11,26 +12,31 @@ namespace SolidSpace.Entities.Splitting
 {
     public class SplittingCommandSystem : ISplittingCommandSystem, IInitializable, IUpdatable
     {
+        private readonly IEntityDestructionBuffer _destructionBuffer;
         private readonly IEntityManager _entityManager;
         private readonly IHealthAtlasSystem _healthSystem;
         private readonly ISpriteColorSystem _spriteSystem;
 
         private HashSet<Entity> _checkingQueue;
-        private SplittingController _splittingController;
         private List<JobMemoryAllocator> _jobMemoryPool;
         private List<SplittingContext> _splittingContext;
+        private SplittingController _splittingController;
 
-        public SplittingCommandSystem(IEntityManager entityManager, IHealthAtlasSystem healthSystem, 
-            ISpriteColorSystem spriteSystem)
+        public SplittingCommandSystem(IEntityManager entityManager,
+                                      IHealthAtlasSystem healthSystem,
+                                      ISpriteColorSystem spriteSystem,
+                                      IEntityDestructionBuffer destructionBuffer)
         {
             _entityManager = entityManager;
             _healthSystem = healthSystem;
             _spriteSystem = spriteSystem;
+            _destructionBuffer = destructionBuffer;
         }
         
         public void OnInitialize()
         {
-            _splittingController = new SplittingController(_entityManager, _healthSystem, _spriteSystem);
+            _splittingController =
+                new SplittingController(_entityManager, _healthSystem, _spriteSystem, _destructionBuffer);
             _checkingQueue = new HashSet<Entity>();
             _jobMemoryPool = new List<JobMemoryAllocator>();
             _splittingContext = new List<SplittingContext>();

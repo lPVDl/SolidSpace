@@ -104,22 +104,21 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
             var seedJobConnections = NativeMemory.CreateTempJobArray<byte2>(256);
             var seedJobBounds = NativeMemory.CreateTempJobArray<ByteBounds>(256);
             var seedJobMask = NativeMemory.CreateTempJobArray<byte>(texture.width * texture.height);
+            var seedJobResult = NativeMemory.CreateTempJobArray<ShapeSeedJobResult>(1);
             
             var seedJob = new ShapeSeedJob
             {
                 inFrameBits = frameArray,
                 inFrameSize = new int2(texture.width, texture.height),
                 outConnections = seedJobConnections,
-                outConnectionCount = NativeMemory.CreateTempJobReference<int>(),
-                outResultCode = NativeMemory.CreateTempJobReference<EShapeSeedResult>(),
+                outResult = seedJobResult,
                 outSeedBounds = seedJobBounds,
-                outSeedCount = NativeMemory.CreateTempJobReference<int>(),
                 outSeedMask = seedJobMask,
             };
             seedJob.Schedule().Complete();
 
-            var resultCode = seedJob.outResultCode.Value;
-            if (resultCode != EShapeSeedResult.Normal)
+            var resultCode = seedJob.outResult[0].code;
+            if (resultCode != EShapeSeedResult.Success)
             {
                 Debug.LogError($"Seed job ended with code '{resultCode}'");
                 pixels.Dispose();
@@ -127,19 +126,19 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
             }
 
             var readJobShapeRootSeeds = NativeMemory.CreateTempJobArray<byte>(256);
+            var readJobShapeCount = NativeMemory.CreateTempJobArray<int>(1);
             
             var readJob = new ShapeReadJob
             {
                 inOutConnections = seedJob.outConnections,
-                inConnectionCount = seedJob.outConnectionCount.Value,
                 inOutBounds = seedJob.outSeedBounds,
-                inSeedCount = seedJob.outSeedCount.Value,
-                outShapeCount = NativeMemory.CreateTempJobReference<int>(),
+                inSeedJobResult = seedJobResult,
+                outShapeCount = readJobShapeCount,
                 outShapeRootSeeds = readJobShapeRootSeeds,
             };
             readJob.Schedule().Complete();
 
-            var shapeCount = readJob.outShapeCount.Value;
+            var shapeCount = readJob.outShapeCount[0];
             var handles = NativeMemory.CreateTempJobArray<JobHandle>(shapeCount * 2);
             var handleCount = 0;
             
@@ -168,7 +167,7 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
                 handles[handleCount++] = new BlitShapeGamma32Job
                 {
                     inConnections = seedJob.outConnections,
-                    inConnectionCount = seedJob.outConnectionCount.Value,
+                    inConnectionCount = seedJob.outResult[0].connectionCount,
                     inSourceOffset = new int2(bounds.min.x, bounds.min.y),
                     inBlitSize = new int2(width, height),
                     inSourceSize = new int2(texture.width, texture.height),
@@ -184,7 +183,7 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
                 handles[handleCount++] = new BuildShapeHealthJob
                 {
                     inConnections = seedJob.outConnections,
-                    inConnectionCount = seedJob.outConnectionCount.Value,
+                    inConnectionCount = seedJob.outResult[0].connectionCount,
                     inSourceOffset = new int2(bounds.min.x, bounds.min.y),
                     inBlitSize = new int2(width, height),
                     inSourceSize = new int2(texture.width, texture.height),
@@ -200,12 +199,10 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
             pixels.Dispose();
             frameArray.Dispose();
             seedJobConnections.Dispose();
-            seedJob.outConnectionCount.Dispose();
-            seedJob.outResultCode.Dispose();
+            seedJobResult.Dispose();
             seedJobBounds.Dispose();
-            seedJob.outSeedCount.Dispose();
             seedJobMask.Dispose();
-            readJob.outShapeCount.Dispose();
+            readJobShapeCount.Dispose();
             readJobShapeRootSeeds.Dispose();
             handles.Dispose();
         }
