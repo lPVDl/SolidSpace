@@ -54,7 +54,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
                 throw new InvalidOperationException(message);
             }
 
-            var chunk = _indexManager.Chunks[target.chunkId];
+            var chunk = _indexManager.Chunks[target.ReadChunkId()];
             var itemMaxSize = 1 << chunk.itemPower;
             if (source.width > itemMaxSize || source.height > itemMaxSize)
             {

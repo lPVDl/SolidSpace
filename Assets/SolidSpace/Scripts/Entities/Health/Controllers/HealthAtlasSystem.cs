@@ -40,7 +40,7 @@ namespace SolidSpace.Entities.Health
                 throw new InvalidOperationException(message);
             }
             
-            var chunk = _indexManager.Chunks[target.chunkId];
+            var chunk = _indexManager.Chunks[target.ReadChunkId()];
             var itemMaxSize = 1 << chunk.itemPower;
             var textureSize = new int2(source.width, source.height);
             var requiredByteCount = HealthFrameBitsUtil.GetRequiredByteCount(textureSize.x, textureSize.y);

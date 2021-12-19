@@ -65,7 +65,7 @@ namespace SolidSpace.Entities.Splitting
                 var entitySize = _entityManager.GetComponentData<RectSizeComponent>(entity).value;
                 var entitySizeInt = new int2((int)entitySize.x, (int)entitySize.y);
                 var healthIndex = _entityManager.GetComponentData<HealthComponent>(entity).index;
-                var healthOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks[healthIndex.chunkId], healthIndex);
+                var healthOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks[healthIndex.ReadChunkId()], healthIndex);
 
                 entitiesData[entityIndex] = new SplittingEntityData
                 {

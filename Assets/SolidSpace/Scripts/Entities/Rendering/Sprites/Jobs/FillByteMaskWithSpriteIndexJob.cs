@@ -24,7 +24,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             for (var i = 0; i < entityCount; i++)
             {
                 var atlasIndex = healthComponents[i].index;
-                outMask[atlasIndex.chunkId * 16 + atlasIndex.itemId] = 1;
+                outMask[atlasIndex.ReadChunkId() * 16 + atlasIndex.ReadItemId()] = 1;
             }
         }
     }

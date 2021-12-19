@@ -26,11 +26,7 @@ namespace SolidSpace.Entities.Health
                 var test = ((atlasMask >> i) ^ requiredBit) & 1;
                 if (test != 0)
                 {
-                    outRedundantIndices[byteMaskOffset + resultCount++] = new AtlasIndex
-                    {
-                        chunkId = (ushort) jobIndex,
-                        itemId = (byte) i
-                    };
+                    outRedundantIndices[byteMaskOffset + resultCount++] = new AtlasIndex(jobIndex, i);
                 }
             }
 

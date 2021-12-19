@@ -163,7 +163,7 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
 
                 SpawnEntity(new float2(posX, posY), new float2(width, height), spriteIndex, healthIndex);
 
-                var spriteOffset = AtlasMath.ComputeOffset(_spriteSystem.Chunks[spriteIndex.chunkId], spriteIndex);
+                var spriteOffset = AtlasMath.ComputeOffset(_spriteSystem.Chunks[spriteIndex.ReadChunkId()], spriteIndex);
                 handles[handleCount++] = new BlitShapeGamma32Job
                 {
                     inConnections = seedJob.outConnections,
@@ -179,7 +179,7 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
                     inSourceSeedMask = seedJob.outSeedMask
                 }.Schedule();
 
-                var healthOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks[healthIndex.chunkId], healthIndex);
+                var healthOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks[healthIndex.ReadChunkId()], healthIndex);
                 handles[handleCount++] = new BuildShapeHealthJob
                 {
                     inConnections = seedJob.outConnections,

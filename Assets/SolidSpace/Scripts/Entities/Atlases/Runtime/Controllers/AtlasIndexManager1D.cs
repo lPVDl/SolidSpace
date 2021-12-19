@@ -58,8 +58,8 @@ namespace SolidSpace.Entities.Atlases
 
             var chunkId = chunkStack[0];
             var freeIndexMask = ~_chunksOccupation[chunkId];
-            var itemIndex = BinaryMath.GetFirstBitIndex16((ushort) freeIndexMask);
-            freeIndexMask &= ~(1 << itemIndex);
+            var itemId = BinaryMath.GetFirstBitIndex16((ushort) freeIndexMask);
+            freeIndexMask &= ~(1 << itemId);
             
             _chunksOccupation[chunkId] = (ushort) ~freeIndexMask;
 
@@ -68,37 +68,35 @@ namespace SolidSpace.Entities.Atlases
                 chunkStack.RemoveAt(0);
             }
 
-            return new AtlasIndex
-            {
-                itemId = (byte) itemIndex,
-                chunkId = chunkId
-            };
+            return new AtlasIndex(chunkId, itemId);
         }
 
         public void Release(AtlasIndex index)
         {
-            var chunk = _chunks[index.chunkId];
-            var chunkOccupation = _chunksOccupation[index.chunkId];
+            index.Read(out var chunkId, out var itemId);
+            
+            var chunk = _chunks[chunkId];
+            var chunkOccupation = _chunksOccupation[chunkId];
             var itemPower = chunk.itemPower;
 
-            if ((chunkOccupation & (1 << index.itemId)) == 0)
+            if ((chunkOccupation & (1 << itemId)) == 0)
             {
                 throw new InvalidOperationException($"Can not release '{index}'. It was not allocated yet");
             }
             
             if (chunkOccupation == ushort.MaxValue)
             {
-                _partiallyFilledChunks[itemPower].Insert(0, index.chunkId);
+                _partiallyFilledChunks[itemPower].Insert(0, (ushort) chunkId);
             }
 
-            chunkOccupation = (ushort) (chunkOccupation & ~(1 << index.itemId));
-            _chunksOccupation[index.chunkId] = chunkOccupation;
+            chunkOccupation = (ushort) (chunkOccupation & ~(1 << itemId));
+            _chunksOccupation[chunkId] = chunkOccupation;
 
             if (chunkOccupation == 0)
             {
-                _partiallyFilledChunks[itemPower].Remove(index.chunkId);
+                _partiallyFilledChunks[itemPower].Remove((ushort) chunkId);
                 _sectorManager.Release(chunk.offset, itemPower + 4);
-                _freeChunkIndices.Push(index.chunkId);
+                _freeChunkIndices.Push((ushort) chunkId);
             }
         }
 
