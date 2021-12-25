@@ -1,5 +1,4 @@
 using System;
-using SolidSpace.Entities.Splitting;
 using SolidSpace.Mathematics;
 using Unity.Burst;
 using Unity.Collections;
@@ -7,7 +6,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using Unity.Mathematics;
 
-namespace SolidSpace.Playground.Tools.ImageSpawn
+namespace SolidSpace.Entities.Splitting
 {
     [BurstCompile]
     public struct BuildShapeHealthJob : IJob
