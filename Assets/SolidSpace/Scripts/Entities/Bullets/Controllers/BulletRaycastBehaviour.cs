@@ -89,7 +89,7 @@ namespace SolidSpace.Entities.Bullets
                     return false;
                 }
                     
-                if (!HealthFrameBitsUtil.HasBit(inHealthAtlas, healthOffset, spriteSize.x, p0Int))
+                if (!HealthUtil.HasBit(inHealthAtlas, healthOffset, spriteSize.x, p0Int))
                 {
                     return false;
                 }
@@ -118,7 +118,7 @@ namespace SolidSpace.Entities.Bullets
                     continue;
                 }
 
-                if (!HealthFrameBitsUtil.HasBit(inHealthAtlas, healthOffset, spriteSize.x, point))
+                if (!HealthUtil.HasBit(inHealthAtlas, healthOffset, spriteSize.x, point))
                 {
                     continue;
                 }

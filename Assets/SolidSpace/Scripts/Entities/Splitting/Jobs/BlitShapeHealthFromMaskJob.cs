@@ -9,7 +9,7 @@ using Unity.Mathematics;
 namespace SolidSpace.Entities.Splitting
 {
     [BurstCompile]
-    public struct BuildShapeHealthJob : IJob
+    public struct BlitShapeHealthFromMaskJob : IJob
     {
         [ReadOnly] public NativeSlice<byte> inSourceSeedMask;
         [ReadOnly] public int2 inSourceSize;
@@ -19,7 +19,6 @@ namespace SolidSpace.Entities.Splitting
         [ReadOnly] public byte inBlitShapeSeed;
         [ReadOnly] public int2 inBlitSize;
 
-        [ReadOnly] public int inConnectionCount;
         [ReadOnly] public NativeSlice<byte2> inConnections;
 
         private Mask256 _shapeMask;
@@ -28,7 +27,7 @@ namespace SolidSpace.Entities.Splitting
         
         public void Execute()
         {
-            _shapeMask = SplittingUtil.BuildShapeMask(inBlitShapeSeed, inConnections, inConnectionCount);
+            _shapeMask = SplittingUtil.BuildShapeMask(inBlitShapeSeed, inConnections);
 
             var sourceOffset = inSourceOffset.y * inSourceSize.x + inSourceOffset.x;
             var targetOffset = inTargetOffset;

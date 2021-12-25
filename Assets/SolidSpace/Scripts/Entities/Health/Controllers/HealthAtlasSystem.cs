@@ -42,7 +42,7 @@ namespace SolidSpace.Entities.Health
             var chunk = _indexManager.Chunks[target.ReadChunkId()];
             var itemMaxSize = 1 << chunk.itemPower;
             var textureSize = new int2(source.width, source.height);
-            var requiredByteCount = HealthFrameBitsUtil.GetRequiredByteCount(textureSize.x, textureSize.y);
+            var requiredByteCount = HealthUtil.GetRequiredByteCount(textureSize.x, textureSize.y);
             
             if (requiredByteCount > itemMaxSize)
             {
@@ -53,12 +53,12 @@ namespace SolidSpace.Entities.Health
             var offset = AtlasMath.ComputeOffset(chunk, target);
             var textureRaw = source.GetRawTextureData<ColorRGB24>();
             var atlasSlice = new NativeSlice<byte>(_data, offset, itemMaxSize);
-            HealthFrameBitsUtil.TextureToFrameBits(textureRaw, textureSize.x, textureSize.y, atlasSlice);
+            HealthUtil.TextureToFrameBits(textureRaw, textureSize.x, textureSize.y, atlasSlice);
         }
 
         public AtlasIndex16 Allocate(int width, int height)
         {
-            var size = HealthFrameBitsUtil.GetRequiredByteCount(width, height);
+            var size = HealthUtil.GetRequiredByteCount(width, height);
             return _indexManager.Allocate(size);
         }
 

@@ -151,7 +151,7 @@ namespace SolidSpace.Entities.Bullets
                 var colliderSize = new int2((int) hit.colliderSize.x, (int) hit.colliderSize.y);
                 var healthChunk = _healthSystem.Chunks[hit.colliderHealth.ReadChunkId()];
                 var healthOffset = AtlasMath.ComputeOffset(healthChunk, hit.colliderHealth);
-                HealthFrameBitsUtil.ClearBit(healthAtlas, healthOffset, colliderSize.x, hit.hitPixel);
+                HealthUtil.ClearBit(healthAtlas, healthOffset, colliderSize.x, hit.hitPixel);
 
                 var neighbourPixels =
                     SplittingUtil.ReadNeighbourPixels(healthAtlas, healthOffset, colliderSize, hit.hitPixel);

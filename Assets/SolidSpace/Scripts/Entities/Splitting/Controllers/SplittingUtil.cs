@@ -10,12 +10,12 @@ namespace SolidSpace.Entities.Splitting
     public static class SplittingUtil
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Mask256 BuildShapeMask(byte rootSeed, NativeSlice<byte2> connections, int connectionCount)
+        public static Mask256 BuildShapeMask(byte rootSeed, NativeSlice<byte2> connections)
         {
             Mask256 resultMask = default;
             
             resultMask.SetBitTrue((byte) (rootSeed - 1));
-            for (var i = 0; i < connectionCount; i++)
+            for (var i = 0; i < connections.Length; i++)
             {
                 var connection = connections[i];
                 if (rootSeed == connection.x)
@@ -42,7 +42,8 @@ namespace SolidSpace.Entities.Splitting
 
             return (byte) resultBits;
         }
-
+        
+        // TODO : Remove frame offset, just pass slice!
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int GetBit(NativeArray<byte> frame, int frameOffset, int2 spriteSize, int2 spritePoint)
         {
@@ -56,7 +57,7 @@ namespace SolidSpace.Entities.Splitting
                 return 0;
             }
 
-            return HealthFrameBitsUtil.HasBit(frame, frameOffset, spriteSize.x, spritePoint) ? 1 : 0;
+            return HealthUtil.HasBit(frame, frameOffset, spriteSize.x, spritePoint) ? 1 : 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

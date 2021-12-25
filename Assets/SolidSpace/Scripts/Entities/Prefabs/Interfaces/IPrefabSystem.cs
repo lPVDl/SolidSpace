@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using SolidSpace.Entities.Splitting;
+using SolidSpace.Mathematics;
 using Unity.Entities;
 using Unity.Mathematics;
 
@@ -11,6 +13,6 @@ namespace SolidSpace.Entities.Prefabs
 
         void SpawnShip(float2 position, float rotation);
         
-        void ScheduleReplication(EntityReplicationData replicationData);
+        void ScheduleReplication(Entity parent, AtlasIndex16 childHealth, ByteBounds childBounds);
     }
 }

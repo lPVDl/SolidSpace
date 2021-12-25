@@ -3,6 +3,7 @@ using SolidSpace.Entities.Atlases;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Despawn;
 using SolidSpace.Entities.Health;
+using SolidSpace.Entities.Prefabs;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
 using SolidSpace.JobUtilities;
@@ -19,22 +20,25 @@ namespace SolidSpace.Entities.Splitting
     public class ExperimentalSplittingController : ISplittingCommandSystem, IInitializable, IUpdatable
     {
         private readonly IEntityDestructionBuffer _destructionBuffer;
+        private readonly IPrefabSystem _prefabSystem;
         private readonly IEntityManager _entityManager;
         private readonly IHealthAtlasSystem _healthSystem;
         private readonly IProfilingManager _profilingManager;
+        
         private ProfilingHandle _profiler;
-
         private HashSet<Entity> _splittingQueue;
 
         public ExperimentalSplittingController(IEntityManager entityManager,
                                                IProfilingManager profilingManager,
                                                IHealthAtlasSystem healthSystem,
-                                               IEntityDestructionBuffer destructionBuffer)
+                                               IEntityDestructionBuffer destructionBuffer,
+                                               IPrefabSystem prefabSystem)
         {
             _entityManager = entityManager;
             _profilingManager = profilingManager;
             _healthSystem = healthSystem;
             _destructionBuffer = destructionBuffer;
+            _prefabSystem = prefabSystem;
         }
 
         public void OnInitialize()
@@ -57,22 +61,23 @@ namespace SolidSpace.Entities.Splitting
             _profiler.BeginSample("Collect entity data");
             var entityCount = _splittingQueue.Count;
             var seedMaskSize = 0;
-            var entitiesData = NativeMemory.CreateTempJobArray<SplittingEntityData>(entityCount);
+            var shapeReading = NativeMemory.CreateTempJobArray<ShapeReadingData>(entityCount);
             var entityIndex = 0;
 
             foreach (var entity in _splittingQueue)
             {
+                // TODO : Remove GetComponentData from here. Bullet system must pass all required data upon scheduling.
                 var entitySize = _entityManager.GetComponentData<RectSizeComponent>(entity).value;
                 var entitySizeInt = new int2((int)entitySize.x, (int)entitySize.y);
                 var healthIndex = _entityManager.GetComponentData<HealthComponent>(entity).index;
                 var healthOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks[healthIndex.ReadChunkId()], healthIndex);
 
-                entitiesData[entityIndex] = new SplittingEntityData
+                shapeReading[entityIndex] = new ShapeReadingData
                 {
                     entity = entity,
                     seedMaskOffset = seedMaskSize,
                     healthAtlasOffset = healthOffset,
-                    entitySize = entitySizeInt
+                    entitySize = entitySizeInt,
                 };
 
                 seedMaskSize += entitySizeInt.x * entitySizeInt.y;
@@ -96,18 +101,18 @@ namespace SolidSpace.Entities.Splitting
             _profiler.BeginSample("Schedule jobs");
             for (var i = 0; i < entityCount; i++)
             {
-                var entity = entitiesData[i];
-                var frameLength = HealthFrameBitsUtil.GetRequiredByteCount(entity.entitySize.x, entity.entitySize.y);
+                var entity = shapeReading[i];
+                var frameLength = HealthUtil.GetRequiredByteCount(entity.entitySize.x, entity.entitySize.y);
                 var maskSize = entity.entitySize.x * entity.entitySize.y;
 
                 var seedJob = new ShapeSeedJob
                 {
-                    inFrameBits = new NativeSlice<byte>(_healthSystem.Data, entity.healthAtlasOffset, frameLength),
+                    inFrameBits = _healthSystem.Data.Slice(entity.healthAtlasOffset, frameLength),
                     inFrameSize = entity.entitySize,
-                    outConnections = new NativeSlice<byte2>(connections, i * 256, 256),
-                    outResult = new NativeSlice<ShapeSeedJobResult>(seedResults, i, 1),
-                    outSeedBounds = new NativeSlice<ByteBounds>(bounds, i * 256, 256),
-                    outSeedMask = new NativeSlice<byte>(seedMask, entity.seedMaskOffset, maskSize)
+                    outConnections = connections.Slice(i * 256, 256),
+                    outResult = seedResults.Slice(i, 1),
+                    outSeedBounds = bounds.Slice(i * 256, 256),
+                    outSeedMask = seedMask.Slice(entity.seedMaskOffset, maskSize)
                 };
 
                 var readJob = new ShapeReadJob
@@ -115,8 +120,8 @@ namespace SolidSpace.Entities.Splitting
                     inOutConnections = seedJob.outConnections,
                     inOutBounds = seedJob.outSeedBounds,
                     inSeedJobResult = seedJob.outResult,
-                    outShapeCount = new NativeSlice<int>(shapeCounts, i, 1),
-                    outShapeRootSeeds = new NativeSlice<byte>(shapeRootSeeds, i * 256, 256)
+                    outShapeCount = shapeCounts.Slice(i, 1),
+                    outShapeRootSeeds = shapeRootSeeds.Slice(i * 256, 256)
                 };
 
                 jobHandles[i] = readJob.Schedule(seedJob.Schedule());
@@ -124,21 +129,31 @@ namespace SolidSpace.Entities.Splitting
 
             _profiler.EndSample("Schedule jobs");
 
-            _profiler.BeginSample("Complete jobs");
+            _profiler.BeginSample("Complete shape seed");
             JobHandle.CombineDependencies(jobHandles).Complete();
-            _profiler.EndSample("Complete jobs");
+            _profiler.EndSample("Complete shape seed");
 
-            _profiler.BeginSample("Schedule replication");
+            _profiler.BeginSample("Schedule health building & replication");
+            var estimatedChildCount = 0;
             for (var i = 0; i < entityCount; i++)
             {
-                var seedResult = seedResults[i];
+                estimatedChildCount += shapeCounts[i];
+            }
+
+            jobHandles.Dispose();
+            jobHandles = NativeMemory.CreateTempJobArray<JobHandle>(estimatedChildCount);
+            var handleCount = 0;
+            
+            for (var parentId = 0; parentId < entityCount; parentId++)
+            {
+                var seedResult = seedResults[parentId];
                 if (seedResult.code != EShapeSeedResult.Success)
                 {
-                    Debug.LogError($"Seeding job ended with result '{seedResult.code}'");
+                    Debug.LogError($"Seeding job ended with result {seedResult.code}.");
                 }
 
-                var entity = entitiesData[i];
-                var shapeCount = shapeCounts[i];
+                var entity = shapeReading[parentId];
+                var shapeCount = shapeCounts[parentId];
                 if (shapeCount == 0)
                 {
                     _destructionBuffer.ScheduleDestroy(entity.entity);
@@ -147,24 +162,56 @@ namespace SolidSpace.Entities.Splitting
 
                 if (shapeCount == 1)
                 {
-                    var childBounds = bounds[0];
+                    var childBounds = bounds[parentId * 256];
                     if (entity.entitySize.x == childBounds.max.x - childBounds.min.x + 1 &&
                         entity.entitySize.y == childBounds.max.y - childBounds.min.y + 1)
+                    {
                         continue;
+                    }
                 }
+                
+                _destructionBuffer.ScheduleDestroy(entity.entity);
+                
+                var parentData = shapeReading[parentId];
 
-                // TODO : Replication!
-                // Seed mask
-                // Seed connections
-                // Seed connection count
-                // Parent entity
-                // Parent entity size
-                // 
+                for (var childId = 0; childId < shapeCount; childId++)
+                {
+                    var childBounds = bounds[parentId * 256 + childId];
+                    var childWidth = childBounds.max.x - childBounds.min.x + 1;
+                    var childHeight = childBounds.max.y - childBounds.min.y + 1;
+                    var childHealth = _healthSystem.Allocate(childWidth, childHeight);
+
+                    jobHandles[handleCount++] = new BlitShapeHealthFromMaskJob
+                    {
+                        inConnections = connections.Slice(parentId * 256, seedResult.connectionCount),
+                        
+                        inSourceOffset = new int2(childBounds.min.x, childBounds.min.y),
+                        inBlitSize = new int2(childWidth, childHeight),
+                        inSourceSize = parentData.entitySize,
+                        inBlitShapeSeed = shapeRootSeeds[parentId * 256 + childId],
+
+                        inTargetOffset =
+                            AtlasMath.ComputeOffset(_healthSystem.Chunks[childHealth.ReadChunkId()], childHealth),
+
+                        inSourceSeedMask = seedMask.Slice(
+                            parentData.seedMaskOffset, 
+                            parentData.entitySize.x * parentData.entitySize.y),
+                        
+                        outTargetHealth = _healthSystem.Data
+
+                    }.Schedule();
+
+                    _prefabSystem.ScheduleReplication(parentData.entity, childHealth, childBounds);
+                }
             }
+            _profiler.EndSample("Schedule health building & replication");
 
-            _profiler.EndSample("Schedule replication");
-
+            _profiler.BeginSample("Complete health jobs");
+            JobHandle.CombineDependencies(jobHandles.Slice(0, handleCount)).Complete();
+            _profiler.EndSample("Complete health jobs");
+            
             _profiler.BeginSample("Disposal");
+            shapeReading.Dispose();
             connections.Dispose();
             seedResults.Dispose();
             bounds.Dispose();

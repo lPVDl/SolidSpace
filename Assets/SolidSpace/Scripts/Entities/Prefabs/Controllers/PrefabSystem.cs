@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Health;
 using SolidSpace.Entities.Rendering.Sprites;
+using SolidSpace.Entities.Splitting;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
 using SolidSpace.Mathematics;
@@ -112,7 +113,7 @@ namespace SolidSpace.Entities.Prefabs
             // TODO: Initialize health...
         }
         
-        public void ScheduleReplication(EntityReplicationData replicationData)
+        public void ScheduleReplication(Entity parent, AtlasIndex16 childHealth, ByteBounds childBounds)
         {
             
         }

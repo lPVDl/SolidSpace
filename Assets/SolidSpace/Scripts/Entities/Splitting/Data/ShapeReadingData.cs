@@ -3,7 +3,7 @@ using Unity.Mathematics;
 
 namespace SolidSpace.Entities.Splitting
 {
-    public struct SplittingEntityData
+    internal struct ShapeReadingData
     {
         public Entity entity;
         public int seedMaskOffset;

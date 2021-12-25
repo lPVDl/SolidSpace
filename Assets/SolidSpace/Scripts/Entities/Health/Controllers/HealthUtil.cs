@@ -7,28 +7,28 @@ using UnityEngine;
 
 namespace SolidSpace.Entities.Health
 {
-    public static class HealthFrameBitsUtil
+    public static class HealthUtil
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool HasBit(NativeArray<byte> frame, int frameOffset, int spriteWidth, int2 spritePoint)
+        public static bool HasBit(NativeArray<byte> health, int healthOffset, int spriteWidth, int2 spritePoint)
         {
             var bytesPerLine = (int) Math.Ceiling(spriteWidth / 8f);
-            var chunkIndex = frameOffset + bytesPerLine * spritePoint.y + spritePoint.x / 8;
-            var chunkValue = frame[chunkIndex];
+            var chunkIndex = healthOffset + bytesPerLine * spritePoint.y + spritePoint.x / 8;
+            var chunkValue = health[chunkIndex];
             var pointBitMask = 1 << (spritePoint.x % 8);
             
             return (chunkValue & pointBitMask) != 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ClearBit(NativeArray<byte> frame, int frameOffset, int spriteWidth, int2 spritePoint)
+        public static void ClearBit(NativeArray<byte> health, int healthOffset, int spriteWidth, int2 spritePoint)
         {
             var bytesPerLine = (int) Math.Ceiling(spriteWidth / 8f);
-            var chunkIndex = frameOffset + bytesPerLine * spritePoint.y + spritePoint.x / 8;
-            var chunkValue = frame[chunkIndex];
+            var chunkIndex = healthOffset + bytesPerLine * spritePoint.y + spritePoint.x / 8;
+            var chunkValue = health[chunkIndex];
             var pointBitMask = 1 << (spritePoint.x % 8);
 
-            frame[chunkIndex] = (byte) (chunkValue & ~pointBitMask);
+            health[chunkIndex] = (byte) (chunkValue & ~pointBitMask);
         }
         
         public static void TextureToFrameBits(NativeArray<Color32> texture, int width, int height, NativeSlice<byte> output)

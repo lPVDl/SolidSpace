@@ -22,7 +22,6 @@ namespace SolidSpace.Entities.Splitting
         [ReadOnly] public byte inBlitShapeSeed;
         [ReadOnly] public int2 inBlitSize;
         
-        [ReadOnly] public int inConnectionCount;
         [ReadOnly] public NativeSlice<byte2> inConnections;
 
         private Mask256 _shapeMask;
@@ -31,7 +30,7 @@ namespace SolidSpace.Entities.Splitting
         
         public void Execute()
         {
-            _shapeMask = SplittingUtil.BuildShapeMask(inBlitShapeSeed, inConnections, inConnectionCount);
+            _shapeMask = SplittingUtil.BuildShapeMask(inBlitShapeSeed, inConnections);
 
             var sourceSeedMaskOffset = inSourceSeedMaskOffset.y * inSourceSeedMaskSize.x + inSourceSeedMaskOffset.x;
             var sourceTextureOffset = inSourceTextureOffset.y * inSourceTextureSize.x + inSourceTextureOffset.x;

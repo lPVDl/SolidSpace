@@ -63,9 +63,9 @@ namespace SolidSpace.Entities.Splitting.Editor
             var textureWidth = _inputTexture.width;
             var textureHeight = _inputTexture.height;
 
-            var requiredByteCount = HealthFrameBitsUtil.GetRequiredByteCount(textureWidth, textureHeight);
+            var requiredByteCount = HealthUtil.GetRequiredByteCount(textureWidth, textureHeight);
             var frameBits = NativeMemory.CreateTempJobArray<byte>(requiredByteCount);
-            HealthFrameBitsUtil.TextureToFrameBits(pixels, textureWidth, textureHeight, frameBits);
+            HealthUtil.TextureToFrameBits(pixels, textureWidth, textureHeight, frameBits);
             TimerEnd("Convert to bit array");
 
             var seedJobConnections = NativeMemory.CreateTempJobArray<byte2>(256);

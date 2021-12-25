@@ -202,7 +202,6 @@ namespace SolidSpace.Entities.Splitting
             return newFill;
         }
 
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private readonly Mask256 ReadMask(NativeSlice<byte> bits, int offset, int count)
         {

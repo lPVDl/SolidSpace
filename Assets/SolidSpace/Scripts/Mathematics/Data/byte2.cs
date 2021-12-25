@@ -19,6 +19,11 @@ namespace SolidSpace.Mathematics
         {
             return new float2(a.x + b.x, a.y + b.y);
         }
+        
+        public static byte2 operator+ (byte2 a, byte2 b)
+        {
+            return new byte2(a.x + b.x, a.y + b.y);
+        }
 
         public override string ToString()
         {

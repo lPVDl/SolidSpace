@@ -50,7 +50,7 @@ namespace SolidSpace.Entities.Splitting
             var entitySizeInt = new int2((int)entitySize.x, (int)entitySize.y);
             var healthIndex = _entityManager.GetComponentData<HealthComponent>(context.entity).index;
             var healthOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks[healthIndex.ReadChunkId()], healthIndex);
-            var frameLength = HealthFrameBitsUtil.GetRequiredByteCount(entitySizeInt.x, entitySizeInt.y);
+            var frameLength = HealthUtil.GetRequiredByteCount(entitySizeInt.x, entitySizeInt.y);
 
             context.seedJob = new ShapeSeedJob
             {
@@ -176,8 +176,7 @@ namespace SolidSpace.Entities.Splitting
                 var childSpriteOffset = AtlasMath.ComputeOffset(_spriteSystem.Chunks[childSprite.ReadChunkId()], childSprite);
                 handles[handleCount++] = new BlitShapeLinear24Job
                 {
-                    inConnections = context.seedJob.outConnections,
-                    inConnectionCount = context.seedJob.outResult[0].connectionCount,
+                    inConnections = context.seedJob.outConnections.Slice(0, context.seedJob.outResult[0].connectionCount),
                     inSourceTextureOffset = parentSpriteOffset + new int2(childBounds.min.x, childBounds.min.y),
                     inSourceTextureSize = spriteSystemTextureSize,
                     inSourceSeedMaskOffset = new int2(childBounds.min.x, childBounds.min.y),
@@ -197,10 +196,9 @@ namespace SolidSpace.Entities.Splitting
                     index = childHealth
                 });
                 var childHealthOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks[childHealth.ReadChunkId()], childHealth);
-                handles[handleCount++] = new BuildShapeHealthJob
+                handles[handleCount++] = new BlitShapeHealthFromMaskJob
                 {
-                    inConnections = context.seedJob.outConnections,
-                    inConnectionCount = context.seedJob.outResult[0].connectionCount,
+                    inConnections = context.seedJob.outConnections.Slice(0, context.seedJob.outResult[0].connectionCount),
                     inSourceOffset = new int2(childBounds.min.x, childBounds.min.y),
                     inBlitSize = new int2(childWidth, childHeight),
                     inSourceSize = parentSizeInt,
