@@ -6,8 +6,6 @@ namespace SolidSpace.Entities.Atlases
 {
     public static class AtlasMath
     {
-        public const int Max1DAtlasSize = 1024 * 1024;
-        public const int Max2DAtlasSize = 1024;
         public const int Min1DEntitySize = 16;
         public const int Min2DEntitySize = 4;
         

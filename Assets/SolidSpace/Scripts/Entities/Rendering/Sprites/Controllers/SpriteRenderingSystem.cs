@@ -15,7 +15,7 @@ using UnityEngine.Rendering;
 
 namespace SolidSpace.Entities.Rendering.Sprites
 {
-    internal class SpriteMeshSystem : IInitializable, IUpdatable
+    internal class SpriteRenderingSystem : IInitializable, IUpdatable
     {
         private static readonly int MainTexturePropertyId = Shader.PropertyToID("_MainTex");
 
@@ -33,7 +33,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
         private Material _material;
         private ProfilingHandle _profiler;
 
-        public SpriteMeshSystem(IEntityManager entityManager, SpriteMeshSystemConfig config,
+        public SpriteRenderingSystem(IEntityManager entityManager, SpriteMeshSystemConfig config,
             ISpriteColorSystem colorSystem, IProfilingManager profilingManager)
         {
             _entityManager = entityManager;
@@ -134,7 +134,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             _profiler.BeginSample("Create meshes");
             for (var i = _meshes.Count; i < meshCount; i++)
             {
-                var name = nameof(SpriteMeshSystem) + "_" + i;
+                var name = nameof(SpriteRenderingSystem) + "_" + i;
                 _meshes.Add(MeshRenderingUtil.CreateMesh(name));
             }
             _meshesForMeshArray.Clear();

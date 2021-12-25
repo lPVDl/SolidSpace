@@ -15,7 +15,7 @@ using UnityEngine.Rendering;
 
 namespace SolidSpace.Entities.Rendering.Pixels
 {
-    internal class PixelMeshSystem : IInitializable, IUpdatable
+    internal class PixelRenderingSystem : IInitializable, IUpdatable
     {
         private readonly IEntityManager _entityManager;
         private readonly PixelMeshSystemConfig _config;
@@ -31,7 +31,7 @@ namespace SolidSpace.Entities.Rendering.Pixels
         private Material _material;
         private ProfilingHandle _profiler;
 
-        public PixelMeshSystem(IEntityManager entityManager, PixelMeshSystemConfig config, IProfilingManager profilingManager)
+        public PixelRenderingSystem(IEntityManager entityManager, PixelMeshSystemConfig config, IProfilingManager profilingManager)
         {
             _entityManager = entityManager;
             _config = config;
@@ -126,7 +126,7 @@ namespace SolidSpace.Entities.Rendering.Pixels
             _profiler.BeginSample("Create meshes");
             for (var i = _meshes.Count; i < meshCount; i++)
             {
-                var name = nameof(PixelMeshSystem) + "_" + i;
+                var name = nameof(PixelRenderingSystem) + "_" + i;
                 _meshes.Add( MeshRenderingUtil.CreateMesh(name));
             }
             _meshesForMeshArray.Clear();

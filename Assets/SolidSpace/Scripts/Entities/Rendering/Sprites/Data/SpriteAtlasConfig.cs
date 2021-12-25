@@ -4,7 +4,7 @@ using UnityEngine;
 namespace SolidSpace.Entities.Rendering.Sprites
 {
     [System.Serializable]
-    public class SpriteColorSystemConfig
+    public class SpriteAtlasConfig
     {
         public Atlas2DConfig AtlasConfig => _atlasConfig;
         public TextureFormat TextureFormat => _textureFormat;

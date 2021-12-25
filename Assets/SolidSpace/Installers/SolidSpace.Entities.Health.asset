@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: SolidSpace.Entities.Health
   m_EditorClassIdentifier: 
   _healthAtlasConfig:
-    _atlasSize: 262144
+    _atlasSize: 524288
     _minItemSize: 16
     _maxItemSize: 1024

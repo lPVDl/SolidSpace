@@ -15,8 +15,8 @@ namespace SolidSpace.Entities.Rendering.Sprites
 
         public AtlasIndex16 Allocate(int width, int height);
         
-        public void Copy(Texture2D source, AtlasIndex16 target);
-
         public void Release(AtlasIndex16 index);
+        
+        public void Copy(Texture2D source, AtlasIndex16 target);
     }
 }

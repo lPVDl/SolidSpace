@@ -4,7 +4,6 @@ using SolidSpace.GameCycle;
 using SolidSpace.Mathematics;
 using Unity.Collections;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace SolidSpace.Entities.Rendering.Sprites
 {
@@ -14,11 +13,11 @@ namespace SolidSpace.Entities.Rendering.Sprites
         public NativeSlice<AtlasChunk2D> Chunks => _indexManager.Chunks;
         public NativeSlice<ushort> ChunksOccupation => _indexManager.ChunksOccupation;
         
-        private readonly SpriteColorSystemConfig _config;
+        private readonly SpriteAtlasConfig _config;
         
         private AtlasIndexManager2D16 _indexManager;
 
-        public SpriteColorSystem(SpriteColorSystemConfig config)
+        public SpriteColorSystem(SpriteAtlasConfig config)
         {
             _config = config;
         }
@@ -27,11 +26,18 @@ namespace SolidSpace.Entities.Rendering.Sprites
         {
             var atlasSize = _config.AtlasConfig.AtlasSize;
             
-            Texture = new Texture2D(atlasSize, atlasSize, _config.TextureFormat, false, true);
+            Texture = new Texture2D(atlasSize, atlasSize, _config.TextureFormat,  false, true);
             Texture.name = nameof(SpriteColorSystem);
             Texture.filterMode = FilterMode.Point;
             
             _indexManager = new AtlasIndexManager2D16(_config.AtlasConfig);
+        }
+        
+        public void OnFinalize()
+        {
+            _indexManager.Dispose();
+            UnityEngine.Object.Destroy(Texture);
+            Texture = null;
         }
 
         public AtlasIndex16 Allocate(int width, int height)
@@ -65,13 +71,6 @@ namespace SolidSpace.Entities.Rendering.Sprites
             var offset = AtlasMath.ComputeOffset(chunk, target);
             Graphics.CopyTexture(source, 0, 0, 0, 0, source.width, source.height, 
                 Texture, 0, 0, offset.x, offset.y);
-        }
-
-        public void OnFinalize()
-        {
-            _indexManager.Dispose();
-            Object.Destroy(Texture);
-            Texture = null;
         }
     }
 }

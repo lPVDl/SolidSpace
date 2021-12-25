@@ -9,7 +9,7 @@ namespace SolidSpace.Entities.Rendering.Pixels
         
         public override void InstallBindings(IDependencyContainer container)
         {
-            container.Bind<PixelMeshSystem>(_pixelMeshSystemConfig);
+            container.Bind<PixelRenderingSystem>(_pixelMeshSystemConfig);
         }
     }
 }

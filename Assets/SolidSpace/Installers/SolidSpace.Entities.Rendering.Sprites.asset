@@ -15,6 +15,12 @@ MonoBehaviour:
   _colorAtlasConfig:
     _textureFormat: 3
     _atlasConfig:
+      _atlasSize: 1024
+      _minItemSize: 4
+      _maxItemSize: 32
+  _frameAtlasConfig:
+    _textureFormat: 9
+    _atlasConfig:
       _atlasSize: 512
       _minItemSize: 4
       _maxItemSize: 32

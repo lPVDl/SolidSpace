@@ -30,11 +30,12 @@ MonoBehaviour:
         - typeName: SolidSpace.Entities.Despawn.TimeDespawnComputeSystem
         - typeName: SolidSpace.Entities.ParticleEmitters.ParticleEmitterComputeSystem
         - typeName: SolidSpace.Entities.ParticleEmitters.ParticleEmitterCommandSystem
-        - typeName: SolidSpace.Entities.Rendering.Pixels.PixelMeshSystem
+        - typeName: SolidSpace.Entities.Rendering.Pixels.PixelRenderingSystem
         - typeName: SolidSpace.Entities.Randomization.RandomValueSystem
         - typeName: SolidSpace.Entities.RepeatTimer.RepeatTimerSystem
         - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteColorSystem
-        - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteMeshSystem
+        - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteFrameSystem
+        - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteRenderingSystem
         - typeName: SolidSpace.Entities.Health.HealthAtlasSystem
         - typeName: SolidSpace.Playground.Tools.EntitySearch.EntitySearchSystem
         - typeName: SolidSpace.Entities.Health.HealthAtlasGarbageCollector
@@ -85,5 +86,5 @@ MonoBehaviour:
       - _name: Render
         _controllers:
         - typeName: SolidSpace.Gizmos.GizmosDrawerManager
-        - typeName: SolidSpace.Entities.Rendering.Pixels.PixelMeshSystem
-        - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteMeshSystem
+        - typeName: SolidSpace.Entities.Rendering.Pixels.PixelRenderingSystem
+        - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteRenderingSystem
