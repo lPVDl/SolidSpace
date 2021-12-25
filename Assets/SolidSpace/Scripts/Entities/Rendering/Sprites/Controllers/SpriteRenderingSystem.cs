@@ -18,11 +18,13 @@ namespace SolidSpace.Entities.Rendering.Sprites
     internal class SpriteRenderingSystem : IInitializable, IUpdatable
     {
         private static readonly int MainTexturePropertyId = Shader.PropertyToID("_MainTex");
+        private static readonly int FrameTexturePropertyId = Shader.PropertyToID("_FrameTex");
 
         private readonly IEntityManager _entityManager;
         private readonly SpriteMeshSystemConfig _config;
         private readonly ISpriteColorSystem _colorSystem;
         private readonly IProfilingManager _profilingManager;
+        private readonly ISpriteFrameSystem _frameSystem;
 
         private EntityQuery _query;
         private VertexAttributeDescriptor[] _meshLayout;
@@ -33,13 +35,17 @@ namespace SolidSpace.Entities.Rendering.Sprites
         private Material _material;
         private ProfilingHandle _profiler;
 
-        public SpriteRenderingSystem(IEntityManager entityManager, SpriteMeshSystemConfig config,
-            ISpriteColorSystem colorSystem, IProfilingManager profilingManager)
+        public SpriteRenderingSystem(IEntityManager entityManager,
+                                     SpriteMeshSystemConfig config,
+                                     ISpriteColorSystem colorSystem,
+                                     IProfilingManager profilingManager,
+                                     ISpriteFrameSystem frameSystem)
         {
             _entityManager = entityManager;
             _config = config;
             _colorSystem = colorSystem;
             _profilingManager = profilingManager;
+            _frameSystem = frameSystem;
         }
         
         public void OnInitialize()
@@ -53,13 +59,16 @@ namespace SolidSpace.Entities.Rendering.Sprites
             _meshLayout = new[]
             {
                 new VertexAttributeDescriptor(VertexAttribute.Position, VertexAttributeFormat.Float32, 2),
-                new VertexAttributeDescriptor(VertexAttribute.TexCoord0, VertexAttributeFormat.Float16, 2)
+                new VertexAttributeDescriptor(VertexAttribute.TexCoord0, VertexAttributeFormat.Float16, 2),
+                new VertexAttributeDescriptor(VertexAttribute.TexCoord1, VertexAttributeFormat.Float16, 2),
+                new VertexAttributeDescriptor(VertexAttribute.TexCoord2, VertexAttributeFormat.Float32, 1)
             };
             _query = _entityManager.CreateEntityQuery(new ComponentType[]
             {
                 typeof(PositionComponent),
                 typeof(SpriteRenderComponent),
-                typeof(RectSizeComponent)
+                typeof(RectSizeComponent),
+                typeof(PrefabInstanceComponent)
             });
         }
 
@@ -90,12 +99,6 @@ namespace SolidSpace.Entities.Rendering.Sprites
             _profiler.BeginSample("Compute meshes");
             var meshDataArray = Mesh.AllocateWritableMeshData(meshCount);
             var computeJobHandles = NativeMemory.CreateTempJobArray<JobHandle>(meshCount);
-            var positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true);
-            var spriteHandle = _entityManager.GetComponentTypeHandle<SpriteRenderComponent>(true);
-            var rotationHandle = _entityManager.GetComponentTypeHandle<RotationComponent>(true);
-            var sizeHandle = _entityManager.GetComponentTypeHandle<RectSizeComponent>(true);
-            var atlasChunks = _colorSystem.Chunks;
-            var atlasSize = new int2(_colorSystem.Texture.width, _colorSystem.Texture.height);
             var chunkOffset = 0;
             for (var i = 0; i < meshCount; i++)
             {
@@ -111,14 +114,17 @@ namespace SolidSpace.Entities.Rendering.Sprites
                 var job = new SpriteMeshComputeJob
                 {
                     inChunks = chunks,
-                    positionHandle = positionHandle,
-                    spriteHandle = spriteHandle,
-                    rotationHandle = rotationHandle,
-                    sizeHandle = sizeHandle,
+                    positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
+                    spriteHandle = _entityManager.GetComponentTypeHandle<SpriteRenderComponent>(true),
+                    rotationHandle = _entityManager.GetComponentTypeHandle<RotationComponent>(true),
+                    sizeHandle = _entityManager.GetComponentTypeHandle<RectSizeComponent>(true),
+                    prefabHandle = _entityManager.GetComponentTypeHandle<PrefabInstanceComponent>(true),
                     inChunkCount = meshChunkCount,
                     inFirstChunkIndex = chunkOffset,
-                    inAtlasChunks = atlasChunks,
-                    inAtlasSize = atlasSize,
+                    inColorAtlasChunks = _colorSystem.Chunks,
+                    inColorAtlasSize = new int2(_colorSystem.Texture.width, _colorSystem.Texture.height),
+                    inFrameAtlasChunks = _frameSystem.Chunks,
+                    inFrameAtlasSize = new int2(_frameSystem.Texture.width, _frameSystem.Texture.height),
                     outIndices = meshData.GetIndexData<ushort>(),
                     outVertices = meshData.GetVertexData<SpriteVertexData>()
                 };
@@ -150,6 +156,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             
             _profiler.BeginSample("Draw mesh");
             _material.SetTexture(MainTexturePropertyId, _colorSystem.Texture);
+            _material.SetTexture(FrameTexturePropertyId, _frameSystem.Texture);
             for (var i = 0; i < meshCount; i++)
             {
                 MeshRenderingUtil.DrawMesh(new MeshDrawingData

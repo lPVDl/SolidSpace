@@ -2,7 +2,8 @@ Shader "SpaceSimulator/SpriteSystem20"
 {
     Properties
     {
-        _MainTex ("Texture", 2D) = "white" {}
+        _MainTex ("Texture", 2D) = "white" { }
+        _FrameTex ("Texture", 2D) = "white" { }
     }
     SubShader
     {
@@ -22,31 +23,40 @@ Shader "SpaceSimulator/SpriteSystem20"
             struct appdata
             {
                 float4 vertex : POSITION;
-                float2 uv : TEXCOORD0;
+                float2 colorUV : TEXCOORD0;
+                float2 frameUV : TEXCOORD1;
+                float frameZValue : TEXCOORD2;
             };
 
             struct v2f
             {
-                float2 uv : TEXCOORD0;
                 float4 vertex : SV_POSITION;
+                float2 colorUV : TEXCOORD0;
+                float2 frameUV : TEXCOORD1;
+                float frameZValue : TEXCOORD2;
             };
 
             sampler2D _MainTex;
+            sampler2D _FrameTex;
 
             v2f vert (appdata IN)
             {
                 v2f OUT;
                 OUT.vertex = UnityObjectToClipPos(IN.vertex);
-                OUT.uv = IN.uv;
+                OUT.colorUV = IN.colorUV;
+                OUT.frameUV = IN.frameUV;
+                OUT.frameZValue = IN.frameZValue;
                 
                 return OUT;
             }
 
             fixed4 frag (v2f IN) : SV_Target
             {
-                float4 color = tex2D(_MainTex, IN.uv);
-
-                clip(color.r + color.g + color.b - 0.001f);
+                float4 color = tex2D(_MainTex, IN.colorUV);
+                
+                float frame = tex2D(_FrameTex, IN.frameUV);
+                // TODO : Some xor magic here.
+                // clip(-(frame & frameZValue))
                 
                 return color;
             }

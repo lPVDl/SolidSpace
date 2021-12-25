@@ -1,3 +1,5 @@
+using Unity.Mathematics;
+
 namespace SolidSpace.Mathematics
 {
     public struct byte2
@@ -11,6 +13,11 @@ namespace SolidSpace.Mathematics
         {
             this.x = (byte) x;
             this.y = (byte) y;
+        }
+        
+        public static float2 operator+ (float2 a, byte2 b)
+        {
+            return new float2(a.x + b.x, a.y + b.y);
         }
 
         public override string ToString()

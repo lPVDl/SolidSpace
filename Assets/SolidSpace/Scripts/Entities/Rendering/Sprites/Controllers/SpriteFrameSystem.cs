@@ -36,6 +36,8 @@ namespace SolidSpace.Entities.Rendering.Sprites
 
         public void OnFinalize()
         {
+            // TODO : Create frame disposing via update.
+            
             _indexManager.Dispose();
             UnityEngine.Object.Destroy(Texture);
             Texture = null;
