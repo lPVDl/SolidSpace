@@ -6,7 +6,6 @@ using SolidSpace.Entities.Health;
 using SolidSpace.Entities.Rendering.Sprites;
 using SolidSpace.Entities.World;
 using SolidSpace.Mathematics;
-using SolidSpace.Playground.Tools.ImageSpawn;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
