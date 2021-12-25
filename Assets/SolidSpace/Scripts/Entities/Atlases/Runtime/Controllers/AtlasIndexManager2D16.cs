@@ -6,9 +6,9 @@ using Unity.Collections;
 
 namespace SolidSpace.Entities.Atlases
 {
-    public class AtlasIndexManager2D : IDisposable
+    public class AtlasIndexManager2D16 : IDisposable
     {
-        private const int BufferSize = 16;
+        private const int BufferSize = 64;
         
         public NativeSlice<AtlasChunk2D> Chunks { get; private set; }
         public NativeSlice<ushort> ChunksOccupation { get; private set; }
@@ -22,7 +22,7 @@ namespace SolidSpace.Entities.Atlases
         private NativeArray<AtlasChunk2D> _chunks;
         private NativeArray<ushort> _chunksOccupation;
 
-        public AtlasIndexManager2D(Atlas2DConfig config)
+        public AtlasIndexManager2D16(Atlas2DConfig config)
         {
             _sectorManager = new AtlasSectorManager2D(config.AtlasSize);
             _minEntityPower = (int) CeilLog2(config.MinItemSize);
@@ -41,7 +41,7 @@ namespace SolidSpace.Entities.Atlases
             ChunksOccupation = new NativeSlice<ushort>(_chunksOccupation, 0, 0);
         }
 
-        public AtlasIndex Allocate(int width, int height)
+        public AtlasIndex16 Allocate(int width, int height)
         {
             var maxSize = Math.Max(width, height);
             var entityPower = (byte) Math.Max(_minEntityPower, CeilLog2(maxSize));
@@ -69,10 +69,10 @@ namespace SolidSpace.Entities.Atlases
                 chunkStack.RemoveAt(0);
             }
 
-            return new AtlasIndex(chunkId, itemId);
+            return new AtlasIndex16(chunkId, itemId);
         }
 
-        public void Release(AtlasIndex index)
+        public void Release(AtlasIndex16 index)
         {
             index.Read(out var chunkId, out var itemId);
             

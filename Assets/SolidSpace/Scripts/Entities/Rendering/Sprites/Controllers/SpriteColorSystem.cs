@@ -16,7 +16,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
         
         private readonly SpriteColorSystemConfig _config;
         
-        private AtlasIndexManager2D _indexManager;
+        private AtlasIndexManager2D16 _indexManager;
 
         public SpriteColorSystem(SpriteColorSystemConfig config)
         {
@@ -31,20 +31,20 @@ namespace SolidSpace.Entities.Rendering.Sprites
             Texture.name = nameof(SpriteColorSystem);
             Texture.filterMode = FilterMode.Point;
             
-            _indexManager = new AtlasIndexManager2D(_config.AtlasConfig);
+            _indexManager = new AtlasIndexManager2D16(_config.AtlasConfig);
         }
 
-        public AtlasIndex Allocate(int width, int height)
+        public AtlasIndex16 Allocate(int width, int height)
         {
             return _indexManager.Allocate(width, height);
         }
 
-        public void Release(AtlasIndex index)
+        public void Release(AtlasIndex16 index)
         {
             _indexManager.Release(index);
         }
 
-        public void Copy(Texture2D source, AtlasIndex target)
+        public void Copy(Texture2D source, AtlasIndex16 target)
         {
             var atlasFormat = _config.TextureFormat;
             

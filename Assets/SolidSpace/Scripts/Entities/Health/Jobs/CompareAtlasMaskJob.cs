@@ -11,7 +11,7 @@ namespace SolidSpace.Entities.Health
         [ReadOnly, NativeDisableParallelForRestriction] public NativeSlice<ushort> inAtlasChunksOccupation;
         [ReadOnly] public NativeArray<byte> inByteMask;
 
-        [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<AtlasIndex> outRedundantIndices;
+        [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<AtlasIndex16> outRedundantIndices;
         [WriteOnly] public NativeArray<int> outCounts;
         
         public void Execute(int jobIndex)
@@ -26,7 +26,7 @@ namespace SolidSpace.Entities.Health
                 var test = ((atlasMask >> i) ^ requiredBit) & 1;
                 if (test != 0)
                 {
-                    outRedundantIndices[byteMaskOffset + resultCount++] = new AtlasIndex(jobIndex, i);
+                    outRedundantIndices[byteMaskOffset + resultCount++] = new AtlasIndex16(jobIndex, i);
                 }
             }
 

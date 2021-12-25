@@ -1,6 +1,5 @@
 using System;
 using SolidSpace.Entities.Atlases;
-using SolidSpace.Entities.Splitting;
 using SolidSpace.GameCycle;
 using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
@@ -18,7 +17,7 @@ namespace SolidSpace.Entities.Health
         
         private readonly Atlas1DConfig _config;
         
-        private AtlasIndexManager1D _indexManager;
+        private AtlasIndexManager1D16 _indexManager;
         private NativeArray<byte> _data;
 
         public HealthAtlasSystem(Atlas1DConfig config)
@@ -29,10 +28,10 @@ namespace SolidSpace.Entities.Health
         public void OnInitialize()
         {
             _data = NativeMemory.CreatePersistentArray<byte>(_config.AtlasSize);
-            _indexManager = new AtlasIndexManager1D(_config);
+            _indexManager = new AtlasIndexManager1D16(_config);
         }
 
-        public void Copy(Texture2D source, AtlasIndex target)
+        public void Copy(Texture2D source, AtlasIndex16 target)
         {
             if (source.format != TextureFormat.RGB24)
             {
@@ -57,13 +56,13 @@ namespace SolidSpace.Entities.Health
             HealthFrameBitsUtil.TextureToFrameBits(textureRaw, textureSize.x, textureSize.y, atlasSlice);
         }
 
-        public AtlasIndex Allocate(int width, int height)
+        public AtlasIndex16 Allocate(int width, int height)
         {
             var size = HealthFrameBitsUtil.GetRequiredByteCount(width, height);
             return _indexManager.Allocate(size);
         }
 
-        public void Release(AtlasIndex index)
+        public void Release(AtlasIndex16 index)
         {
             _indexManager.Release(index);
         }

@@ -5,6 +5,6 @@ namespace SolidSpace.Entities.Components
 {
     public struct HealthComponent : IComponentData
     {
-        public AtlasIndex index;
+        public AtlasIndex16 index;
     }
 }

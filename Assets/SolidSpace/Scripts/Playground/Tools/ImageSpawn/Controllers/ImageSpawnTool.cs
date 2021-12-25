@@ -207,7 +207,7 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
             handles.Dispose();
         }
 
-        private void SpawnEntity(float2 position, float2 size, AtlasIndex spriteIndex, AtlasIndex healthIndex)
+        private void SpawnEntity(float2 position, float2 size, AtlasIndex16 spriteIndex, AtlasIndex16 healthIndex)
         {
             var entity = _entityManager.CreateEntity(_shipArchetype);
             

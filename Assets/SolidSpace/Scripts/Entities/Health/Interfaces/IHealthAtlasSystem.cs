@@ -13,10 +13,10 @@ namespace SolidSpace.Entities.Health
         
         public NativeSlice<ushort> ChunksOccupation { get; }
 
-        public AtlasIndex Allocate(int width, int height);
+        public AtlasIndex16 Allocate(int width, int height);
         
-        public void Copy(Texture2D source, AtlasIndex target);
+        public void Copy(Texture2D source, AtlasIndex16 target);
 
-        public void Release(AtlasIndex index);
+        public void Release(AtlasIndex16 index);
     }
 }

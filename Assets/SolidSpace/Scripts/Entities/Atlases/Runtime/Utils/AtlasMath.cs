@@ -12,20 +12,34 @@ namespace SolidSpace.Entities.Atlases
         public const int Min2DEntitySize = 4;
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int ComputeOffset(AtlasChunk1D chunk, AtlasIndex index)
+        public static int ComputeOffset(AtlasChunk1D chunk, AtlasIndex16 index)
         {
             return (chunk.offset << 2) + index.ReadItemId() * (1 << chunk.itemPower);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int2 ComputeOffset(AtlasChunk2D chunk, AtlasIndex index)
+        public static int2 ComputeOffset(AtlasChunk2D chunk, AtlasIndex16 index)
         {
             var itemId = index.ReadItemId();
-            var x = (chunk.offset.x << 2) + (itemId &  3) * (1 << chunk.itemPower);
-            var y = (chunk.offset.y << 2) + (itemId >> 2) * (1 << chunk.itemPower);
-
-            return new int2(x, y);
+            
+            return new int2
+            {
+                x = (chunk.offset.x << 2) + (itemId &  3) * (1 << chunk.itemPower),
+                y = (chunk.offset.y << 2) + (itemId >> 2) * (1 << chunk.itemPower)
+            };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int3 ComputeOffset(AtlasChunk2D chunk, AtlasIndex64 index)
+        {
+            var itemId = index.ReadItemId();
+
+            return new int3
+            {
+                x = (chunk.offset.x << 2) + ((itemId & 0x10) >> 5) * (1 << chunk.itemPower),
+                y = (chunk.offset.y << 2) + ((itemId & 0x20) >> 6) * (1 << chunk.itemPower),
+                z = itemId & 0xF
+            };
+        }
     }
 }

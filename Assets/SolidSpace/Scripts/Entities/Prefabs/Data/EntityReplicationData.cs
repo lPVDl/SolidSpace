@@ -6,7 +6,7 @@ namespace SolidSpace.Entities.Prefabs
     public struct EntityReplicationData
     {
         public Entity sourceEntity;
-        public AtlasIndex replicationHealth;
+        public AtlasIndex16 replicationHealth;
         public byte2 replicationSize;
     }
 }
