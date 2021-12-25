@@ -225,7 +225,7 @@ namespace SolidSpace.Playground.Tools.ImageSpawn
             });
             _entityManager.SetComponentData(entity, new SpriteRenderComponent
             {
-                index = spriteIndex
+                colorIndex = spriteIndex
             });
             _entityManager.SetComponentData(entity, new HealthComponent
             {

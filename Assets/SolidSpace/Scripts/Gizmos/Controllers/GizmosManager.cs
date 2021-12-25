@@ -6,7 +6,6 @@ using Rect = SolidSpace.Gizmos.Shapes.Rect;
 
 namespace SolidSpace.Gizmos
 {
-    // TODO [T-27]: Move debug related classes to one folder, create facade.
     internal class GizmosManager : IInitializable, IGizmosManager
     {
         public int RenderVersion { get; private set; }

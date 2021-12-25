@@ -141,7 +141,6 @@ namespace SolidSpace.Playground.Tools.EntitySearch
             var inRadiusTotalCount = NativeMemory.CreateTempJobReference<int>();
             new DataCollectJobWithOffsets<Entity, float2>
             {
-                // TODO : Refer to chunks.chunkCount when refactored.
                 inDataCount = radiusCounts.Length,
                 inCounts = radiusCounts,
                 inOffsets = radiusOffsets,

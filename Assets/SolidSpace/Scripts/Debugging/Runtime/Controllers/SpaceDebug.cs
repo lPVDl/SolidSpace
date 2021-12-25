@@ -2,7 +2,6 @@ using System.Collections.Generic;
 
 namespace SolidSpace.Debugging
 {
-    // TODO [T-27]: Move debug related classes to one folder, create facade.
     public static class SpaceDebug
     {
         public static IReadOnlyDictionary<string, int> IntStates => _intStates;

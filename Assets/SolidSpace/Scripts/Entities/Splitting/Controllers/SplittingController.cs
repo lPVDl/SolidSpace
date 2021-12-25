@@ -133,7 +133,7 @@ namespace SolidSpace.Entities.Splitting
             var handles = context.jobMemory.CreateNativeArray<JobHandle>(childCount * 2);
             var parentPosition = _entityManager.GetComponentData<PositionComponent>(context.entity).value;
             var parentRotation = _entityManager.GetComponentData<RotationComponent>(context.entity).value;
-            var parentSprite = _entityManager.GetComponentData<SpriteRenderComponent>(context.entity).index;
+            var parentSprite = _entityManager.GetComponentData<SpriteRenderComponent>(context.entity).colorIndex;
             var parentSpriteOffset = AtlasMath.ComputeOffset(_spriteSystem.Chunks[parentSprite.ReadChunkId()], parentSprite);
             var spriteSystemTexture = _spriteSystem.Texture;
             var spriteSystemTextureSize = new int2(spriteSystemTexture.width, spriteSystemTexture.height);
@@ -171,7 +171,7 @@ namespace SolidSpace.Entities.Splitting
                 var childSprite = _spriteSystem.Allocate(childWidth, childHeight);
                 _entityManager.SetComponentData(childEntity, new SpriteRenderComponent
                 {
-                    index = childSprite
+                    colorIndex = childSprite
                 });
                 
                 var childSpriteOffset = AtlasMath.ComputeOffset(_spriteSystem.Chunks[childSprite.ReadChunkId()], childSprite);

@@ -93,11 +93,11 @@ namespace SolidSpace.GameCycle
         {
             _updateBehaviour.OnUpdate -= OnUpdate;
 
-            foreach (var controller in _initializables)
+            for (var i = _initializables.Count - 1; i >= 0; i--)
             {
-                controller.OnFinalize();
+                _initializables[i].OnFinalize();
             }
-            
+
             _profilingProcessor.FinalizeObject();
         }
     }

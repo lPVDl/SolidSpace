@@ -82,7 +82,7 @@ namespace SolidSpace.Entities.Atlases
 
             if ((chunkOccupation & (1ul << itemId)) == 0)
             {
-                throw new InvalidOperationException($"Can not release '{index}'. It was not allocated yet");
+                throw new InvalidOperationException($"Can not release {index}. It is not allocated.");
             }
             
             if (chunkOccupation == ulong.MaxValue)

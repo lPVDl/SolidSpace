@@ -48,6 +48,7 @@ MonoBehaviour:
         - typeName: SolidSpace.Entities.ParentHandle.ParentHandleManager
         - typeName: SolidSpace.Entities.ParentHandle.ParentHandleGarbageCollector
         - typeName: SolidSpace.Entities.ParentTransform.ParentTransformSystem
+        - typeName: SolidSpace.Entities.Prefabs.PrefabSystem
       - _name: Managed
         _controllers:
         - typeName: SolidSpace.CameraMotion.CameraMotionController

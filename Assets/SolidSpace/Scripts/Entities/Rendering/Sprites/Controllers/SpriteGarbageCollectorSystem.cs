@@ -9,6 +9,7 @@ using SolidSpace.Profiling;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
+using UnityEngine;
 
 namespace SolidSpace.Entities.Rendering.Sprites
 {
@@ -38,8 +39,15 @@ namespace SolidSpace.Entities.Rendering.Sprites
             _profiler = _profilingManager.GetHandle(this);
         }
         
+        public void OnFinalize()
+        {
+            
+        }
+        
         public void OnUpdate()
         {
+            return;
+            
             var archetypeChunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
            
             _profiler.BeginSample("Create byte mask");
@@ -103,11 +111,6 @@ namespace SolidSpace.Entities.Rendering.Sprites
             indicesCounts.Dispose();
             indicesTotalCount.Dispose();
             _profiler.EndSample("Dispose arrays");
-        }
-
-        public void OnFinalize()
-        {
-            
         }
     }
 }

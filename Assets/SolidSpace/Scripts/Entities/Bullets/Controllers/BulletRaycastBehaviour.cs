@@ -94,7 +94,7 @@ namespace SolidSpace.Entities.Bullets
                     return false;
                 }
                 
-                var spriteIndex = inColliderSprites[hit.colliderIndex].index;
+                var spriteIndex = inColliderSprites[hit.colliderIndex].colorIndex;
                 outHits[hit.writeOffset] = new BulletHit
                 {
                     bulletEntity = _chunkEntities[hit.rayIndex],
@@ -123,7 +123,7 @@ namespace SolidSpace.Entities.Bullets
                     continue;
                 }
 
-                var spriteIndex = inColliderSprites[hit.colliderIndex].index;
+                var spriteIndex = inColliderSprites[hit.colliderIndex].colorIndex;
                     
                 outHits[hit.writeOffset] = new BulletHit
                 {

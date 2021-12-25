@@ -62,7 +62,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
 
                 for (var i = 0; i < spriteCount; i++)
                 {
-                    var renderIndex = renders[i].index;
+                    var renderIndex = renders[i].colorIndex;
                     var renderChunk = inAtlasChunks[renderIndex.ReadChunkId()];
                     var size = sizes[i].value;
                     var uvPixelOffset = (float2) AtlasMath.ComputeOffset(renderChunk, renderIndex);

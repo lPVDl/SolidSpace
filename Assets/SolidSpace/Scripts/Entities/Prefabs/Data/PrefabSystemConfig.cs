@@ -1,10 +1,10 @@
 using System;
 using UnityEngine;
 
-namespace SolidSpace.Playground.Tools.ShipSpawn
+namespace SolidSpace.Entities.Prefabs
 {
     [Serializable]
-    public class ShipSpawnToolConfig
+    internal class PrefabSystemConfig
     {
         public Texture2D ShipTexture => _shipTexture;
         

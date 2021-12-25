@@ -35,6 +35,15 @@ namespace SolidSpace.Entities.Rendering.Sprites
         
         public void OnFinalize()
         {
+            foreach (var mask in _indexManager.ChunksOccupation)
+            {
+                if (mask != 0)
+                {
+                    Debug.LogError("Some sprites color indexes are not deallocated on finalize.");
+                    break;
+                }
+            }
+            
             _indexManager.Dispose();
             UnityEngine.Object.Destroy(Texture);
             Texture = null;
@@ -56,7 +65,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             
             if (source.format != atlasFormat)
             {
-                var message = $"Expected texture with format {atlasFormat} but got {source.format}";
+                var message = $"Expected texture with format {atlasFormat} but got {source.format}.";
                 throw new InvalidOperationException(message);
             }
 
@@ -64,7 +73,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             var itemMaxSize = 1 << chunk.itemPower;
             if (source.width > itemMaxSize || source.height > itemMaxSize)
             {
-                var message = $"Expected texture with size less that {itemMaxSize}x{itemMaxSize}, but got {source.width}x{source.height}";
+                var message = $"Expected texture with size less that {itemMaxSize}x{itemMaxSize}, but got {source.width}x{source.height}.";
                 throw new InvalidOperationException(message);
             }
             

@@ -94,7 +94,7 @@ namespace SolidSpace.Playground.Tools.ComponentFilter
             return view;
         }
 
-        public IUIElement CreateReadonly(params ComponentType[] components)
+        public IUIElement CreateReadonly(IReadOnlyList<ComponentType> components)
         {
             var window = _uiFactory.CreateToolWindow();
             window.SetTitle("Components");
@@ -104,7 +104,7 @@ namespace SolidSpace.Playground.Tools.ComponentFilter
             container.SetFlexWrap(Wrap.Wrap);
             window.AttachChild(container);
 
-            for (var i = 0; i < components.Length; i++)
+            for (var i = 0; i < components.Count; i++)
             {
                 var component = components[i];
                 var tag = _uiFactory.CreateTagLabel();
