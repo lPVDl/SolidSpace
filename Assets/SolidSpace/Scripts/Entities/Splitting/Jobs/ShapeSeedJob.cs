@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using SolidSpace.Mathematics;
 using Unity.Burst;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using Unity.Mathematics;
 
@@ -14,11 +15,11 @@ namespace SolidSpace.Entities.Splitting
         [ReadOnly] public NativeSlice<byte> inFrameBits;
         [ReadOnly] public int2 inFrameSize;
         
-        public NativeSlice<byte> outSeedMask;
-        public NativeSlice<ByteBounds> outSeedBounds;
+        [NativeDisableContainerSafetyRestriction] public NativeSlice<byte> outSeedMask;
+        [NativeDisableContainerSafetyRestriction] public NativeSlice<ByteBounds> outSeedBounds;
         
-        [WriteOnly] public NativeSlice<byte2> outConnections;
-        [WriteOnly] public NativeSlice<ShapeSeedJobResult> outResult;
+        [NativeDisableContainerSafetyRestriction, WriteOnly] public NativeSlice<byte2> outConnections;
+        [NativeDisableContainerSafetyRestriction, WriteOnly] public NativeSlice<ShapeSeedJobResult> outResult;
 
         private EShapeSeedResult _resultCode;
         private int _seedCount;

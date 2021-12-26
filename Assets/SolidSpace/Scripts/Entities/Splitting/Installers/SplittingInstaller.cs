@@ -6,7 +6,7 @@ namespace SolidSpace.Entities.Splitting
     {
         public override void InstallBindings(IDependencyContainer container)
         {
-            container.Bind<SplittingCommandSystem>();
+            container.Bind<SplittingController>();
         }
     }
 }

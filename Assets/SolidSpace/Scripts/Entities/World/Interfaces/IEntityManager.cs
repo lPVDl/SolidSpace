@@ -21,6 +21,5 @@ namespace SolidSpace.Entities.World
         EntityQuery CreateEntityQuery(params EntityQueryDesc[] queryDesc);
         void DestroyEntity(EntityQuery query);
         bool CheckExists(Entity entity);
-        Entity Instantiate(Entity source);
     }
 }

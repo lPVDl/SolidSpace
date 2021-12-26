@@ -44,7 +44,7 @@ MonoBehaviour:
         - typeName: SolidSpace.Entities.Bullets.BulletComputeSystem
         - typeName: SolidSpace.Entities.Physics.Rigidbody.RigidbodyComputeSystem
         - typeName: SolidSpace.Entities.Despawn.EntityDestructionBuffer
-        - typeName: SolidSpace.Entities.Splitting.SplittingCommandSystem
+        - typeName: SolidSpace.Entities.Splitting.SplittingController
         - typeName: SolidSpace.Entities.ParentHandle.ParentHandleManager
         - typeName: SolidSpace.Entities.ParentHandle.ParentHandleGarbageCollector
         - typeName: SolidSpace.Entities.ParentTransform.ParentTransformSystem
@@ -74,7 +74,8 @@ MonoBehaviour:
         - typeName: SolidSpace.Entities.ParentHandle.ParentHandleGarbageCollector
       - _name: EntityCommand
         _controllers:
-        - typeName: SolidSpace.Entities.Splitting.SplittingCommandSystem
+        - typeName: SolidSpace.Entities.Splitting.SplittingController
+        - typeName: SolidSpace.Entities.Prefabs.PrefabSystem
         - typeName: SolidSpace.Entities.ParticleEmitters.ParticleEmitterCommandSystem
         - typeName: SolidSpace.Entities.Despawn.EntityDestructionBuffer
       - _name: Managed

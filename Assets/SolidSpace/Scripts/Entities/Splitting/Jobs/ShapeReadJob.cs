@@ -1,9 +1,9 @@
 using System;
 using System.Runtime.CompilerServices;
-using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
 using Unity.Burst;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 
 namespace SolidSpace.Entities.Splitting
@@ -13,11 +13,11 @@ namespace SolidSpace.Entities.Splitting
     {
         [ReadOnly] public NativeSlice<ShapeSeedJobResult> inSeedJobResult;
 
-        public NativeSlice<ByteBounds> inOutBounds;
-        public NativeSlice<byte2> inOutConnections;
+        [NativeDisableContainerSafetyRestriction] public NativeSlice<ByteBounds> inOutBounds;
+        [NativeDisableContainerSafetyRestriction] public NativeSlice<byte2> inOutConnections;
         
-        [WriteOnly] public NativeSlice<byte> outShapeRootSeeds;
-        [WriteOnly] public NativeSlice<int> outShapeCount;
+        [WriteOnly, NativeDisableContainerSafetyRestriction] public NativeSlice<byte> outShapeRootSeeds;
+        [WriteOnly, NativeDisableContainerSafetyRestriction] public NativeSlice<int> outShapeCount;
 
         private Mask256 _connectionUsageMask;
         private Mask256 _seedUsageMask;

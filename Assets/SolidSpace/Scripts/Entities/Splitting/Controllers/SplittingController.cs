@@ -1,233 +1,221 @@
-using System;
+using System.Collections.Generic;
 using SolidSpace.Entities.Atlases;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Despawn;
 using SolidSpace.Entities.Health;
-using SolidSpace.Entities.Rendering.Sprites;
+using SolidSpace.Entities.Prefabs;
 using SolidSpace.Entities.World;
+using SolidSpace.GameCycle;
+using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
+using SolidSpace.Profiling;
 using Unity.Collections;
+using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
 namespace SolidSpace.Entities.Splitting
 {
-    public class SplittingController
+    public class SplittingController : ISplittingCommandSystem, IInitializable, IUpdatable
     {
         private readonly IEntityDestructionBuffer _destructionBuffer;
+        private readonly IPrefabSystem _prefabSystem;
         private readonly IEntityManager _entityManager;
         private readonly IHealthAtlasSystem _healthSystem;
-        private readonly ISpriteColorSystem _spriteSystem;
+        private readonly IProfilingManager _profilingManager;
+        
+        private ProfilingHandle _profiler;
+        private HashSet<Entity> _splittingQueue;
 
         public SplittingController(IEntityManager entityManager,
+                                   IProfilingManager profilingManager,
                                    IHealthAtlasSystem healthSystem,
-                                   ISpriteColorSystem spriteSystem,
-                                   IEntityDestructionBuffer destructionBuffer)
+                                   IEntityDestructionBuffer destructionBuffer,
+                                   IPrefabSystem prefabSystem)
         {
             _entityManager = entityManager;
+            _profilingManager = profilingManager;
             _healthSystem = healthSystem;
-            _spriteSystem = spriteSystem;
             _destructionBuffer = destructionBuffer;
+            _prefabSystem = prefabSystem;
         }
 
-        public SplittingContext UpdateState(SplittingContext context)
+        public void OnInitialize()
         {
-            return context.state switch
-            {
-                ESplittingState.NotStarted => OnNotStarted(context),
-                ESplittingState.SeedJob => OnSeedJob(context),
-                ESplittingState.ReadJob => OnReadJob(context),
-                ESplittingState.BlitJob => OnBlitJob(context),
-
-                _ => throw new ArgumentOutOfRangeException($"Could not process state '{context.state}'")
-            };
+            _splittingQueue = new HashSet<Entity>();
+            _profiler = _profilingManager.GetHandle(this);
         }
 
-        private SplittingContext OnNotStarted(SplittingContext context)
+        public void OnFinalize()
         {
-            var entitySize = _entityManager.GetComponentData<RectSizeComponent>(context.entity).value;
-            var entitySizeInt = new int2((int)entitySize.x, (int)entitySize.y);
-            var healthIndex = _entityManager.GetComponentData<HealthComponent>(context.entity).index;
-            var healthOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks, healthIndex);
-            var frameLength = HealthUtil.GetRequiredByteCount(entitySizeInt.x, entitySizeInt.y);
-
-            context.seedJob = new ShapeSeedJob
-            {
-                inFrameBits = new NativeSlice<byte>(_healthSystem.Data, healthOffset, frameLength),
-                inFrameSize = entitySizeInt,
-                outConnections = context.jobMemory.CreateNativeArray<byte2>(256),
-                outResult = context.jobMemory.CreateNativeArray<ShapeSeedJobResult>(1),
-                outSeedBounds = context.jobMemory.CreateNativeArray<ByteBounds>(256),
-                outSeedMask = context.jobMemory.CreateNativeArray<byte>(entitySizeInt.x * entitySizeInt.y)
-            };
-            context.jobHandle = context.seedJob.Schedule();
-            context.state = ESplittingState.SeedJob;
-            context.jobDifficulty = entitySizeInt.x * entitySizeInt.y;
-
-            return context;
         }
 
-        private SplittingContext OnSeedJob(SplittingContext context)
+        public void ScheduleSplittingCheck(Entity entity)
         {
-            if (!context.jobHandle.IsCompleted) return context;
-
-            context.jobHandle.Complete();
-
-            var resultCode = context.seedJob.outResult[0].code;
-            if (resultCode != EShapeSeedResult.Success)
-            {
-                Debug.LogError($"Seed job ended with code '{resultCode}'");
-                context.state = ESplittingState.Completed;
-                return context;
-            }
-
-            context.readJob = new ShapeReadJob
-            {
-                inOutConnections = context.seedJob.outConnections,
-                inOutBounds = context.seedJob.outSeedBounds,
-                inSeedJobResult = context.seedJob.outResult,
-                outShapeCount = context.jobMemory.CreateNativeArray<int>(1),
-                outShapeRootSeeds = context.jobMemory.CreateNativeArray<byte>(256)
-            };
-            context.jobHandle = context.readJob.Schedule();
-            context.state = ESplittingState.ReadJob;
-            context.jobDifficulty = 0;
-            
-            return context;
+            _splittingQueue.Add(entity);
         }
 
-        private SplittingContext OnReadJob(SplittingContext context)
+        public void OnUpdate()
         {
-            if (!context.jobHandle.IsCompleted)
-            {
-                return context;
-            }
-            
-            context.jobHandle.Complete();
+            _profiler.BeginSample("Collect entity data");
+            var entityCount = _splittingQueue.Count;
+            var seedMaskSize = 0;
+            var shapeReading = NativeMemory.CreateTempJobArray<ShapeReadingData>(entityCount);
+            var entityIndex = 0;
 
-            var childCount = context.readJob.outShapeCount[0];
-            if (childCount == 0)
+            foreach (var entity in _splittingQueue)
             {
-                context.state = ESplittingState.Completed;
-                _destructionBuffer.ScheduleDestroy(context.entity);
-                return context;
-            }
+                // TODO : Remove GetComponentData from here. Bullet system must pass all required data upon scheduling.
+                var entitySize = _entityManager.GetComponentData<RectSizeComponent>(entity).value;
+                var entitySizeInt = new int2((int)entitySize.x, (int)entitySize.y);
+                var healthIndex = _entityManager.GetComponentData<HealthComponent>(entity).index;
+                var healthOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks, healthIndex);
 
-            var parentSize = _entityManager.GetComponentData<RectSizeComponent>(context.entity).value;
-            var parentSizeInt = new int2((int) parentSize.x, (int) parentSize.y);
-            if (childCount == 1)
-            {
-                var childBounds = context.readJob.inOutBounds[0];
-                var childWidth = childBounds.max.x - childBounds.min.x + 1;
-                var childHeight = childBounds.max.y - childBounds.min.y + 1;
-                if ((childWidth == parentSizeInt.x) && (childHeight == parentSizeInt.y))
+                shapeReading[entityIndex] = new ShapeReadingData
                 {
-                    context.state = ESplittingState.Completed;
-                    return context;
-                }
+                    entity = entity,
+                    seedMaskOffset = seedMaskSize,
+                    healthAtlasOffset = healthOffset,
+                    entitySize = entitySizeInt,
+                };
+
+                seedMaskSize += entitySizeInt.x * entitySizeInt.y;
+
+                entityIndex++;
             }
-            
+
+            _splittingQueue.Clear();
+            _profiler.EndSample("Collect entity data");
+
+            _profiler.BeginSample("Allocate arrays");
+            var connections = NativeMemory.CreateTempJobArray<byte2>(256 * entityCount);
+            var seedResults = NativeMemory.CreateTempJobArray<ShapeSeedJobResult>(entityCount);
+            var bounds = NativeMemory.CreateTempJobArray<ByteBounds>(256 * entityCount);
+            var seedMask = NativeMemory.CreateTempJobArray<byte>(seedMaskSize);
+            var shapeCounts = NativeMemory.CreateTempJobArray<int>(entityCount);
+            var shapeRootSeeds = NativeMemory.CreateTempJobArray<byte>(256 * entityCount);
+            var jobHandles = NativeMemory.CreateTempJobArray<JobHandle>(entityCount);
+            _profiler.EndSample("Allocate arrays");
+
+            _profiler.BeginSample("Schedule jobs");
+            for (var i = 0; i < entityCount; i++)
+            {
+                var entity = shapeReading[i];
+                var frameLength = HealthUtil.GetRequiredByteCount(entity.entitySize.x, entity.entitySize.y);
+                var maskSize = entity.entitySize.x * entity.entitySize.y;
+
+                var seedJob = new ShapeSeedJob
+                {
+                    inFrameBits = _healthSystem.Data.Slice(entity.healthAtlasOffset, frameLength),
+                    inFrameSize = entity.entitySize,
+                    outConnections = connections.Slice(i * 256, 256),
+                    outResult = seedResults.Slice(i, 1),
+                    outSeedBounds = bounds.Slice(i * 256, 256),
+                    outSeedMask = seedMask.Slice(entity.seedMaskOffset, maskSize)
+                };
+
+                var readJob = new ShapeReadJob
+                {
+                    inOutConnections = seedJob.outConnections,
+                    inOutBounds = seedJob.outSeedBounds,
+                    inSeedJobResult = seedJob.outResult,
+                    outShapeCount = shapeCounts.Slice(i, 1),
+                    outShapeRootSeeds = shapeRootSeeds.Slice(i * 256, 256)
+                };
+
+                jobHandles[i] = readJob.Schedule(seedJob.Schedule());
+            }
+
+            _profiler.EndSample("Schedule jobs");
+
+            _profiler.BeginSample("Complete shape seed");
+            JobHandle.CombineDependencies(jobHandles).Complete();
+            _profiler.EndSample("Complete shape seed");
+
+            _profiler.BeginSample("Schedule health building & replication");
+            var estimatedChildCount = 0;
+            for (var i = 0; i < entityCount; i++)
+            {
+                estimatedChildCount += shapeCounts[i];
+            }
+
+            jobHandles.Dispose();
+            jobHandles = NativeMemory.CreateTempJobArray<JobHandle>(estimatedChildCount);
             var handleCount = 0;
-            var handles = context.jobMemory.CreateNativeArray<JobHandle>(childCount * 2);
-            var parentPosition = _entityManager.GetComponentData<PositionComponent>(context.entity).value;
-            var parentRotation = _entityManager.GetComponentData<RotationComponent>(context.entity).value;
-            var parentSprite = _entityManager.GetComponentData<SpriteRenderComponent>(context.entity).colorIndex;
-            var parentSpriteOffset = AtlasMath.ComputeOffset(_spriteSystem.Chunks, parentSprite);
-            var spriteSystemTexture = _spriteSystem.Texture;
-            var spriteSystemTextureSize = new int2(spriteSystemTexture.width, spriteSystemTexture.height);
-            var spriteSystemTextureData = _spriteSystem.Texture.GetRawTextureData<ColorRGB24>();
-
-            for (var i = 0; i < childCount; i++)
+            
+            for (var parentId = 0; parentId < entityCount; parentId++)
             {
-                var childBounds = context.readJob.inOutBounds[i];
-                var childWidth = childBounds.max.x - childBounds.min.x + 1;
-                var childHeight = childBounds.max.y - childBounds.min.y + 1;
-                if (childWidth > 32 || childHeight > 32)
+                var seedResult = seedResults[parentId];
+                if (seedResult.code != EShapeSeedResult.Success)
                 {
+                    Debug.LogError($"Seeding job ended with result {seedResult.code}.");
+                }
+
+                var entity = shapeReading[parentId];
+                var shapeCount = shapeCounts[parentId];
+                if (shapeCount == 0)
+                {
+                    _destructionBuffer.ScheduleDestroy(entity.entity);
                     continue;
                 }
+
+                if (shapeCount == 1)
+                {
+                    var childSize = bounds[parentId * 256].GetSize();
+                    if ((entity.entitySize.x == childSize.x) && (entity.entitySize.y == childSize.y))
+                    {
+                        continue;
+                    }
+                }
                 
-                var childEntity = _entityManager.Instantiate(context.entity);
-                _entityManager.SetComponentData(childEntity, new RectSizeComponent
-                {
-                    value = new half2((half) childWidth, (half) childHeight)
-                });
+                _destructionBuffer.ScheduleDestroy(entity.entity);
                 
-                var childLocalPosX = (childBounds.max.x + childBounds.min.x + 1) * 0.5f - parentSize.x * 0.5f;
-                var childLocalPosY = (childBounds.max.y + childBounds.min.y + 1) * 0.5f - parentSize.y * 0.5f;
-                FloatMath.SinCos(parentRotation, out var childSin, out var childCos);
-                _entityManager.SetComponentData(childEntity, new PositionComponent
+                var parentData = shapeReading[parentId];
+
+                for (var childId = 0; childId < shapeCount; childId++)
                 {
-                    value = FloatMath.Rotate(childLocalPosX, childLocalPosY, childSin, childCos) + parentPosition
-                });
-                
-                _entityManager.SetComponentData(childEntity, new RotationComponent
-                {
-                    value = parentRotation
-                });
-                
-                var childSprite = _spriteSystem.Allocate(childWidth, childHeight);
-                _entityManager.SetComponentData(childEntity, new SpriteRenderComponent
-                {
-                    colorIndex = childSprite
-                });
-                
-                handles[handleCount++] = new BlitShapeLinear24Job
-                {
-                    inConnections = context.seedJob.outConnections.Slice(0, context.seedJob.outResult[0].connectionCount),
-                    inSourceTextureOffset = parentSpriteOffset + new int2(childBounds.min.x, childBounds.min.y),
-                    inSourceTextureSize = spriteSystemTextureSize,
-                    inSourceSeedMaskOffset = new int2(childBounds.min.x, childBounds.min.y),
-                    inSourceSeedMaskSize = parentSizeInt,
-                    inBlitSize = new int2(childWidth, childHeight),
-                    inSourceTexture = spriteSystemTextureData,
-                    inTargetOffset = AtlasMath.ComputeOffset(_spriteSystem.Chunks, childSprite),
-                    inTargetSize = spriteSystemTextureSize,
-                    inBlitShapeSeed = context.readJob.outShapeRootSeeds[i],
-                    inSourceSeedMask = context.seedJob.outSeedMask,
-                    outTargetTexture = spriteSystemTextureData
-                }.Schedule();
-                
-                var childHealth = _healthSystem.Allocate(childWidth, childHeight);
-                _entityManager.SetComponentData(childEntity, new HealthComponent
-                {
-                    index = childHealth
-                });
-                handles[handleCount++] = new BlitShapeHealthFromMaskJob
-                {
-                    inConnections = context.seedJob.outConnections.Slice(0, context.seedJob.outResult[0].connectionCount),
-                    inSourceOffset = new int2(childBounds.min.x, childBounds.min.y),
-                    inBlitSize = new int2(childWidth, childHeight),
-                    inSourceSize = parentSizeInt,
-                    inTargetOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks, childHealth),
-                    inBlitShapeSeed = context.readJob.outShapeRootSeeds[i],
-                    inSourceSeedMask = context.seedJob.outSeedMask,
-                    outTargetHealth = _healthSystem.Data
-                }.Schedule();
+                    var childBounds = bounds[parentId * 256 + childId];
+                    var childSize = childBounds.GetSize();
+                    var childHealth = _healthSystem.Allocate(childSize.x, childSize.y);
+
+                    jobHandles[handleCount++] = new BlitShapeHealthFromMaskJob
+                    {
+                        inConnections = connections.Slice(parentId * 256, seedResult.connectionCount),
+                        
+                        inSourceOffset = new int2(childBounds.min.x, childBounds.min.y),
+                        inBlitSize = childSize,
+                        inSourceSize = parentData.entitySize,
+                        inBlitShapeSeed = shapeRootSeeds[parentId * 256 + childId],
+                        inTargetOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks, childHealth),
+
+                        inSourceSeedMask = seedMask.Slice(
+                            parentData.seedMaskOffset, 
+                            parentData.entitySize.x * parentData.entitySize.y),
+                        
+                        outTargetHealth = _healthSystem.Data
+
+                    }.Schedule();
+
+                    _prefabSystem.ScheduleReplication(parentData.entity, childHealth, childBounds);
+                }
             }
+            _profiler.EndSample("Schedule health building & replication");
 
-            _destructionBuffer.ScheduleDestroy(context.entity);
-
-            context.jobHandle = JobHandle.CombineDependencies(new NativeSlice<JobHandle>(handles, 0, handleCount));
-            context.state = ESplittingState.BlitJob;
-            context.jobDifficulty = int.MaxValue;
-
-            return context;
-        }
-
-        private SplittingContext OnBlitJob(SplittingContext context)
-        {
-            if (!context.jobHandle.IsCompleted)
-            {
-                return context;
-            }
-
-            context.jobHandle.Complete();
+            _profiler.BeginSample("Complete health jobs");
+            JobHandle.CombineDependencies(jobHandles.Slice(0, handleCount)).Complete();
+            _profiler.EndSample("Complete health jobs");
             
-            context.state = ESplittingState.Completed;
-            
-            return context;
+            _profiler.BeginSample("Disposal");
+            shapeReading.Dispose();
+            connections.Dispose();
+            seedResults.Dispose();
+            bounds.Dispose();
+            seedMask.Dispose();
+            shapeCounts.Dispose();
+            shapeRootSeeds.Dispose();
+            jobHandles.Dispose();
+            _profiler.EndSample("Disposal");
         }
     }
 }
