@@ -49,7 +49,7 @@ namespace SolidSpace.Entities.Splitting
             var entitySize = _entityManager.GetComponentData<RectSizeComponent>(context.entity).value;
             var entitySizeInt = new int2((int)entitySize.x, (int)entitySize.y);
             var healthIndex = _entityManager.GetComponentData<HealthComponent>(context.entity).index;
-            var healthOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks[healthIndex.ReadChunkId()], healthIndex);
+            var healthOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks, healthIndex);
             var frameLength = HealthUtil.GetRequiredByteCount(entitySizeInt.x, entitySizeInt.y);
 
             context.seedJob = new ShapeSeedJob
@@ -133,7 +133,7 @@ namespace SolidSpace.Entities.Splitting
             var parentPosition = _entityManager.GetComponentData<PositionComponent>(context.entity).value;
             var parentRotation = _entityManager.GetComponentData<RotationComponent>(context.entity).value;
             var parentSprite = _entityManager.GetComponentData<SpriteRenderComponent>(context.entity).colorIndex;
-            var parentSpriteOffset = AtlasMath.ComputeOffset(_spriteSystem.Chunks[parentSprite.ReadChunkId()], parentSprite);
+            var parentSpriteOffset = AtlasMath.ComputeOffset(_spriteSystem.Chunks, parentSprite);
             var spriteSystemTexture = _spriteSystem.Texture;
             var spriteSystemTextureSize = new int2(spriteSystemTexture.width, spriteSystemTexture.height);
             var spriteSystemTextureData = _spriteSystem.Texture.GetRawTextureData<ColorRGB24>();
@@ -173,7 +173,6 @@ namespace SolidSpace.Entities.Splitting
                     colorIndex = childSprite
                 });
                 
-                var childSpriteOffset = AtlasMath.ComputeOffset(_spriteSystem.Chunks[childSprite.ReadChunkId()], childSprite);
                 handles[handleCount++] = new BlitShapeLinear24Job
                 {
                     inConnections = context.seedJob.outConnections.Slice(0, context.seedJob.outResult[0].connectionCount),
@@ -183,7 +182,7 @@ namespace SolidSpace.Entities.Splitting
                     inSourceSeedMaskSize = parentSizeInt,
                     inBlitSize = new int2(childWidth, childHeight),
                     inSourceTexture = spriteSystemTextureData,
-                    inTargetOffset = childSpriteOffset,
+                    inTargetOffset = AtlasMath.ComputeOffset(_spriteSystem.Chunks, childSprite),
                     inTargetSize = spriteSystemTextureSize,
                     inBlitShapeSeed = context.readJob.outShapeRootSeeds[i],
                     inSourceSeedMask = context.seedJob.outSeedMask,
@@ -195,14 +194,13 @@ namespace SolidSpace.Entities.Splitting
                 {
                     index = childHealth
                 });
-                var childHealthOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks[childHealth.ReadChunkId()], childHealth);
                 handles[handleCount++] = new BlitShapeHealthFromMaskJob
                 {
                     inConnections = context.seedJob.outConnections.Slice(0, context.seedJob.outResult[0].connectionCount),
                     inSourceOffset = new int2(childBounds.min.x, childBounds.min.y),
                     inBlitSize = new int2(childWidth, childHeight),
                     inSourceSize = parentSizeInt,
-                    inTargetOffset = childHealthOffset,
+                    inTargetOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks, childHealth),
                     inBlitShapeSeed = context.readJob.outShapeRootSeeds[i],
                     inSourceSeedMask = context.seedJob.outSeedMask,
                     outTargetHealth = _healthSystem.Data

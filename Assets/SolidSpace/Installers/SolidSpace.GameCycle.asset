@@ -87,5 +87,6 @@ MonoBehaviour:
       - _name: Render
         _controllers:
         - typeName: SolidSpace.Gizmos.GizmosDrawerManager
+        - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteFrameSystem
         - typeName: SolidSpace.Entities.Rendering.Pixels.PixelRenderingSystem
         - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteRenderingSystem

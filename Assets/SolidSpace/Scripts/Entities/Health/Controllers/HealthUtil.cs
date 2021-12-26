@@ -9,6 +9,7 @@ namespace SolidSpace.Entities.Health
 {
     public static class HealthUtil
     {
+        // TODO: Remove NativeArray<byte> version, leave NativeSlice only.
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool HasBit(NativeArray<byte> health, int healthOffset, int spriteWidth, int2 spritePoint)
         {
@@ -18,6 +19,17 @@ namespace SolidSpace.Entities.Health
             var pointBitMask = 1 << (spritePoint.x % 8);
             
             return (chunkValue & pointBitMask) != 0;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool HasBit(NativeSlice<byte> health, int2 healthSize, int2 point)
+        {
+            var bytesPerLine = (int) Math.Ceiling(healthSize.x / 8f);
+            var chunkIndex = bytesPerLine * point.y + point.x / 8;
+            var chunkValue = health[chunkIndex];
+            var pointMask = 1 << (point.x % 8);
+
+            return (chunkValue & pointMask) != 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -31,7 +43,7 @@ namespace SolidSpace.Entities.Health
             health[chunkIndex] = (byte) (chunkValue & ~pointBitMask);
         }
         
-        public static void TextureToFrameBits(NativeArray<Color32> texture, int width, int height, NativeSlice<byte> output)
+        public static void TextureToHealth(NativeArray<Color32> texture, int width, int height, NativeSlice<byte> output)
         {
             var bytesPerLine = (int) Math.Ceiling(width / 8f);
             var requiredByteCount = bytesPerLine * height;
@@ -64,7 +76,7 @@ namespace SolidSpace.Entities.Health
             }
         }
 
-        public static void TextureToFrameBits(NativeArray<ColorRGB24> texture, int width, int height, NativeSlice<byte> output)
+        public static void TextureToHealth(NativeArray<ColorRGB24> texture, int width, int height, NativeSlice<byte> output)
         {
             var bytesPerLine = (int) Math.Ceiling(width / 8f);
             var requiredByteCount = bytesPerLine * height;

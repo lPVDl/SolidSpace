@@ -144,13 +144,11 @@ namespace SolidSpace.Entities.Bullets
                 var hit = hits[i];
                 _entitiesToDestroy[i] = hit.bulletEntity;
 
-                var spriteChunk = _spriteSystem.Chunks[hit.colliderSprite.ReadChunkId()];
-                var spriteOffset = AtlasMath.ComputeOffset(spriteChunk, hit.colliderSprite) + hit.hitPixel;
+                var spriteOffset = AtlasMath.ComputeOffset(_spriteSystem.Chunks, hit.colliderSprite) + hit.hitPixel;
                 spriteTexture.SetPixel(spriteOffset.x, spriteOffset.y, Color.black);
 
                 var colliderSize = new int2((int) hit.colliderSize.x, (int) hit.colliderSize.y);
-                var healthChunk = _healthSystem.Chunks[hit.colliderHealth.ReadChunkId()];
-                var healthOffset = AtlasMath.ComputeOffset(healthChunk, hit.colliderHealth);
+                var healthOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks, hit.colliderHealth);
                 HealthUtil.ClearBit(healthAtlas, healthOffset, colliderSize.x, hit.hitPixel);
 
                 var neighbourPixels =

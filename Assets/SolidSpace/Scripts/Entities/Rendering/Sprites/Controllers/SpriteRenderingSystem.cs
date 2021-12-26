@@ -124,7 +124,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
                     inColorAtlasChunks = _colorSystem.Chunks,
                     inColorAtlasSize = new int2(_colorSystem.Texture.width, _colorSystem.Texture.height),
                     inFrameAtlasChunks = _frameSystem.Chunks,
-                    inFrameAtlasSize = new int2(_frameSystem.Texture.width, _frameSystem.Texture.height),
+                    inFrameAtlasSize = _frameSystem.AtlasSize,
                     outIndices = meshData.GetIndexData<ushort>(),
                     outVertices = meshData.GetVertexData<SpriteVertexData>()
                 };
@@ -156,7 +156,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             
             _profiler.BeginSample("Draw mesh");
             _material.SetTexture(MainTexturePropertyId, _colorSystem.Texture);
-            _material.SetTexture(FrameTexturePropertyId, _frameSystem.Texture);
+            _material.SetTexture(FrameTexturePropertyId, _frameSystem.AtlasTexture);
             for (var i = 0; i < meshCount; i++)
             {
                 MeshRenderingUtil.DrawMesh(new MeshDrawingData

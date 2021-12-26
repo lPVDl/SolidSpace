@@ -58,14 +58,14 @@ namespace SolidSpace.Entities.Splitting.Editor
             ConsoleUtil.ClearLog();
             
             TimerBegin();
-            var pixels = new NativeArray<Color32>(_inputTexture.GetPixels32(), Allocator.TempJob);
+            var pixels = _inputTexture.GetPixelData<Color32>(0);
             
             var textureWidth = _inputTexture.width;
             var textureHeight = _inputTexture.height;
 
             var requiredByteCount = HealthUtil.GetRequiredByteCount(textureWidth, textureHeight);
             var frameBits = NativeMemory.CreateTempJobArray<byte>(requiredByteCount);
-            HealthUtil.TextureToFrameBits(pixels, textureWidth, textureHeight, frameBits);
+            HealthUtil.TextureToHealth(pixels, textureWidth, textureHeight, frameBits);
             TimerEnd("Convert to bit array");
 
             var seedJobConnections = NativeMemory.CreateTempJobArray<byte2>(256);
@@ -146,7 +146,6 @@ namespace SolidSpace.Entities.Splitting.Editor
             File.WriteAllBytes(_outputTexturePath, exportTexture.EncodeToPNG());
 
             DestroyImmediate(exportTexture);
-            pixels.Dispose();
             seedJobResult.Dispose();
             seedJobConnections.Dispose();
             seedJobBounds.Dispose();

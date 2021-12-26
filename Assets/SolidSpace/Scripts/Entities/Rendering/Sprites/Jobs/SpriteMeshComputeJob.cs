@@ -74,13 +74,11 @@ namespace SolidSpace.Entities.Rendering.Sprites
                     var size = sizes[i].value;
                     
                     var colorIndex = render.colorIndex;
-                    var colorChunk = inColorAtlasChunks[colorIndex.ReadChunkId()];
-                    var colorOffset = (float2) AtlasMath.ComputeOffset(colorChunk, colorIndex);
+                    var colorOffset = (float2) AtlasMath.ComputeOffset(inColorAtlasChunks, colorIndex);
                     colorOffset += prefabs[i].instanceOffset;
 
                     var frameIndex = render.frameIndex;
-                    var frameChunk = inFrameAtlasChunks[frameIndex.ReadChunkId()];
-                    var frameOffset = AtlasMath.ComputeOffset(frameChunk, frameIndex);
+                    var frameOffset = AtlasMath.ComputeOffset(inFrameAtlasChunks, frameIndex);
                     var frameOffsetXY = new float2(frameOffset.x, frameOffset.y);
                     
                     FlushSquare(ref indexOffset, ref vertexOffset, new Square

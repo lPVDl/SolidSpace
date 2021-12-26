@@ -1,13 +1,19 @@
+using System;
 using System.Collections.Generic;
+using SolidSpace.Entities.Atlases;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Health;
 using SolidSpace.Entities.Rendering.Sprites;
 using SolidSpace.Entities.Splitting;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
+using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
+using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Mathematics;
+using UnityEngine;
 
 namespace SolidSpace.Entities.Prefabs
 {
@@ -25,6 +31,7 @@ namespace SolidSpace.Entities.Prefabs
 
         private EntityArchetype _shipArchetype;
         private AtlasIndex16 _shipColorIndex;
+        private NativeArray<byte> _shipHealth;
         private int2 _shipSize;
 
         public PrefabSystem(PrefabSystemConfig config, 
@@ -61,15 +68,26 @@ namespace SolidSpace.Entities.Prefabs
             _shipSize = new int2(texture.width, texture.height);
             _shipColorIndex = _colorSystem.Allocate(_shipSize.x, _shipSize.y);
             _colorSystem.Copy(texture, _shipColorIndex);
-            // TODO: Prebake frame here...
-            // TODO: Prebake health here...
-            
+
+            var byteCount = HealthUtil.GetRequiredByteCount(texture.width, texture.height);
+            _shipHealth = NativeMemory.CreatePersistentArray<byte>(byteCount);
+
+            if (texture.format != TextureFormat.RGB24)
+            {
+                var message = $"Texture expected to have format RGB24, but was {texture.format}.";
+                throw new InvalidOperationException(message);
+            }
+
+            var pixels = texture.GetPixelData<ColorRGB24>(0);
+            HealthUtil.TextureToHealth(pixels, texture.width, texture.height, _shipHealth);
+
             ShipComponents = shipComponents;
         }
 
         public void OnFinalize()
         {
             _colorSystem.Release(_shipColorIndex);
+            _shipHealth.Dispose();
         }
         
         public void SpawnShip(float2 position, float rotation)
@@ -108,9 +126,22 @@ namespace SolidSpace.Entities.Prefabs
             {
                 isActive = false
             });
-            
-            // TODO: Initialize frame...
-            // TODO: Initialize health...
+
+            new BlitHealthToFrameJob
+            {
+                inHealth = _shipHealth,
+                inHealthSize = _shipSize,
+                inAtlasSize = _frameSystem.AtlasSize,
+                inOutAtlasTexture = _frameSystem.GetAtlasData(false),
+                inAtlasOffset = AtlasMath.ComputeOffset(_frameSystem.Chunks, frameIndex),
+            }.Run();
+
+            var healthOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks, healthIndex);
+            var healthAtlas = _healthSystem.Data;
+            for (var i = 0; i < _shipHealth.Length; i++)
+            {
+                healthAtlas[healthOffset + i] = _shipHealth[i];
+            }
         }
         
         public void ScheduleReplication(Entity parent, AtlasIndex16 childHealth, ByteBounds childBounds)

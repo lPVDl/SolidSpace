@@ -78,7 +78,7 @@ namespace SolidSpace.Entities.Bullets
             
             var spriteSize = new int2((int) colliderShape.size.x, (int) colliderShape.size.y);
             var healthIndex = inColliderHealths[hit.colliderIndex].index;
-            var healthOffset = AtlasMath.ComputeOffset(inHealthChunks[healthIndex.ReadChunkId()], healthIndex);
+            var healthOffset = AtlasMath.ComputeOffset(inHealthChunks, healthIndex);
             
             var p0Int = new int2((int) p0.x, (int) p0.y);
             var p1Int = new int2((int) p1.x, (int) p1.y);

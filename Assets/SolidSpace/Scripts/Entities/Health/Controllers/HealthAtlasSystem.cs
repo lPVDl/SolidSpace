@@ -53,7 +53,7 @@ namespace SolidSpace.Entities.Health
             var offset = AtlasMath.ComputeOffset(chunk, target);
             var textureRaw = source.GetRawTextureData<ColorRGB24>();
             var atlasSlice = new NativeSlice<byte>(_data, offset, itemMaxSize);
-            HealthUtil.TextureToFrameBits(textureRaw, textureSize.x, textureSize.y, atlasSlice);
+            HealthUtil.TextureToHealth(textureRaw, textureSize.x, textureSize.y, atlasSlice);
         }
 
         public AtlasIndex16 Allocate(int width, int height)

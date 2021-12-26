@@ -25,8 +25,8 @@ namespace SolidSpace.Entities.Rendering.Sprites
         public void OnInitialize()
         {
             var atlasSize = _config.AtlasConfig.AtlasSize;
-            
-            Texture = new Texture2D(atlasSize, atlasSize, _config.TextureFormat,  false, true);
+
+            Texture = new Texture2D(atlasSize, atlasSize, TextureFormat.RGB24, false, true);
             Texture.name = nameof(SpriteColorSystem);
             Texture.filterMode = FilterMode.Point;
             
@@ -61,11 +61,9 @@ namespace SolidSpace.Entities.Rendering.Sprites
 
         public void Copy(Texture2D source, AtlasIndex16 target)
         {
-            var atlasFormat = _config.TextureFormat;
-            
-            if (source.format != atlasFormat)
+            if (source.format != TextureFormat.RGB24)
             {
-                var message = $"Expected texture with format {atlasFormat} but got {source.format}.";
+                var message = $"Expected texture with format RGB24 but got {source.format}.";
                 throw new InvalidOperationException(message);
             }
 

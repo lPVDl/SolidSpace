@@ -70,7 +70,7 @@ namespace SolidSpace.Entities.Splitting
                 var entitySize = _entityManager.GetComponentData<RectSizeComponent>(entity).value;
                 var entitySizeInt = new int2((int)entitySize.x, (int)entitySize.y);
                 var healthIndex = _entityManager.GetComponentData<HealthComponent>(entity).index;
-                var healthOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks[healthIndex.ReadChunkId()], healthIndex);
+                var healthOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks, healthIndex);
 
                 shapeReading[entityIndex] = new ShapeReadingData
                 {
@@ -162,9 +162,8 @@ namespace SolidSpace.Entities.Splitting
 
                 if (shapeCount == 1)
                 {
-                    var childBounds = bounds[parentId * 256];
-                    if (entity.entitySize.x == childBounds.max.x - childBounds.min.x + 1 &&
-                        entity.entitySize.y == childBounds.max.y - childBounds.min.y + 1)
+                    var childSize = bounds[parentId * 256].GetSize();
+                    if ((entity.entitySize.x == childSize.x) && (entity.entitySize.y == childSize.y))
                     {
                         continue;
                     }
@@ -177,21 +176,18 @@ namespace SolidSpace.Entities.Splitting
                 for (var childId = 0; childId < shapeCount; childId++)
                 {
                     var childBounds = bounds[parentId * 256 + childId];
-                    var childWidth = childBounds.max.x - childBounds.min.x + 1;
-                    var childHeight = childBounds.max.y - childBounds.min.y + 1;
-                    var childHealth = _healthSystem.Allocate(childWidth, childHeight);
+                    var childSize = childBounds.GetSize();
+                    var childHealth = _healthSystem.Allocate(childSize.x, childSize.y);
 
                     jobHandles[handleCount++] = new BlitShapeHealthFromMaskJob
                     {
                         inConnections = connections.Slice(parentId * 256, seedResult.connectionCount),
                         
                         inSourceOffset = new int2(childBounds.min.x, childBounds.min.y),
-                        inBlitSize = new int2(childWidth, childHeight),
+                        inBlitSize = childSize,
                         inSourceSize = parentData.entitySize,
                         inBlitShapeSeed = shapeRootSeeds[parentId * 256 + childId],
-
-                        inTargetOffset =
-                            AtlasMath.ComputeOffset(_healthSystem.Chunks[childHealth.ReadChunkId()], childHealth),
+                        inTargetOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks, childHealth),
 
                         inSourceSeedMask = seedMask.Slice(
                             parentData.seedMaskOffset, 
