@@ -12,11 +12,10 @@ namespace SolidSpace.Entities.Rendering.Sprites
 {
     public class SpriteFrameSystem : ISpriteFrameSystem, IInitializable, IUpdatable
     {
+        // TODO : Hide texture access, create ToMaterialMethod()
         public Texture2D AtlasTexture => _texture;
         public int2 AtlasSize { get; private set; }
-        
         public NativeSlice<AtlasChunk2D> Chunks => _indexManager.Chunks;
-
         public NativeSlice<ulong> ChunksOccupation => _indexManager.ChunksOccupation;
 
         private readonly SpriteAtlasConfig _config;
@@ -77,6 +76,25 @@ namespace SolidSpace.Entities.Rendering.Sprites
             }
 
             return _texture.GetPixelData<float>(0);
+        }
+
+        public void SetFrame(int3 index, bool frameExists)
+        {
+            _isTextureDirty = true;
+            var offset = index.y * AtlasSize.x + index.x;
+            var texture = _texture.GetPixelData<float>(0);
+            var value = (int) texture[offset];
+            
+            if (frameExists)
+            {
+                value |= 1 << index.z;
+            }
+            else
+            {
+                value &= ~(1 << index.z);
+            }
+
+            texture[offset] = value;
         }
 
         public AtlasIndex64 Allocate(int width, int height)

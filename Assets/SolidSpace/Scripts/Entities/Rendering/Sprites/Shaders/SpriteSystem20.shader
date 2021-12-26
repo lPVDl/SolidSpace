@@ -53,11 +53,9 @@ Shader "SpaceSimulator/SpriteSystem20"
             fixed4 frag (v2f IN) : SV_Target
             {
                 float frame = tex2D(_FrameTex, IN.frameUV);
-
-                if (((int)frame & (int)IN.frameZValue) == 0)
-                {
-                    clip(-1);
-                }
+                frame = saturate((int)frame & (int)IN.frameZValue);
+                frame = lerp(-1, 1, frame);
+                clip(frame);
 
                 return tex2D(_MainTex, IN.colorUV);
             }

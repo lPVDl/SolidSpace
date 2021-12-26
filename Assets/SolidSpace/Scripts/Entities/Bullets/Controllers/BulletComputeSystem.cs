@@ -23,11 +23,11 @@ namespace SolidSpace.Entities.Bullets
         private readonly IProfilingManager _profilingManager;
         private readonly IEntityManager _entityManager;
         private readonly IEntityWorldTime _worldTime;
-        private readonly ISpriteColorSystem _spriteSystem;
         private readonly IHealthAtlasSystem _healthSystem;
         private readonly IGizmosManager _gizmosManager;
         private readonly IEntityDestructionBuffer _destructionBuffer;
         private readonly ISplittingCommandSystem _splittingSystem;
+        private readonly ISpriteFrameSystem _frameSystem;
 
         private ProfilingHandle _profiler;
         private NativeArray<Entity> _entitiesToDestroy;
@@ -42,20 +42,20 @@ namespace SolidSpace.Entities.Bullets
             IEntityWorldTime worldTime, 
             IProfilingManager profilingManager, 
             IEntityManager entityManager,
-            ISpriteColorSystem spriteSystem, 
             IHealthAtlasSystem healthSystem, 
             IGizmosManager gizmosManager,
             IEntityDestructionBuffer destructionBuffer,
-            ISplittingCommandSystem splittingSystem)
+            ISplittingCommandSystem splittingSystem,
+            ISpriteFrameSystem frameSystem)
         {
             _profilingManager = profilingManager;
             _entityManager = entityManager;
             _worldTime = worldTime;
-            _spriteSystem = spriteSystem;
             _healthSystem = healthSystem;
             _gizmosManager = gizmosManager;
             _destructionBuffer = destructionBuffer;
             _splittingSystem = splittingSystem;
+            _frameSystem = frameSystem;
         }
         
         public void OnInitialize()
@@ -134,7 +134,6 @@ namespace SolidSpace.Entities.Bullets
             var hitCount = raycastBehaviour.outCount.Value;
             var hits = raycastBehaviour.outHits;
             var healthAtlas = _healthSystem.Data;
-            var spriteTexture = _spriteSystem.Texture;
             
             _entitiesToDestroy.Dispose();
             _entitiesToDestroy = NativeMemory.CreateTempJobArray<Entity>(hitCount);
@@ -144,8 +143,9 @@ namespace SolidSpace.Entities.Bullets
                 var hit = hits[i];
                 _entitiesToDestroy[i] = hit.bulletEntity;
 
-                var spriteOffset = AtlasMath.ComputeOffset(_spriteSystem.Chunks, hit.colliderSprite) + hit.hitPixel;
-                spriteTexture.SetPixel(spriteOffset.x, spriteOffset.y, Color.black);
+                var frameOffset = AtlasMath.ComputeOffset(_frameSystem.Chunks, hit.colliderFrame);
+                frameOffset += new int3(hit.hitPixel.x, hit.hitPixel.y, 0);
+                _frameSystem.SetFrame(frameOffset, false);
 
                 var colliderSize = new int2((int) hit.colliderSize.x, (int) hit.colliderSize.y);
                 var healthOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks, hit.colliderHealth);
@@ -157,10 +157,9 @@ namespace SolidSpace.Entities.Bullets
                 if (!_pixelConnectionMask.HasBit(neighbourPixels) || 
                     IsAloneBorderPixel(hit.hitPixel, colliderSize, neighbourPixels))
                 {
-                    _splittingSystem.ScheduleSplittingCheck(hit.colliderEntity);   
+                    // _splittingSystem.ScheduleSplittingCheck(hit.colliderEntity);   
                 }
             }
-            spriteTexture.Apply();
             _destructionBuffer.ScheduleDestroy(new NativeSlice<Entity>(_entitiesToDestroy, 0, hitCount));
             _profiler.EndSample("Apply damage");
             

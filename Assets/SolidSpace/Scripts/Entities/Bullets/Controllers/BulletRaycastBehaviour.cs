@@ -5,7 +5,6 @@ using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Health;
 using SolidSpace.Entities.Physics.Colliders;
 using SolidSpace.Entities.Physics.Raycast;
-using SolidSpace.Entities.Splitting;
 using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
 using Unity.Collections;
@@ -94,12 +93,11 @@ namespace SolidSpace.Entities.Bullets
                     return false;
                 }
                 
-                var spriteIndex = inColliderSprites[hit.colliderIndex].colorIndex;
                 outHits[hit.writeOffset] = new BulletHit
                 {
                     bulletEntity = _chunkEntities[hit.rayIndex],
                     hitPixel = p0Int,
-                    colliderSprite = spriteIndex,
+                    colliderFrame = inColliderSprites[hit.colliderIndex].frameIndex,
                     colliderHealth = healthIndex,
                     colliderSize = colliderShape.size,
                     colliderEntity = inColliderEntities[hit.colliderIndex]
@@ -122,13 +120,11 @@ namespace SolidSpace.Entities.Bullets
                 {
                     continue;
                 }
-
-                var spriteIndex = inColliderSprites[hit.colliderIndex].colorIndex;
-                    
+                
                 outHits[hit.writeOffset] = new BulletHit
                 {
                     bulletEntity = _chunkEntities[hit.rayIndex],
-                    colliderSprite = spriteIndex,
+                    colliderFrame = inColliderSprites[hit.colliderIndex].frameIndex,
                     colliderHealth = healthIndex,
                     hitPixel = point,
                     colliderSize = colliderShape.size,

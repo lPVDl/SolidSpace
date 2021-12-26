@@ -18,5 +18,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
         public void Release(AtlasIndex64 index);
 
         NativeArray<float> GetAtlasData(bool readOnly);
+        
+        void SetFrame(int3 index, bool frameExists);
     }
 }

@@ -8,7 +8,7 @@ namespace SolidSpace.Entities.Bullets
     {
         public Entity bulletEntity;
         public int2 hitPixel;
-        public AtlasIndex16 colliderSprite;
+        public AtlasIndex64 colliderFrame;
         public AtlasIndex16 colliderHealth;
         public half2 colliderSize;
         public Entity colliderEntity;
