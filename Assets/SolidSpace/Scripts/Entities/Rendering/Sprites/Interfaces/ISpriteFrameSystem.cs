@@ -8,7 +8,6 @@ namespace SolidSpace.Entities.Rendering.Sprites
 {
     public interface ISpriteFrameSystem
     {
-        public Texture2D AtlasTexture { get; }
         public NativeSlice<AtlasChunk2D> Chunks { get; }
         public NativeSlice<ulong> ChunksOccupation { get; }
         int2 AtlasSize { get;  }
@@ -20,5 +19,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
         NativeArray<float> GetAtlasData(bool readOnly);
         
         void SetFrame(int3 index, bool frameExists);
+        
+        public void InsertAtlasIntoMaterial(Material material, int propertyId);
     }
 }

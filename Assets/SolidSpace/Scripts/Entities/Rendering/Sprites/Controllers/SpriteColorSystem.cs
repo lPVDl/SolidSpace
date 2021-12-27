@@ -3,19 +3,23 @@ using SolidSpace.Entities.Atlases;
 using SolidSpace.GameCycle;
 using SolidSpace.Mathematics;
 using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace SolidSpace.Entities.Rendering.Sprites
 {
     internal class SpriteColorSystem : ISpriteColorSystem, IInitializable
     {
-        public Texture2D Texture { get; private set; }
+        
+        public int2 AtlasSize { get; private set; }
         public NativeSlice<AtlasChunk2D> Chunks => _indexManager.Chunks;
         public NativeSlice<ushort> ChunksOccupation => _indexManager.ChunksOccupation;
         
         private readonly SpriteAtlasConfig _config;
         
         private AtlasIndexManager2D16 _indexManager;
+
+        private Texture2D _texture;
 
         public SpriteColorSystem(SpriteAtlasConfig config)
         {
@@ -26,11 +30,13 @@ namespace SolidSpace.Entities.Rendering.Sprites
         {
             var atlasSize = _config.AtlasConfig.AtlasSize;
 
-            Texture = new Texture2D(atlasSize, atlasSize, TextureFormat.RGB24, false, true);
-            Texture.name = nameof(SpriteColorSystem);
-            Texture.filterMode = FilterMode.Point;
+            _texture = new Texture2D(atlasSize, atlasSize, TextureFormat.RGB24, false, true);
+            _texture.name = nameof(SpriteColorSystem);
+            _texture.filterMode = FilterMode.Point;
             
             _indexManager = new AtlasIndexManager2D16(_config.AtlasConfig);
+
+            AtlasSize = new int2(atlasSize, atlasSize);
         }
         
         public void OnFinalize()
@@ -45,8 +51,8 @@ namespace SolidSpace.Entities.Rendering.Sprites
             }
             
             _indexManager.Dispose();
-            UnityEngine.Object.Destroy(Texture);
-            Texture = null;
+            UnityEngine.Object.Destroy(_texture);
+            _texture = null;
         }
 
         public AtlasIndex16 Allocate(int width, int height)
@@ -57,6 +63,11 @@ namespace SolidSpace.Entities.Rendering.Sprites
         public void Release(AtlasIndex16 index)
         {
             _indexManager.Release(index);
+        }
+
+        public void InsertAtlasIntoMaterial(Material material, int propertyId)
+        {
+            material.SetTexture(propertyId, _texture);
         }
 
         public void Copy(Texture2D source, AtlasIndex16 target)
@@ -77,7 +88,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             
             var offset = AtlasMath.ComputeOffset(chunk, target);
             Graphics.CopyTexture(source, 0, 0, 0, 0, source.width, source.height, 
-                Texture, 0, 0, offset.x, offset.y);
+                _texture, 0, 0, offset.x, offset.y);
         }
     }
 }

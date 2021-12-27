@@ -17,8 +17,8 @@ namespace SolidSpace.Entities.Rendering.Sprites
 {
     internal class SpriteRenderingSystem : IInitializable, IUpdatable
     {
-        private static readonly int MainTexturePropertyId = Shader.PropertyToID("_MainTex");
-        private static readonly int FrameTexturePropertyId = Shader.PropertyToID("_FrameTex");
+        private static readonly int MainTextureId = Shader.PropertyToID("_MainTex");
+        private static readonly int FrameTextureId = Shader.PropertyToID("_FrameTex");
 
         private readonly IEntityManager _entityManager;
         private readonly SpriteMeshSystemConfig _config;
@@ -122,7 +122,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
                     inChunkCount = meshChunkCount,
                     inFirstChunkIndex = chunkOffset,
                     inColorAtlasChunks = _colorSystem.Chunks,
-                    inColorAtlasSize = new int2(_colorSystem.Texture.width, _colorSystem.Texture.height),
+                    inColorAtlasSize = _colorSystem.AtlasSize,
                     inFrameAtlasChunks = _frameSystem.Chunks,
                     inFrameAtlasSize = _frameSystem.AtlasSize,
                     outIndices = meshData.GetIndexData<ushort>(),
@@ -155,8 +155,10 @@ namespace SolidSpace.Entities.Rendering.Sprites
             _profiler.EndSample("Apply and dispose writable mesh data");
             
             _profiler.BeginSample("Draw mesh");
-            _material.SetTexture(MainTexturePropertyId, _colorSystem.Texture);
-            _material.SetTexture(FrameTexturePropertyId, _frameSystem.AtlasTexture);
+            
+            _colorSystem.InsertAtlasIntoMaterial(_material, MainTextureId);
+            _frameSystem.InsertAtlasIntoMaterial(_material, FrameTextureId);
+            
             for (var i = 0; i < meshCount; i++)
             {
                 MeshRenderingUtil.DrawMesh(new MeshDrawingData

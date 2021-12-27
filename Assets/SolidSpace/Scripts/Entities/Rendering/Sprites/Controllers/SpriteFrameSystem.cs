@@ -12,8 +12,6 @@ namespace SolidSpace.Entities.Rendering.Sprites
 {
     public class SpriteFrameSystem : ISpriteFrameSystem, IInitializable, IUpdatable
     {
-        // TODO : Hide texture access, create ToMaterialMethod()
-        public Texture2D AtlasTexture => _texture;
         public int2 AtlasSize { get; private set; }
         public NativeSlice<AtlasChunk2D> Chunks => _indexManager.Chunks;
         public NativeSlice<ulong> ChunksOccupation => _indexManager.ChunksOccupation;
@@ -52,8 +50,6 @@ namespace SolidSpace.Entities.Rendering.Sprites
 
         public void OnFinalize()
         {
-            // TODO : Create frame disposing via update.
-            
             _indexManager.Dispose();
             UnityEngine.Object.Destroy(_texture);
             _texture = null;
@@ -95,6 +91,11 @@ namespace SolidSpace.Entities.Rendering.Sprites
             }
 
             texture[offset] = value;
+        }
+
+        public void InsertAtlasIntoMaterial(Material material, int propertyId)
+        {
+            material.SetTexture(propertyId, _texture);
         }
 
         public AtlasIndex64 Allocate(int width, int height)
