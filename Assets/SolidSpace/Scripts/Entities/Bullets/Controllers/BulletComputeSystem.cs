@@ -149,10 +149,10 @@ namespace SolidSpace.Entities.Bullets
 
                 var colliderSize = new int2((int) hit.colliderSize.x, (int) hit.colliderSize.y);
                 var healthOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks, hit.colliderHealth);
-                HealthUtil.ClearBit(healthAtlas, healthOffset, colliderSize.x, hit.hitPixel);
+                var healthAtlasSlice = healthAtlas.Slice(healthOffset);
+                HealthUtil.ClearBit(healthAtlasSlice, colliderSize, hit.hitPixel);
 
-                var neighbourPixels =
-                    SplittingUtil.ReadNeighbourPixels(healthAtlas, healthOffset, colliderSize, hit.hitPixel);
+                var neighbourPixels = SplittingUtil.ReadNeighbourPixels(healthAtlasSlice, colliderSize, hit.hitPixel);
                 
                 if (!_pixelConnectionMask.HasBit(neighbourPixels) || 
                     IsAloneBorderPixel(hit.hitPixel, colliderSize, neighbourPixels))
@@ -160,7 +160,7 @@ namespace SolidSpace.Entities.Bullets
                     _splittingSystem.ScheduleSplittingCheck(hit.colliderEntity);   
                 }
             }
-            _destructionBuffer.ScheduleDestroy(new NativeSlice<Entity>(_entitiesToDestroy, 0, hitCount));
+            _destructionBuffer.ScheduleDestroy(_entitiesToDestroy.Slice(0, hitCount));
             _profiler.EndSample("Apply damage");
             
             _profiler.BeginSample("Gizmos");

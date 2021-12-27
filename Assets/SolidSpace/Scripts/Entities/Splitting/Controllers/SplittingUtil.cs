@@ -28,24 +28,23 @@ namespace SolidSpace.Entities.Splitting
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static byte ReadNeighbourPixels(NativeArray<byte> frame, int frameOffset, int2 spriteSize, int2 center)
+        public static byte ReadNeighbourPixels(NativeSlice<byte> frame, int2 spriteSize, int2 center)
         {
             var resultBits = 0;
-            resultBits |= GetBit(frame, frameOffset, spriteSize, center + new int2(-1, -1)) << 0;
-            resultBits |= GetBit(frame, frameOffset, spriteSize, center + new int2(+0, -1)) << 1;
-            resultBits |= GetBit(frame, frameOffset, spriteSize, center + new int2(+1, -1)) << 2;
-            resultBits |= GetBit(frame, frameOffset, spriteSize, center + new int2(-1, +0)) << 3;
-            resultBits |= GetBit(frame, frameOffset, spriteSize, center + new int2(+1, +0)) << 4;
-            resultBits |= GetBit(frame, frameOffset, spriteSize, center + new int2(-1, +1)) << 5;
-            resultBits |= GetBit(frame, frameOffset, spriteSize, center + new int2(+0, +1)) << 6;
-            resultBits |= GetBit(frame, frameOffset, spriteSize, center + new int2(+1, +1)) << 7;
+            resultBits |= GetBit(frame, spriteSize, center + new int2(-1, -1)) << 0;
+            resultBits |= GetBit(frame, spriteSize, center + new int2(+0, -1)) << 1;
+            resultBits |= GetBit(frame, spriteSize, center + new int2(+1, -1)) << 2;
+            resultBits |= GetBit(frame, spriteSize, center + new int2(-1, +0)) << 3;
+            resultBits |= GetBit(frame, spriteSize, center + new int2(+1, +0)) << 4;
+            resultBits |= GetBit(frame, spriteSize, center + new int2(-1, +1)) << 5;
+            resultBits |= GetBit(frame, spriteSize, center + new int2(+0, +1)) << 6;
+            resultBits |= GetBit(frame, spriteSize, center + new int2(+1, +1)) << 7;
 
             return (byte) resultBits;
         }
         
-        // TODO : Remove frame offset, just pass slice!
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static int GetBit(NativeArray<byte> frame, int frameOffset, int2 spriteSize, int2 spritePoint)
+        private static int GetBit(NativeSlice<byte> frame, int2 spriteSize, int2 spritePoint)
         {
             if (spritePoint.x < 0 || spritePoint.x >= spriteSize.x)
             {
@@ -57,7 +56,7 @@ namespace SolidSpace.Entities.Splitting
                 return 0;
             }
 
-            return HealthUtil.HasBit(frame, frameOffset, spriteSize.x, spritePoint) ? 1 : 0;
+            return HealthUtil.HasBit(frame, spriteSize, spritePoint) ? 1 : 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

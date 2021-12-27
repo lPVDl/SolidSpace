@@ -9,18 +9,6 @@ namespace SolidSpace.Entities.Health
 {
     public static class HealthUtil
     {
-        // TODO: Remove NativeArray<byte> version, leave NativeSlice only.
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool HasBit(NativeArray<byte> health, int healthOffset, int spriteWidth, int2 spritePoint)
-        {
-            var bytesPerLine = (int) Math.Ceiling(spriteWidth / 8f);
-            var chunkIndex = healthOffset + bytesPerLine * spritePoint.y + spritePoint.x / 8;
-            var chunkValue = health[chunkIndex];
-            var pointBitMask = 1 << (spritePoint.x % 8);
-            
-            return (chunkValue & pointBitMask) != 0;
-        }
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool HasBit(NativeSlice<byte> health, int2 healthSize, int2 point)
         {
@@ -33,10 +21,10 @@ namespace SolidSpace.Entities.Health
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ClearBit(NativeArray<byte> health, int healthOffset, int spriteWidth, int2 spritePoint)
+        public static void ClearBit(NativeSlice<byte> health, int2 spriteSize, int2 spritePoint)
         {
-            var bytesPerLine = (int) Math.Ceiling(spriteWidth / 8f);
-            var chunkIndex = healthOffset + bytesPerLine * spritePoint.y + spritePoint.x / 8;
+            var bytesPerLine = (int) Math.Ceiling(spriteSize.x / 8f);
+            var chunkIndex = bytesPerLine * spritePoint.y + spritePoint.x / 8;
             var chunkValue = health[chunkIndex];
             var pointBitMask = 1 << (spritePoint.x % 8);
 
