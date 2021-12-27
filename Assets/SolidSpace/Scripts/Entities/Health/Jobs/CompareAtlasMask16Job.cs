@@ -6,7 +6,7 @@ using Unity.Jobs;
 namespace SolidSpace.Entities.Health
 {
     [BurstCompile]
-    public struct CompareAtlasMaskJob : IJobParallelFor
+    public struct CompareAtlasMask16Job : IJobParallelFor
     {
         [ReadOnly, NativeDisableParallelForRestriction] public NativeSlice<ushort> inAtlasChunksOccupation;
         [ReadOnly] public NativeArray<byte> inByteMask;

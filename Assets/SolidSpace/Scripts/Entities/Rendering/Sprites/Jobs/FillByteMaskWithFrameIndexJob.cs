@@ -7,7 +7,7 @@ using Unity.Jobs;
 namespace SolidSpace.Entities.Rendering.Sprites
 {
     [BurstCompile]
-    public struct FillByteMaskWithSpriteIndexJob : IJobParallelFor
+    public struct FillByteMaskWithFrameIndexJob : IJobParallelFor
     {
         [ReadOnly] public NativeArray<ArchetypeChunk> inChunks;
         [ReadOnly] public ComponentTypeHandle<SpriteRenderComponent> spriteHandle;
@@ -23,8 +23,8 @@ namespace SolidSpace.Entities.Rendering.Sprites
             
             for (var i = 0; i < entityCount; i++)
             {
-                var atlasIndex = healthComponents[i].colorIndex;
-                outMask[atlasIndex.ReadChunkId() * 16 + atlasIndex.ReadItemId()] = 1;
+                var atlasIndex = healthComponents[i].frameIndex;
+                outMask[atlasIndex.ReadChunkId() * 64 + atlasIndex.ReadItemId()] = 1;
             }
         }
     }

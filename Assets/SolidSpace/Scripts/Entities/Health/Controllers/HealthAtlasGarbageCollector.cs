@@ -68,7 +68,7 @@ namespace SolidSpace.Entities.Health
             _profiler.BeginSample("Compare mask");
             var indicesToRelease = NativeMemory.CreateTempJobArray<AtlasIndex16>(occupiedChunkCount * 16);
             var indicesCounts = NativeMemory.CreateTempJobArray<int>(occupiedChunkCount);
-            new CompareAtlasMaskJob
+            new CompareAtlasMask16Job
             {
                 inByteMask = occupationByteMask,
                 inAtlasChunksOccupation = _healthAtlas.ChunksOccupation,

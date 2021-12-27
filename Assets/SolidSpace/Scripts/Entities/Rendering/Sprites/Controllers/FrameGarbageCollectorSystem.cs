@@ -1,6 +1,5 @@
 using System;
 using SolidSpace.Entities.Components;
-using SolidSpace.Entities.Health;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
 using SolidSpace.JobUtilities;
@@ -9,25 +8,25 @@ using SolidSpace.Profiling;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
-using UnityEngine;
 
 namespace SolidSpace.Entities.Rendering.Sprites
 {
-    public class SpriteGarbageCollectorSystem : IInitializable, IUpdatable
+    public class FrameGarbageCollectorSystem : IInitializable, IUpdatable
     {
-        private readonly ISpriteColorSystem _spriteAtlas;
         private readonly IEntityManager _entityManager;
         private readonly IProfilingManager _profilingManager;
-        
+        private readonly ISpriteFrameSystem _frameSystem;
+
         private EntityQuery _query;
         private ProfilingHandle _profiler;
 
-        public SpriteGarbageCollectorSystem(ISpriteColorSystem spriteAtlas, IEntityManager entityManager,
-            IProfilingManager profilingManager)
+        public FrameGarbageCollectorSystem(IEntityManager entityManager,
+                                           IProfilingManager profilingManager,
+                                           ISpriteFrameSystem frameSystem)
         {
-            _spriteAtlas = spriteAtlas;
             _entityManager = entityManager;
             _profilingManager = profilingManager;
+            _frameSystem = frameSystem;
         }
 
         public void OnInitialize()
@@ -46,13 +45,11 @@ namespace SolidSpace.Entities.Rendering.Sprites
         
         public void OnUpdate()
         {
-            return;
-            
             var archetypeChunks = _query.CreateArchetypeChunkArray(Allocator.TempJob);
            
             _profiler.BeginSample("Create byte mask");
-            var occupiedChunkCount = _spriteAtlas.ChunksOccupation.Length;
-            var byteMaskSize = occupiedChunkCount * 16;
+            var occupiedChunkCount = _frameSystem.ChunksOccupation.Length;
+            var byteMaskSize = occupiedChunkCount * 64;
             var occupationByteMask = NativeMemory.CreateTempJobArray<byte>(byteMaskSize);
             var jobCount = (int) Math.Ceiling(byteMaskSize / 128f);
             new FillNativeArrayJob<byte>
@@ -65,7 +62,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             _profiler.EndSample("Create byte mask");
             
             _profiler.BeginSample("Fill byte mask");
-            new FillByteMaskWithSpriteIndexJob
+            new FillByteMaskWithFrameIndexJob
             {
                 inChunks = archetypeChunks,
                 spriteHandle = _entityManager.GetComponentTypeHandle<SpriteRenderComponent>(true),
@@ -74,12 +71,12 @@ namespace SolidSpace.Entities.Rendering.Sprites
             _profiler.EndSample("Fill byte mask");
             
             _profiler.BeginSample("Compare mask");
-            var indicesToRelease = NativeMemory.CreateTempJobArray<AtlasIndex16>(occupiedChunkCount * 16);
+            var indicesToRelease = NativeMemory.CreateTempJobArray<AtlasIndex64>(occupiedChunkCount * 64);
             var indicesCounts = NativeMemory.CreateTempJobArray<int>(occupiedChunkCount);
-            new CompareAtlasMaskJob
+            new CompareAtlasMask64Job
             {
                 inByteMask = occupationByteMask,
-                inAtlasChunksOccupation = _spriteAtlas.ChunksOccupation,
+                inAtlasChunksOccupation = _frameSystem.ChunksOccupation,
                 outRedundantIndices = indicesToRelease,
                 outCounts = indicesCounts
             }.Schedule(occupiedChunkCount, 32).Complete();
@@ -87,10 +84,10 @@ namespace SolidSpace.Entities.Rendering.Sprites
             
             _profiler.BeginSample("Collect results");
             var indicesTotalCount = NativeMemory.CreateTempJobReference<int>(); 
-            new DataCollectJob<AtlasIndex16>
+            new DataCollectJob<AtlasIndex64>
             {
                 inCounts = indicesCounts,
-                inOffset = 16,
+                inOffset = 64,
                 inOutData = indicesToRelease,
                 outCount = indicesTotalCount
             }.Schedule().Complete();
@@ -100,7 +97,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
             var totalCount = indicesTotalCount.Value;
             for (var i = 0; i < totalCount; i++)
             {
-                _spriteAtlas.Release(indicesToRelease[i]);
+                _frameSystem.Release(indicesToRelease[i]);
             }
             _profiler.EndSample("Release indices");
             

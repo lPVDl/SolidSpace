@@ -99,12 +99,14 @@ namespace SolidSpace.Entities.Rendering.Sprites
 
         public AtlasIndex64 Allocate(int width, int height)
         {
-            return _indexManager.Allocate(width, height);
+            var index = _indexManager.Allocate(width, height);
+            
+            return index;
         }
 
-        public void Release(AtlasIndex64 index64)
+        public void Release(AtlasIndex64 index)
         {
-            _indexManager.Release(index64);
+            _indexManager.Release(index);
         }
     }
 }

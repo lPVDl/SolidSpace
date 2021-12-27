@@ -39,7 +39,7 @@ MonoBehaviour:
         - typeName: SolidSpace.Entities.Health.HealthAtlasSystem
         - typeName: SolidSpace.Playground.Tools.EntitySearch.EntitySearchSystem
         - typeName: SolidSpace.Entities.Health.HealthAtlasGarbageCollector
-        - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteGarbageCollectorSystem
+        - typeName: SolidSpace.Entities.Rendering.Sprites.FrameGarbageCollectorSystem
         - typeName: SolidSpace.Entities.Actors.ActorControlSystem
         - typeName: SolidSpace.Entities.Bullets.BulletComputeSystem
         - typeName: SolidSpace.Entities.Physics.Rigidbody.RigidbodyComputeSystem
@@ -70,7 +70,7 @@ MonoBehaviour:
         - typeName: SolidSpace.Entities.Despawn.TimeDespawnComputeSystem
         - typeName: SolidSpace.Playground.Tools.EntitySearch.EntitySearchSystem
         - typeName: SolidSpace.Entities.Health.HealthAtlasGarbageCollector
-        - typeName: SolidSpace.Entities.Rendering.Sprites.SpriteGarbageCollectorSystem
+        - typeName: SolidSpace.Entities.Rendering.Sprites.FrameGarbageCollectorSystem
         - typeName: SolidSpace.Entities.ParentHandle.ParentHandleGarbageCollector
       - _name: EntityCommand
         _controllers:
