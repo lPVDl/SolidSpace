@@ -1,16 +1,13 @@
 using System.Collections.Generic;
 using SolidSpace.Entities.Atlases;
-using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Despawn;
 using SolidSpace.Entities.Health;
 using SolidSpace.Entities.Prefabs;
-using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
 using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
 using SolidSpace.Profiling;
 using Unity.Collections;
-using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
@@ -21,20 +18,17 @@ namespace SolidSpace.Entities.Splitting
     {
         private readonly IEntityDestructionBuffer _destructionBuffer;
         private readonly IPrefabSystem _prefabSystem;
-        private readonly IEntityManager _entityManager;
         private readonly IHealthAtlasSystem _healthSystem;
         private readonly IProfilingManager _profilingManager;
         
         private ProfilingHandle _profiler;
-        private HashSet<Entity> _splittingQueue;
+        private HashSet<SplittingEntityData> _splittingQueue;
 
-        public SplittingController(IEntityManager entityManager,
-                                   IProfilingManager profilingManager,
+        public SplittingController(IProfilingManager profilingManager,
                                    IHealthAtlasSystem healthSystem,
                                    IEntityDestructionBuffer destructionBuffer,
                                    IPrefabSystem prefabSystem)
         {
-            _entityManager = entityManager;
             _profilingManager = profilingManager;
             _healthSystem = healthSystem;
             _destructionBuffer = destructionBuffer;
@@ -43,7 +37,7 @@ namespace SolidSpace.Entities.Splitting
 
         public void OnInitialize()
         {
-            _splittingQueue = new HashSet<Entity>();
+            _splittingQueue = new HashSet<SplittingEntityData>();
             _profiler = _profilingManager.GetHandle(this);
         }
 
@@ -51,9 +45,9 @@ namespace SolidSpace.Entities.Splitting
         {
         }
 
-        public void ScheduleSplittingCheck(Entity entity)
+        public void ScheduleSplittingCheck(SplittingEntityData entityData)
         {
-            _splittingQueue.Add(entity);
+            _splittingQueue.Add(entityData);
         }
 
         public void OnUpdate()
@@ -64,23 +58,17 @@ namespace SolidSpace.Entities.Splitting
             var shapeReading = NativeMemory.CreateTempJobArray<ShapeReadingData>(entityCount);
             var entityIndex = 0;
 
-            foreach (var entity in _splittingQueue)
+            foreach (var entityData in _splittingQueue)
             {
-                // TODO : Remove GetComponentData from here. Bullet system must pass all required data upon scheduling.
-                var entitySize = _entityManager.GetComponentData<RectSizeComponent>(entity).value;
-                var entitySizeInt = new int2((int)entitySize.x, (int)entitySize.y);
-                var healthIndex = _entityManager.GetComponentData<HealthComponent>(entity).index;
-                var healthOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks, healthIndex);
-
                 shapeReading[entityIndex] = new ShapeReadingData
                 {
-                    entity = entity,
+                    entity = entityData.entity,
                     seedMaskOffset = seedMaskSize,
-                    healthAtlasOffset = healthOffset,
-                    entitySize = entitySizeInt,
+                    healthAtlasOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks, entityData.health),
+                    entitySize = entityData.size,
                 };
 
-                seedMaskSize += entitySizeInt.x * entitySizeInt.y;
+                seedMaskSize += entityData.size.x * entityData.size.y;
 
                 entityIndex++;
             }
@@ -197,7 +185,12 @@ namespace SolidSpace.Entities.Splitting
 
                     }.Schedule();
 
-                    _prefabSystem.ScheduleReplication(parentData.entity, childHealth, childBounds);
+                    _prefabSystem.ScheduleReplication(new PrefabReplicationData
+                    {
+                        parent = parentData.entity,
+                        childHealth = childHealth,
+                        childBounds = childBounds
+                    });
                 }
             }
             _profiler.EndSample("Schedule health building & replication");

@@ -4,7 +4,6 @@ using SolidSpace.Entities.Atlases;
 using SolidSpace.Entities.Components;
 using SolidSpace.Entities.Health;
 using SolidSpace.Entities.Rendering.Sprites;
-using SolidSpace.Entities.Splitting;
 using SolidSpace.Entities.World;
 using SolidSpace.GameCycle;
 using SolidSpace.JobUtilities;
@@ -33,7 +32,7 @@ namespace SolidSpace.Entities.Prefabs
         private AtlasIndex16 _shipColorIndex;
         private NativeArray<byte> _shipHealth;
         private int2 _shipSize;
-        private List<ReplicationData> _replications;
+        private List<PrefabReplicationData> _replications;
 
         public PrefabSystem(PrefabSystemConfig config, 
                             ISpriteColorSystem colorSystem,
@@ -84,7 +83,7 @@ namespace SolidSpace.Entities.Prefabs
 
             ShipComponents = shipComponents;
 
-            _replications = new List<ReplicationData>();
+            _replications = new List<PrefabReplicationData>();
         }
 
         public void OnFinalize()
@@ -147,14 +146,9 @@ namespace SolidSpace.Entities.Prefabs
             }
         }
         
-        public void ScheduleReplication(Entity parent, AtlasIndex16 childHealth, ByteBounds childBounds)
+        public void ScheduleReplication(PrefabReplicationData replicationData)
         {
-            _replications.Add(new ReplicationData
-            {
-                parent = parent,
-                childHealth = childHealth,
-                childBounds = childBounds
-            });
+            _replications.Add(replicationData);
         }
 
         public void OnUpdate()

@@ -157,7 +157,12 @@ namespace SolidSpace.Entities.Bullets
                 if (!_pixelConnectionMask.HasBit(neighbourPixels) || 
                     IsAloneBorderPixel(hit.hitPixel, colliderSize, neighbourPixels))
                 {
-                    _splittingSystem.ScheduleSplittingCheck(hit.colliderEntity);   
+                    _splittingSystem.ScheduleSplittingCheck(new SplittingEntityData
+                    {
+                        entity = hit.colliderEntity,
+                        health = hit.colliderHealth,
+                        size = colliderSize
+                    });   
                 }
             }
             _destructionBuffer.ScheduleDestroy(_entitiesToDestroy.Slice(0, hitCount));

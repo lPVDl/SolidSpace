@@ -4,7 +4,7 @@ using Unity.Entities;
 
 namespace SolidSpace.Entities.Prefabs
 {
-    internal struct ReplicationData
+    public struct PrefabReplicationData
     {
         public Entity parent;
         public AtlasIndex16 childHealth;
