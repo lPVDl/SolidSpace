@@ -1,5 +1,6 @@
 using System;
 using SolidSpace.Entities.Components;
+using SolidSpace.Entities.Despawn;
 using SolidSpace.Entities.World;
 using SolidSpace.Gizmos;
 using SolidSpace.Playground.Core;
@@ -12,24 +13,27 @@ namespace SolidSpace.Playground.Tools.Eraser
 {
     internal class EraserTool : IPlaygroundTool, ICaptureToolHandler
     {
-        private readonly IEntityManager _entityManager;
         private readonly IPlaygroundUIManager _playgroundUIManager;
         private readonly IUIFactory _uiFactory;
         private readonly ICaptureToolFactory _captureToolFactory;
         private readonly IGizmosManager _gizmosManager;
+        private readonly IEntityDestructionSystem _destructionSystem;
 
         private ICaptureTool _captureTool;
         private IToolWindow _window;
         private GizmosHandle _gizmos;
 
-        public EraserTool(IEntityManager entityManager, IPlaygroundUIManager playgroundUIManager, 
-            IUIFactory uiFactory, ICaptureToolFactory captureToolFactory, IGizmosManager gizmosManager)
+        public EraserTool(IPlaygroundUIManager playgroundUIManager,
+                          IUIFactory uiFactory,
+                          ICaptureToolFactory captureToolFactory,
+                          IGizmosManager gizmosManager,
+                          IEntityDestructionSystem destructionSystem)
         {
-            _entityManager = entityManager;
             _playgroundUIManager = playgroundUIManager;
             _uiFactory = uiFactory;
             _captureToolFactory = captureToolFactory;
             _gizmosManager = gizmosManager;
+            _destructionSystem = destructionSystem;
         }
         
         public void OnInitialize()
@@ -72,7 +76,7 @@ namespace SolidSpace.Playground.Tools.Eraser
                     break;
                 
                 case ECaptureEventType.CaptureStart:
-                    _entityManager.DestroyEntity(eventData.entity);
+                    _destructionSystem.ScheduleDestroy(eventData.entity);
                     break;
                 
                 case ECaptureEventType.CaptureUpdate:
@@ -94,7 +98,7 @@ namespace SolidSpace.Playground.Tools.Eraser
         private void OnDestroyClicked()
         {
             var query = _captureTool.CreateQueryFromCurrentFilter();
-            _entityManager.DestroyEntity(query);
+            _destructionSystem.ScheduleDestroy(query);
         }
 
         public void OnFinalize()

@@ -17,7 +17,7 @@ namespace SolidSpace.Entities.Despawn
         private readonly IEntityManager _entityManager;
         private readonly IEntityWorldTime _time;
         private readonly IProfilingManager _profilingManager;
-        private readonly IEntityDestructionBuffer _destructionBuffer;
+        private readonly IEntityDestructionSystem _destructionSystem;
 
         private EntityQuery _query;
         private NativeArray<Entity> _entities;
@@ -25,12 +25,12 @@ namespace SolidSpace.Entities.Despawn
         private ProfilingHandle _profiler;
 
         public TimeDespawnComputeSystem(IEntityManager entityManager, IEntityWorldTime time, IProfilingManager profilingManager,
-            IEntityDestructionBuffer destructionBuffer)
+            IEntityDestructionSystem destructionSystem)
         {
             _entityManager = entityManager;
             _time = time;
             _profilingManager = profilingManager;
-            _destructionBuffer = destructionBuffer;
+            _destructionSystem = destructionSystem;
         }
         
         public void OnInitialize()
@@ -80,7 +80,7 @@ namespace SolidSpace.Entities.Despawn
             collectJobHandle.Complete();
             _profiler.EndSample("Compute & Collect");
 
-            _destructionBuffer.ScheduleDestroy(new NativeSlice<Entity>(_entities, 0, collectJob.outCount.Value));
+            _destructionSystem.ScheduleDestroy(new NativeSlice<Entity>(_entities, 0, collectJob.outCount.Value));
             
             _profiler.BeginSample("Disposal");
             chunks.Dispose();

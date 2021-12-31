@@ -16,7 +16,7 @@ namespace SolidSpace.Entities.Splitting
 {
     public class SplittingController : ISplittingCommandSystem, IInitializable, IUpdatable
     {
-        private readonly IEntityDestructionBuffer _destructionBuffer;
+        private readonly IEntityDestructionSystem _destructionSystem;
         private readonly IPrefabSystem _prefabSystem;
         private readonly IHealthAtlasSystem _healthSystem;
         private readonly IProfilingManager _profilingManager;
@@ -26,12 +26,12 @@ namespace SolidSpace.Entities.Splitting
 
         public SplittingController(IProfilingManager profilingManager,
                                    IHealthAtlasSystem healthSystem,
-                                   IEntityDestructionBuffer destructionBuffer,
+                                   IEntityDestructionSystem destructionSystem,
                                    IPrefabSystem prefabSystem)
         {
             _profilingManager = profilingManager;
             _healthSystem = healthSystem;
-            _destructionBuffer = destructionBuffer;
+            _destructionSystem = destructionSystem;
             _prefabSystem = prefabSystem;
         }
 
@@ -144,7 +144,7 @@ namespace SolidSpace.Entities.Splitting
                 var shapeCount = shapeCounts[parentId];
                 if (shapeCount == 0)
                 {
-                    _destructionBuffer.ScheduleDestroy(entity.entity);
+                    _destructionSystem.ScheduleDestroy(entity.entity);
                     continue;
                 }
 
@@ -157,7 +157,7 @@ namespace SolidSpace.Entities.Splitting
                     }
                 }
                 
-                _destructionBuffer.ScheduleDestroy(entity.entity);
+                _destructionSystem.ScheduleDestroy(entity.entity);
                 
                 var parentData = shapeReading[parentId];
 

@@ -3,10 +3,11 @@ using Unity.Entities;
 
 namespace SolidSpace.Entities.Despawn
 {
-    public interface IEntityDestructionBuffer
+    public interface IEntityDestructionSystem
     {
         void ScheduleDestroy(NativeSlice<Entity> entities);
 
         void ScheduleDestroy(Entity entity);
+        void ScheduleDestroy(EntityQuery query);
     }
 }

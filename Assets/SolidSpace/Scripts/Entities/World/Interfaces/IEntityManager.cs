@@ -21,5 +21,7 @@ namespace SolidSpace.Entities.World
         EntityQuery CreateEntityQuery(params EntityQueryDesc[] queryDesc);
         void DestroyEntity(EntityQuery query);
         bool CheckExists(Entity entity);
+        void AddComponent<T>(NativeArray<Entity> entities) where T : struct, IComponentData;
+        void AddComponent<T>(EntityQuery query) where T : struct, IComponentData;
     }
 }

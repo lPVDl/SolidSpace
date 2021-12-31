@@ -25,7 +25,7 @@ namespace SolidSpace.Entities.Bullets
         private readonly IEntityWorldTime _worldTime;
         private readonly IHealthAtlasSystem _healthSystem;
         private readonly IGizmosManager _gizmosManager;
-        private readonly IEntityDestructionBuffer _destructionBuffer;
+        private readonly IEntityDestructionSystem _destructionSystem;
         private readonly ISplittingCommandSystem _splittingSystem;
         private readonly ISpriteFrameSystem _frameSystem;
 
@@ -44,7 +44,7 @@ namespace SolidSpace.Entities.Bullets
             IEntityManager entityManager,
             IHealthAtlasSystem healthSystem, 
             IGizmosManager gizmosManager,
-            IEntityDestructionBuffer destructionBuffer,
+            IEntityDestructionSystem destructionSystem,
             ISplittingCommandSystem splittingSystem,
             ISpriteFrameSystem frameSystem)
         {
@@ -53,7 +53,7 @@ namespace SolidSpace.Entities.Bullets
             _worldTime = worldTime;
             _healthSystem = healthSystem;
             _gizmosManager = gizmosManager;
-            _destructionBuffer = destructionBuffer;
+            _destructionSystem = destructionSystem;
             _splittingSystem = splittingSystem;
             _frameSystem = frameSystem;
         }
@@ -165,7 +165,7 @@ namespace SolidSpace.Entities.Bullets
                     });   
                 }
             }
-            _destructionBuffer.ScheduleDestroy(_entitiesToDestroy.Slice(0, hitCount));
+            _destructionSystem.ScheduleDestroy(_entitiesToDestroy.Slice(0, hitCount));
             _profiler.EndSample("Apply damage");
             
             _profiler.BeginSample("Gizmos");

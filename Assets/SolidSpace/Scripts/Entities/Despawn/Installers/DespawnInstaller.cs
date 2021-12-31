@@ -7,7 +7,7 @@ namespace SolidSpace.Entities.Despawn
         public override void InstallBindings(IDependencyContainer container)
         {
             container.Bind<TimeDespawnComputeSystem>();
-            container.Bind<EntityDestructionBuffer>();
+            container.Bind<EntityDestructionSystem>();
         }
     }
 }

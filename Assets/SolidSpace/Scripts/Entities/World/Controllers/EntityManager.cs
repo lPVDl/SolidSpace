@@ -12,6 +12,16 @@ namespace SolidSpace.Entities.World
         {
             _world = new Unity.Entities.World("SolidSpace");
         }
+
+        public void AddComponent<T>(NativeArray<Entity> entities) where T : struct, IComponentData
+        {
+            _world.EntityManager.AddComponent<T>(entities);
+        }
+
+        public void AddComponent<T>(EntityQuery query) where T : struct, IComponentData
+        {
+            _world.EntityManager.AddComponent<T>(query);
+        }
         
         public void DestroyEntity(NativeSlice<Entity> entities)
         {
