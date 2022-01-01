@@ -8,6 +8,7 @@ using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
 using SolidSpace.Profiling;
 using Unity.Collections;
+using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
@@ -22,7 +23,8 @@ namespace SolidSpace.Entities.Splitting
         private readonly IProfilingManager _profilingManager;
         
         private ProfilingHandle _profiler;
-        private HashSet<SplittingEntityData> _splittingQueue;
+        private List<SplittingEntityData> _splittingQueue;
+        private HashSet<Entity> _entities;
 
         public SplittingController(IProfilingManager profilingManager,
                                    IHealthAtlasSystem healthSystem,
@@ -37,7 +39,8 @@ namespace SolidSpace.Entities.Splitting
 
         public void OnInitialize()
         {
-            _splittingQueue = new HashSet<SplittingEntityData>();
+            _splittingQueue = new List<SplittingEntityData>();
+            _entities = new HashSet<Entity>();
             _profiler = _profilingManager.GetHandle(this);
         }
 
@@ -47,7 +50,10 @@ namespace SolidSpace.Entities.Splitting
 
         public void ScheduleSplittingCheck(SplittingEntityData entityData)
         {
-            _splittingQueue.Add(entityData);
+            if (_entities.Add(entityData.entity))
+            {
+                _splittingQueue.Add(entityData);
+            }
         }
 
         public void OnUpdate()
@@ -73,6 +79,7 @@ namespace SolidSpace.Entities.Splitting
                 entityIndex++;
             }
 
+            _entities.Clear();
             _splittingQueue.Clear();
             _profiler.EndSample("Collect entity data");
 
