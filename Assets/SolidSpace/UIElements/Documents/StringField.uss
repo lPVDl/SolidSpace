@@ -2,7 +2,7 @@
 
 Label {
     min-width: 100px;
-    color: var(--disabled-color);
+    color: var(--enabled-color);
 }
 
 TextField {
@@ -11,8 +11,13 @@ TextField {
 
 TextInput {
     border-color: var(--disabled-color);
+    border-width: 0;
+    border-bottom-width: 1px;
+    border-radius: 0;
     -unity-font: url('../Resources/Fonts/HelvetiPixel.ttf');
+    color: var(--enabled-color);
     font-size: 16px;
+    background-color: var(--background-color);
 }
 
 TextInput:hover {
@@ -21,8 +26,4 @@ TextInput:hover {
 
 TextInput:focus {
     border-color: var(--enabled-color);
-}
-
-Label:focus{
-    color: var(--enabled-color);
 }
