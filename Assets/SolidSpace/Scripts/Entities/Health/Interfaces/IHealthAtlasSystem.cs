@@ -1,6 +1,7 @@
 using SolidSpace.Entities.Atlases;
 using SolidSpace.Mathematics;
 using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace SolidSpace.Entities.Health
@@ -11,12 +12,8 @@ namespace SolidSpace.Entities.Health
         
         public NativeSlice<AtlasChunk1D> Chunks { get; }
         
-        public NativeSlice<ushort> ChunksOccupation { get; }
-
-        public AtlasIndex16 Allocate(int width, int height);
+        public AtlasIndex16 Allocate(int2 size);
         
-        public void Copy(Texture2D source, AtlasIndex16 target);
-
         public void Release(AtlasIndex16 index);
     }
 }

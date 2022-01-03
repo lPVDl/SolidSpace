@@ -80,8 +80,8 @@ namespace SolidSpace.Entities.Rendering.Sprites
             
             _profiler.BeginSample("Compute offsets");
             var chunkTotal = chunks.Length;
-            var chunkPerMesh = NativeMemory.CreateTempJobArray<int>(chunkTotal);
-            var spritePerMesh = NativeMemory.CreateTempJobArray<int>(chunkTotal);
+            var chunkPerMesh = NativeMemory.CreateTempArray<int>(chunkTotal);
+            var spritePerMesh = NativeMemory.CreateTempArray<int>(chunkTotal);
             var totalSpriteCount = 0;
             var meshCount = 0;
             var chunkIndex = 0;
@@ -98,7 +98,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
 
             _profiler.BeginSample("Compute meshes");
             var meshDataArray = Mesh.AllocateWritableMeshData(meshCount);
-            var computeJobHandles = NativeMemory.CreateTempJobArray<JobHandle>(meshCount);
+            var computeJobHandles = NativeMemory.CreateTempArray<JobHandle>(meshCount);
             var chunkOffset = 0;
             for (var i = 0; i < meshCount; i++)
             {

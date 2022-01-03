@@ -13,4 +13,7 @@ MonoBehaviour:
   m_Name: SolidSpace.Entities.Prefabs
   m_EditorClassIdentifier: 
   _config:
-    _shipTexture: {fileID: 2800000, guid: c7dc818a243fcca41b5ce4e55ce9e7ca, type: 3}
+    _bakedHealthConfig:
+      _atlasSize: 65536
+      _minItemSize: 16
+      _maxItemSize: 1024

@@ -26,7 +26,7 @@ namespace SolidSpace.Entities.Randomization
 
         public void OnInitialize()
         {
-            _buffer = NativeMemory.CreatePersistentArray<float>(BufferChunkSize);
+            _buffer = NativeMemory.CreatePermArray<float>(BufferChunkSize);
             for (var i = 0; i < BufferChunkSize; i++)
             {
                 _buffer[i] = Random.value;
@@ -40,7 +40,7 @@ namespace SolidSpace.Entities.Randomization
             var requiredCapacity = Mathf.CeilToInt(entityCount / (float) BufferChunkSize) * BufferChunkSize;
             if (_buffer.Length < requiredCapacity)
             {
-                var newBuffer = NativeMemory.CreatePersistentArray<float>(requiredCapacity);
+                var newBuffer = NativeMemory.CreatePermArray<float>(requiredCapacity);
                 for (var i = 0; i < _buffer.Length; i++)
                 {
                     newBuffer[i] = _buffer[i];

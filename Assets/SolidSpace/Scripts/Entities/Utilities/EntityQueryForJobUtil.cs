@@ -17,7 +17,7 @@ namespace SolidSpace.Entities.Utilities
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ArchetypeChunksWithOffsets ComputeOffsets(NativeArray<ArchetypeChunk> chunks)
         {
-            var offsets = NativeMemory.CreateTempJobArray<int>(chunks.Length);
+            var offsets = NativeMemory.CreateTempArray<int>(chunks.Length);
             var chunkCount = chunks.Length;
             var entityCount = 0;
             
@@ -40,7 +40,7 @@ namespace SolidSpace.Entities.Utilities
             int cycleLength, ref int cycleIndex)
         {
             var chunks = entityQuery.CreateArchetypeChunkArray(Allocator.TempJob);
-            var offsets = NativeMemory.CreateTempJobArray<int>(chunks.Length);
+            var offsets = NativeMemory.CreateTempArray<int>(chunks.Length);
             var chunksLength = chunks.Length;
             
             var chunkCount = 0;

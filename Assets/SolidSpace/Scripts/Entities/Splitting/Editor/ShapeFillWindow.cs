@@ -59,24 +59,21 @@ namespace SolidSpace.Entities.Splitting.Editor
             
             TimerBegin();
             var pixels = _inputTexture.GetPixelData<Color32>(0);
-            
-            var textureWidth = _inputTexture.width;
-            var textureHeight = _inputTexture.height;
-
-            var requiredByteCount = HealthUtil.GetRequiredByteCount(textureWidth, textureHeight);
-            var frameBits = NativeMemory.CreateTempJobArray<byte>(requiredByteCount);
-            HealthUtil.TextureToHealth(pixels, textureWidth, textureHeight, frameBits);
+            var textureSize = new int2(_inputTexture.width, _inputTexture.height);
+            var requiredByteCount = HealthUtil.GetRequiredByteCount(textureSize);
+            var frameBits = NativeMemory.CreateTempArray<byte>(requiredByteCount);
+            HealthUtil.TextureToHealth(pixels, textureSize, frameBits);
             TimerEnd("Convert to bit array");
 
-            var seedJobConnections = NativeMemory.CreateTempJobArray<byte2>(256);
-            var seedJobBounds = NativeMemory.CreateTempJobArray<ByteBounds>(256);
-            var seedJobMask = NativeMemory.CreateTempJobArray<byte>(textureWidth * textureHeight);
-            var seedJobResult = NativeMemory.CreateTempJobArray<ShapeSeedJobResult>(1);
+            var seedJobConnections = NativeMemory.CreateTempArray<byte2>(256);
+            var seedJobBounds = NativeMemory.CreateTempArray<ByteBounds>(256);
+            var seedJobMask = NativeMemory.CreateTempArray<byte>(textureSize.x * textureSize.y);
+            var seedJobResult = NativeMemory.CreateTempArray<ShapeSeedJobResult>(1);
             
             var seedJob = new ShapeSeedJob
             {
                 inFrameBits = frameBits,
-                inFrameSize = new int2(textureWidth, textureHeight),
+                inFrameSize = textureSize,
                 outResult = seedJobResult,
                 outConnections = seedJobConnections,
                 outSeedBounds = seedJobBounds,
@@ -96,8 +93,8 @@ namespace SolidSpace.Entities.Splitting.Editor
             Debug.Log("Seed count: " + seedJob.outResult[0].seedCount);
             Debug.Log("Connection count: " + seedJob.outResult[0].connectionCount);
 
-            var shapeReadJobRootSeeds = NativeMemory.CreateTempJobArray<byte>(256);
-            var shapeReadShapeCount = NativeMemory.CreateTempJobArray<int>(1);
+            var shapeReadJobRootSeeds = NativeMemory.CreateTempArray<byte>(256);
+            var shapeReadShapeCount = NativeMemory.CreateTempArray<int>(1);
             
             var shapeReadJob = new ShapeReadJob
             {
@@ -123,8 +120,7 @@ namespace SolidSpace.Entities.Splitting.Editor
                 Debug.Log($"Shape at ({pos.x}, {pos.y}) with size ({width}, {height})");
             }
 
-            var exportTexture = new Texture2D(textureWidth, textureHeight, TextureFormat.RGB24, false);
-            var textureSize = textureWidth * textureHeight;
+            var exportTexture = new Texture2D(textureSize.x, textureSize.y, TextureFormat.RGB24, false);
             var exportTextureRaw = exportTexture.GetRawTextureData<ColorRGB24>();
             var colors = new ColorRGB24[]
             {
@@ -136,7 +132,8 @@ namespace SolidSpace.Entities.Splitting.Editor
                 new ColorRGB24 {r = 255, g = 255, b = 0},
                 new ColorRGB24 {r = 255, g = 255, b = 255},
             };
-            for (var i = 0; i < textureSize; i++)
+            
+            for (var i = 0; i < textureSize.x * textureSize.y; i++)
             {
                 var maskColor = seedJob.outSeedMask[i];
                 exportTextureRaw[i] = maskColor == 0 ? default : colors[maskColor % colors.Length];

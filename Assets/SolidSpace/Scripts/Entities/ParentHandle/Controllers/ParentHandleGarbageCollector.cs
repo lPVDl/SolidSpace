@@ -43,7 +43,7 @@ namespace SolidSpace.Entities.ParentHandle
             
             _profiler.BeginSample("Create byte mask");
             var maskSize = handles.Length;
-            var occupationMask = NativeMemory.CreateTempJobArray<byte>(handles.Length);
+            var occupationMask = NativeMemory.CreateTempArray<byte>(handles.Length);
             var jobCount = (int) Math.Ceiling(maskSize / 128f);
             new FillNativeArrayJob<byte>
             {
@@ -70,8 +70,8 @@ namespace SolidSpace.Entities.ParentHandle
                 inByteMask = occupationMask,
                 inItemPerJob = 32,
                 inParentHandles = _handleManager.Handles,
-                outCounts = NativeMemory.CreateTempJobArray<int>(jobCount),
-                outWastedHandles = NativeMemory.CreateTempJobArray<ushort>(maskSize)
+                outCounts = NativeMemory.CreateTempArray<int>(jobCount),
+                outWastedHandles = NativeMemory.CreateTempArray<ushort>(maskSize)
             };
             compareJob.Schedule(jobCount, 4).Complete();
             _profiler.EndSample("Compare mask");

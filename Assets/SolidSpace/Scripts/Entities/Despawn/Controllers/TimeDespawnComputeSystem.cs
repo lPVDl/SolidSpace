@@ -38,7 +38,7 @@ namespace SolidSpace.Entities.Despawn
             _profiler = _profilingManager.GetHandle(this);
             _query = _entityManager.CreateEntityQuery(typeof(TimeDespawnComponent));
             _cycleIndex = 0;
-            _entities = NativeMemory.CreatePersistentArray<Entity>(4096);
+            _entities = NativeMemory.CreatePermArray<Entity>(4096);
         }
 
         public void OnUpdate()
@@ -51,7 +51,7 @@ namespace SolidSpace.Entities.Despawn
             if (_entities.Length < chunks.entityCount)
             {
                 _entities.Dispose();
-                _entities = NativeMemory.CreatePersistentArray<Entity>(chunks.entityCount * 2);
+                _entities = NativeMemory.CreatePermArray<Entity>(chunks.entityCount * 2);
             }
             _profiler.EndSample("Update Entity Buffer");
 
@@ -62,7 +62,7 @@ namespace SolidSpace.Entities.Despawn
                 inWriteOffsets = chunks.chunkOffsets,
                 despawnHandle = _entityManager.GetComponentTypeHandle<TimeDespawnComponent>(true),
                 entityHandle = _entityManager.GetEntityTypeHandle(),
-                outEntityCounts = NativeMemory.CreateTempJobArray<int>(chunks.chunkCount), 
+                outEntityCounts = NativeMemory.CreateTempArray<int>(chunks.chunkCount), 
                 outEntities = _entities,
                 time = (float) _time.ElapsedTime
             };

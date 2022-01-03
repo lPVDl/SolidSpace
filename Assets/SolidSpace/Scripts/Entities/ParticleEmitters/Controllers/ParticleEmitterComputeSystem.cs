@@ -43,7 +43,7 @@ namespace SolidSpace.Entities.ParticleEmitters
                 typeof(RandomValueComponent),
                 typeof(RepeatTimerComponent)
             });
-            _particles = NativeMemory.CreatePersistentArray<ParticleEmitterData>(BufferChunkSize);
+            _particles = NativeMemory.CreatePermArray<ParticleEmitterData>(BufferChunkSize);
             _particleCount = NativeMemory.CreatePersistentReference(0);
         }
 
@@ -72,7 +72,7 @@ namespace SolidSpace.Entities.ParticleEmitters
                 rotationHandle = _entityManager.GetComponentTypeHandle<RotationComponent>(true),
                 inTime = (float) _time.ElapsedTime,
                 outParticles = _particles, 
-                outParticleCounts = NativeMemory.CreateTempJobArray<int>(chunks.chunkCount),
+                outParticleCounts = NativeMemory.CreateTempArray<int>(chunks.chunkCount),
             };
             var computeHandle = computeJob.Schedule(chunks.chunkCount, 32);
 

@@ -34,8 +34,8 @@ namespace SolidSpace.Entities.Atlases
                 _partiallyFilledChunks[i] = new List<ushort>();
             }
 
-            _chunks = NativeMemory.CreatePersistentArray<AtlasChunk1D>(0);
-            _chunksOccupation = NativeMemory.CreatePersistentArray<ushort>(0);
+            _chunks = NativeMemory.CreatePermArray<AtlasChunk1D>(0);
+            _chunksOccupation = NativeMemory.CreatePermArray<ushort>(0);
             
             Chunks = new NativeSlice<AtlasChunk1D>(_chunks, 0, 0);
             ChunksOccupation = new NativeSlice<ushort>(_chunksOccupation, 0, 0);

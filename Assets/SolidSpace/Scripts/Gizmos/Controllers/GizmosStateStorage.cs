@@ -22,8 +22,8 @@ namespace SolidSpace.Gizmos
         {
             _handleToId = new Dictionary<string, ushort>();
             _lastHandleId = 0;
-            _activityChunks = NativeMemory.CreatePersistentArray<int>(0);
-            _colors = NativeMemory.CreatePersistentArray<Color>(0);
+            _activityChunks = NativeMemory.CreatePermArray<int>(0);
+            _colors = NativeMemory.CreatePermArray<Color>(0);
             _names = new List<string>();
         }
 

@@ -57,7 +57,7 @@ namespace SolidSpace.Entities.Physics.Colliders
         private static FloatBounds ComputeWorldBounds(NativeArray<FloatBounds> colliders, int colliderCount, ProfilingHandle profiler)
         {
             var colliderJobCount = (int) Math.Ceiling(colliderCount / 128f);
-            var colliderJoinedBounds = NativeMemory.CreateTempJobArray<FloatBounds>(colliderJobCount);
+            var colliderJoinedBounds = NativeMemory.CreateTempArray<FloatBounds>(colliderJobCount);
             var worldBoundsJob = new JoinBoundsJob
             {
                 inBounds = colliders,
@@ -132,7 +132,7 @@ namespace SolidSpace.Entities.Physics.Colliders
         private static float2 FindMaxColliderSize(NativeArray<FloatBounds> colliders, int colliderCount, ProfilingHandle profiler)
         {
             var colliderJobCount = (int) Math.Ceiling(colliderCount / 128f);
-            var colliderMaxSizes = NativeMemory.CreateTempJobArray<float2>(colliderJobCount);
+            var colliderMaxSizes = NativeMemory.CreateTempArray<float2>(colliderJobCount);
             var colliderSizesJob = new FindMaxColliderSizeJob
             {
                 inBounds = colliders,

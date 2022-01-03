@@ -9,12 +9,12 @@ namespace SolidSpace.Entities.Prefabs
     [BurstCompile]
     public struct BlitHealthToFrameJob : IJob
     {
-        [ReadOnly] public int3 inAtlasOffset;
-        [ReadOnly] public int2 inAtlasSize;
+        [ReadOnly] public int3 inFrameAtlasOffset;
+        [ReadOnly] public int2 inFrameAtlasSize;
         [ReadOnly] public int2 inHealthSize;
         [ReadOnly] public NativeSlice<byte> inHealth;
 
-        public NativeArray<float> inOutAtlasTexture;
+        public NativeArray<float> inOutFrameAtlas;
 
         public void Execute()
         {
@@ -22,19 +22,19 @@ namespace SolidSpace.Entities.Prefabs
             {
                 for (var x = 0; x < inHealthSize.x; x++)
                 {
-                    var framePoint = (inAtlasOffset.y + y) * inAtlasSize.x + inAtlasOffset.x + x;
-                    var frameValue = (int) inOutAtlasTexture[framePoint];
+                    var framePoint = (inFrameAtlasOffset.y + y) * inFrameAtlasSize.x + inFrameAtlasOffset.x + x;
+                    var frameValue = (int) inOutFrameAtlas[framePoint];
                     
                     if (HealthUtil.HasBit(inHealth, inHealthSize, new int2(x, y)))
                     {
-                        frameValue |= 1 << inAtlasOffset.z;
+                        frameValue |= 1 << inFrameAtlasOffset.z;
                     }
                     else
                     {
-                        frameValue &= ~(1 << inAtlasOffset.z);
+                        frameValue &= ~(1 << inFrameAtlasOffset.z);
                     }
 
-                    inOutAtlasTexture[framePoint] = (ushort) frameValue;
+                    inOutFrameAtlas[framePoint] = (ushort) frameValue;
                 }
             }
         }

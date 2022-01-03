@@ -4,7 +4,7 @@ using Unity.Collections;
 
 namespace SolidSpace.Gizmos
 {
-    internal struct ShapeStorage<T> : IDisposable where T : struct
+    internal struct ShapeStorage<T> : IDisposable where T : unmanaged
     {
         private NativeArray<T> _shapes;
         private int _shapeCount;
@@ -13,7 +13,7 @@ namespace SolidSpace.Gizmos
         public ShapeStorage(int allocationSize)
         {
             _allocationSize = allocationSize;
-            _shapes = NativeMemory.CreatePersistentArray<T>(allocationSize);
+            _shapes = NativeMemory.CreatePermArray<T>(allocationSize);
             _shapeCount = 0;
         }
 

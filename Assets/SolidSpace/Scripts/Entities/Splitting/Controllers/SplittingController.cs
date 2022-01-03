@@ -61,7 +61,7 @@ namespace SolidSpace.Entities.Splitting
             _profiler.BeginSample("Collect entity data");
             var entityCount = _splittingQueue.Count;
             var seedMaskSize = 0;
-            var shapeReading = NativeMemory.CreateTempJobArray<ShapeReadingData>(entityCount);
+            var shapeReading = NativeMemory.CreateTempArray<ShapeReadingData>(entityCount);
             var entityIndex = 0;
 
             foreach (var entityData in _splittingQueue)
@@ -84,20 +84,20 @@ namespace SolidSpace.Entities.Splitting
             _profiler.EndSample("Collect entity data");
 
             _profiler.BeginSample("Allocate arrays");
-            var connections = NativeMemory.CreateTempJobArray<byte2>(256 * entityCount);
-            var seedResults = NativeMemory.CreateTempJobArray<ShapeSeedJobResult>(entityCount);
-            var bounds = NativeMemory.CreateTempJobArray<ByteBounds>(256 * entityCount);
-            var seedMask = NativeMemory.CreateTempJobArray<byte>(seedMaskSize);
-            var shapeCounts = NativeMemory.CreateTempJobArray<int>(entityCount);
-            var shapeRootSeeds = NativeMemory.CreateTempJobArray<byte>(256 * entityCount);
-            var jobHandles = NativeMemory.CreateTempJobArray<JobHandle>(entityCount);
+            var connections = NativeMemory.CreateTempArray<byte2>(256 * entityCount);
+            var seedResults = NativeMemory.CreateTempArray<ShapeSeedJobResult>(entityCount);
+            var bounds = NativeMemory.CreateTempArray<ByteBounds>(256 * entityCount);
+            var seedMask = NativeMemory.CreateTempArray<byte>(seedMaskSize);
+            var shapeCounts = NativeMemory.CreateTempArray<int>(entityCount);
+            var shapeRootSeeds = NativeMemory.CreateTempArray<byte>(256 * entityCount);
+            var jobHandles = NativeMemory.CreateTempArray<JobHandle>(entityCount);
             _profiler.EndSample("Allocate arrays");
 
             _profiler.BeginSample("Schedule jobs");
             for (var i = 0; i < entityCount; i++)
             {
                 var entity = shapeReading[i];
-                var frameLength = HealthUtil.GetRequiredByteCount(entity.entitySize.x, entity.entitySize.y);
+                var frameLength = HealthUtil.GetRequiredByteCount(entity.entitySize);
                 var maskSize = entity.entitySize.x * entity.entitySize.y;
 
                 var seedJob = new ShapeSeedJob
@@ -136,7 +136,7 @@ namespace SolidSpace.Entities.Splitting
             }
 
             jobHandles.Dispose();
-            jobHandles = NativeMemory.CreateTempJobArray<JobHandle>(estimatedChildCount);
+            jobHandles = NativeMemory.CreateTempArray<JobHandle>(estimatedChildCount);
             var handleCount = 0;
             
             for (var parentId = 0; parentId < entityCount; parentId++)
@@ -172,7 +172,7 @@ namespace SolidSpace.Entities.Splitting
                 {
                     var childBounds = bounds[parentId * 256 + childId];
                     var childSize = childBounds.GetSize();
-                    var childHealth = _healthSystem.Allocate(childSize.x, childSize.y);
+                    var childHealth = _healthSystem.Allocate(childSize);
 
                     jobHandles[handleCount++] = new BlitShapeHealthFromMaskJob
                     {

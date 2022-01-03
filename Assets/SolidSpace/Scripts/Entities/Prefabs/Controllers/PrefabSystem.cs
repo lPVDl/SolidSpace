@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using SolidSpace.Entities.Atlases;
 using SolidSpace.Entities.Components;
+using SolidSpace.Entities.Despawn;
 using SolidSpace.Entities.Health;
 using SolidSpace.Entities.Rendering.Sprites;
 using SolidSpace.Entities.World;
@@ -16,40 +18,45 @@ using UnityEngine;
 
 namespace SolidSpace.Entities.Prefabs
 {
-    internal class PrefabSystem : IPrefabSystem, IInitializable, IUpdatable
+    internal class PrefabSystem : IInitializable, IUpdatable, IPrefabSystem, 
+        IEntityDestructionHandler
     {
-        public IReadOnlyList<ComponentType> ShipComponents { get; private set; }
-
-        public int2 ShipSize => _shipSize;
+        public IReadOnlyList<ComponentType> PrefabComponents { get; private set; }
 
         private readonly PrefabSystemConfig _config;
         private readonly ISpriteColorSystem _colorSystem;
-        private readonly IEntityManager _entityManager;
         private readonly ISpriteFrameSystem _frameSystem;
         private readonly IHealthAtlasSystem _healthSystem;
+        private readonly IEntityManager _entityManager;
 
-        private EntityArchetype _shipArchetype;
-        private AtlasIndex16 _shipColorIndex;
-        private NativeArray<byte> _shipHealth;
-        private int2 _shipSize;
+        private AtlasIndexManager1D16 _bakedHealthManager;
+        private NativeArray<byte> _bakedHealth;
+        private NativeArray<BakedPrefabData> _prefabs;
+        private int _prefabCount;
+        private EntityArchetype _prefabArchetype;
         private List<PrefabReplicationData> _replications;
+        private List<ushort> _freePrefabIndices;
+        private EntityQuery _destroyalQuery;
 
         public PrefabSystem(PrefabSystemConfig config, 
-                            ISpriteColorSystem colorSystem,
-                            IEntityManager entityManager,
-                            ISpriteFrameSystem frameSystem,
-                            IHealthAtlasSystem healthSystem)
+                                        ISpriteColorSystem colorSystem,
+                                        ISpriteFrameSystem frameSystem,
+                                        IHealthAtlasSystem healthSystem,
+                                        IEntityManager entityManager)
         {
             _config = config;
             _colorSystem = colorSystem;
-            _entityManager = entityManager;
             _frameSystem = frameSystem;
             _healthSystem = healthSystem;
+            _entityManager = entityManager;
         }
 
         public void OnInitialize()
         {
-            var shipComponents = new ComponentType[]
+            _bakedHealthManager = new AtlasIndexManager1D16(_config.BakedHealthConfig);
+            _bakedHealth = NativeMemory.CreatePermArray<byte>(_config.BakedHealthConfig.AtlasSize);
+            _prefabs = NativeMemory.CreateTempArray<BakedPrefabData>(0);
+            var components = new ComponentType[]
             {
                 typeof(PositionComponent),
                 typeof(RotationComponent),
@@ -62,41 +69,113 @@ namespace SolidSpace.Entities.Prefabs
                 typeof(RigidbodyComponent),
                 typeof(PrefabInstanceComponent)
             };
-            
-            _shipArchetype = _entityManager.CreateArchetype(shipComponents);
-            var texture = _config.ShipTexture;
-            _shipSize = new int2(texture.width, texture.height);
-            _shipColorIndex = _colorSystem.Allocate(_shipSize.x, _shipSize.y);
-            _colorSystem.Copy(texture, _shipColorIndex);
-
-            var byteCount = HealthUtil.GetRequiredByteCount(texture.width, texture.height);
-            _shipHealth = NativeMemory.CreatePersistentArray<byte>(byteCount);
-
-            if (texture.format != TextureFormat.RGB24)
-            {
-                var message = $"Texture expected to have format RGB24, but was {texture.format}.";
-                throw new InvalidOperationException(message);
-            }
-
-            var pixels = texture.GetPixelData<ColorRGB24>(0);
-            HealthUtil.TextureToHealth(pixels, texture.width, texture.height, _shipHealth);
-
-            ShipComponents = shipComponents;
-
+            _prefabArchetype = _entityManager.CreateArchetype(components);
             _replications = new List<PrefabReplicationData>();
+            _freePrefabIndices = new List<ushort>();
+            _destroyalQuery = _entityManager.CreateEntityQuery(new ComponentType[]
+            {
+                typeof(PrefabInstanceComponent),
+                typeof(DestroyedComponent)
+            });
+
+            PrefabComponents = components;
         }
 
         public void OnFinalize()
         {
-            _colorSystem.Release(_shipColorIndex);
-            _shipHealth.Dispose();
+            _bakedHealthManager.Dispose();
+            _bakedHealth.Dispose();
+            _prefabs.Dispose();
         }
         
-        public void SpawnShip(float2 position, float rotation)
+        public ushort Create(Texture2D texture)
         {
-            var frameIndex = _frameSystem.Allocate(_shipSize.x, _shipSize.y);
-            var healthIndex = _healthSystem.Allocate(_shipSize.x, _shipSize.y);
-            var entity = _entityManager.CreateEntity(_shipArchetype);
+            var size = new int2(texture.width, texture.height);
+            var colorIndex = _colorSystem.Allocate(size);
+            _colorSystem.Copy(texture, colorIndex);
+            
+            var pixels = texture.GetPixelData<ColorRGB24>(0);
+            var healthByteCount = HealthUtil.GetRequiredByteCount(size);
+            var healthIndex = _bakedHealthManager.Allocate(healthByteCount);
+            var healthOffset = AtlasMath.ComputeOffset(_bakedHealthManager.Chunks, healthIndex);
+            HealthUtil.TextureToHealth(pixels, size, _bakedHealth.Slice(healthOffset, healthByteCount));
+
+            var prefabIndex = AllocatePrefabIndex();
+            _prefabs[prefabIndex] = new BakedPrefabData
+            {
+                colorIndex = colorIndex,
+                bakedHealthIndex = healthIndex,
+                size = size,
+                entityReferenceCount = 0,
+                hasManagedReference = true,
+                isCreated = true
+            };
+
+            return prefabIndex;
+        }
+
+        private ushort AllocatePrefabIndex()
+        {
+            var freeIndexCount = _freePrefabIndices.Count;
+            if (freeIndexCount > 0)
+            {
+                var index = _freePrefabIndices[freeIndexCount - 1];
+                _freePrefabIndices.RemoveAt(freeIndexCount - 1);
+                return index;
+            }
+            
+            NativeMemory.EnsureCapacity(ref _prefabs, _prefabCount + 1);
+            
+            return (ushort) _prefabCount++;
+        }
+
+        public void ScheduleRelease(ushort prefabIndex)
+        {
+            var prefabData = GetAndValidate(prefabIndex);
+            if (!prefabData.hasManagedReference)
+            {
+                throw new InvalidOperationException($"Prefab with index {prefabIndex} is already released.");
+            }
+
+            prefabData.hasManagedReference = false;
+            UpdateOrReleasePrefab(prefabData, prefabIndex);
+        }
+
+        public void OnBeforeEntitiesDestroyed()
+        {
+            var prefabs = _destroyalQuery.ToComponentDataArray<PrefabInstanceComponent>(Allocator.TempJob);
+            foreach (var prefabComponent in prefabs)
+            {
+                var prefabData = _prefabs[prefabComponent.prefabIndex];
+                prefabData.entityReferenceCount--;
+                UpdateOrReleasePrefab(prefabData, prefabComponent.prefabIndex);
+            }
+
+            prefabs.Dispose();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void UpdateOrReleasePrefab(BakedPrefabData data, ushort prefabIndex)
+        {
+            if (!data.hasManagedReference && data.entityReferenceCount == 0)
+            {
+                _bakedHealthManager.Release(data.bakedHealthIndex);
+                _colorSystem.Release(data.colorIndex);
+                _prefabs[prefabIndex] = default;
+                _freePrefabIndices.Add(prefabIndex);
+            }
+            else
+            {
+                _prefabs[prefabIndex] = data;
+            }
+        }
+
+        public void Instantiate(ushort prefabIndex, float2 position, float rotation)
+        {
+            var prefabData = GetAndValidate(prefabIndex);
+            var frameIndex = _frameSystem.Allocate(prefabData.size);
+            var healthIndex = _healthSystem.Allocate(prefabData.size);
+            var entity = _entityManager.CreateEntity(_prefabArchetype);
             
             _entityManager.SetComponentData(entity, new PositionComponent
             {
@@ -104,7 +183,7 @@ namespace SolidSpace.Entities.Prefabs
             });
             _entityManager.SetComponentData(entity, new RectSizeComponent
             {
-                value = new half2((half)_shipSize.x, (half)_shipSize.y)
+                value = new half2((half)prefabData.size.x, (half)prefabData.size.y)
             });
             _entityManager.SetComponentData(entity, new RotationComponent
             {
@@ -112,12 +191,12 @@ namespace SolidSpace.Entities.Prefabs
             });
             _entityManager.SetComponentData(entity, new SpriteRenderComponent
             {
-                colorIndex = _shipColorIndex,
+                colorIndex = prefabData.colorIndex,
                 frameIndex = frameIndex
             });
             _entityManager.SetComponentData(entity, new PrefabInstanceComponent
             {
-                prefabIndex = 0,
+                prefabIndex = prefabIndex,
                 instanceOffset = byte2.zero
             });
             _entityManager.SetComponentData(entity, new HealthComponent
@@ -128,24 +207,29 @@ namespace SolidSpace.Entities.Prefabs
             {
                 isActive = false
             });
-
-            new BlitHealthToFrameJob
-            {
-                inHealth = _shipHealth,
-                inHealthSize = _shipSize,
-                inAtlasSize = _frameSystem.AtlasSize,
-                inOutAtlasTexture = _frameSystem.GetAtlasData(false),
-                inAtlasOffset = AtlasMath.ComputeOffset(_frameSystem.Chunks, frameIndex),
-            }.Run();
-
+            
+            var bakedHealthOffset = AtlasMath.ComputeOffset(_bakedHealthManager.Chunks, prefabData.bakedHealthIndex);
+            var bakedHealthSize = HealthUtil.GetRequiredByteCount(prefabData.size);
             var healthOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks, healthIndex);
             var healthAtlas = _healthSystem.Data;
-            for (var i = 0; i < _shipHealth.Length; i++)
+            for (var i = 0; i < bakedHealthSize; i++)
             {
-                healthAtlas[healthOffset + i] = _shipHealth[i];
+                healthAtlas[healthOffset + i] = _bakedHealth[bakedHealthOffset + i];
             }
+            
+            new BlitHealthToFrameJob
+            {
+                inHealth = _bakedHealth.Slice(bakedHealthOffset, bakedHealthSize),
+                inHealthSize = prefabData.size,
+                inFrameAtlasSize = _frameSystem.AtlasSize,
+                inOutFrameAtlas = _frameSystem.GetAtlasData(false),
+                inFrameAtlasOffset = AtlasMath.ComputeOffset(_frameSystem.Chunks, frameIndex),
+            }.Run();
+
+            prefabData.entityReferenceCount++;
+            _prefabs[prefabIndex] = prefabData;
         }
-        
+
         public void ScheduleReplication(PrefabReplicationData replicationData)
         {
             _replications.Add(replicationData);
@@ -160,8 +244,9 @@ namespace SolidSpace.Entities.Prefabs
                 var parentPosition = _entityManager.GetComponentData<PositionComponent>(parentEntity).value;
                 var parentRotation = _entityManager.GetComponentData<RotationComponent>(parentEntity).value;
                 var parentSize = _entityManager.GetComponentData<RectSizeComponent>(parentEntity).value;
+                var prefabData = GetAndValidate(parentPrefab.prefabIndex);
                 
-                var childEntity = _entityManager.CreateEntity(_shipArchetype);
+                var childEntity = _entityManager.CreateEntity(_prefabArchetype);
                 var childBounds = replication.childBounds;
                 var childHealthIndex = replication.childHealth;
                 var childSize = childBounds.GetSize();
@@ -189,31 +274,51 @@ namespace SolidSpace.Entities.Prefabs
                     index = childHealthIndex
                 });
 
-                var childFrameIndex = _frameSystem.Allocate(childSize.x, childSize.y);
+                var childFrameIndex = _frameSystem.Allocate(childSize);
                 var healthOffset = AtlasMath.ComputeOffset(_healthSystem.Chunks, childHealthIndex);
-                var healthSize = HealthUtil.GetRequiredByteCount(childSize.x, childSize.y);
+                var healthSize = HealthUtil.GetRequiredByteCount(childSize);
                 new BlitHealthToFrameJob
                 {
                     inHealth = _healthSystem.Data.Slice(healthOffset, healthSize),
-                    inOutAtlasTexture = _frameSystem.GetAtlasData(false),
-                    inAtlasOffset = AtlasMath.ComputeOffset(_frameSystem.Chunks, childFrameIndex),
-                    inAtlasSize = _frameSystem.AtlasSize,
+                    inOutFrameAtlas = _frameSystem.GetAtlasData(false),
+                    inFrameAtlasOffset = AtlasMath.ComputeOffset(_frameSystem.Chunks, childFrameIndex),
+                    inFrameAtlasSize = _frameSystem.AtlasSize,
                     inHealthSize = childSize,
                 }.Run();
                 _entityManager.SetComponentData(childEntity, new SpriteRenderComponent
                 {
-                    colorIndex = _shipColorIndex,
+                    colorIndex = prefabData.colorIndex,
                     frameIndex = childFrameIndex
                 });
                 
                 _entityManager.SetComponentData(childEntity, new PrefabInstanceComponent
                 {
-                    prefabIndex = 0,
+                    prefabIndex = parentPrefab.prefabIndex,
                     instanceOffset = parentPrefab.instanceOffset + childBounds.min
                 });
+
+                prefabData.entityReferenceCount++;
+                _prefabs[parentPrefab.prefabIndex] = prefabData;
             }
 
             _replications.Clear();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private BakedPrefabData GetAndValidate(ushort index)
+        {
+            if (index > _prefabCount)
+            {
+                throw new InvalidOperationException($"Prefab by index {index} is not created. (index out of range)");
+            }
+
+            var data = _prefabs[index];
+            if (!data.isCreated)
+            {
+                throw new InvalidOperationException($"Prefab by index {index} is not created. (already released)");
+            }
+
+            return data;
         }
     }
 }

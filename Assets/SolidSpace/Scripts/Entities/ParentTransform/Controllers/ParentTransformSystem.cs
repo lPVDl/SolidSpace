@@ -52,7 +52,7 @@ namespace SolidSpace.Entities.ParentTransform
                 parentHandle = _entityManager.GetComponentTypeHandle<ParentComponent>(true),
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
                 rotationHandle = _entityManager.GetComponentTypeHandle<RotationComponent>(true),
-                outParentData = NativeMemory.CreateTempJobArray<ParentData>(_parentHandleManager.Handles.Length)
+                outParentData = NativeMemory.CreateTempArray<ParentData>(_parentHandleManager.Handles.Length)
             };
             parentCollectJob.Schedule(parentCollectJob.inChunks.Length, 4).Complete();
             _profiler.EndSample("Parent Collect");

@@ -74,8 +74,8 @@ namespace SolidSpace.Entities.Actors
                 inWriteOffsets = chunks.chunkOffsets,
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
                 actorHandle = _entityManager.GetComponentTypeHandle<ActorComponent>(true),
-                outPositions = NativeMemory.CreateTempJobArray<float2>(chunks.entityCount),
-                outCounts = NativeMemory.CreateTempJobArray<int>(chunks.chunkCount)
+                outPositions = NativeMemory.CreateTempArray<float2>(chunks.entityCount),
+                outCounts = NativeMemory.CreateTempArray<int>(chunks.chunkCount)
             };
             filterJob.Schedule(chunks.chunkCount, 4).Complete();
             _profiler.EndSample("Gizmos filter");

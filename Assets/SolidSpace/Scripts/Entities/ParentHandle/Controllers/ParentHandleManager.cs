@@ -17,7 +17,7 @@ namespace SolidSpace.Entities.ParentHandle
         public void OnInitialize()
         {
             _freeHandles = new List<ushort>();
-            _handles = NativeMemory.CreatePersistentArray<HandleState>(0);
+            _handles = NativeMemory.CreatePermArray<HandleState>(0);
         }
         
         public ParentHandleInfo AllocateHandle()

@@ -10,7 +10,6 @@ namespace SolidSpace.Entities.Rendering.Sprites
 {
     internal class SpriteColorSystem : ISpriteColorSystem, IInitializable
     {
-        
         public int2 AtlasSize { get; private set; }
         public NativeSlice<AtlasChunk2D> Chunks => _indexManager.Chunks;
         public NativeSlice<ushort> ChunksOccupation => _indexManager.ChunksOccupation;
@@ -30,7 +29,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
         {
             var atlasSize = _config.AtlasConfig.AtlasSize;
 
-            _texture = new Texture2D(atlasSize, atlasSize, TextureFormat.RGB24, false, true);
+            _texture = new Texture2D(atlasSize, atlasSize, TextureFormat.RGB24, false, false);
             _texture.name = nameof(SpriteColorSystem);
             _texture.filterMode = FilterMode.Point;
             
@@ -41,23 +40,14 @@ namespace SolidSpace.Entities.Rendering.Sprites
         
         public void OnFinalize()
         {
-            foreach (var mask in _indexManager.ChunksOccupation)
-            {
-                if (mask != 0)
-                {
-                    Debug.LogError("Some sprites color indexes are not deallocated on finalize.");
-                    break;
-                }
-            }
-            
             _indexManager.Dispose();
             UnityEngine.Object.Destroy(_texture);
             _texture = null;
         }
 
-        public AtlasIndex16 Allocate(int width, int height)
+        public AtlasIndex16 Allocate(int2 size)
         {
-            return _indexManager.Allocate(width, height);
+            return _indexManager.Allocate(size);
         }
 
         public void Release(AtlasIndex16 index)

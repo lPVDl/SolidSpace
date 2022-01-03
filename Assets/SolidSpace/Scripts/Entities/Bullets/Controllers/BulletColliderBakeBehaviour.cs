@@ -23,9 +23,9 @@ namespace SolidSpace.Entities.Bullets
 
         public void OnInitialize(int colliderCount)
         {
-            outHealthComponents = NativeMemory.CreateTempJobArray<HealthComponent>(colliderCount);
-            outSpriteComponents = NativeMemory.CreateTempJobArray<SpriteRenderComponent>(colliderCount);
-            outEntities = NativeMemory.CreateTempJobArray<Entity>(colliderCount);
+            outHealthComponents = NativeMemory.CreateTempArray<HealthComponent>(colliderCount);
+            outSpriteComponents = NativeMemory.CreateTempArray<SpriteRenderComponent>(colliderCount);
+            outEntities = NativeMemory.CreateTempArray<Entity>(colliderCount);
         }
 
         public void OnProcessChunk(ArchetypeChunk chunk)

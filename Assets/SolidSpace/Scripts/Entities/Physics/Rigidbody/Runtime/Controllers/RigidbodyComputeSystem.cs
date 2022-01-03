@@ -66,9 +66,9 @@ namespace SolidSpace.Entities.Physics.Rigidbody
                 rigidbodyHandle = _entityManager.GetComponentTypeHandle<RigidbodyComponent>(true),
                 inArchetypeChunks = archetypeChunks,
                 inColliders = colliders,
-                hitStack = NativeMemory.CreateTempJobArray<ushort>(archetypeChunks.Length * CollisionStackSize),
+                hitStack = NativeMemory.CreateTempArray<ushort>(archetypeChunks.Length * CollisionStackSize),
                 hitStackSize = CollisionStackSize,
-                outMotion = NativeMemory.CreateTempJobArray<float2>(colliders.shapes.Length)
+                outMotion = NativeMemory.CreateTempArray<float2>(colliders.shapes.Length)
             };
             collisionJob.Schedule(archetypeChunks.Length, 1).Complete();
             _profiler.EndSample("Collision job");

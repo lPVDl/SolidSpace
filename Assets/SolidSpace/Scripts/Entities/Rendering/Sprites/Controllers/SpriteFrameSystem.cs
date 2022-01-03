@@ -14,7 +14,6 @@ namespace SolidSpace.Entities.Rendering.Sprites
     {
         public int2 AtlasSize { get; private set; }
         public NativeSlice<AtlasChunk2D> Chunks => _indexManager.Chunks;
-        public NativeSlice<ulong> ChunksOccupation => _indexManager.ChunksOccupation;
 
         private readonly SpriteAtlasConfig _config;
         
@@ -98,11 +97,9 @@ namespace SolidSpace.Entities.Rendering.Sprites
             material.SetTexture(propertyId, _texture);
         }
 
-        public AtlasIndex64 Allocate(int width, int height)
+        public AtlasIndex64 Allocate(int2 size)
         {
-            var index = _indexManager.Allocate(width, height);
-            
-            return index;
+            return _indexManager.Allocate(size);
         }
 
         public void Release(AtlasIndex64 index)

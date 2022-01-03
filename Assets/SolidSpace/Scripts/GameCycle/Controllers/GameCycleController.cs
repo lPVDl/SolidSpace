@@ -93,9 +93,9 @@ namespace SolidSpace.GameCycle
         {
             _updateBehaviour.OnUpdate -= OnUpdate;
 
-            for (var i = _initializables.Count - 1; i >= 0; i--)
+            for (var i = _initializationSequence.Length - 1; i >= 0; i--)
             {
-                _initializables[i].OnFinalize();
+                _initializationSequence[i].OnFinalize();
             }
 
             _profilingProcessor.FinalizeObject();

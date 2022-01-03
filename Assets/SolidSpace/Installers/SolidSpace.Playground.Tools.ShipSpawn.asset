@@ -13,4 +13,7 @@ MonoBehaviour:
   m_Name: SolidSpace.Playground.Tools.ShipSpawn
   m_EditorClassIdentifier: 
   _config:
-    _shipTexture: {fileID: 2800000, guid: c7dc818a243fcca41b5ce4e55ce9e7ca, type: 3}
+    _sprites:
+    - {fileID: 21300000, guid: d09475ef631139d4e8e54a6e56d5c9f2, type: 3}
+    - {fileID: 21300000, guid: b690e9dbb90184d438741d676428d34d, type: 3}
+    - {fileID: 21300000, guid: 8ba7473f1e2c3634182d540068b4cedb, type: 3}

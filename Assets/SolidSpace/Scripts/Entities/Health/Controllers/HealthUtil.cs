@@ -31,26 +31,26 @@ namespace SolidSpace.Entities.Health
             health[chunkIndex] = (byte) (chunkValue & ~pointBitMask);
         }
         
-        public static void TextureToHealth(NativeArray<Color32> texture, int width, int height, NativeSlice<byte> output)
+        public static void TextureToHealth(NativeArray<Color32> texture, int2 size, NativeSlice<byte> output)
         {
-            var bytesPerLine = (int) Math.Ceiling(width / 8f);
-            var requiredByteCount = bytesPerLine * height;
+            var bytesPerLine = (int) Math.Ceiling(size.x / 8f);
+            var requiredByteCount = bytesPerLine * size.y;
             if (output.Length < requiredByteCount)
             {
-                var message = $"{nameof(output)} must be at least {requiredByteCount}b to store frame {width}x{height}, but got {output.Length}b";
+                var message = $"{nameof(output)} must be at least {requiredByteCount}b to store frame {size.x}x{size.y}, but got {output.Length}b";
                 throw new InvalidOperationException(message);
             }
 
-            for (var y = 0; y < height; y++)
+            for (var y = 0; y < size.y; y++)
             {
-                var textureOffset = width * y;
+                var textureOffset = size.x * y;
                 var bitsOffset = bytesPerLine * y;
                 
-                for (var x = 0; x < width; x += 8)
+                for (var x = 0; x < size.x; x += 8)
                 {
                     var bitChunk = 0;
 
-                    for (var j = 0; j < 8 && (x + j < width); j++)
+                    for (var j = 0; j < 8 && (x + j < size.x); j++)
                     {
                         var color = texture[textureOffset + x + j];
                         if (color.r + color.g + color.b > 0)
@@ -64,26 +64,26 @@ namespace SolidSpace.Entities.Health
             }
         }
 
-        public static void TextureToHealth(NativeArray<ColorRGB24> texture, int width, int height, NativeSlice<byte> output)
+        public static void TextureToHealth(NativeArray<ColorRGB24> texture, int2 size, NativeSlice<byte> output)
         {
-            var bytesPerLine = (int) Math.Ceiling(width / 8f);
-            var requiredByteCount = bytesPerLine * height;
+            var bytesPerLine = (int) Math.Ceiling(size.x / 8f);
+            var requiredByteCount = bytesPerLine * size.y;
             if (output.Length < requiredByteCount)
             {
-                var message = $"{nameof(output)} must be at least {requiredByteCount}b to store frame {width}x{height}, but got {output.Length}b";
+                var message = $"{nameof(output)} must be at least {requiredByteCount}b to store frame {size.x}x{size.y}, but got {output.Length}b";
                 throw new InvalidOperationException(message);
             }
 
-            for (var y = 0; y < height; y++)
+            for (var y = 0; y < size.y; y++)
             {
-                var textureOffset = width * y;
+                var textureOffset = size.x * y;
                 var bitsOffset = bytesPerLine * y;
                 
-                for (var x = 0; x < width; x += 8)
+                for (var x = 0; x < size.x; x += 8)
                 {
                     var bitChunk = 0;
 
-                    for (var j = 0; j < 8 && (x + j < width); j++)
+                    for (var j = 0; j < 8 && (x + j < size.x); j++)
                     {
                         var color = texture[textureOffset + x + j];
                         if (color.r + color.g + color.b > 0)
@@ -97,6 +97,12 @@ namespace SolidSpace.Entities.Health
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int GetRequiredByteCount(int2 size)
+        {
+            return GetRequiredByteCount(size.x, size.y);
+        }
+        
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetRequiredByteCount(int width, int height)
         {

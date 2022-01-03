@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
 using Unity.Collections;
+using Unity.Mathematics;
 
 namespace SolidSpace.Entities.Atlases
 {
@@ -34,16 +35,16 @@ namespace SolidSpace.Entities.Atlases
                 _partiallyFilledChunks[i] = new List<ushort>();
             }
 
-            _chunks = NativeMemory.CreatePersistentArray<AtlasChunk2D>(0);
-            _chunksOccupation = NativeMemory.CreatePersistentArray<ulong>(0);
+            _chunks = NativeMemory.CreatePermArray<AtlasChunk2D>(0);
+            _chunksOccupation = NativeMemory.CreatePermArray<ulong>(0);
             
             Chunks = new NativeSlice<AtlasChunk2D>(_chunks, 0, 0);
             ChunksOccupation = new NativeSlice<ulong>(_chunksOccupation, 0, 0);
         }
 
-        public AtlasIndex64 Allocate(int width, int height)
+        public AtlasIndex64 Allocate(int2 size)
         {
-            var maxSize = Math.Max(width, height);
+            var maxSize = Math.Max(size.x, size.y);
             var entityPower = (byte) Math.Max(_minEntityPower, CeilLog2(maxSize));
             if (entityPower > _maxEntityPower)
             {

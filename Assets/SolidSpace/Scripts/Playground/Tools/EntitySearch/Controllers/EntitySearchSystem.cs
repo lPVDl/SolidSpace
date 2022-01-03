@@ -37,8 +37,8 @@ namespace SolidSpace.Playground.Tools.EntitySearch
         public void OnInitialize()
         {
             _profiler = _profilingManager.GetHandle(this);
-            _entitiesInRadius = NativeMemory.CreatePersistentArray<Entity>(BufferSize);
-            _pointsInRadius = NativeMemory.CreatePersistentArray<float2>(BufferSize);
+            _entitiesInRadius = NativeMemory.CreatePermArray<Entity>(BufferSize);
+            _pointsInRadius = NativeMemory.CreatePermArray<float2>(BufferSize);
         }
         
         public void SetSearchPosition(float2 position)
@@ -82,7 +82,7 @@ namespace SolidSpace.Playground.Tools.EntitySearch
 
             _profiler.BeginSample("Offsets");
             var archetypeChunkCount = archetypeChunks.Length;
-            var radiusOffsets = NativeMemory.CreateTempJobArray<int>(archetypeChunkCount);
+            var radiusOffsets = NativeMemory.CreateTempArray<int>(archetypeChunkCount);
             var entityCount = 0;
             for (var i = 0; i < archetypeChunkCount; i++)
             {
@@ -93,9 +93,9 @@ namespace SolidSpace.Playground.Tools.EntitySearch
             _profiler.EndSample("Offsets");
             
             _profiler.BeginSample("Job");
-            var radiusCounts = NativeMemory.CreateTempJobArray<int>(archetypeChunkCount);
-            var nearestPositions = NativeMemory.CreateTempJobArray<float2>(archetypeChunks.Length);
-            var nearestEntities = NativeMemory.CreateTempJobArray<Entity>(archetypeChunks.Length);
+            var radiusCounts = NativeMemory.CreateTempArray<int>(archetypeChunkCount);
+            var nearestPositions = NativeMemory.CreateTempArray<float2>(archetypeChunks.Length);
+            var nearestEntities = NativeMemory.CreateTempArray<Entity>(archetypeChunks.Length);
             var rule = new ArrayMaintenanceData
             {
                 itemPerAllocation = BufferSize,

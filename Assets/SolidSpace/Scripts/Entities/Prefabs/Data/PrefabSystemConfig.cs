@@ -1,13 +1,13 @@
-using System;
+using SolidSpace.Entities.Atlases;
 using UnityEngine;
 
 namespace SolidSpace.Entities.Prefabs
 {
-    [Serializable]
-    internal class PrefabSystemConfig
+    [System.Serializable]
+    public class PrefabSystemConfig
     {
-        public Texture2D ShipTexture => _shipTexture;
+        public Atlas1DConfig BakedHealthConfig => _bakedHealthConfig;
         
-        [SerializeField] private Texture2D _shipTexture;
+        [SerializeField] private Atlas1DConfig _bakedHealthConfig;
     }
 }

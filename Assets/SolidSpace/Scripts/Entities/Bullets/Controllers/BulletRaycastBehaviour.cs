@@ -40,7 +40,7 @@ namespace SolidSpace.Entities.Bullets
     
         public void Initialize(int maxHitCount)
         {
-            outHits = NativeMemory.CreateTempJobArray<BulletHit>(maxHitCount);
+            outHits = NativeMemory.CreateTempArray<BulletHit>(maxHitCount);
             outCount = NativeMemory.CreateTempJobReference<int>();
         }
 

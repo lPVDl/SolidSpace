@@ -71,7 +71,7 @@ namespace SolidSpace.Entities.Despawn
                 _profiler.EndSample("Count buffer entities");
 
                 _profiler.BeginSample("Blit entities buffer");
-                var entities = NativeMemory.CreateTempJobArray<Entity>(entityCount);
+                var entities = NativeMemory.CreateTempArray<Entity>(entityCount);
                 entityCount = 0;
                 foreach (var entity in _scheduledSingles)
                 {

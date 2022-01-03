@@ -76,7 +76,7 @@ namespace SolidSpace.Entities.Bullets
                 typeof(VelocityComponent),
                 typeof(BulletComponent)
             });
-            _entitiesToDestroy = NativeMemory.CreateTempJobArray<Entity>(0);
+            _entitiesToDestroy = NativeMemory.CreateTempArray<Entity>(0);
             _pixelConnectionMask = SplittingUtil.Bake4NeighbourPixelConnectionMask();
             _aloneBorderPixelMask = SplittingUtil.BakeAloneBorderPixelMask();
         }
@@ -136,7 +136,7 @@ namespace SolidSpace.Entities.Bullets
             var healthAtlas = _healthSystem.Data;
             
             _entitiesToDestroy.Dispose();
-            _entitiesToDestroy = NativeMemory.CreateTempJobArray<Entity>(hitCount);
+            _entitiesToDestroy = NativeMemory.CreateTempArray<Entity>(hitCount);
 
             for (var i = 0; i < hitCount; i++)
             {

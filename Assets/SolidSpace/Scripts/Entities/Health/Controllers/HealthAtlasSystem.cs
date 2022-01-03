@@ -1,11 +1,9 @@
-using System;
 using SolidSpace.Entities.Atlases;
 using SolidSpace.GameCycle;
 using SolidSpace.JobUtilities;
 using SolidSpace.Mathematics;
 using Unity.Collections;
 using Unity.Mathematics;
-using UnityEngine;
 
 namespace SolidSpace.Entities.Health
 {
@@ -13,7 +11,6 @@ namespace SolidSpace.Entities.Health
     {
         public NativeArray<byte> Data => _data;
         public NativeSlice<AtlasChunk1D> Chunks => _indexManager.Chunks;
-        public NativeSlice<ushort> ChunksOccupation => _indexManager.ChunksOccupation;
         
         private readonly Atlas1DConfig _config;
         
@@ -27,39 +24,14 @@ namespace SolidSpace.Entities.Health
         
         public void OnInitialize()
         {
-            _data = NativeMemory.CreatePersistentArray<byte>(_config.AtlasSize);
+            _data = NativeMemory.CreatePermArray<byte>(_config.AtlasSize);
             _indexManager = new AtlasIndexManager1D16(_config);
         }
 
-        public void Copy(Texture2D source, AtlasIndex16 target)
+        public AtlasIndex16 Allocate(int2 size)
         {
-            if (source.format != TextureFormat.RGB24)
-            {
-                var message = $"Expected texture with format {TextureFormat.RGB24}, but got {source.format}";
-                throw new InvalidOperationException(message);
-            }
-            
-            var chunk = _indexManager.Chunks[target.ReadChunkId()];
-            var itemMaxSize = 1 << chunk.itemPower;
-            var textureSize = new int2(source.width, source.height);
-            var requiredByteCount = HealthUtil.GetRequiredByteCount(textureSize.x, textureSize.y);
-            
-            if (requiredByteCount > itemMaxSize)
-            {
-                var message = $"Given texture {textureSize} requires {requiredByteCount} bytes, but {itemMaxSize} is available";
-                throw new InvalidOperationException(message);
-            }
-
-            var offset = AtlasMath.ComputeOffset(chunk, target);
-            var textureRaw = source.GetRawTextureData<ColorRGB24>();
-            var atlasSlice = new NativeSlice<byte>(_data, offset, itemMaxSize);
-            HealthUtil.TextureToHealth(textureRaw, textureSize.x, textureSize.y, atlasSlice);
-        }
-
-        public AtlasIndex16 Allocate(int width, int height)
-        {
-            var size = HealthUtil.GetRequiredByteCount(width, height);
-            return _indexManager.Allocate(size);
+            var byteCount = HealthUtil.GetRequiredByteCount(size);
+            return _indexManager.Allocate(byteCount);
         }
 
         public void Release(AtlasIndex16 index)

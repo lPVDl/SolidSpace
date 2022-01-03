@@ -31,8 +31,8 @@ namespace SolidSpace.Entities.Physics.Raycast
                 inArchetypeChunks = archetypeChunks,
                 inColliders = colliders,
                 inWriteOffsets = chunkOffsets.chunkOffsets,
-                hitStack = NativeMemory.CreateTempJobArray<ushort>(chunkOffsets.chunkCount * HitStackSize),
-                outCounts = NativeMemory.CreateTempJobArray<int>(chunkOffsets.chunkCount)
+                hitStack = NativeMemory.CreateTempArray<ushort>(chunkOffsets.chunkCount * HitStackSize),
+                outCounts = NativeMemory.CreateTempArray<int>(chunkOffsets.chunkCount)
             };
             raycastJob.Schedule(chunkOffsets.chunkCount, 1).Complete();
             profiler.EndSample("Raycast");

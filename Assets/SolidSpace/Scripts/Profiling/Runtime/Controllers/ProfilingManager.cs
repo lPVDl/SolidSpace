@@ -49,10 +49,10 @@ namespace SolidSpace.Profiling
             _samplesTimer.Start();
             _profilingTree = new ProfilingTree
             {
-                childs = NativeMemory.CreateTempJobArray<ushort>(1),
-                names = NativeMemory.CreateTempJobArray<ushort>(1),
-                siblings = NativeMemory.CreateTempJobArray<ushort>(1),
-                times = NativeMemory.CreateTempJobArray<float>(1),
+                childs = NativeMemory.CreateTempArray<ushort>(1),
+                names = NativeMemory.CreateTempArray<ushort>(1),
+                siblings = NativeMemory.CreateTempArray<ushort>(1),
+                times = NativeMemory.CreateTempArray<float>(1),
                 text = _namesActive
             };
             _profilingTree.times[0] = 0;
@@ -72,15 +72,15 @@ namespace SolidSpace.Profiling
                 inRecords = _records,
                 inRecordCount = _recordCount,
                 inFrequency = Stopwatch.Frequency,
-                outChilds = NativeMemory.CreateTempJobArray<ushort>(nodeCount),
-                outNames = NativeMemory.CreateTempJobArray<ushort>(nodeCount),
-                outSiblings = NativeMemory.CreateTempJobArray<ushort>(nodeCount),
-                outTimes = NativeMemory.CreateTempJobArray<float>(nodeCount),
-                outState = NativeMemory.CreateTempJobArray<TreeBuildState>(1),
-                parentStack = NativeMemory.CreateTempJobArray<ushort>(_config.StackSize),
-                siblingStack = NativeMemory.CreateTempJobArray<ushort>(_config.StackSize),
-                timeStack = NativeMemory.CreateTempJobArray<int>(_config.StackSize),
-                nameHashStack = NativeMemory.CreateTempJobArray<int>(_config.StackSize)
+                outChilds = NativeMemory.CreateTempArray<ushort>(nodeCount),
+                outNames = NativeMemory.CreateTempArray<ushort>(nodeCount),
+                outSiblings = NativeMemory.CreateTempArray<ushort>(nodeCount),
+                outTimes = NativeMemory.CreateTempArray<float>(nodeCount),
+                outState = NativeMemory.CreateTempArray<TreeBuildState>(1),
+                parentStack = NativeMemory.CreateTempArray<ushort>(_config.StackSize),
+                siblingStack = NativeMemory.CreateTempArray<ushort>(_config.StackSize),
+                timeStack = NativeMemory.CreateTempArray<int>(_config.StackSize),
+                nameHashStack = NativeMemory.CreateTempArray<int>(_config.StackSize)
             };
             
             Profiler.BeginSample("ProfilingManager.BuildTreeJob");

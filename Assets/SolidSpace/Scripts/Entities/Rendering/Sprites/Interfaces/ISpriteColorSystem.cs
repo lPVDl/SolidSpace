@@ -12,7 +12,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
         public NativeSlice<ushort> ChunksOccupation { get; }
         public int2 AtlasSize { get; }
 
-        public AtlasIndex16 Allocate(int width, int height);
+        public AtlasIndex16 Allocate(int2 size);
         
         public void Release(AtlasIndex16 index);
         
