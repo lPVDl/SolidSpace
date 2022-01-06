@@ -51,6 +51,12 @@ namespace SolidSpace.Mathematics
 
             return value;
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float2 Round(float2 value)
+        {
+            return math.round(value);
+        }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Clamp01(float value)

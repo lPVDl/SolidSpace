@@ -9,13 +9,12 @@ using SolidSpace.Profiling;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace SolidSpace.Entities.Rendering.Sprites
 {
-    internal class SpriteRenderingSystem : IInitializable, IUpdatable
+    internal class SpriteRenderingSystem : IInitializable, IUpdatable, ISpriteRenderingSystem
     {
         private static readonly int MainTextureId = Shader.PropertyToID("_MainTex");
         private static readonly int FrameTextureId = Shader.PropertyToID("_FrameTex");
@@ -34,6 +33,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
         private MeshUpdateFlags _meshUpdateFlags;
         private Material _material;
         private ProfilingHandle _profiler;
+        private float _snapGridSize;
 
         public SpriteRenderingSystem(IEntityManager entityManager,
                                      SpriteMeshSystemConfig config,
@@ -70,6 +70,17 @@ namespace SolidSpace.Entities.Rendering.Sprites
                 typeof(RectSizeComponent),
                 typeof(PrefabInstanceComponent)
             });
+            _snapGridSize = 1;
+        }
+
+        public void SetSnapGridSize(float gridSize)
+        {
+            if (gridSize <= 0)
+            {
+                throw new System.ArgumentException("Must be greater than zero", nameof(gridSize));
+            }
+
+            _snapGridSize = gridSize;
         }
 
         public void OnUpdate()
@@ -125,6 +136,7 @@ namespace SolidSpace.Entities.Rendering.Sprites
                     inColorAtlasSize = _colorSystem.AtlasSize,
                     inFrameAtlasChunks = _frameSystem.Chunks,
                     inFrameAtlasSize = _frameSystem.AtlasSize,
+                    inSnapGridSize = _snapGridSize,
                     outIndices = meshData.GetIndexData<ushort>(),
                     outVertices = meshData.GetVertexData<SpriteVertexData>()
                 };

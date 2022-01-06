@@ -1,3 +1,4 @@
+using SolidSpace.Entities.Rendering.Sprites;
 using SolidSpace.GameCycle;
 using SolidSpace.UI.Core;
 using UnityEngine;
@@ -8,6 +9,7 @@ namespace SolidSpace.CameraMotion
     {
         private readonly Camera _camera;
         private readonly IUIManager _uiManager;
+        private readonly ISpriteRenderingSystem _spriteRenderingSystem;
         private readonly Transform _cameraTransform;
 
         private int _zoom;
@@ -15,10 +17,11 @@ namespace SolidSpace.CameraMotion
         private Vector2 _startMousePosition;
         private Vector2 _startCameraPosition;
 
-        public CameraMotionController(Camera camera, IUIManager uiManager)
+        public CameraMotionController(Camera camera, IUIManager uiManager, ISpriteRenderingSystem spriteRenderingSystem)
         {
             _camera = camera;
             _uiManager = uiManager;
+            _spriteRenderingSystem = spriteRenderingSystem;
             _cameraTransform = camera.transform;
         }
         
@@ -26,6 +29,7 @@ namespace SolidSpace.CameraMotion
         {
             SetCameraPosition(Vector2.zero);
             _camera.orthographicSize = GetScreenSize().y / 2;
+            _spriteRenderingSystem.SetSnapGridSize(1);
         }
         
         public void OnUpdate()
@@ -46,6 +50,8 @@ namespace SolidSpace.CameraMotion
                 _zoom = newZoom;
                 _camera.orthographicSize = screenSize.y / (1 << (_zoom + 1));
                 _isMoving = false;
+                
+                _spriteRenderingSystem.SetSnapGridSize(1f / (1 << _zoom));
             }
 
             if (_isMoving)
