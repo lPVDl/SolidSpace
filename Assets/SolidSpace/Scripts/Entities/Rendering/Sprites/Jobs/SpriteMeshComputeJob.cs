@@ -38,7 +38,6 @@ namespace SolidSpace.Entities.Rendering.Sprites
         [ReadOnly] public int2 inColorAtlasSize;
         [ReadOnly] public NativeSlice<AtlasChunk2D> inFrameAtlasChunks;
         [ReadOnly] public int2 inFrameAtlasSize;
-        [ReadOnly] public float inSnapGridSize;
 
         [WriteOnly, NativeDisableContainerSafetyRestriction] public NativeArray<SpriteVertexData> outVertices;
         [WriteOnly, NativeDisableContainerSafetyRestriction] public NativeArray<ushort> outIndices;
@@ -108,7 +107,6 @@ namespace SolidSpace.Entities.Rendering.Sprites
             var frameUVMax = square.frameUVMax;
             FloatMath.SinCos(square.rotation, out var sin, out var cos);
 
-            square.center = FloatMath.Round(square.center / inSnapGridSize) * inSnapGridSize;
             vertex.frameZValue = square.frameZValue;
             
             vertex.position = square.center + FloatMath.Rotate(-halfSize.x, -halfSize.y, sin, cos);
